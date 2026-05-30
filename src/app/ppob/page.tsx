@@ -1,16 +1,16 @@
-
-"use client"
+'use client';
 
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Smartphone, Zap, Wallet, Wifi, ReceiptText, ShieldCheck, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import Link from 'next/link';
 
 export default function PPOBPage() {
   const router = useRouter();
 
   const services = [
-    { id: 'pulsa', name: 'PULSA', icon: Smartphone, active: true },
+    { id: 'pulsa', name: 'PULSA', icon: Smartphone, active: true, path: '/kategori/top-up/pulsa' },
     { id: 'token-pln', name: 'TOKEN PLN', icon: Zap, active: true },
     { id: 'e-wallet', name: 'E-WALLET', icon: Wallet, active: true },
     { id: 'paket-data', name: 'PAKET DATA', icon: Wifi, active: false, badge: 'COMING SOON' },
@@ -30,35 +30,46 @@ export default function PPOBPage() {
       <main className="pt-20 px-4">
         {/* Services Grid */}
         <div className="grid grid-cols-3 gap-3">
-          {services.map((service) => (
-            <div 
-              key={service.id}
-              className={cn(
-                "relative bg-white p-4 rounded-2xl border flex flex-col items-center justify-center gap-2 transition-all shadow-sm h-28 text-center overflow-hidden",
-                service.active 
-                  ? "border-gray-100 active:scale-95 cursor-pointer hover:bg-gray-50" 
-                  : "border-gray-100 opacity-60 grayscale cursor-not-allowed bg-gray-50/50"
-              )}
-            >
-              <div className={cn(
-                "w-10 h-10 rounded-full flex items-center justify-center",
-                service.active ? "bg-primary/10 text-primary" : "bg-gray-200 text-gray-400"
-              )}>
-                <service.icon className="w-5 h-5" />
-              </div>
-              <span className="text-[9px] font-bold text-gray-700 tracking-tight leading-tight">
-                {service.name}
-              </span>
-              
-              {service.badge && (
-                <div className="absolute top-1.5 right-1.5">
-                  <span className="bg-gray-200 text-gray-500 text-[6px] font-black px-1.5 py-0.5 rounded-full border border-gray-300 whitespace-nowrap">
-                    {service.badge}
-                  </span>
+          {services.map((service) => {
+            const content = (
+              <div 
+                className={cn(
+                  "relative bg-white p-4 rounded-2xl border flex flex-col items-center justify-center gap-2 transition-all shadow-sm h-28 text-center overflow-hidden w-full",
+                  service.active 
+                    ? "border-gray-100 active:scale-95 cursor-pointer hover:bg-gray-50" 
+                    : "border-gray-100 opacity-60 grayscale cursor-not-allowed bg-gray-50/50"
+                )}
+              >
+                <div className={cn(
+                  "w-10 h-10 rounded-full flex items-center justify-center",
+                  service.active ? "bg-primary/10 text-primary" : "bg-gray-200 text-gray-400"
+                )}>
+                  <service.icon className="w-5 h-5" />
                 </div>
-              )}
-            </div>
-          ))}
+                <span className="text-[9px] font-bold text-gray-700 tracking-tight leading-tight">
+                  {service.name}
+                </span>
+                
+                {service.badge && (
+                  <div className="absolute top-1.5 right-1.5">
+                    <span className="bg-gray-200 text-gray-500 text-[6px] font-black px-1.5 py-0.5 rounded-full border border-gray-300 whitespace-nowrap">
+                      {service.badge}
+                    </span>
+                  </div>
+                )}
+              </div>
+            );
+
+            return service.path ? (
+              <Link key={service.id} href={service.path} className="flex">
+                {content}
+              </Link>
+            ) : (
+              <div key={service.id} className="flex">
+                {content}
+              </div>
+            );
+          })}
         </div>
 
         {/* Feature Highlights */}
