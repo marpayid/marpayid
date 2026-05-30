@@ -22,6 +22,7 @@ import {
 } from '@/components/ui/dialog';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
+import Link from 'next/link';
 
 interface AddressData {
   name: string;
@@ -97,7 +98,7 @@ export default function Checkout() {
       return;
     }
 
-    const adminWhatsApp = "083851278935";
+    const adminWhatsApp = "6283851278935";
     const paymentLabels: Record<string, string> = {
       'bank_transfer': 'Bank Transfer',
       'e_wallet': 'E-Wallet (OVO/DANA/GoPay)',
@@ -123,7 +124,8 @@ Total Bayar: Rp ${totalBill.toLocaleString()}
 Mohon dibantu proses pesanannya.`;
 
     const encodedMessage = encodeURIComponent(message);
-    window.open(`https://wa.me/${adminWhatsApp}?text=${encodedMessage}`, '_blank');
+    const whatsappUrl = `https://wa.me/${adminWhatsApp}?text=${encodedMessage}`;
+    window.open(whatsappUrl, '_blank');
   };
 
   if (!isLoaded) return null;
