@@ -122,8 +122,8 @@ export default function Cart() {
               <ShoppingBag className="w-10 h-10" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-gray-900">Keranjangmu masih kosong</h2>
-              <p className="text-sm text-muted-foreground mt-1 px-10">Mungkin kamu ingin melihat produk viral kami?</p>
+              <h2 className="text-lg font-bold text-gray-900">Keranjang Kosong</h2>
+              <p className="text-sm text-muted-foreground mt-1 px-10">Yuk temukan produk favoritmu sekarang.</p>
             </div>
             <Link href="/">
               <Button className="bg-primary text-white rounded-xl px-10 h-12 font-bold shadow-lg shadow-primary/20">
