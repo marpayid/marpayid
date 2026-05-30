@@ -9,7 +9,7 @@ import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carouse
 import { Banners, Products } from '@/app/lib/dummy-data';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Star, ShoppingCart, Heart } from 'lucide-react';
+import { Star, ShoppingCart } from 'lucide-react';
 
 export default function Home() {
   return (
@@ -56,9 +56,9 @@ export default function Home() {
         {/* 4. Rekomendasi Untukmu Section */}
         <section className="bg-white py-4 px-4">
           <h2 className="text-sm font-bold text-gray-900 mb-3">Rekomendasi Untukmu</h2>
-          <div className="flex gap-3 overflow-x-auto pb-2 no-scrollbar -mx-4 px-4">
-            {Products.slice(0, 5).map((product) => (
-              <div key={product.id} className="min-w-[150px] bg-white rounded-xl border border-gray-100 overflow-hidden shadow-sm flex flex-col">
+          <div className="flex gap-3 overflow-x-auto pb-4 no-scrollbar -mx-4 px-4">
+            {Products.slice(2, 7).map((product) => (
+              <div key={product.id} className="min-w-[175px] bg-white rounded-xl border border-gray-100 overflow-hidden shadow-sm flex flex-col">
                 <Link href={`/product/${product.id}`} className="relative aspect-square block">
                   <Image 
                     src={product.image || ''} 
@@ -72,16 +72,18 @@ export default function Home() {
                     </div>
                   )}
                 </Link>
-                <div className="p-2.5">
-                  <h3 className="text-[10px] font-medium text-gray-800 line-clamp-2 h-7 mb-1 leading-tight">{product.name}</h3>
-                  <p className="text-xs font-bold text-red-600">Rp {product.price.toLocaleString()}</p>
+                <div className="p-2.5 flex-1 flex flex-col justify-between">
+                  <div>
+                    <h3 className="text-[11px] font-medium text-gray-800 line-clamp-2 h-7 mb-1 leading-tight">{product.name}</h3>
+                    <p className="text-sm font-bold text-red-600">Rp {product.price.toLocaleString()}</p>
+                  </div>
                   <div className="flex items-center justify-between mt-2">
                     <div className="flex items-center gap-1">
-                      <Star className="w-2.5 h-2.5 fill-yellow-400 text-yellow-400" />
-                      <span className="text-[9px] font-semibold text-gray-600">{product.rating}</span>
+                      <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                      <span className="text-[10px] font-semibold text-gray-600">{product.rating}</span>
                     </div>
-                    <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                      <ShoppingCart className="w-3 h-3" />
+                    <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                      <ShoppingCart className="w-3.5 h-3.5" />
                     </div>
                   </div>
                 </div>
