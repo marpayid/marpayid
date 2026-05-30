@@ -1,7 +1,7 @@
 "use client"
 
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Search } from 'lucide-react';
+import { ArrowLeft, Search, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Categories } from '@/app/lib/dummy-data';
 import * as Icons from 'lucide-react';
@@ -39,10 +39,10 @@ export default function CategoriesPage() {
         <div className="mt-8 space-y-4">
           <h2 className="text-md font-bold text-gray-900">Populer Hari Ini</h2>
           <div className="grid grid-cols-2 gap-3">
-            {['Top Up ML', 'Netflix', 'Pulsa Tsel', 'Token Listrik'].map(tag => (
+            {['BIOAQUA', 'Sertifikat', 'Custom Akrilik', 'Skincare Viral'].map(tag => (
               <div key={tag} className="bg-white px-4 py-3 rounded-xl border border-gray-100 flex items-center justify-between">
                 <span className="text-sm font-medium">{tag}</span>
-                <Icons.TrendingUp className="w-4 h-4 text-primary" />
+                <TrendingUp className="w-4 h-4 text-primary" />
               </div>
             ))}
           </div>
