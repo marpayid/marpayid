@@ -1,9 +1,9 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'react-router-dom';
-import { useRouter as useNextRouter } from 'next/navigation';
-import { ArrowLeft, Smartphone, Info, CheckCircle2, AlertCircle } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { ArrowLeft, Smartphone, Info, CheckCircle2, AlertCircle, Signal, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
@@ -64,17 +64,23 @@ const OPERATORS = [
 ];
 
 export default function PulsaPage() {
-  const router = useNextRouter();
+  const router = useRouter();
   const [phoneNumber, setPhoneNumber] = useState('');
   const [detectedOperator, setDetectedOperator] = useState<any>(null);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
-    if (phoneNumber.length >= 4) {
+    if (phoneNumber.length > 0 && phoneNumber.length < 4) {
+      setIsSearching(true);
+      setDetectedOperator(null);
+    } else if (phoneNumber.length >= 4) {
+      setIsSearching(false);
       const prefix = phoneNumber.substring(0, 4);
       const operator = OPERATORS.find(op => op.prefixes.includes(prefix));
       setDetectedOperator(operator || 'not_found');
     } else {
+      setIsSearching(false);
       setDetectedOperator(null);
       setSelectedProduct(null);
     }
@@ -87,7 +93,7 @@ export default function PulsaPage() {
       id: `PULSA-${detectedOperator.name}-${selectedProduct.nominal}`,
       name: `Pulsa ${detectedOperator.name} ${selectedProduct.nominal}`,
       price: selectedProduct.price,
-      image: '/pulsa-icon.png', // Placeholder for digital icon
+      image: '/pulsa-icon.png',
       variant: phoneNumber,
       quantity: 1,
       type: 'digital',
@@ -98,8 +104,6 @@ export default function PulsaPage() {
       }
     };
 
-    // Use specific cart for checkout to avoid mixing with physical products if needed
-    // But for this request, we use the existing cart system
     localStorage.setItem('marpay_cart', JSON.stringify([digitalItem]));
     window.dispatchEvent(new Event('cart-updated'));
     router.push('/checkout');
@@ -122,30 +126,41 @@ export default function PulsaPage() {
           <div className="relative">
             <Input 
               type="tel"
-              placeholder="Contoh: 08123456xxxx"
+              placeholder="Contoh: 0812xxxxxxx"
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value.replace(/[^0-9]/g, ''))}
-              className="rounded-2xl h-14 text-lg font-bold border-gray-100 focus-visible:ring-primary/20 pl-4 pr-12"
+              className="rounded-2xl h-14 text-lg font-bold border-gray-100 focus-visible:ring-primary/20 pl-4 pr-12 placeholder:font-normal placeholder:text-gray-300"
             />
-            <div className="absolute right-4 top-1/2 -translate-y-1/2">
-               <Smartphone className={cn(
-                 "w-6 h-6 transition-colors",
-                 detectedOperator && detectedOperator !== 'not_found' ? "text-primary" : "text-gray-300"
-               )} />
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center">
+              <div className={cn(
+                "w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-300",
+                isSearching ? "bg-primary/5 text-primary animate-pulse" : 
+                detectedOperator && detectedOperator !== 'not_found' ? "bg-primary/10 text-primary" :
+                detectedOperator === 'not_found' ? "bg-red-50 text-red-500" :
+                "bg-gray-50 text-gray-300"
+              )}>
+                {isSearching ? (
+                  <Search className="w-5 h-5" />
+                ) : detectedOperator === 'not_found' ? (
+                  <AlertCircle className="w-5 h-5" />
+                ) : (
+                  <Signal className="w-5 h-5" />
+                )}
+              </div>
             </div>
           </div>
           
           {detectedOperator === 'not_found' && (
-            <div className="mt-3 flex items-center gap-2 text-red-500 bg-red-50 p-2 rounded-xl">
-              <AlertCircle className="w-4 h-4" />
+            <div className="mt-3 flex items-center gap-2 text-red-500 bg-red-50 p-2.5 rounded-xl border border-red-100 animate-in fade-in slide-in-from-top-1">
+              <AlertCircle className="w-4 h-4 shrink-0" />
               <span className="text-[10px] font-bold">Operator tidak dikenali</span>
             </div>
           )}
           
           {detectedOperator && detectedOperator !== 'not_found' && (
-            <div className="mt-3 flex items-center gap-2 text-primary bg-primary/5 p-2 rounded-xl">
-              <CheckCircle2 className="w-4 h-4" />
-              <span className="text-[10px] font-bold">Operator: {detectedOperator.name}</span>
+            <div className="mt-3 flex items-center gap-2 text-primary bg-primary/5 p-2.5 rounded-xl border border-primary/10 animate-in fade-in slide-in-from-top-1">
+              <CheckCircle2 className="w-4 h-4 shrink-0" />
+              <span className="text-[10px] font-bold">Operator Terdeteksi: <span className="uppercase">{detectedOperator.name}</span></span>
             </div>
           )}
         </section>
@@ -166,13 +181,13 @@ export default function PulsaPage() {
                   className={cn(
                     "bg-white p-4 rounded-2xl border text-left transition-all relative overflow-hidden group",
                     selectedProduct?.nominal === product.nominal 
-                      ? "border-primary bg-primary/5 ring-1 ring-primary/20" 
-                      : "border-gray-100 active:bg-gray-50"
+                      ? "border-primary bg-primary/5 ring-1 ring-primary/20 shadow-md shadow-primary/5" 
+                      : "border-gray-100 active:bg-gray-50 active:scale-95"
                   )}
                 >
                   {selectedProduct?.nominal === product.nominal && (
                     <div className="absolute top-0 right-0 p-1 bg-primary text-white rounded-bl-xl">
-                      <CheckCircle2 className="w-3 h-3" />
+                      <CheckCircle2 className="w-3.5 h-3.5" />
                     </div>
                   )}
                   <p className="text-[10px] font-bold text-gray-400 mb-1">PULSA</p>
