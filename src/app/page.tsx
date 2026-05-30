@@ -52,13 +52,6 @@ export default function Home() {
                       <div className="absolute -right-10 -top-10 w-48 h-48 bg-white/10 rounded-full blur-3xl group-hover:bg-white/20 transition-colors"></div>
                       <div className="absolute right-10 bottom-0 w-32 h-32 bg-cyan-400/20 rounded-full blur-2xl"></div>
                     </div>
-                    
-                    {/* Signature Brand Label */}
-                    <div className="absolute top-4 left-4 z-10 pointer-events-none select-none">
-                      <div className="text-white text-[9px] font-black tracking-[0.2em] opacity-80 uppercase">
-                        MARPAY
-                      </div>
-                    </div>
 
                     {/* Premium 3D Glassmorphism Watermark */}
                     <div className="absolute right-32 bottom-4 z-0 pointer-events-none select-none animate-float-3d-watermark">
