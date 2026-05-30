@@ -6,6 +6,7 @@ import { Star, ShoppingCart, Heart } from 'lucide-react';
 import { Products } from '@/app/lib/dummy-data';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
 
 export function ProductGrid() {
   const viralProducts = Products.filter(p => p.tag === 'Produk Viral');
@@ -50,6 +51,41 @@ export function ProductGrid() {
 }
 
 export function ProductCard({ product, compact = false }: { product: any, compact?: boolean }) {
+  const { toast } = useToast();
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const cartItem = {
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.image,
+      variant: product.variants?.[0] || 'Default',
+      quantity: 1
+    };
+
+    const savedCart = localStorage.getItem('marpay_cart');
+    let cart = savedCart ? JSON.parse(savedCart) : [];
+
+    const existingIndex = cart.findIndex((item: any) => item.id === cartItem.id && item.variant === cartItem.variant);
+
+    if (existingIndex > -1) {
+      cart[existingIndex].quantity += 1;
+    } else {
+      cart.push(cartItem);
+    }
+
+    localStorage.setItem('marpay_cart', JSON.stringify(cart));
+    window.dispatchEvent(new Event('cart-updated'));
+
+    toast({
+      title: "Berhasil!",
+      description: `${product.name.substring(0, 20)}... ditambahkan ke keranjang.`,
+    });
+  };
+
   return (
     <div className={cn(
       "bg-white rounded-[14px] border border-gray-100 overflow-hidden shadow-sm flex flex-col group relative",
@@ -86,7 +122,10 @@ export function ProductCard({ product, compact = false }: { product: any, compac
               <span className="text-[10px] text-gray-400 mx-0.5 flex-shrink-0">|</span>
               <span className="text-[10px] text-gray-500 truncate">{product.sold} terjual</span>
             </div>
-            <button className="w-6 h-6 rounded-full border border-primary/20 bg-primary/5 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-colors flex-shrink-0 ml-1">
+            <button 
+              onClick={handleAddToCart}
+              className="w-6 h-6 rounded-full border border-primary/20 bg-primary/5 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-colors flex-shrink-0 ml-1"
+            >
               <ShoppingCart className="w-3 h-3" />
             </button>
           </div>
