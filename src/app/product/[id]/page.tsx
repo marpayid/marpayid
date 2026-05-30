@@ -25,12 +25,21 @@ export default function ProductDetail() {
 
   const product = useMemo(() => Products.find(p => p.id === Number(id)), [id]);
 
+  const currentPrice = useMemo(() => {
+    if (!product) return 0;
+    // Dynamic pricing for Akrilik product (id: 2)
+    if (product.id === 2) {
+      return selectedVariant === 1 ? 309000 : 269000;
+    }
+    return product.price;
+  }, [product, selectedVariant]);
+
   if (!product) return <div className="p-8 text-center">Product not found</div>;
 
   const variants = product.variants || ['Default'];
-  const totalPrice = product.price * quantity;
+  const totalPrice = currentPrice * quantity;
   const hasDiscount = !!product.originalPrice;
-  const savings = hasDiscount ? (product.originalPrice! - product.price) * quantity : 0;
+  const savings = hasDiscount ? (product.originalPrice! - currentPrice) * quantity : 0;
 
   const handleQuantity = (type: 'inc' | 'dec') => {
     if (type === 'inc') setQuantity(prev => prev + 1);
@@ -41,7 +50,7 @@ export default function ProductDetail() {
     const cartItem = {
       id: product.id,
       name: product.name,
-      price: product.price,
+      price: currentPrice,
       image: product.image,
       variant: variants[selectedVariant],
       quantity: quantity
@@ -168,7 +177,7 @@ export default function ProductDetail() {
 
           <div className="space-y-1">
             <div className="flex items-end gap-2">
-              <span className="text-2xl font-bold text-primary font-headline">Rp {product.price.toLocaleString()}</span>
+              <span className="text-2xl font-bold text-primary font-headline">Rp {currentPrice.toLocaleString()}</span>
               {hasDiscount && (
                 <span className="text-sm text-gray-400 line-through mb-1">Rp {product.originalPrice?.toLocaleString()}</span>
               )}

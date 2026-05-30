@@ -57,13 +57,21 @@ Membantu merawat kulit berjerawat dan menjaga kondisi kulit tetap nyaman.`
     rating: 5.0,
     reviews: '84',
     sold: 84,
-    category: 'Hobi',
-    image: 'https://picsum.photos/seed/acrylic/400/400',
+    category: 'Sertifikat Funded',
+    image: '/akrilik1.png',
     isFlashSale: true,
     discount: '23%',
-    stock: 12,
-    tag: 'Limited Edition',
-    variants: ['Gold Edition', 'Silver Edition']
+    stock: 'Tersedia',
+    tag: 'Eksklusif',
+    variants: ['20x10', '20x15'],
+    description: `Akrilik Sertifikat Funded premium cocok untuk pajangan meja, hadiah trader, dokumentasi payout, dan koleksi pencapaian funded account. Menggunakan bahan akrilik tebal 2cm dengan tampilan elegan, jernih, dan eksklusif.
+
+Keunggulan:
+• Bahan akrilik premium tebal 2cm
+• Tampilan elegan dan profesional
+• Cocok untuk pajangan meja
+• Bisa custom nama, payout, tanggal, dan desain sertifikat
+• Cocok untuk trader, prop firm, dan hadiah pencapaian`
   },
   {
     id: 3,
