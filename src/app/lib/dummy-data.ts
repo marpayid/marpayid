@@ -19,7 +19,7 @@ export const Products = [
     reviews: '1.2rb',
     sold: '10rb+',
     category: 'Skincare',
-    image: 'https://picsum.photos/seed/bioaqua-set/400/400',
+    image: '/bioaqua24k.png',
     isFlashSale: true,
     discount: '30%',
     stock: 'Tersedia',
