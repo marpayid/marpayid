@@ -117,17 +117,17 @@ export const Products = [
 export const Banners = [
   {
     id: 1,
-    title: 'Bayar Apa Aja, Semua Bisa di MarPay',
-    subtitle: 'Pulsa, token PLN, e-wallet, voucher, OTP & top up game',
-    badges: ['PROSES CEPAT', 'HARGA BERSAING', '24 JAM'],
+    title: 'Semua Kebutuhan Digital Dalam Satu Tempat',
+    subtitle: 'Pulsa, Paket Data, Token PLN, E-Wallet, Top Up Game, BPJS dan Tagihan Internet',
+    badges: ['Proses Instan', 'Aman & Terpercaya', '24 Jam Nonstop'],
     type: 'digital',
     gradient: 'from-blue-600 via-indigo-600 to-purple-700'
   },
   {
     id: 2,
-    title: 'Belanja Produk Pilihan Lebih Hemat',
-    subtitle: 'Produk fisik, aksesoris, fashion, elektronik & kebutuhan harian',
-    badges: ['GRATIS ONGKIR', 'PRODUK TERPILIH', 'PROMO SPESIAL'],
+    title: 'Belanja Lebih Hemat Setiap Hari',
+    subtitle: 'Gratis ongkir, promo spesial, produk pilihan dan pengiriman cepat',
+    badges: ['Gratis Ongkir', 'Promo Spesial', 'Produk Pilihan'],
     type: 'physical',
     gradient: 'from-emerald-500 via-teal-600 to-blue-600'
   }

@@ -1,15 +1,35 @@
 "use client"
 
+import { useState, useEffect } from 'react';
 import { TopSearch } from '@/components/top-search';
 import { BottomNav } from '@/components/bottom-nav';
 import { CategoryMenu } from '@/components/category-menu';
 import { FlashSale } from '@/components/flash-sale';
 import { ProductGrid, ProductCard } from '@/components/product-grid';
-import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
+import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from '@/components/ui/carousel';
 import { Banners, Products } from '@/app/lib/dummy-data';
-import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
+import { Smartphone, Gamepad2, CreditCard, Package, Truck, Tag } from 'lucide-react';
 
 export default function Home() {
+  const [api, setApi] = useState<CarouselApi>();
+  const [current, setCurrent] = useState(0);
+
+  useEffect(() => {
+    if (!api) return;
+
+    setCurrent(api.selectedScrollSnap());
+    api.on("select", () => {
+      setCurrent(api.selectedScrollSnap());
+    });
+
+    const intervalId = setInterval(() => {
+      api.scrollNext();
+    }, 4000);
+
+    return () => clearInterval(intervalId);
+  }, [api]);
+
   return (
     <div className="min-h-screen bg-gray-50 pb-24">
       <TopSearch />
@@ -17,51 +37,76 @@ export default function Home() {
       <main className="pt-16 space-y-2">
         {/* 1. Hero Banner Slider */}
         <section className="px-4 pt-3 bg-white">
-          <Carousel className="w-full" opts={{ loop: true }}>
+          <Carousel 
+            className="w-full" 
+            opts={{ loop: true }}
+            setApi={setApi}
+          >
             <CarouselContent>
               {Banners.map((banner) => (
                 <CarouselItem key={banner.id}>
-                  <div className={`relative h-[170px] w-full overflow-hidden rounded-[22px] bg-gradient-to-br ${banner.gradient} shadow-md border border-white/10`}>
-                    {/* Visual Decor Elements (3D Simulated) */}
-                    <div className="absolute top-0 right-0 w-full h-full pointer-events-none opacity-20">
-                      <div className="absolute -right-10 -top-10 w-40 h-40 bg-white rounded-full blur-3xl"></div>
-                      <div className="absolute right-4 bottom-4 w-24 h-24 bg-cyan-300 rounded-full blur-2xl"></div>
+                  <div className={`relative h-[170px] w-full overflow-hidden rounded-[22px] bg-gradient-to-br ${banner.gradient} shadow-md border border-white/10 group`}>
+                    {/* Visual Decor Elements */}
+                    <div className="absolute top-0 right-0 w-full h-full pointer-events-none overflow-hidden">
+                      <div className="absolute -right-10 -top-10 w-48 h-48 bg-white/10 rounded-full blur-3xl group-hover:bg-white/20 transition-colors"></div>
+                      <div className="absolute right-10 bottom-0 w-32 h-32 bg-cyan-400/20 rounded-full blur-2xl"></div>
                     </div>
                     
-                    <div className="absolute inset-0 p-5 flex flex-col justify-center max-w-[75%] z-10">
+                    <div className="absolute inset-0 p-5 flex flex-col justify-center max-w-[70%] z-20">
                       <div className="flex flex-wrap gap-1 mb-2">
                         {banner.badges.map((badge, idx) => (
                           <span 
                             key={idx} 
-                            className="bg-white/20 backdrop-blur-md text-white text-[7px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider border border-white/20"
+                            className="bg-white/20 backdrop-blur-md text-white text-[7px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider border border-white/20 whitespace-nowrap"
                           >
                             {badge}
                           </span>
                         ))}
                       </div>
                       
-                      <h3 className="text-lg font-bold text-white mb-1.5 leading-tight drop-shadow-sm">
+                      <h3 className="text-base font-bold text-white mb-1.5 leading-tight drop-shadow-md">
                         {banner.title}
                       </h3>
                       
-                      <p className="text-[9px] text-white/90 font-medium leading-tight max-w-[180px]">
+                      <p className="text-[9px] text-white/80 font-medium leading-tight max-w-[200px] line-clamp-2">
                         {banner.subtitle}
                       </p>
                     </div>
 
-                    {/* Abstract 3D Shapes */}
-                    <div className="absolute right-5 top-1/2 -translate-y-1/2 w-16 h-16">
+                    {/* Professional 3D Simulated Visuals */}
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 w-28 h-28 z-10 flex items-center justify-center">
                        {banner.type === 'digital' ? (
-                         <div className="relative w-full h-full">
-                           <div className="absolute inset-0 bg-white/10 rounded-2xl rotate-12 backdrop-blur-sm border border-white/20"></div>
-                           <div className="absolute inset-2 bg-white/20 rounded-2xl -rotate-6 backdrop-blur-sm"></div>
-                           <div className="absolute inset-0 flex items-center justify-center text-white/40 font-black text-xl">3D</div>
+                         <div className="relative w-full h-full scale-110">
+                           {/* Smartphone Glassmorphism */}
+                           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-24 bg-white/10 backdrop-blur-lg rounded-2xl border border-white/30 rotate-12 shadow-2xl overflow-hidden">
+                             <div className="absolute top-2 left-1/2 -translate-x-1/2 w-4 h-1 bg-white/20 rounded-full"></div>
+                             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-6 h-6 bg-cyan-400/30 rounded-full blur-sm"></div>
+                           </div>
+                           {/* Floating Icons */}
+                           <div className="absolute top-2 right-2 p-1.5 bg-white/20 backdrop-blur-md rounded-lg -rotate-12 border border-white/20 animate-bounce duration-3000">
+                             <CreditCard className="w-5 h-5 text-cyan-300" />
+                           </div>
+                           <div className="absolute bottom-4 left-2 p-1.5 bg-white/20 backdrop-blur-md rounded-lg rotate-12 border border-white/20 animate-pulse">
+                             <Gamepad2 className="w-5 h-5 text-indigo-200" />
+                           </div>
+                           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-2 bg-white/30 backdrop-blur-xl rounded-full border border-white/40 shadow-xl">
+                             <Smartphone className="w-6 h-6 text-white" />
+                           </div>
                          </div>
                        ) : (
-                         <div className="relative w-full h-full">
-                           <div className="absolute inset-0 bg-white/10 rounded-full scale-110 blur-sm"></div>
-                           <div className="absolute inset-0 bg-gradient-to-tr from-white/30 to-transparent rounded-lg rotate-45 border border-white/20"></div>
-                           <div className="absolute bottom-2 right-2 w-6 h-6 bg-white/20 rounded-full"></div>
+                         <div className="relative w-full h-full scale-110">
+                           {/* Package Box Glassmorphism */}
+                           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 bg-white/10 backdrop-blur-lg rounded-xl border border-white/30 rotate-12 shadow-2xl flex items-center justify-center">
+                             <Package className="w-10 h-10 text-white/50" />
+                           </div>
+                           {/* Floating Items */}
+                           <div className="absolute -top-1 right-2 p-2 bg-white/20 backdrop-blur-md rounded-full border border-white/20 shadow-lg -rotate-12">
+                             <Truck className="w-6 h-6 text-emerald-300" />
+                           </div>
+                           <div className="absolute bottom-1 left-2 p-2 bg-white/20 backdrop-blur-md rounded-xl border border-white/20 shadow-lg rotate-12">
+                             <Tag className="w-6 h-6 text-white" />
+                           </div>
+                           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-emerald-500/40 rounded-full blur-xl"></div>
                          </div>
                        )}
                     </div>
@@ -71,10 +116,17 @@ export default function Home() {
             </CarouselContent>
           </Carousel>
           
-          {/* Slider Indicator */}
-          <div className="flex justify-center gap-1 mt-3 pb-1">
-             <div className="w-4 h-1 rounded-full bg-primary" />
-             <div className="w-1 h-1 rounded-full bg-gray-200" />
+          {/* Slider Indicators */}
+          <div className="flex justify-center gap-1.5 mt-3 pb-1">
+             {Banners.map((_, index) => (
+               <div 
+                 key={index} 
+                 className={cn(
+                   "transition-all duration-300 rounded-full",
+                   current === index ? "w-5 h-1.5 bg-primary" : "w-1.5 h-1.5 bg-gray-200"
+                 )} 
+               />
+             ))}
           </div>
         </section>
 
