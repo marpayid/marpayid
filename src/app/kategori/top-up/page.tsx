@@ -12,7 +12,7 @@ export default function TopUpPage() {
   const services = [
     { id: 'pulsa', name: 'PULSA', icon: Smartphone, active: true, path: '/kategori/top-up/pulsa' },
     { id: 'paket-data', name: 'PAKET DATA', icon: Wifi, active: false, badge: 'COMING SOON' },
-    { id: 'token-pln', name: 'TOKEN PLN', icon: Zap, active: true },
+    { id: 'token-pln', name: 'TOKEN PLN', icon: Zap, active: true, path: '/kategori/top-up/token-pln' },
     { id: 'e-wallet', name: 'E-WALLET', icon: Wallet, active: true },
     { id: 'pln-pasca', name: 'PLN PASCABAYAR', icon: ReceiptText, active: false, badge: 'COMING SOON' },
   ];
@@ -22,9 +22,9 @@ export default function TopUpPage() {
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white px-4 py-4 border-b border-gray-100 flex items-center gap-4">
         <Button variant="ghost" size="icon" onClick={() => router.back()}>
-          <ArrowLeft className="w-5 h-5" />
+          <ArrowLeft className="w-5 h-5 text-gray-800" />
         </Button>
-        <h1 className="text-lg font-bold">Top Up</h1>
+        <h1 className="text-lg font-bold text-gray-900">Top Up</h1>
       </header>
 
       <main className="pt-20 px-4">
