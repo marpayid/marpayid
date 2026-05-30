@@ -13,7 +13,7 @@ export default function TopUpPage() {
     { id: 'pulsa', name: 'PULSA', icon: Smartphone, active: true, path: '/kategori/top-up/pulsa' },
     { id: 'paket-data', name: 'PAKET DATA', icon: Wifi, active: false, badge: 'COMING SOON' },
     { id: 'token-pln', name: 'TOKEN PLN', icon: Zap, active: true, path: '/kategori/top-up/token-pln' },
-    { id: 'e-wallet', name: 'E-WALLET', icon: Wallet, active: true },
+    { id: 'e-wallet', name: 'E-WALLET', icon: Wallet, active: true, path: '/kategori/top-up/e-wallet' },
     { id: 'pln-pasca', name: 'PLN PASCABAYAR', icon: ReceiptText, active: false, badge: 'COMING SOON' },
   ];
 
@@ -65,7 +65,7 @@ export default function TopUpPage() {
               </div>
             );
 
-            return service.path ? (
+            return service.active && service.path ? (
               <Link key={service.id} href={service.path} className="flex">
                 {content}
               </Link>
@@ -81,7 +81,7 @@ export default function TopUpPage() {
         <div className="mt-6 space-y-2.5">
           <div className="bg-white p-3.5 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-3.5">
              <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary shrink-0">
-                <ShieldCheck className="w-5 h-5" />
+                < ShieldCheck className="w-5 h-5" />
              </div>
              <div>
                 <h3 className="text-[11px] font-bold text-gray-900">Transaksi Aman & Terpercaya</h3>

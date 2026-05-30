@@ -12,7 +12,7 @@ export default function PPOBPage() {
   const services = [
     { id: 'pulsa', name: 'PULSA', icon: Smartphone, active: true, path: '/kategori/top-up/pulsa' },
     { id: 'token-pln', name: 'TOKEN PLN', icon: Zap, active: true, path: '/kategori/top-up/token-pln' },
-    { id: 'e-wallet', name: 'E-WALLET', icon: Wallet, active: true },
+    { id: 'e-wallet', name: 'E-WALLET', icon: Wallet, active: true, path: '/kategori/top-up/e-wallet' },
     { id: 'paket-data', name: 'PAKET DATA', icon: Wifi, active: false, badge: 'COMING SOON' },
     { id: 'pln-pasca', name: 'PLN PASCABAYAR', icon: ReceiptText, active: false, badge: 'COMING SOON' },
   ];
@@ -60,7 +60,7 @@ export default function PPOBPage() {
               </div>
             );
 
-            return service.path ? (
+            return service.active && service.path ? (
               <Link key={service.id} href={service.path} className="flex">
                 {content}
               </Link>
