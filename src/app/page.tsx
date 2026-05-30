@@ -53,17 +53,19 @@ export default function Home() {
                       <div className="absolute right-10 bottom-0 w-32 h-32 bg-cyan-400/20 rounded-full blur-2xl"></div>
                     </div>
                     
-                    {/* Signature Brand Watermark Layer */}
-                    <div className="absolute top-4 left-4 z-0 pointer-events-none select-none">
-                      <div className="relative">
-                        {/* Logo Label */}
-                        <div className="text-white text-[9px] font-black tracking-[0.2em] opacity-80 uppercase relative z-10">
-                          MARPAY
-                        </div>
-                        {/* Large Luxury Watermark Behind */}
-                        <div className="absolute top-[-22px] left-[-15px] text-white/10 font-black text-7xl tracking-tighter -z-10 animate-float-watermark">
-                          MARPAY
-                        </div>
+                    {/* Signature Brand Label */}
+                    <div className="absolute top-4 left-4 z-10 pointer-events-none select-none">
+                      <div className="text-white text-[9px] font-black tracking-[0.2em] opacity-80 uppercase">
+                        MARPAY
+                      </div>
+                    </div>
+
+                    {/* Premium 3D Glassmorphism Watermark */}
+                    <div className="absolute right-32 bottom-4 z-0 pointer-events-none select-none animate-float-3d-watermark">
+                      <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl px-4 py-2 shadow-2xl flex items-center justify-center">
+                         <span className="text-white/20 font-black text-xl tracking-tighter drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]">
+                           MARPAY
+                         </span>
                       </div>
                     </div>
 
@@ -83,7 +85,7 @@ export default function Home() {
                         {banner.title}
                       </h3>
                       
-                      <p className="text-[9px] text-white/80 font-medium leading-tight max-w-[210px]">
+                      <p className="text-[9px] text-white/80 font-medium leading-tight">
                         {banner.subtitle}
                       </p>
                     </div>

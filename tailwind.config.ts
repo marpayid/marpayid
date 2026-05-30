@@ -103,6 +103,10 @@ export default {
         'float-watermark': {
           '0%, 100%': { transform: 'translate(0, 0)' },
           '50%': { transform: 'translate(4px, 2px)' },
+        },
+        'float-3d-watermark': {
+          '0%, 100%': { transform: 'translateY(0) rotate(0deg)' },
+          '50%': { transform: 'translateY(-12px) rotate(3deg)' },
         }
       },
       animation: {
@@ -112,6 +116,7 @@ export default {
         'float-slow': 'float-slow 4s ease-in-out infinite',
         'float-reverse': 'float-reverse 4.5s ease-in-out infinite',
         'float-watermark': 'float-watermark 10s ease-in-out infinite',
+        'float-3d-watermark': 'float-3d-watermark 10s ease-in-out infinite',
       },
     },
   },
