@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect } from 'react';
@@ -55,26 +56,23 @@ export function FlashSale() {
                 {item.discount}
               </div>
             </Link>
-            <div className="p-2 flex flex-col flex-1 justify-between">
+            <div className="p-2.5 flex flex-col flex-1 justify-between">
               <div>
-                <h3 className="text-[10px] font-medium text-gray-800 line-clamp-2 h-7 mb-0.5 leading-tight">{item.name}</h3>
-                <p className="text-[11px] font-bold text-red-600">Rp {item.price.toLocaleString()}</p>
+                <h3 className="text-[11px] font-medium text-gray-800 line-clamp-2 h-7 mb-1 leading-tight">{item.name}</h3>
+                <p className="text-xs font-bold text-red-600">Rp {item.price.toLocaleString()}</p>
               </div>
               
-              <div className="flex items-center justify-between mt-1.5">
+              <div className="flex items-center justify-between mt-2">
                 <div className="flex items-center gap-0.5">
                   <Star className="w-2.5 h-2.5 fill-yellow-400 text-yellow-400" />
                   <span className="text-[9px] font-bold text-gray-600">{item.rating}</span>
+                  <span className="text-[9px] text-muted-foreground border-l pl-1 ml-1 leading-none">
+                    {item.sold >= 1000 ? `${(item.sold/1000).toFixed(1)}rb` : item.sold}
+                  </span>
                 </div>
                 <button className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-colors">
                   <ShoppingCart className="w-3 h-3" />
                 </button>
-              </div>
-              
-              <div className="mt-1">
-                 <span className="text-[9px] text-gray-400 font-medium">
-                  {item.sold >= 1000 ? `${(item.sold/1000).toFixed(1)}rb` : item.sold} terjual
-                 </span>
               </div>
             </div>
           </div>

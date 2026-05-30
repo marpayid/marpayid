@@ -1,3 +1,4 @@
+
 "use client"
 
 import Image from 'next/image';
@@ -77,8 +78,10 @@ function ProductCard({ product }: { product: any }) {
         <div className="flex items-center justify-between mt-auto">
           <div className="flex items-center gap-1">
             <Star className="w-2.5 h-2.5 fill-yellow-400 text-yellow-400" />
-            <span className="text-[9px] font-semibold text-gray-600">{product.rating}</span>
-            <span className="text-[9px] text-muted-foreground border-l pl-1 ml-0.5"> {product.sold >= 1000 ? `${(product.sold/1000).toFixed(1)}rb` : product.sold} terjual</span>
+            <span className="text-[10px] font-semibold text-gray-600">{product.rating}</span>
+            <span className="text-[10px] text-muted-foreground border-l pl-1 ml-0.5 leading-none">
+              {product.sold >= 1000 ? `${(product.sold/1000).toFixed(1)}rb` : product.sold}
+            </span>
           </div>
           <button className="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
             <ShoppingCart className="w-3 h-3" />

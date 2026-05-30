@@ -1,3 +1,4 @@
+
 "use client"
 
 import { TopSearch } from '@/components/top-search';
@@ -58,7 +59,7 @@ export default function Home() {
           <h2 className="text-sm font-bold text-gray-900 mb-3">Rekomendasi Untukmu</h2>
           <div className="flex gap-3 overflow-x-auto pb-4 no-scrollbar -mx-4 px-4">
             {Products.slice(2, 7).map((product) => (
-              <div key={product.id} className="min-w-[175px] bg-white rounded-xl border border-gray-100 overflow-hidden shadow-sm flex flex-col">
+              <div key={product.id} className="min-w-[160px] bg-white rounded-xl border border-gray-100 overflow-hidden shadow-sm flex flex-col">
                 <Link href={`/product/${product.id}`} className="relative aspect-square block">
                   <Image 
                     src={product.image || ''} 
@@ -81,6 +82,11 @@ export default function Home() {
                     <div className="flex items-center gap-1">
                       <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
                       <span className="text-[10px] font-semibold text-gray-600">{product.rating}</span>
+                      {product.sold && (
+                        <span className="text-[10px] text-muted-foreground border-l pl-1 ml-0.5 leading-none">
+                          {product.sold >= 1000 ? `${(product.sold/1000).toFixed(1)}rb` : product.sold}
+                        </span>
+                      )}
                     </div>
                     <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary">
                       <ShoppingCart className="w-3.5 h-3.5" />
