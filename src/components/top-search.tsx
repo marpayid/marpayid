@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect } from 'react';
@@ -36,7 +37,7 @@ export function TopSearch() {
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
         <Input 
           placeholder="Cari di MarPay" 
-          className="pl-9 bg-gray-50 border-none rounded-full h-10 focus-visible:ring-primary/20 text-sm placeholder:text-gray-400"
+          className="pl-9 bg-gray-50 border-none rounded-full h-10 focus-visible:ring-primary/20 text-base placeholder:text-gray-400 md:text-sm"
         />
       </div>
       <div className="flex items-center">

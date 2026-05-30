@@ -35,7 +35,7 @@ export default function TokenPLNPage() {
       id: `TOKEN-PLN-${selectedProduct.nominal}`,
       name: `Token PLN ${selectedProduct.nominal}`,
       price: selectedProduct.price,
-      image: '/pln-icon.png', // Placeholder identifier for checkout icon
+      image: '/pln-icon.png',
       variant: meterId,
       quantity: 1,
       type: 'digital',
@@ -76,7 +76,7 @@ export default function TokenPLNPage() {
                   if (errors.name) setErrors({...errors, name: undefined});
                 }}
                 className={cn(
-                  "rounded-2xl h-12 text-sm font-semibold border-gray-100 focus-visible:ring-primary/20 pl-4",
+                  "rounded-2xl h-12 text-base md:text-sm font-semibold border-gray-100 focus-visible:ring-primary/20 pl-4",
                   errors.name && "border-red-500 bg-red-50/30"
                 )}
               />
@@ -100,7 +100,7 @@ export default function TokenPLNPage() {
                   if (errors.meter) setErrors({...errors, meter: undefined});
                 }}
                 className={cn(
-                  "rounded-2xl h-12 text-sm font-semibold border-gray-100 focus-visible:ring-primary/20 pl-4",
+                  "rounded-2xl h-12 text-base md:text-sm font-semibold border-gray-100 focus-visible:ring-primary/20 pl-4",
                   errors.meter && "border-red-500 bg-red-50/30"
                 )}
               />
