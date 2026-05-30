@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useRouter } from 'next/navigation';
@@ -29,35 +28,35 @@ export default function TopUpPage() {
 
       <main className="pt-20 px-4">
         {/* Subtitle Section */}
-        <div className="mb-6 px-1">
-          <p className="text-xs text-gray-500 font-medium leading-relaxed">Pilih layanan top up dan pembayaran digital MarPay.</p>
+        <div className="mb-5 px-1">
+          <p className="text-[11px] text-gray-500 font-medium leading-relaxed">Pilih layanan top up dan pembayaran digital MarPay.</p>
         </div>
 
-        {/* Services Grid */}
+        {/* Services Grid - Matched with PPOB Proportions */}
         <div className="grid grid-cols-3 gap-3">
           {services.map((service) => (
             <div 
               key={service.id}
               className={cn(
-                "relative bg-white p-4 rounded-2xl border flex flex-col items-center justify-center gap-2 transition-all shadow-sm h-28 text-center overflow-hidden",
+                "relative bg-white p-3 rounded-2xl border flex flex-col items-center justify-center gap-2 transition-all shadow-sm h-28 text-center overflow-hidden",
                 service.active 
                   ? "border-gray-100 active:scale-95 cursor-pointer hover:bg-gray-50" 
                   : "border-gray-100 opacity-60 grayscale cursor-not-allowed bg-gray-50/50"
               )}
             >
               <div className={cn(
-                "w-10 h-10 rounded-full flex items-center justify-center",
-                service.active ? "bg-primary/10 text-primary" : "bg-gray-200 text-gray-400"
+                "w-10 h-10 rounded-full flex items-center justify-center transition-colors",
+                service.active ? "bg-primary/10 text-primary" : "bg-gray-100 text-gray-400"
               )}>
-                <service.icon className="w-5 h-5" />
+                <service.icon className="w-5 h-5 stroke-[2px]" />
               </div>
-              <span className="text-[9px] font-bold text-gray-700 tracking-tight leading-tight">
+              <span className="text-[9px] font-bold text-gray-700 tracking-tight leading-tight uppercase">
                 {service.name}
               </span>
               
               {service.badge && (
                 <div className="absolute top-1.5 right-1.5">
-                  <span className="bg-gray-200 text-gray-500 text-[6px] font-black px-1.5 py-0.5 rounded-full border border-gray-300 whitespace-nowrap">
+                  <span className="bg-gray-100 text-gray-500 text-[6px] font-black px-1.5 py-0.5 rounded-full border border-gray-200 whitespace-nowrap">
                     {service.badge}
                   </span>
                 </div>
@@ -66,36 +65,36 @@ export default function TopUpPage() {
           ))}
         </div>
 
-        {/* Feature Highlights */}
-        <div className="mt-8 space-y-3">
-          <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4">
-             <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary shrink-0">
-                <ShieldCheck className="w-6 h-6" />
+        {/* Feature Highlights - Compact & Premium */}
+        <div className="mt-6 space-y-2.5">
+          <div className="bg-white p-3.5 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-3.5">
+             <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary shrink-0">
+                <ShieldCheck className="w-5 h-5" />
              </div>
              <div>
-                <h3 className="text-xs font-bold text-gray-900">Transaksi Aman & Terpercaya</h3>
-                <p className="text-[10px] text-gray-500 mt-0.5">Seluruh transaksi digital Anda dilindungi oleh sistem keamanan berlapis.</p>
+                <h3 className="text-[11px] font-bold text-gray-900">Transaksi Aman & Terpercaya</h3>
+                <p className="text-[9px] text-gray-500 mt-0.5">Sistem keamanan berlapis untuk setiap transaksi.</p>
              </div>
           </div>
 
-          <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4">
-             <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center text-blue-500 shrink-0">
-                <Clock className="w-6 h-6" />
+          <div className="bg-white p-3.5 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-3.5">
+             <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-blue-500 shrink-0">
+                <Clock className="w-5 h-5" />
              </div>
              <div>
-                <h3 className="text-xs font-bold text-gray-900">Proses Cepat 24 Jam</h3>
-                <p className="text-[10px] text-gray-500 mt-0.5">Sistem kami bekerja otomatis untuk memproses pesanan Anda secara instan.</p>
+                <h3 className="text-[11px] font-bold text-gray-900">Proses Cepat 24 Jam</h3>
+                <p className="text-[9px] text-gray-500 mt-0.5">Otomatisasi sistem untuk layanan instan nonstop.</p>
              </div>
           </div>
         </div>
 
-        {/* Promo Banner */}
-        <div className="mt-6 relative rounded-2xl overflow-hidden h-32 bg-gradient-to-r from-primary to-emerald-600 p-5 flex flex-col justify-center text-white shadow-lg shadow-primary/20">
-           <Zap className="absolute right-[-10px] top-[-10px] w-32 h-32 text-white/10 rotate-12" />
-           <p className="text-[10px] font-bold uppercase tracking-widest opacity-80 mb-1">PROMO HARI INI</p>
-           <h2 className="text-lg font-bold leading-tight mb-2">Cashback s/d Rp5.000<br/>Setiap Top Up Digital</h2>
+        {/* Promo Banner - Slightly Reduced Height */}
+        <div className="mt-6 relative rounded-2xl overflow-hidden h-28 bg-gradient-to-r from-primary to-emerald-600 p-5 flex flex-col justify-center text-white shadow-lg shadow-primary/20">
+           <Zap className="absolute right-[-10px] top-[-10px] w-28 h-28 text-white/10 rotate-12" />
+           <p className="text-[8px] font-bold uppercase tracking-widest opacity-80 mb-1">PROMO HARI INI</p>
+           <h2 className="text-base font-bold leading-tight mb-2">Cashback s/d Rp5.000<br/>Setiap Top Up Digital</h2>
            <div className="flex">
-              <span className="bg-white/20 backdrop-blur-md text-[8px] font-bold px-2 py-0.5 rounded-full border border-white/20">
+              <span className="bg-white/20 backdrop-blur-md text-[7px] font-bold px-2 py-0.5 rounded-full border border-white/20 uppercase">
                 Gunakan Kode: TOPUPHEMAT
               </span>
            </div>
