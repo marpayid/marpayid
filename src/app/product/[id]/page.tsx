@@ -1,10 +1,12 @@
+
 "use client"
 
 import { useParams, useRouter } from 'next/navigation';
 import { useState, useMemo } from 'react';
 import { 
   ArrowLeft, Share2, ShoppingCart, Heart, Star, ShieldCheck, 
-  Truck, ChevronRight, Minus, Plus, MessageCircle, CheckCircle2 
+  Truck, ChevronRight, Minus, Plus, MessageCircle, CheckCircle2,
+  Ticket, Zap
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -80,19 +82,52 @@ export default function ProductDetail() {
             />
           </div>
           <div className="flex gap-2 px-4 py-4 overflow-x-auto no-scrollbar">
-            {[1].map((i) => (
-              <div key={i} className={cn(
-                "relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 border-2",
-                i === 1 ? "border-primary" : "border-gray-100"
-              )}>
-                <Image 
-                  src={product.image || ''} 
-                  alt="" 
-                  fill 
-                  className="object-cover opacity-80"
-                />
+            <div className="relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 border-2 border-primary">
+              <Image 
+                src={product.image || ''} 
+                alt="" 
+                fill 
+                className="object-cover opacity-80"
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* Voucher & Promo Section */}
+        <section className="mx-4 my-3 bg-white border border-primary/40 rounded-xl p-3 shadow-sm hover:shadow-md transition-shadow">
+          <div className="space-y-3">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center text-primary shrink-0">
+                <Ticket className="w-4 h-4" />
               </div>
-            ))}
+              <div className="flex-1">
+                <div className="flex items-center justify-between">
+                  <p className="text-[10px] font-bold text-primary uppercase tracking-tight">Voucher Toko</p>
+                  <span className="text-[9px] font-bold text-primary px-1.5 py-0.5 bg-primary/5 rounded border border-primary/20">Klaim</span>
+                </div>
+                <p className="text-[11px] font-bold text-gray-800">Diskon Rp10.000 <span className="text-[9px] font-normal text-gray-500 ml-1">Min. Belanja Rp150.000</span></p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 border-t border-gray-50 pt-3">
+              <div className="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center text-blue-500 shrink-0">
+                <Truck className="w-4 h-4" />
+              </div>
+              <div className="flex-1">
+                <p className="text-[10px] font-bold text-blue-500 uppercase tracking-tight">Gratis Ongkir</p>
+                <p className="text-[11px] font-bold text-gray-800">Potongan Maksimal Rp20.000</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 border-t border-gray-50 pt-3">
+              <div className="w-8 h-8 bg-orange-50 rounded-lg flex items-center justify-center text-orange-500 shrink-0">
+                <Zap className="w-4 h-4" />
+              </div>
+              <div className="flex-1">
+                <p className="text-[10px] font-bold text-orange-500 uppercase tracking-tight">Promo Hari Ini</p>
+                <p className="text-[11px] font-bold text-gray-800">Berlaku sampai <span className="text-orange-600 font-black">23:59 WIB</span></p>
+              </div>
+            </div>
           </div>
         </section>
 
