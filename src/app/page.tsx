@@ -21,7 +21,7 @@ export default function Home() {
             <CarouselContent>
               {Banners.map((banner) => (
                 <CarouselItem key={banner.id}>
-                  <div className={`relative h-[155px] w-full overflow-hidden rounded-[22px] bg-gradient-to-br ${banner.gradient} shadow-md border border-white/10`}>
+                  <div className={`relative h-[170px] w-full overflow-hidden rounded-[22px] bg-gradient-to-br ${banner.gradient} shadow-md border border-white/10`}>
                     {/* Visual Decor Elements (3D Simulated) */}
                     <div className="absolute top-0 right-0 w-full h-full pointer-events-none opacity-20">
                       <div className="absolute -right-10 -top-10 w-40 h-40 bg-white rounded-full blur-3xl"></div>
