@@ -5,8 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useState, useMemo } from 'react';
 import { 
   ArrowLeft, Share2, ShoppingCart, Heart, Star, ShieldCheck, 
-  Truck, ChevronRight, Minus, Plus, MessageCircle, CheckCircle2,
-  Ticket, Zap
+  Truck, ChevronRight, Minus, Plus, MessageCircle, CheckCircle2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -93,14 +92,14 @@ export default function ProductDetail() {
           </div>
         </section>
 
-        {/* Voucher & Promo Section - Single Gratis Ongkir Card */}
-        <section className="mx-4 my-3 bg-white border border-[#22c55e]/20 rounded-[14px] p-4 shadow-sm flex items-center gap-4 h-[80px]">
-          <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center text-blue-500 shrink-0">
-            <Truck className="w-6 h-6" />
+        {/* Voucher & Promo Section - Compact Single Gratis Ongkir Card */}
+        <section className="mx-4 my-2 bg-white border border-[#22c55e]/15 rounded-[10px] px-3 py-2 shadow-[0_2px_6px_rgba(0,0,0,0.02)] flex items-center gap-3 h-[60px]">
+          <div className="w-9 h-9 bg-blue-50 rounded-lg flex items-center justify-center text-blue-500 shrink-0">
+            <Truck className="w-7 h-7" />
           </div>
           <div className="flex-1">
-            <p className="text-[10px] font-bold text-blue-500 uppercase tracking-wider mb-0.5">GRATIS ONGKIR</p>
-            <p className="text-[13px] font-bold text-gray-900">Potongan Maksimal Rp20.000</p>
+            <p className="text-[12px] font-bold text-blue-500 uppercase tracking-tight mb-0">GRATIS ONGKIR</p>
+            <p className="text-[14px] font-semibold text-gray-900 leading-tight">Potongan Maksimal Rp20.000</p>
           </div>
         </section>
 
