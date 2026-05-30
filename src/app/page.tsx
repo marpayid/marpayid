@@ -60,6 +60,9 @@ export default function Home() {
                     </div>
                     
                     <div className="absolute inset-0 p-5 pb-6 flex flex-col justify-center max-w-[70%] z-20">
+                      {/* Brand Label */}
+                      <span className="text-[9px] font-bold text-white/90 tracking-[0.2em] mb-2 block uppercase">MarPay</span>
+                      
                       <div className="flex flex-wrap gap-1 mb-2">
                         {banner.badges.map((badge, idx) => (
                           <span 
