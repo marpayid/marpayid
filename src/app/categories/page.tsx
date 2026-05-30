@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useRouter } from 'next/navigation';
@@ -13,7 +14,7 @@ export default function CategoriesPage() {
   const handleCategoryClick = (catName: string) => {
     // Specific routing for Top Up
     if (catName === 'Top Up') {
-      router.push('/top-up');
+      router.push('/kategori/top-up');
       return;
     }
     
@@ -21,7 +22,10 @@ export default function CategoriesPage() {
     const digitalCategories = ['E-Wallet', 'Voucher', 'Premium'];
     if (digitalCategories.includes(catName)) {
       router.push('/ppob');
+      return;
     }
+
+    // Default to search or same page for other categories
   };
 
   return (

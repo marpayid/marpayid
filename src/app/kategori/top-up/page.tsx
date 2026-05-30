@@ -6,7 +6,7 @@ import { ArrowLeft, Smartphone, Zap, Wallet, Wifi, ReceiptText, ShieldCheck, Clo
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
-export default function TopUpCategoryPage() {
+export default function TopUpPage() {
   const router = useRouter();
 
   const services = [
