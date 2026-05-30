@@ -1,4 +1,3 @@
-
 "use client"
 
 import Image from 'next/image';
@@ -6,6 +5,7 @@ import Link from 'next/link';
 import { Star, ShoppingCart, Heart } from 'lucide-react';
 import { Products } from '@/app/lib/dummy-data';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { cn } from '@/lib/utils';
 
 export function ProductGrid() {
   const viralProducts = Products.filter(p => p.tag === 'Produk Viral');
@@ -17,13 +17,13 @@ export function ProductGrid() {
         <TabsList className="bg-transparent border-b border-gray-100 w-full flex justify-start h-auto p-0 mb-4 gap-6 overflow-x-auto no-scrollbar">
           <TabsTrigger 
             value="viral" 
-            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-primary font-bold text-xs px-0 pb-2 shadow-none"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-primary font-bold text-xs px-0 pb-2 shadow-none transition-none"
           >
             Produk Viral
           </TabsTrigger>
           <TabsTrigger 
             value="semua" 
-            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-primary font-bold text-xs px-0 pb-2 shadow-none"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-primary font-bold text-xs px-0 pb-2 shadow-none transition-none"
           >
             Semua Produk
           </TabsTrigger>
@@ -49,10 +49,13 @@ export function ProductGrid() {
   );
 }
 
-function ProductCard({ product }: { product: any }) {
+export function ProductCard({ product, compact = false }: { product: any, compact?: boolean }) {
   return (
-    <div className="bg-white rounded-xl border border-gray-100 overflow-hidden shadow-sm flex flex-col group relative">
-      <Link href={`/product/${product.id}`} className="relative aspect-square">
+    <div className={cn(
+      "bg-white rounded-[14px] border border-gray-100 overflow-hidden shadow-sm flex flex-col group relative",
+      compact ? "min-w-[145px] w-[145px]" : "w-full"
+    )}>
+      <Link href={`/product/${product.id}`} className="relative aspect-square block">
         <Image 
           src={product.image || ''} 
           alt={product.name} 
@@ -61,31 +64,32 @@ function ProductCard({ product }: { product: any }) {
         />
         {product.discount && (
           <div className="absolute top-0 left-0 bg-orange-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-br-lg shadow-sm">
-            {product.discount}
+            {product.discount} OFF
           </div>
         )}
-        <button className="absolute top-1.5 right-1.5 p-1 bg-white/80 rounded-full shadow-sm text-gray-400 active:text-red-500 backdrop-blur-sm">
+        <button className="absolute top-1.5 right-1.5 p-1.5 bg-white/80 rounded-full shadow-sm text-gray-400 active:text-red-500 backdrop-blur-sm">
           <Heart className="w-3.5 h-3.5" />
         </button>
       </Link>
-      <div className="p-2.5 flex-1 flex flex-col justify-between">
-        <div>
-          <Link href={`/product/${product.id}`}>
-            <h3 className="text-[11px] font-medium text-gray-800 line-clamp-2 leading-tight h-7 mb-1">{product.name}</h3>
-          </Link>
-          <p className="text-sm font-bold text-red-600 mb-2">Rp {product.price.toLocaleString()}</p>
-        </div>
-        <div className="flex items-center justify-between mt-auto">
-          <div className="flex items-center gap-1">
-            <Star className="w-2.5 h-2.5 fill-yellow-400 text-yellow-400" />
-            <span className="text-[10px] font-semibold text-gray-600">{product.rating}</span>
-            <span className="text-[10px] text-muted-foreground border-l pl-1 ml-0.5 leading-none">
-              {product.sold >= 1000 ? `${(product.sold/1000).toFixed(1)}rb` : product.sold}
-            </span>
+      <div className="p-2.5 flex-1 flex flex-col">
+        <Link href={`/product/${product.id}`} className="mb-1">
+          <h3 className="text-[11px] font-medium text-gray-800 line-clamp-2 leading-tight h-[26px]">
+            {product.name}
+          </h3>
+        </Link>
+        <div className="mt-auto">
+          <p className="text-sm font-bold text-red-600 mb-1.5">Rp {product.price.toLocaleString()}</p>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1 overflow-hidden">
+              <Star className="w-2.5 h-2.5 fill-yellow-400 text-yellow-400 flex-shrink-0" />
+              <span className="text-[10px] font-bold text-gray-700">{product.rating}</span>
+              <span className="text-[10px] text-gray-400 mx-0.5 flex-shrink-0">|</span>
+              <span className="text-[10px] text-gray-500 truncate">{product.sold} terjual</span>
+            </div>
+            <button className="w-6 h-6 rounded-full border border-primary/20 bg-primary/5 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-colors flex-shrink-0 ml-1">
+              <ShoppingCart className="w-3 h-3" />
+            </button>
           </div>
-          <button className="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
-            <ShoppingCart className="w-3 h-3" />
-          </button>
         </div>
       </div>
     </div>
