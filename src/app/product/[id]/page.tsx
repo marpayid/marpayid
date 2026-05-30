@@ -77,7 +77,6 @@ export default function ProductDetail() {
               fill 
               className="object-cover"
               priority
-              unoptimized={product.image?.startsWith('/')}
             />
           </div>
           <div className="flex gap-2 px-4 py-4 overflow-x-auto no-scrollbar">
@@ -91,7 +90,6 @@ export default function ProductDetail() {
                   alt="" 
                   fill 
                   className="object-cover opacity-80"
-                  unoptimized={product.image?.startsWith('/')}
                 />
               </div>
             ))}
