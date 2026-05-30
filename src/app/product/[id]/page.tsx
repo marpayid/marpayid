@@ -77,7 +77,7 @@ export default function ProductDetail() {
               fill 
               className="object-cover"
               priority
-              data-ai-hint="product detail image"
+              unoptimized={product.image?.startsWith('/')}
             />
           </div>
           <div className="flex gap-2 px-4 py-4 overflow-x-auto no-scrollbar">
@@ -86,7 +86,13 @@ export default function ProductDetail() {
                 "relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 border-2",
                 i === 1 ? "border-primary" : "border-gray-100"
               )}>
-                <Image src={product.image || ''} alt="" fill className="object-cover opacity-80" />
+                <Image 
+                  src={product.image || ''} 
+                  alt="" 
+                  fill 
+                  className="object-cover opacity-80"
+                  unoptimized={product.image?.startsWith('/')}
+                />
               </div>
             ))}
           </div>
@@ -215,9 +221,9 @@ export default function ProductDetail() {
         {/* Description Section */}
         <section className="mt-2 bg-white p-4">
           <h3 className="text-sm font-bold mb-3">Deskripsi Produk</h3>
-          <p className="text-xs text-gray-600 whitespace-pre-wrap leading-relaxed mb-6">
+          <div className="text-xs text-gray-600 whitespace-pre-wrap leading-relaxed mb-6">
             {product.description || `Produk unggulan dari MarPay dengan kualitas material terbaik dan desain modern yang cocok untuk kebutuhan gaya hidup digital Anda saat ini. Kami menjamin setiap produk yang dikirimkan telah melalui tahap inspeksi kualitas yang ketat.`}
-          </p>
+          </div>
 
           <h3 className="text-sm font-bold mb-3">Cara Pemesanan</h3>
           <div className="space-y-4">
