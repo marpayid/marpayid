@@ -48,11 +48,6 @@ export default function Home() {
                 <CarouselItem key={banner.id}>
                   <div className={`relative h-[170px] w-full overflow-hidden rounded-[22px] bg-gradient-to-br ${banner.gradient} shadow-md border border-white/10 group`}>
                     
-                    {/* Watermark Branding Protection */}
-                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden select-none opacity-[0.06] z-0">
-                       <span className="text-[140px] font-black tracking-tighter -rotate-12 uppercase text-white whitespace-nowrap">MarPay</span>
-                    </div>
-
                     {/* Visual Decor Elements */}
                     <div className="absolute top-0 right-0 w-full h-full pointer-events-none overflow-hidden">
                       <div className="absolute -right-10 -top-10 w-48 h-48 bg-white/10 rounded-full blur-3xl group-hover:bg-white/20 transition-colors"></div>
@@ -60,9 +55,6 @@ export default function Home() {
                     </div>
                     
                     <div className="absolute inset-0 p-5 pb-6 flex flex-col justify-center max-w-[70%] z-20">
-                      {/* Brand Label */}
-                      <span className="text-[9px] font-bold text-white/90 tracking-[0.2em] mb-2 block uppercase">MarPay</span>
-                      
                       <div className="flex flex-wrap gap-1 mb-2">
                         {banner.badges.map((badge, idx) => (
                           <span 
