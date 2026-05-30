@@ -163,7 +163,7 @@ export default function ProductDetail() {
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-xs font-bold text-gray-800">Atur Jumlah</h3>
-              <p className="text-[10px] text-gray-400 mt-0.5">Stok tersedia: {product.stock || 120}</p>
+              <p className="text-[10px] text-gray-400 mt-0.5">Stok: {product.stock || 120}</p>
             </div>
             <div className="flex items-center gap-4 bg-gray-50 rounded-xl p-1 border border-gray-100">
               <Button 
@@ -215,8 +215,8 @@ export default function ProductDetail() {
         {/* Description Section */}
         <section className="mt-2 bg-white p-4">
           <h3 className="text-sm font-bold mb-3">Deskripsi Produk</h3>
-          <p className="text-xs text-gray-600 leading-relaxed mb-6">
-            Produk unggulan dari MarPay dengan kualitas material terbaik dan desain modern yang cocok untuk kebutuhan gaya hidup digital Anda saat ini. Kami menjamin setiap produk yang dikirimkan telah melalui tahap inspeksi kualitas yang ketat.
+          <p className="text-xs text-gray-600 whitespace-pre-wrap leading-relaxed mb-6">
+            {product.description || `Produk unggulan dari MarPay dengan kualitas material terbaik dan desain modern yang cocok untuk kebutuhan gaya hidup digital Anda saat ini. Kami menjamin setiap produk yang dikirimkan telah melalui tahap inspeksi kualitas yang ketat.`}
           </p>
 
           <h3 className="text-sm font-bold mb-3">Cara Pemesanan</h3>

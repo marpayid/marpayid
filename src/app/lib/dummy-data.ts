@@ -12,19 +12,42 @@ export const Categories = [
 export const Products = [
   {
     id: 1,
-    name: 'BIOAQUA Skincare 1 Set Lengkap 6pcs With 24K Gold Skin Care',
+    name: 'BIOAQUA Skincare 1 Set Lengkap 6pcs With Brightening Serum Wajah / Acne Essence / Day & Night Pelembab Wajah Cream Krim / Hydrating Toner Wajah / Facial Wash Sabun Cuci Muka Skincare Paket',
     price: 140000,
     originalPrice: 200000,
     rating: 4.9,
     reviews: '1.2rb',
     sold: '10rb+',
     category: 'Skincare',
-    image: 'https://picsum.photos/seed/bioaqua/400/400',
+    image: 'https://picsum.photos/seed/bioaqua-set/400/400',
     isFlashSale: true,
     discount: '30%',
-    stock: 85,
+    stock: 'Tersedia',
     tag: 'Produk Viral',
-    variants: ['Set Lengkap', 'Pembersih Saja', 'Serum Saja']
+    variants: ['Whitening Set 6Pcs', 'Anti-Acne Set 6Pcs'],
+    description: `BIOAQUA Skincare Set Lengkap 6Pcs hadir sebagai solusi perawatan wajah harian dengan rangkaian produk yang saling melengkapi untuk membantu menjaga kelembapan, kebersihan, dan tampilan kulit agar terlihat lebih sehat dan terawat.
+
+Isi Paket:
+• Facial Wash
+• Hydrating Toner
+• Brightening Serum / Acne Essence
+• Day Cream
+• Night Cream
+• Perawatan pendukung lainnya sesuai varian
+
+Keunggulan:
+• Membantu menjaga kelembapan kulit
+• Membersihkan wajah dari kotoran dan minyak berlebih
+• Cocok digunakan pagi dan malam hari
+• Praktis dalam satu paket lengkap
+• Kemasan premium dan aman digunakan sehari-hari
+
+Varian:
+1. Whitening Set 6Pcs
+Membantu membuat kulit tampak lebih cerah dan segar.
+
+2. Anti-Acne Set 6Pcs
+Membantu merawat kulit berjerawat dan menjaga kondisi kulit tetap nyaman.`
   },
   {
     id: 2,
