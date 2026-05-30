@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, LayoutGrid, ShoppingCart, User } from 'lucide-react';
+import { Home, LayoutGrid, ShoppingBag, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export function BottomNav() {
@@ -34,7 +34,7 @@ export function BottomNav() {
   const navItems = [
     { label: 'Home', icon: Home, path: '/' },
     { label: 'Kategori', icon: LayoutGrid, path: '/categories' },
-    { label: 'Keranjang', icon: ShoppingCart, path: '/cart', hasBadge: true },
+    { label: 'Keranjang', icon: ShoppingBag, path: '/cart', hasBadge: true },
     { label: 'Akun', icon: User, path: '/profile' },
   ];
 
@@ -47,19 +47,29 @@ export function BottomNav() {
             key={item.label}
             href={item.path}
             className={cn(
-              "flex-1 flex flex-col items-center justify-center gap-1 transition-colors duration-200",
-              isActive ? "text-primary" : "text-gray-400"
+              "flex-1 flex flex-col items-center justify-center gap-1 transition-all duration-300",
+              isActive ? "text-primary scale-105" : "text-gray-400 hover:text-gray-500"
             )}
           >
             <div className="flex items-center justify-center h-6 w-6 relative">
-              <item.icon className={cn("w-6 h-6", isActive && "stroke-[2.5px]")} />
+              <item.icon 
+                className={cn(
+                  "w-6 h-6 transition-all", 
+                  isActive ? "stroke-[2.5px] fill-primary/10" : "stroke-[1.5px]"
+                )} 
+              />
               {item.hasBadge && cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-primary text-white text-[8px] font-bold h-4 w-4 rounded-full flex items-center justify-center border-2 border-white">
+                <span className="absolute -top-1.5 -right-1.5 bg-primary text-white text-[8px] font-bold h-4 w-4 rounded-full flex items-center justify-center border-2 border-white animate-in zoom-in">
                   {cartCount}
                 </span>
               )}
             </div>
-            <span className="text-[10px] font-bold tracking-tight">{item.label}</span>
+            <span className={cn(
+              "text-[10px] tracking-tight transition-colors",
+              isActive ? "font-bold" : "font-medium"
+            )}>
+              {item.label}
+            </span>
           </Link>
         );
       })}

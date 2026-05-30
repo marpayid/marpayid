@@ -3,7 +3,7 @@
 import { useParams, useRouter } from 'next/navigation';
 import { useState, useMemo } from 'react';
 import { 
-  ArrowLeft, Share2, ShoppingCart, Heart, Star, ShieldCheck, 
+  ArrowLeft, Share2, ShoppingBag, Heart, Star, ShieldCheck, 
   Truck, ChevronRight, Minus, Plus, MessageCircle, CheckCircle2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -88,7 +88,7 @@ export default function ProductDetail() {
           </Button>
           <Link href="/cart">
             <Button variant="ghost" size="icon" className="h-9 w-9 relative">
-              <ShoppingCart className="w-5 h-5 text-gray-800" />
+              <ShoppingBag className="w-5 h-5 text-gray-800" />
             </Button>
           </Link>
         </div>

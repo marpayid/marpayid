@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react';
-import { Search, ShoppingCart, User } from 'lucide-react';
+import { Search, ShoppingBag, User } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -42,7 +42,7 @@ export function TopSearch() {
       <div className="flex items-center">
         <Link href="/cart">
           <Button variant="ghost" size="icon" className="text-gray-600 h-9 w-9 relative">
-            <ShoppingCart className="w-[22px] h-[22px]" />
+            <ShoppingBag className="w-[22px] h-[22px]" />
             {cartCount > 0 && (
               <span className="absolute top-1 right-1 bg-primary text-white text-[8px] font-bold h-4 w-4 rounded-full flex items-center justify-center border-2 border-white">
                 {cartCount}

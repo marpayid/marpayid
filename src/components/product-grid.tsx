@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { Star, ShoppingCart, Heart } from 'lucide-react';
+import { Star, ShoppingBag, Heart } from 'lucide-react';
 import { Products } from '@/app/lib/dummy-data';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
@@ -127,7 +127,7 @@ export function ProductCard({ product, compact = false }: { product: any, compac
               onClick={handleAddToCart}
               className="w-6 h-6 rounded-full border border-primary/20 bg-primary/5 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-colors flex-shrink-0 ml-1"
             >
-              <ShoppingCart className="w-3 h-3" />
+              <ShoppingBag className="w-3 h-3" />
             </button>
           </div>
         </div>
