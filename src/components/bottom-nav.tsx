@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, ShoppingBag, ClipboardList, User } from 'lucide-react';
+import { Home, LayoutGrid, ShoppingCart, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export function BottomNav() {
@@ -10,9 +10,9 @@ export function BottomNav() {
 
   const navItems = [
     { label: 'Home', icon: Home, path: '/' },
-    { label: 'Feed', icon: ShoppingBag, path: '/feed' },
-    { label: 'Orders', icon: ClipboardList, path: '/orders' },
-    { label: 'Profile', icon: User, path: '/profile' },
+    { label: 'Kategori', icon: LayoutGrid, path: '/categories' },
+    { label: 'Keranjang', icon: ShoppingCart, path: '/cart' },
+    { label: 'Akun', icon: User, path: '/profile' },
   ];
 
   return (
