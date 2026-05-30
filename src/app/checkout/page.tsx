@@ -20,7 +20,6 @@ import {
   DialogTrigger,
   DialogFooter 
 } from '@/components/ui/dialog';
-import { Products } from '@/app/lib/dummy-data';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
@@ -46,10 +45,18 @@ export default function Checkout() {
   const [selectedPayment, setSelectedPayment] = useState<string>('bank_transfer');
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    // Prototype: Get items (in real app would be from cart context/localStorage)
-    setItems(Products.slice(0, 2));
+    // Load items from cart
+    const savedCart = localStorage.getItem('marpay_cart');
+    if (savedCart) {
+      try {
+        setItems(JSON.parse(savedCart));
+      } catch (e) {
+        console.error("Failed to parse cart");
+      }
+    }
 
     // Load saved address from localStorage
     const savedAddress = localStorage.getItem('marpay_address');
@@ -62,10 +69,11 @@ export default function Checkout() {
         console.error("Failed to parse address");
       }
     }
+    setIsLoaded(true);
   }, []);
 
-  const totalItemsPrice = items.reduce((acc, curr) => acc + curr.price, 0);
-  const discount = 0; // Simplified for now
+  const totalItemsPrice = items.reduce((acc, curr) => acc + (curr.price * curr.quantity), 0);
+  const discount = 0; 
   const totalBill = totalItemsPrice - discount;
 
   const saveAddress = () => {
@@ -81,6 +89,8 @@ export default function Checkout() {
   };
 
   const handleWhatsAppCheckout = () => {
+    if (items.length === 0) return;
+
     if (!address) {
       setError("Mohon isi alamat pengiriman terlebih dahulu.");
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -94,7 +104,7 @@ export default function Checkout() {
       'qris': 'QRIS'
     };
 
-    const productList = items.map(item => `- ${item.name} (Varian: ${item.variants?.[0] || 'Default'}) x 1`).join('\n');
+    const productList = items.map(item => `- ${item.name} (Varian: ${item.variant || 'Default'}) x ${item.quantity}`).join('\n');
     
     const message = `Halo Admin MarPay, saya ingin konfirmasi pesanan.
 
@@ -115,6 +125,20 @@ Mohon dibantu proses pesanannya.`;
     const encodedMessage = encodeURIComponent(message);
     window.open(`https://wa.me/${adminWhatsApp}?text=${encodedMessage}`, '_blank');
   };
+
+  if (!isLoaded) return null;
+
+  if (items.length === 0) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-6 text-center">
+        <h1 className="text-xl font-bold mb-2">Checkout Kosong</h1>
+        <p className="text-sm text-muted-foreground mb-6">Silakan pilih produk terlebih dahulu.</p>
+        <Link href="/">
+          <Button className="bg-primary text-white px-8 h-12 rounded-xl">Kembali Belanja</Button>
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 pb-32">
@@ -254,8 +278,8 @@ Mohon dibantu proses pesanannya.`;
             </div>
             <span className="text-sm font-bold">Daftar Barang</span>
           </div>
-          {items.map(item => (
-            <div key={item.id} className="flex gap-3">
+          {items.map((item, idx) => (
+            <div key={`${item.id}-${idx}`} className="flex gap-3">
               <div className="relative w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 border border-gray-50">
                 <Image src={item.image || ''} alt={item.name} fill className="object-cover" />
               </div>
@@ -263,9 +287,9 @@ Mohon dibantu proses pesanannya.`;
                 <h4 className="text-xs font-medium line-clamp-1">{item.name}</h4>
                 <div className="flex items-center justify-between mt-1">
                   <p className="text-xs font-bold text-primary">Rp {item.price.toLocaleString()}</p>
-                  <p className="text-[10px] text-muted-foreground">x1</p>
+                  <p className="text-[10px] text-muted-foreground">x{item.quantity}</p>
                 </div>
-                {item.variants && <p className="text-[10px] text-gray-400 mt-0.5">Varian: {item.variants[0]}</p>}
+                {item.variant && <p className="text-[10px] text-gray-400 mt-0.5">Varian: {item.variant}</p>}
               </div>
             </div>
           ))}

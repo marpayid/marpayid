@@ -5,45 +5,51 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Trash2, Plus, Minus, ShoppingBag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Products } from '@/app/lib/dummy-data';
 import Image from 'next/image';
 import Link from 'next/link';
 
 export default function Cart() {
   const router = useRouter();
-  
-  // Initialize cart with state to allow dynamic updates
   const [items, setItems] = useState<any[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    // In a real application, this would fetch from localStorage or an API
-    // For this prototype, we'll initialize with a subset of products
-    const initialItems = Products.slice(0, 3).map(p => ({
-      ...p,
-      quantity: 1
-    }));
-    setItems(initialItems);
+    const savedCart = localStorage.getItem('marpay_cart');
+    if (savedCart) {
+      try {
+        setItems(JSON.parse(savedCart));
+      } catch (e) {
+        console.error("Failed to parse cart");
+      }
+    }
     setIsLoaded(true);
   }, []);
 
-  const handleRemove = (id: number) => {
-    setItems(prev => prev.filter(item => item.id !== id));
+  const saveCart = (newItems: any[]) => {
+    setItems(newItems);
+    localStorage.setItem('marpay_cart', JSON.stringify(newItems));
+    // Trigger event for other components (like badges) if necessary
+    window.dispatchEvent(new Event('cart-updated'));
   };
 
-  const updateQuantity = (id: number, delta: number) => {
-    setItems(prev => prev.map(item => {
-      if (item.id === id) {
+  const handleRemove = (id: number, variant: string) => {
+    const newItems = items.filter(item => !(item.id === id && item.variant === variant));
+    saveCart(newItems);
+  };
+
+  const updateQuantity = (id: number, variant: string, delta: number) => {
+    const newItems = items.map(item => {
+      if (item.id === id && item.variant === variant) {
         const newQty = Math.max(1, item.quantity + delta);
         return { ...item, quantity: newQty };
       }
       return item;
-    }));
+    });
+    saveCart(newItems);
   };
 
   const total = items.reduce((acc, curr) => acc + (curr.price * curr.quantity), 0);
 
-  // Prevent hydration mismatch by waiting for mount
   if (!isLoaded) return <div className="min-h-screen bg-gray-50" />;
 
   return (
@@ -58,15 +64,15 @@ export default function Cart() {
       <main className="pt-20 px-4 space-y-3">
         {items.length > 0 ? (
           <>
-            {items.map((item) => (
-              <div key={item.id} className="bg-white p-3 rounded-2xl flex gap-3 border border-gray-100 shadow-sm">
+            {items.map((item, idx) => (
+              <div key={`${item.id}-${item.variant || idx}`} className="bg-white p-3 rounded-2xl flex gap-3 border border-gray-100 shadow-sm">
                 <div className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
                   <Image src={item.image || ''} alt={item.name} fill className="object-cover" />
                 </div>
                 <div className="flex-1 flex flex-col justify-between">
                   <div>
                     <h3 className="text-sm font-medium line-clamp-1">{item.name}</h3>
-                    <p className="text-xs text-muted-foreground mt-1">Varian: Default</p>
+                    <p className="text-xs text-muted-foreground mt-1">Varian: {item.variant || 'Default'}</p>
                     <div className="flex items-center justify-between">
                       <p className="text-sm font-bold text-gray-900 mt-1">Rp {item.price.toLocaleString()}</p>
                     </div>
@@ -76,14 +82,14 @@ export default function Cart() {
                       variant="ghost" 
                       size="icon" 
                       className="text-gray-400 h-8 w-8 hover:text-red-500 hover:bg-red-50 transition-colors"
-                      onClick={() => handleRemove(item.id)}
+                      onClick={() => handleRemove(item.id, item.variant)}
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>
                     <div className="flex items-center gap-3 bg-gray-50 rounded-lg px-2 py-1">
                       <button 
                         className="text-primary hover:bg-white p-1 rounded disabled:opacity-30 disabled:cursor-not-allowed transition-all"
-                        onClick={() => updateQuantity(item.id, -1)}
+                        onClick={() => updateQuantity(item.id, item.variant, -1)}
                         disabled={item.quantity <= 1}
                       >
                         <Minus className="w-3 h-3" />
@@ -91,7 +97,7 @@ export default function Cart() {
                       <span className="text-xs font-bold w-4 text-center">{item.quantity}</span>
                       <button 
                         className="text-primary hover:bg-white p-1 rounded transition-all"
-                        onClick={() => updateQuantity(item.id, 1)}
+                        onClick={() => updateQuantity(item.id, item.variant, 1)}
                       >
                         <Plus className="w-3 h-3" />
                       </button>

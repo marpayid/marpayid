@@ -14,11 +14,13 @@ import { ProductCard } from '@/components/product-grid';
 import Image from 'next/image';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
 
 export default function ProductDetail() {
   const params = useParams();
   const id = params?.id;
   const router = useRouter();
+  const { toast } = useToast();
   const [quantity, setQuantity] = useState(1);
   const [selectedVariant, setSelectedVariant] = useState(0);
 
@@ -34,6 +36,41 @@ export default function ProductDetail() {
   const handleQuantity = (type: 'inc' | 'dec') => {
     if (type === 'inc') setQuantity(prev => prev + 1);
     else if (type === 'dec' && quantity > 1) setQuantity(prev => prev - 1);
+  };
+
+  const handleAddToCart = (redirect = false) => {
+    const cartItem = {
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.image,
+      variant: variants[selectedVariant],
+      quantity: quantity
+    };
+
+    const savedCart = localStorage.getItem('marpay_cart');
+    let cart = savedCart ? JSON.parse(savedCart) : [];
+
+    // Check if item with same ID and variant exists
+    const existingIndex = cart.findIndex((item: any) => item.id === cartItem.id && item.variant === cartItem.variant);
+
+    if (existingIndex > -1) {
+      cart[existingIndex].quantity += quantity;
+    } else {
+      cart.push(cartItem);
+    }
+
+    localStorage.setItem('marpay_cart', JSON.stringify(cart));
+    window.dispatchEvent(new Event('cart-updated'));
+
+    if (redirect) {
+      router.push('/checkout');
+    } else {
+      toast({
+        title: "Berhasil!",
+        description: "Produk telah ditambahkan ke keranjang.",
+      });
+    }
   };
 
   return (
@@ -53,7 +90,7 @@ export default function ProductDetail() {
           <Link href="/cart">
             <Button variant="ghost" size="icon" className="h-9 w-9 relative">
               <ShoppingCart className="w-5 h-5 text-gray-800" />
-              <span className="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-[10px] flex items-center justify-center rounded-full font-bold">3</span>
+              {/* Note: In a real app, this badge would be dynamic */}
             </Button>
           </Link>
         </div>
@@ -92,7 +129,7 @@ export default function ProductDetail() {
           </div>
         </section>
 
-        {/* Voucher & Promo Section - Compact Single Gratis Ongkir Card */}
+        {/* Voucher & Promo Section */}
         <section className="mx-4 my-2 bg-white border border-[#22c55e]/15 rounded-[10px] px-3 py-2 shadow-[0_2px_6px_rgba(0,0,0,0.02)] flex items-center gap-3 h-[60px]">
           <div className="w-9 h-9 bg-blue-50 rounded-lg flex items-center justify-center text-blue-500 shrink-0">
             <Truck className="w-7 h-7" />
@@ -258,22 +295,6 @@ export default function ProductDetail() {
             ))}
           </div>
         </section>
-
-        {/* Footer */}
-        <footer className="mt-2 bg-white border-t border-gray-100 p-8 pb-32">
-          <div className="flex flex-col items-center text-center">
-            <div className="text-2xl font-black italic tracking-tighter text-primary mb-6">MARPAY</div>
-            <div className="grid grid-cols-2 gap-x-12 gap-y-4 text-xs font-medium text-gray-500">
-              <Link href="/">Beranda</Link>
-              <Link href="/categories">Produk</Link>
-              <Link href="/cart">Keranjang</Link>
-              <Link href="/profile">FAQ</Link>
-              <Link href="/profile">Kontak</Link>
-              <Link href="/profile">Kebijakan Privasi</Link>
-            </div>
-            <p className="mt-8 text-[10px] text-gray-400">© 2024 MarPay Marketplace. All rights reserved.</p>
-          </div>
-        </footer>
       </main>
 
       {/* Sticky Bottom Action Bar */}
@@ -283,14 +304,19 @@ export default function ProductDetail() {
           <p className="text-lg font-bold text-primary leading-none">Rp {totalPrice.toLocaleString()}</p>
         </div>
         <div className="flex gap-2 flex-1">
-          <Button variant="outline" className="flex-1 border-primary text-primary font-bold h-11 rounded-xl active:scale-95 transition-transform text-xs">
+          <Button 
+            variant="outline" 
+            className="flex-1 border-primary text-primary font-bold h-11 rounded-xl active:scale-95 transition-transform text-xs"
+            onClick={() => handleAddToCart(false)}
+          >
             + Keranjang
           </Button>
-          <Link href="/checkout" className="flex-1">
-            <Button className="w-full bg-primary text-white font-bold h-11 rounded-xl shadow-lg shadow-primary/20 active:scale-95 transition-transform text-xs">
-              Beli Sekarang
-            </Button>
-          </Link>
+          <Button 
+            className="flex-1 bg-primary text-white font-bold h-11 rounded-xl shadow-lg shadow-primary/20 active:scale-95 transition-transform text-xs"
+            onClick={() => handleAddToCart(true)}
+          >
+            Beli Sekarang
+          </Button>
         </div>
       </div>
     </div>
