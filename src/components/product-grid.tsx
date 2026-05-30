@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Star, ShoppingBag, Heart } from 'lucide-react';
 import { Products } from '@/app/lib/dummy-data';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { cn } from '@/lib/utils';
+import { cn, formatSold } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 
 export function ProductGrid() {
@@ -121,7 +121,7 @@ export function ProductCard({ product, compact = false }: { product: any, compac
               <Star className="w-2.5 h-2.5 fill-yellow-400 text-yellow-400 flex-shrink-0" />
               <span className="text-[10px] font-bold text-gray-700">{product.rating}</span>
               <span className="text-[10px] text-gray-400 mx-0.5 flex-shrink-0">|</span>
-              <span className="text-[10px] text-gray-500 truncate">{product.sold} terjual</span>
+              <span className="text-[10px] text-gray-500 truncate">{formatSold(product.sold)}</span>
             </div>
             <button 
               onClick={handleAddToCart}

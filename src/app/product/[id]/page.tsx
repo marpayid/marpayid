@@ -12,7 +12,7 @@ import { Products } from '@/app/lib/dummy-data';
 import { ProductCard } from '@/components/product-grid';
 import Image from 'next/image';
 import Link from 'next/link';
-import { cn } from '@/lib/utils';
+import { cn, formatSold } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 
 export default function ProductDetail() {
@@ -127,7 +127,7 @@ export default function ProductDetail() {
           </div>
         </section>
 
-        {/* Promo Section */}
+        {/* Compact Promo Section */}
         <section className="mx-4 my-2 bg-white border border-[#22c55e]/15 rounded-[10px] px-3 py-2 shadow-[0_2px_6px_rgba(0,0,0,0.02)] flex items-center gap-3 h-[60px]">
           <div className="w-9 h-9 bg-blue-50 rounded-lg flex items-center justify-center text-blue-500 shrink-0">
             <Truck className="w-7 h-7" />
@@ -163,7 +163,7 @@ export default function ProductDetail() {
             <div className="h-3 w-px bg-gray-200" />
             <span className="text-xs text-gray-500">{product.reviews || '42'} Ulasan</span>
             <div className="h-3 w-px bg-gray-200" />
-            <span className="text-xs text-gray-500">Terjual {product.sold}</span>
+            <span className="text-xs text-gray-500">{formatSold(product.sold)}</span>
           </div>
 
           <div className="space-y-1">
