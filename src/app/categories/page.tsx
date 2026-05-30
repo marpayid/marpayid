@@ -1,5 +1,4 @@
-
-"use client"
+'use client';
 
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Search, TrendingUp } from 'lucide-react';
@@ -12,8 +11,14 @@ export default function CategoriesPage() {
   const router = useRouter();
 
   const handleCategoryClick = (catName: string) => {
-    // Redirect digital categories to PPOB page
-    const digitalCategories = ['Top Up', 'E-Wallet', 'Voucher', 'Premium'];
+    // Specific routing for Top Up
+    if (catName === 'Top Up') {
+      router.push('/top-up');
+      return;
+    }
+    
+    // Redirect other digital categories to PPOB page
+    const digitalCategories = ['E-Wallet', 'Voucher', 'Premium'];
     if (digitalCategories.includes(catName)) {
       router.push('/ppob');
     }
