@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect } from 'react';
@@ -46,6 +47,12 @@ export default function Home() {
               {Banners.map((banner) => (
                 <CarouselItem key={banner.id}>
                   <div className={`relative h-[170px] w-full overflow-hidden rounded-[22px] bg-gradient-to-br ${banner.gradient} shadow-md border border-white/10 group`}>
+                    
+                    {/* Watermark Branding Protection */}
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden select-none opacity-[0.06] z-0">
+                       <span className="text-[140px] font-black tracking-tighter -rotate-12 uppercase text-white whitespace-nowrap">MarPay</span>
+                    </div>
+
                     {/* Visual Decor Elements */}
                     <div className="absolute top-0 right-0 w-full h-full pointer-events-none overflow-hidden">
                       <div className="absolute -right-10 -top-10 w-48 h-48 bg-white/10 rounded-full blur-3xl group-hover:bg-white/20 transition-colors"></div>
@@ -68,7 +75,7 @@ export default function Home() {
                         {banner.title}
                       </h3>
                       
-                      <p className="text-[9px] text-white/80 font-medium leading-tight max-w-[210px]">
+                      <p className="text-[9px] text-white/80 font-medium leading-tight max-w-[210px] line-clamp-none">
                         {banner.subtitle}
                       </p>
                     </div>
