@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useParams, useRouter } from 'next/navigation';
@@ -67,8 +66,9 @@ export default function ProductDetail() {
       router.push('/checkout');
     } else {
       toast({
-        title: "Berhasil!",
-        description: "Produk telah ditambahkan ke keranjang.",
+        title: "✅ Berhasil ditambahkan ke keranjang",
+        description: product.name,
+        duration: 2000,
       });
     }
   };
