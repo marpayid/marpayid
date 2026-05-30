@@ -80,7 +80,7 @@ export default function ProductDetail() {
             />
           </div>
           <div className="flex gap-2 px-4 py-4 overflow-x-auto no-scrollbar">
-            {[1, 2, 3, 4].map((i) => (
+            {[1].map((i) => (
               <div key={i} className={cn(
                 "relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 border-2",
                 i === 1 ? "border-primary" : "border-gray-100"
