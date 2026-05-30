@@ -52,7 +52,7 @@ export default function Home() {
                       <div className="absolute right-10 bottom-0 w-32 h-32 bg-cyan-400/20 rounded-full blur-2xl"></div>
                     </div>
                     
-                    <div className="absolute inset-0 p-5 flex flex-col justify-center max-w-[70%] z-20">
+                    <div className="absolute inset-0 p-5 pb-6 flex flex-col justify-center max-w-[70%] z-20">
                       <div className="flex flex-wrap gap-1 mb-2">
                         {banner.badges.map((badge, idx) => (
                           <span 
@@ -68,7 +68,7 @@ export default function Home() {
                         {banner.title}
                       </h3>
                       
-                      <p className="text-[9px] text-white/80 font-medium leading-tight max-w-[200px] line-clamp-2">
+                      <p className="text-[9px] text-white/80 font-medium leading-tight max-w-[210px]">
                         {banner.subtitle}
                       </p>
                     </div>
@@ -78,35 +78,35 @@ export default function Home() {
                        {banner.type === 'digital' ? (
                          <div className="relative w-full h-full scale-110">
                            {/* Smartphone Glassmorphism */}
-                           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-24 bg-white/10 backdrop-blur-lg rounded-2xl border border-white/30 rotate-12 shadow-2xl overflow-hidden">
+                           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-24 bg-white/10 backdrop-blur-lg rounded-2xl border border-white/30 rotate-12 shadow-2xl overflow-hidden animate-float">
                              <div className="absolute top-2 left-1/2 -translate-x-1/2 w-4 h-1 bg-white/20 rounded-full"></div>
                              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-6 h-6 bg-cyan-400/30 rounded-full blur-sm"></div>
                            </div>
                            {/* Floating Icons */}
-                           <div className="absolute top-2 right-2 p-1.5 bg-white/20 backdrop-blur-md rounded-lg -rotate-12 border border-white/20 animate-bounce duration-3000">
+                           <div className="absolute top-2 right-2 p-1.5 bg-white/20 backdrop-blur-md rounded-lg border border-white/20 animate-float-reverse">
                              <CreditCard className="w-5 h-5 text-cyan-300" />
                            </div>
-                           <div className="absolute bottom-4 left-2 p-1.5 bg-white/20 backdrop-blur-md rounded-lg rotate-12 border border-white/20 animate-pulse">
+                           <div className="absolute bottom-4 left-2 p-1.5 bg-white/20 backdrop-blur-md rounded-lg border border-white/20 animate-float-slow">
                              <Gamepad2 className="w-5 h-5 text-indigo-200" />
                            </div>
-                           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-2 bg-white/30 backdrop-blur-xl rounded-full border border-white/40 shadow-xl">
+                           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-2 bg-white/30 backdrop-blur-xl rounded-full border border-white/40 shadow-xl animate-pulse">
                              <Smartphone className="w-6 h-6 text-white" />
                            </div>
                          </div>
                        ) : (
                          <div className="relative w-full h-full scale-110">
                            {/* Package Box Glassmorphism */}
-                           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 bg-white/10 backdrop-blur-lg rounded-xl border border-white/30 rotate-12 shadow-2xl flex items-center justify-center">
+                           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 bg-white/10 backdrop-blur-lg rounded-xl border border-white/30 rotate-12 shadow-2xl flex items-center justify-center animate-float">
                              <Package className="w-10 h-10 text-white/50" />
                            </div>
                            {/* Floating Items */}
-                           <div className="absolute -top-1 right-2 p-2 bg-white/20 backdrop-blur-md rounded-full border border-white/20 shadow-lg -rotate-12">
+                           <div className="absolute -top-1 right-2 p-2 bg-white/20 backdrop-blur-md rounded-full border border-white/20 shadow-lg animate-float-reverse">
                              <Truck className="w-6 h-6 text-emerald-300" />
                            </div>
-                           <div className="absolute bottom-1 left-2 p-2 bg-white/20 backdrop-blur-md rounded-xl border border-white/20 shadow-lg rotate-12">
+                           <div className="absolute bottom-1 left-2 p-2 bg-white/20 backdrop-blur-md rounded-xl border border-white/20 shadow-lg animate-float-slow">
                              <Tag className="w-6 h-6 text-white" />
                            </div>
-                           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-emerald-500/40 rounded-full blur-xl"></div>
+                           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-emerald-500/40 rounded-full blur-xl animate-pulse"></div>
                          </div>
                        )}
                     </div>

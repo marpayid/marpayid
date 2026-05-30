@@ -88,10 +88,25 @@ export default {
             height: '0',
           },
         },
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-6px)' },
+        },
+        'float-slow': {
+          '0%, 100%': { transform: 'translateY(0) rotate(12deg)' },
+          '50%': { transform: 'translateY(-8px) rotate(12deg)' },
+        },
+        'float-reverse': {
+          '0%, 100%': { transform: 'translateY(0) rotate(-12deg)' },
+          '50%': { transform: 'translateY(-8px) rotate(-12deg)' },
+        }
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+        float: 'float 3s ease-in-out infinite',
+        'float-slow': 'float-slow 4s ease-in-out infinite',
+        'float-reverse': 'float-reverse 4.5s ease-in-out infinite',
       },
     },
   },
