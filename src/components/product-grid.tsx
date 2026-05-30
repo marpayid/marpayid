@@ -81,8 +81,8 @@ export function ProductCard({ product, compact = false }: { product: any, compac
     window.dispatchEvent(new Event('cart-updated'));
 
     toast({
-      title: "✅ Berhasil ditambahkan ke keranjang",
-      description: product.name,
+      variant: "success",
+      title: "Berhasil Ditambahkan",
       duration: 2000,
     });
   };
