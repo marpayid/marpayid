@@ -1,14 +1,14 @@
 import { PlaceHolderImages } from './placeholder-images';
 
 export const Categories = [
-  { id: 1, name: 'Game', icon: 'Gamepad2' },
-  { id: 2, name: 'Pulsa', icon: 'Smartphone' },
-  { id: 3, name: 'PPOB', icon: 'Zap' },
-  { id: 4, name: 'Voucher', icon: 'Ticket' },
-  { id: 5, name: 'Premium', icon: 'Crown' },
-  { id: 6, name: 'E-Wallet', icon: 'Wallet' },
-  { id: 7, name: 'Streaming', icon: 'Tv' },
-  { id: 8, name: 'Lainnya', icon: 'LayoutGrid' },
+  { id: 1, name: 'PPOB', icon: 'Zap' },
+  { id: 2, name: 'Kecantikan', icon: 'Sparkles' },
+  { id: 3, name: 'Fashion', icon: 'Shirt' },
+  { id: 4, name: 'Elektronik', icon: 'Smartphone' },
+  { id: 5, name: 'Hobi', icon: 'Gamepad2' },
+  { id: 6, name: 'Voucher', icon: 'Ticket' },
+  { id: 7, name: 'E-Wallet', icon: 'Wallet' },
+  { id: 8, name: 'Premium', icon: 'Crown' },
 ];
 
 export const Products = [
@@ -23,7 +23,7 @@ export const Products = [
     category: 'Game',
     image: 'https://picsum.photos/seed/mlbb/400/400',
     isFlashSale: true,
-    discount: '18%',
+    discount: '20%',
     stock: 85,
     tag: 'Produk Viral'
   },
@@ -87,7 +87,7 @@ export const Products = [
   },
   {
     id: 7,
-    name: 'Gojek/GoPay Top Up 100k',
+    name: 'GoPay Top Up 100k - Saldo Instant',
     price: 101000,
     rating: 4.9,
     reviews: 1200,
@@ -97,17 +97,37 @@ export const Products = [
   },
   {
     id: 8,
-    name: 'Voucher Google Play 50.000',
-    price: 52000,
+    name: 'DANA Top Up 50.000',
+    price: 50500,
     rating: 4.7,
     reviews: 800,
     sold: 1500,
-    category: 'Voucher',
-    image: 'https://picsum.photos/seed/googleplay/400/400',
+    category: 'E-Wallet',
+    image: 'https://picsum.photos/seed/dana/400/400',
+  },
+  {
+    id: 9,
+    name: 'PUBG Mobile 60 UC - Top Up Cepat',
+    price: 14000,
+    rating: 4.9,
+    reviews: 950,
+    sold: 4500,
+    category: 'Game',
+    image: 'https://picsum.photos/seed/pubg/400/400',
+  },
+  {
+    id: 10,
+    name: 'OTP WhatsApp - Verifikasi Akun',
+    price: 2500,
+    rating: 4.6,
+    reviews: 300,
+    sold: 1200,
+    category: 'Service',
+    image: 'https://picsum.photos/seed/wa/400/400',
   }
 ];
 
 export const Banners = [
-  { id: 1, image: 'https://picsum.photos/seed/marpay1/800/400', title: 'Top Up Game Termurah!' },
-  { id: 2, image: 'https://picsum.photos/seed/marpay2/800/400', title: 'Promo PPOB Setiap Hari' },
+  { id: 1, image: 'https://picsum.photos/seed/marpay1/800/400', title: 'Belanja Apa Aja, Semua Ada di MarPay', subtitle: 'Produk lengkap, harga bersaing, gratis ongkir & pengiriman cepat.' },
+  { id: 2, image: 'https://picsum.photos/seed/marpay2/800/400', title: 'Promo Top Up Game!', subtitle: 'Diskon hingga 50% untuk diamond pilihanmu.' },
 ];

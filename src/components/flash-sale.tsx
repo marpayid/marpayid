@@ -4,10 +4,10 @@ import { useState, useEffect } from 'react';
 import { Products } from '@/app/lib/dummy-data';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Progress } from '@/components/ui/progress';
+import { ChevronRight, ShoppingCart, Star } from 'lucide-react';
 
 export function FlashSale() {
-  const [timeLeft, setTimeLeft] = useState({ h: 2, m: 34, s: 12 });
+  const [timeLeft, setTimeLeft] = useState({ h: 2, m: 44, s: 50 });
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -24,42 +24,44 @@ export function FlashSale() {
   const flashSaleItems = Products.filter(p => p.isFlashSale);
 
   return (
-    <section className="mt-6 px-4">
+    <section className="mt-6 px-4 bg-white">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <h2 className="text-lg font-headline font-bold text-gray-900">Flash Sale</h2>
-          <div className="flex items-center gap-1">
-            <span className="bg-red-600 text-white px-1.5 py-0.5 rounded text-[10px] font-bold">{timeLeft.h.toString().padStart(2, '0')}</span>
-            <span className="text-red-600 font-bold">:</span>
-            <span className="bg-red-600 text-white px-1.5 py-0.5 rounded text-[10px] font-bold">{timeLeft.m.toString().padStart(2, '0')}</span>
-            <span className="text-red-600 font-bold">:</span>
-            <span className="bg-red-600 text-white px-1.5 py-0.5 rounded text-[10px] font-bold">{timeLeft.s.toString().padStart(2, '0')}</span>
+          <h2 className="text-md font-black italic tracking-tighter text-orange-600 uppercase">Flash Sale</h2>
+          <div className="flex items-center gap-1.5">
+            <span className="bg-orange-600 text-white px-1.5 py-0.5 rounded text-[10px] font-bold">{timeLeft.h.toString().padStart(2, '0')}</span>
+            <span className="text-orange-600 font-bold">:</span>
+            <span className="bg-orange-600 text-white px-1.5 py-0.5 rounded text-[10px] font-bold">{timeLeft.m.toString().padStart(2, '0')}</span>
+            <span className="text-orange-600 font-bold">:</span>
+            <span className="bg-orange-600 text-white px-1.5 py-0.5 rounded text-[10px] font-bold">{timeLeft.s.toString().padStart(2, '0')}</span>
           </div>
         </div>
-        <Link href="/" className="text-xs font-semibold text-primary">Lihat Semua</Link>
+        <Link href="/" className="text-xs font-bold text-primary flex items-center gap-0.5">
+          Lihat Semua <ChevronRight className="w-4 h-4" />
+        </Link>
       </div>
 
       <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar -mx-4 px-4">
         {flashSaleItems.map((item) => (
-          <Link key={item.id} href={`/product/${item.id}`} className="min-w-[140px] bg-white rounded-xl border border-gray-100 overflow-hidden flex-shrink-0 shadow-sm">
+          <Link key={item.id} href={`/product/${item.id}`} className="min-w-[140px] bg-white rounded-xl border border-gray-100 overflow-hidden flex-shrink-0 shadow-sm group">
             <div className="relative aspect-square">
               <Image 
                 src={item.image || ''} 
                 alt={item.name} 
                 fill 
                 className="object-cover"
-                data-ai-hint="digital product"
               />
               <div className="absolute top-0 left-0 bg-orange-500 text-white text-[10px] font-bold px-2 py-1 rounded-br-lg">
                 {item.discount} OFF
               </div>
             </div>
             <div className="p-3">
-              <p className="text-sm font-bold text-red-600">Rp {(item.price/1000).toLocaleString()}rb</p>
-              <p className="text-[10px] text-muted-foreground line-through">Rp {(item.originalPrice!/1000).toLocaleString()}rb</p>
-              <div className="mt-2">
-                <Progress value={Math.min(100, (100 - (item.stock || 0)))} className="h-1.5 bg-gray-100" />
-                <p className="text-[9px] mt-1 font-semibold text-red-600">Segera Habis</p>
+              <h3 className="text-[11px] font-medium text-gray-800 line-clamp-1 mb-1">{item.name}</h3>
+              <p className="text-sm font-bold text-red-600">Rp {item.price.toLocaleString()}</p>
+              <div className="flex items-center gap-1 mt-1 opacity-70">
+                 <Star className="w-2.5 h-2.5 fill-yellow-400 text-yellow-400" />
+                 <span className="text-[9px] font-semibold">{item.rating}</span>
+                 <span className="text-[9px] border-l pl-1 ml-1">{item.sold >= 1000 ? `${(item.sold/1000).toFixed(1)}rb+` : item.sold} terjual</span>
               </div>
             </div>
           </Link>
