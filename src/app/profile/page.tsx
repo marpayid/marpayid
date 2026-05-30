@@ -1,86 +1,200 @@
+
 "use client"
 
 import { BottomNav } from '@/components/bottom-nav';
-import { Settings, Wallet, CreditCard, Gift, Heart, MapPin, Shield, HelpCircle, LogOut, ChevronRight } from 'lucide-react';
+import { 
+  Settings, 
+  Heart, 
+  MapPin, 
+  ShieldCheck, 
+  HelpCircle, 
+  LogOut, 
+  ChevronRight,
+  ClipboardList,
+  Bell,
+  ShoppingBag,
+  Wallet,
+  Package,
+  CheckCircle,
+  XCircle
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Card } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
+import Link from 'next/link';
 
 export default function Profile() {
   const menuItems = [
-    { label: 'Wishlist Saya', icon: Heart, count: '12' },
-    { label: 'Daftar Alamat', icon: MapPin },
-    { label: 'Metode Pembayaran', icon: CreditCard },
-    { label: 'Keamanan Akun', icon: Shield },
-    { label: 'Bantuan & Hubungi Kami', icon: HelpCircle },
+    { 
+      label: 'Daftar Transaksi', 
+      description: 'Lihat semua pesanan dan status transaksi Anda.',
+      icon: ClipboardList, 
+      color: 'text-blue-500',
+      bgColor: 'bg-blue-50'
+    },
+    { 
+      label: 'Wishlist Saya', 
+      description: 'Produk favorit yang telah disimpan.',
+      icon: Heart, 
+      color: 'text-red-500',
+      bgColor: 'bg-red-50',
+      count: '12'
+    },
+    { 
+      label: 'Alamat Pengiriman', 
+      description: 'Kelola alamat pengiriman Anda.',
+      icon: MapPin, 
+      color: 'text-emerald-500',
+      bgColor: 'bg-emerald-50'
+    },
+    { 
+      label: 'Notifikasi', 
+      description: 'Informasi pesanan dan promo terbaru.',
+      icon: Bell, 
+      color: 'text-orange-500',
+      bgColor: 'bg-orange-50'
+    },
+    { 
+      label: 'Pusat Bantuan', 
+      description: 'Bantuan dan pertanyaan seputar MarPay.',
+      icon: HelpCircle, 
+      color: 'text-purple-500',
+      bgColor: 'bg-purple-50'
+    },
+    { 
+      label: 'Keamanan Akun', 
+      description: 'Kelola keamanan akun dan data pribadi.',
+      icon: ShieldCheck, 
+      color: 'text-cyan-500',
+      bgColor: 'bg-cyan-50'
+    },
+    { 
+      label: 'Pengaturan App', 
+      description: 'Tema, preferensi, dan pengaturan aplikasi.',
+      icon: Settings, 
+      color: 'text-gray-500',
+      bgColor: 'bg-gray-50'
+    },
+  ];
+
+  const transactionStatuses = [
+    { label: 'Menunggu', icon: Wallet },
+    { label: 'Diproses', icon: Package },
+    { label: 'Selesai', icon: CheckCircle },
+    { label: 'Dibatalkan', icon: XCircle },
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-24">
-      <header className="bg-primary pt-12 pb-24 px-6 relative overflow-hidden rounded-b-[40px]">
-         <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
-         <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-white/5 rounded-full blur-2xl"></div>
-         
-         <div className="flex items-center justify-between mb-6">
-           <h1 className="text-white font-headline text-xl font-bold">Profil MarPay</h1>
-           <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
-             <Settings className="w-5 h-5" />
-           </Button>
-         </div>
-
-         <div className="flex items-center gap-4">
-            <Avatar className="w-16 h-16 border-2 border-white/50 shadow-xl">
-              <AvatarImage src="https://picsum.photos/seed/user1/200/200" />
-              <AvatarFallback>BS</AvatarFallback>
+    <div className="min-h-screen bg-gray-50 pb-32">
+      {/* Header Section */}
+      <header className="bg-white px-6 pt-14 pb-8 border-b border-gray-100 relative overflow-hidden">
+        <div className="flex items-center gap-4 relative z-10">
+          <div className="relative">
+            <Avatar className="w-20 h-20 border-4 border-white shadow-xl">
+              <AvatarImage src="https://picsum.photos/seed/user-marpay/200/200" />
+              <AvatarFallback className="bg-primary text-white font-bold text-xl">BS</AvatarFallback>
             </Avatar>
-            <div className="text-white">
-              <h2 className="text-lg font-bold">Budi Santoso</h2>
-              <p className="text-xs text-white/80">Member Gold • Silver Level</p>
+            <div className="absolute bottom-0 right-0 w-6 h-6 bg-primary border-2 border-white rounded-full flex items-center justify-center">
+              <CheckCircle className="w-3 h-3 text-white" />
             </div>
-         </div>
-      </header>
-
-      <main className="px-4 -mt-12 relative z-10 space-y-4">
-        <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex items-center divide-x divide-gray-100">
-          <div className="flex-1 flex flex-col items-center gap-1">
-            <div className="flex items-center gap-1.5 text-primary">
-              <Wallet className="w-4 h-4" />
-              <span className="text-[10px] font-bold">Saldo MarPay</span>
-            </div>
-            <p className="text-sm font-bold">Rp 2.500.000</p>
           </div>
-          <div className="flex-1 flex flex-col items-center gap-1">
-            <div className="flex items-center gap-1.5 text-secondary">
-              <Gift className="w-4 h-4" />
-              <span className="text-[10px] font-bold">Poin Reward</span>
-            </div>
-            <p className="text-sm font-bold">1.250 Pts</p>
+          <div className="flex-1">
+            <h2 className="text-xl font-black text-gray-900 leading-tight">Budi Santoso</h2>
+            <p className="text-xs font-bold text-primary mt-0.5 uppercase tracking-wider">Member Gold</p>
+            <p className="text-[10px] text-gray-400 font-medium mt-1">budi.santoso@example.com</p>
           </div>
+          <Button variant="ghost" size="icon" className="text-gray-400 bg-gray-50 rounded-full h-10 w-10">
+            <Settings className="w-5 h-5" />
+          </Button>
         </div>
 
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        {/* Stats Section */}
+        <div className="grid grid-cols-2 gap-3 mt-8">
+          <div className="bg-primary/5 border border-primary/10 p-4 rounded-2xl flex items-center gap-3">
+            <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
+              <ShoppingBag className="w-5 h-5" />
+            </div>
+            <div>
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Total Pesanan</p>
+              <p className="text-base font-black text-gray-800">42</p>
+            </div>
+          </div>
+          <div className="bg-red-50/50 border border-red-100 p-4 rounded-2xl flex items-center gap-3">
+            <div className="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center text-red-500">
+              <Heart className="w-5 h-5" />
+            </div>
+            <div>
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Produk Favorit</p>
+              <p className="text-base font-black text-gray-800">12</p>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main className="px-4 py-6 space-y-6">
+        {/* Transaction Status Quick Access */}
+        <section className="bg-white p-5 rounded-[22px] border border-gray-100 shadow-sm">
+          <div className="flex items-center justify-between mb-5">
+            <h3 className="text-sm font-black text-gray-800 uppercase tracking-tight">Status Pesanan</h3>
+            <Link href="/orders" className="text-[10px] font-bold text-primary">Lihat Semua</Link>
+          </div>
+          <div className="grid grid-cols-4 gap-2">
+            {transactionStatuses.map((status) => (
+              <div key={status.label} className="flex flex-col items-center gap-2 group cursor-pointer">
+                <div className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-gray-400 group-active:scale-95 transition-all border border-gray-50">
+                  <status.icon className="w-6 h-6 stroke-[1.5px]" />
+                </div>
+                <span className="text-[9px] font-bold text-gray-600 uppercase tracking-tighter">{status.label}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Main Menu List */}
+        <section className="bg-white rounded-[22px] border border-gray-100 shadow-sm overflow-hidden">
           {menuItems.map((item, idx) => (
             <div 
               key={item.label} 
-              className={`flex items-center justify-between p-4 ${idx !== menuItems.length - 1 ? 'border-b border-gray-50' : ''} active:bg-gray-50 cursor-pointer`}
+              className={cn(
+                "flex items-center justify-between p-4 active:bg-gray-50 cursor-pointer transition-colors",
+                idx !== menuItems.length - 1 ? 'border-b border-gray-50' : ''
+              )}
             >
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center text-gray-500">
-                  <item.icon className="w-4 h-4" />
+              <div className="flex items-center gap-4">
+                <div className={cn("w-11 h-11 rounded-2xl flex items-center justify-center", item.bgColor, item.color)}>
+                  <item.icon className="w-5 h-5 stroke-[2px]" />
                 </div>
-                <span className="text-sm font-medium text-gray-700">{item.label}</span>
+                <div>
+                  <h4 className="text-sm font-bold text-gray-800">{item.label}</h4>
+                  <p className="text-[10px] text-gray-400 font-medium leading-tight">{item.description}</p>
+                </div>
               </div>
               <div className="flex items-center gap-2">
-                {item.count && <span className="bg-gray-100 text-gray-500 text-[10px] px-2 py-0.5 rounded-full">{item.count}</span>}
+                {item.count && (
+                  <span className="bg-red-500 text-white text-[8px] font-black h-5 w-5 rounded-full flex items-center justify-center border-2 border-white shadow-sm">
+                    {item.count}
+                  </span>
+                )}
                 <ChevronRight className="w-4 h-4 text-gray-300" />
               </div>
             </div>
           ))}
-        </div>
+        </section>
 
-        <Button variant="ghost" className="w-full text-red-500 font-bold gap-2 py-6 rounded-2xl border-2 border-transparent hover:bg-red-50 hover:border-red-100 mt-4">
+        {/* Logout Button */}
+        <Button 
+          variant="ghost" 
+          className="w-full text-red-500 font-black gap-3 h-14 rounded-2xl border-2 border-transparent hover:bg-red-50 transition-all uppercase text-xs tracking-widest mt-4"
+        >
           <LogOut className="w-5 h-5" />
           Keluar dari Akun
         </Button>
+
+        {/* App Version */}
+        <p className="text-center text-[10px] text-gray-300 font-bold uppercase tracking-[0.2em] pb-10">
+          MarPay Marketplace v1.0.4
+        </p>
       </main>
 
       <BottomNav />
