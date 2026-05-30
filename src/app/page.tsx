@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect } from 'react';
@@ -31,7 +32,7 @@ export default function Home() {
   }, [api]);
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-24">
+    <div className="min-h-screen bg-gray-50 pb-32">
       <TopSearch />
       
       <main className="pt-16 space-y-2">

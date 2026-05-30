@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useParams, useRouter } from 'next/navigation';
@@ -82,7 +83,7 @@ export default function ProductDetail() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <div className="min-h-screen bg-gray-50 pb-32">
       {/* Top Navbar */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md px-4 py-3 border-b border-gray-100 flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -305,7 +306,7 @@ export default function ProductDetail() {
       </main>
 
       {/* Sticky Bottom Action Bar */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-100 flex items-center justify-between z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-100 flex items-center justify-between z-[100] shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
         <div className="flex flex-col mr-4">
           <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Total Harga</p>
           <p className="text-lg font-bold text-primary leading-none">Rp {totalPrice.toLocaleString()}</p>

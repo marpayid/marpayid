@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect } from 'react';
@@ -39,7 +40,7 @@ export function BottomNav() {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-100 px-2 pt-2.5 pb-4 flex items-center shadow-[0_-2px_10px_rgba(0,0,0,0.03)]">
+    <nav className="fixed bottom-0 left-0 right-0 z-[100] bg-white border-t border-gray-100 px-2 pt-2.5 pb-5 flex items-center shadow-[0_-4px_12px_rgba(0,0,0,0.05)] w-full transition-transform">
       {navItems.map((item) => {
         const isActive = pathname === item.path;
         return (
@@ -55,7 +56,7 @@ export function BottomNav() {
               <item.icon 
                 className={cn(
                   "w-6 h-6 transition-all", 
-                  isActive ? "stroke-[2.5px] fill-primary/10" : "stroke-[1.5px]"
+                  isActive ? "stroke-[2.5px] fill-primary/10 text-primary" : "stroke-[1.5px]"
                 )} 
               />
               {item.hasBadge && cartCount > 0 && (
@@ -66,7 +67,7 @@ export function BottomNav() {
             </div>
             <span className={cn(
               "text-[10px] tracking-tight transition-colors",
-              isActive ? "font-bold" : "font-medium"
+              isActive ? "font-bold text-primary" : "font-medium"
             )}>
               {item.label}
             </span>
