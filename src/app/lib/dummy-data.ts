@@ -30,7 +30,7 @@ export const Products = [
     price: 269000,
     originalPrice: 350000,
     rating: 5.0,
-    sold: '84',
+    sold: '84+',
     category: 'Hobi',
     image: 'https://picsum.photos/seed/acrylic/400/400',
     isFlashSale: true,
@@ -115,6 +115,20 @@ export const Products = [
 ];
 
 export const Banners = [
-  { id: 1, image: 'https://picsum.photos/seed/marpay1/800/400', title: 'Promo Skincare 24K Gold', subtitle: 'Diskon Spesial Hingga 50% Hanya Hari Ini!' },
-  { id: 2, image: 'https://picsum.photos/seed/marpay2/800/400', title: 'Top Up Game Termurah', subtitle: 'Diamonds, UC, dan Voucher Pilihan Kamu Ada Disini.' },
+  {
+    id: 1,
+    title: 'Bayar Apa Aja, Semua Bisa di MarPay',
+    subtitle: 'Pulsa, token PLN, e-wallet, voucher, OTP & top up game',
+    badges: ['PROSES CEPAT', 'HARGA BERSAING', '24 JAM'],
+    type: 'digital',
+    gradient: 'from-blue-600 via-indigo-600 to-purple-700'
+  },
+  {
+    id: 2,
+    title: 'Belanja Produk Pilihan Lebih Hemat',
+    subtitle: 'Produk fisik, aksesoris, fashion, elektronik & kebutuhan harian',
+    badges: ['GRATIS ONGKIR', 'PRODUK TERPILIH', 'PROMO SPESIAL'],
+    type: 'physical',
+    gradient: 'from-emerald-500 via-teal-600 to-blue-600'
+  }
 ];
