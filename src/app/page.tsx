@@ -54,6 +54,11 @@ export default function Home() {
                       <div className="absolute right-10 bottom-0 w-32 h-32 bg-cyan-400/20 rounded-full blur-2xl"></div>
                     </div>
                     
+                    {/* Visible Premium Watermark */}
+                    <div className="absolute bottom-2 right-4 text-white/15 font-bold text-6xl tracking-tighter pointer-events-none select-none z-0">
+                      MARPAY
+                    </div>
+
                     <div className="absolute inset-0 p-5 pb-6 flex flex-col justify-center max-w-[70%] z-20">
                       <div className="flex flex-wrap gap-1 mb-2">
                         {banner.badges.map((badge, idx) => (
