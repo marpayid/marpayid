@@ -1,10 +1,11 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { 
   ArrowLeft, MapPin, CreditCard, ChevronRight, Truck, 
-  Smartphone, QrCode, Banknote, Edit3, MessageCircle, AlertCircle 
+  Smartphone, QrCode, Banknote, Edit3, MessageCircle, AlertCircle, Zap, Wallet
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -132,6 +133,22 @@ export default function Checkout() {
     const encodedMessage = encodeURIComponent(message);
     const whatsappUrl = `https://wa.me/${adminWhatsApp}?text=${encodedMessage}`;
     window.open(whatsappUrl, '_blank');
+  };
+
+  const renderProductImage = (item: any) => {
+    if (item.image === '/pulsa-icon.png') {
+      return <Smartphone className="w-8 h-8 text-primary" />;
+    }
+    if (item.image === '/pln-icon.png') {
+      return <Zap className="w-8 h-8 text-primary" />;
+    }
+    if (item.image === '/e-wallet-icon.png') {
+      return <Wallet className="w-8 h-8 text-primary" />;
+    }
+    if (item.image) {
+      return <Image src={item.image} alt={item.name} fill className="object-cover" />;
+    }
+    return <Smartphone className="w-8 h-8 text-primary/40" />;
   };
 
   if (!isLoaded) return null;
@@ -286,16 +303,12 @@ export default function Checkout() {
             <div className="w-5 h-5 bg-primary/10 rounded flex items-center justify-center">
                <span className="text-[10px] font-bold text-primary">{isDigital ? 'D' : 'M'}</span>
             </div>
-            <span className="text-sm font-bold">{isDigital ? 'Detail Top Up' : 'Daftar Barang'}</span>
+            <span className="text-sm font-bold">{isDigital ? 'Detail Pesanan' : 'Daftar Barang'}</span>
           </div>
           {items.map((item, idx) => (
             <div key={`${item.id}-${idx}`} className="flex gap-3">
               <div className="relative w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 border border-gray-50 bg-gray-50 flex items-center justify-center">
-                {item.image && item.image !== '/pulsa-icon.png' ? (
-                  <Image src={item.image} alt={item.name} fill className="object-cover" />
-                ) : (
-                  <Smartphone className="w-8 h-8 text-primary/40" />
-                )}
+                {renderProductImage(item)}
               </div>
               <div className="flex-1">
                 <h4 className="text-xs font-medium line-clamp-1">{item.name}</h4>
@@ -303,7 +316,7 @@ export default function Checkout() {
                   <p className="text-xs font-bold text-primary">Rp {item.price.toLocaleString()}</p>
                   <p className="text-[10px] text-muted-foreground">x{item.quantity}</p>
                 </div>
-                {item.variant && <p className="text-[10px] text-gray-400 mt-0.5">{isDigital ? `Nomor: ${item.variant}` : `Varian: ${item.variant}`}</p>}
+                {item.variant && <p className="text-[10px] text-gray-400 mt-0.5">{isDigital ? `Tujuan: ${item.variant}` : `Varian: ${item.variant}`}</p>}
               </div>
             </div>
           ))}
@@ -414,7 +427,7 @@ export default function Checkout() {
         </div>
       </main>
 
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-100 flex items-center justify-between z-50 shadow-[0_-10px_20px_rgba(0,0,0,0.03)]">
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-100 flex items-center justify-between z-[100] shadow-[0_-10px_20px_rgba(0,0,0,0.03)]">
         <div className="flex flex-col">
           <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Total Pembayaran</p>
           <p className="text-lg font-bold text-primary leading-tight">Rp {totalBill.toLocaleString()}</p>
