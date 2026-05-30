@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect } from 'react';
@@ -54,9 +53,18 @@ export default function Home() {
                       <div className="absolute right-10 bottom-0 w-32 h-32 bg-cyan-400/20 rounded-full blur-2xl"></div>
                     </div>
                     
-                    {/* Visible Premium Watermark */}
-                    <div className="absolute bottom-2 right-4 text-white/15 font-bold text-6xl tracking-tighter pointer-events-none select-none z-0">
-                      MARPAY
+                    {/* Signature Brand Watermark Layer */}
+                    <div className="absolute top-4 left-4 z-0 pointer-events-none select-none">
+                      <div className="relative">
+                        {/* Logo Label */}
+                        <div className="text-white text-[9px] font-black tracking-[0.2em] opacity-80 uppercase relative z-10">
+                          MARPAY
+                        </div>
+                        {/* Large Luxury Watermark Behind */}
+                        <div className="absolute top-[-22px] left-[-15px] text-white/10 font-black text-7xl tracking-tighter -z-10 animate-float-watermark">
+                          MARPAY
+                        </div>
+                      </div>
                     </div>
 
                     <div className="absolute inset-0 p-5 pb-6 flex flex-col justify-center max-w-[70%] z-20">
@@ -75,7 +83,7 @@ export default function Home() {
                         {banner.title}
                       </h3>
                       
-                      <p className="text-[9px] text-white/80 font-medium leading-tight max-w-[210px] line-clamp-none">
+                      <p className="text-[9px] text-white/80 font-medium leading-tight max-w-[210px]">
                         {banner.subtitle}
                       </p>
                     </div>

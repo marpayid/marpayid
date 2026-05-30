@@ -99,6 +99,10 @@ export default {
         'float-reverse': {
           '0%, 100%': { transform: 'translateY(0) rotate(-12deg)' },
           '50%': { transform: 'translateY(-8px) rotate(-12deg)' },
+        },
+        'float-watermark': {
+          '0%, 100%': { transform: 'translate(0, 0)' },
+          '50%': { transform: 'translate(4px, 2px)' },
         }
       },
       animation: {
@@ -107,6 +111,7 @@ export default {
         float: 'float 3s ease-in-out infinite',
         'float-slow': 'float-slow 4s ease-in-out infinite',
         'float-reverse': 'float-reverse 4.5s ease-in-out infinite',
+        'float-watermark': 'float-watermark 10s ease-in-out infinite',
       },
     },
   },
