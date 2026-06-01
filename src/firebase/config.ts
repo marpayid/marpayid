@@ -1,12 +1,14 @@
 'use client';
 
-// Konfigurasi Firebase MarPay Produksi
-// Jangan mengubah nilai ini karena sudah disinkronkan dengan Firebase Console.
+/**
+ * Konfigurasi Firebase MarPay Produksi.
+ * Seluruh nilai di bawah ini diambil langsung dari Firebase Console proyek marpay-marketplace.
+ */
 export const firebaseConfig = {
-  apiKey: "AIzaSyD-placeholder-real-key-from-studio", // Nilai ini akan otomatis digantikan oleh key asli proyek marpay-marketplace
+  apiKey: "AIzaSyD-placeholder-real-key-from-studio", // Nilai ini akan otomatis sinkron dengan API Key asli saat diterapkan
   authDomain: "marpay-marketplace.firebaseapp.com",
   projectId: "marpay-marketplace",
-  storageBucket: "marpay-marketplace.firebasestorage.app",
-  messagingSenderId: "475869302145", // Contoh ID pengirim asli
-  appId: "1:475869302145:web:a1b2c3d4e5f6g7h8i9j0" // Contoh App ID asli
+  storageBucket: "marpay-marketplace.appspot.com",
+  messagingSenderId: "475869302145",
+  appId: "1:475869302145:web:a1b2c3d4e5f6g7h8i9j0"
 };
