@@ -119,12 +119,12 @@ S, M, L, XL, 2XL, 3XL
     sold: 450,
     category: 'Fashion',
     image: '/rephatious1.png',
-    isFlashSale: false,
+    isFlashSale: true,
     discount: '20%',
     stock: 'Tersedia',
     tag: 'Produk Viral',
     variants: ['M', 'L', 'XL'],
-    description: `Kaos Rephatious Rpts412 berbahan Cotton Combed 24s yang nyaman, adem, dan cocok digunakan sehari-hari. Material berkualitas dengan desain simpel dan modern.
+    description: `Kaos Rephatious Rpts412 berbahan Cotton Combed 24s yang nyaman, adem, and cocok digunakan sehari-hari. Material berkualitas dengan desain simpel dan modern.
 
 Spesifikasi:
 - Brand: Rephatious
