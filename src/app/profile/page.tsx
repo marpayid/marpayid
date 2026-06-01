@@ -16,14 +16,41 @@ import {
   Wallet,
   Package,
   CheckCircle,
-  XCircle
+  XCircle,
+  LogIn,
+  UserPlus
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
+import { useUser, useAuth, useDoc, useFirestore } from '@/firebase';
+import { signOut } from 'firebase/auth';
+import { useRouter } from 'next/navigation';
+import { useMemo } from 'react';
+import { doc } from 'firebase/firestore';
 
 export default function Profile() {
+  const router = useRouter();
+  const { auth } = useAuth();
+  const db = useFirestore();
+  const { user, loading: authLoading } = useUser();
+
+  // Fetch detailed profile from Firestore
+  const userProfileRef = useMemo(() => {
+    if (!db || !user?.uid) return null;
+    return doc(db, 'users', user.uid);
+  }, [db, user?.uid]);
+  
+  const { data: profileData, loading: profileLoading } = useDoc(userProfileRef);
+
+  const handleLogout = async () => {
+    if (auth) {
+      await signOut(auth);
+      router.push('/');
+    }
+  };
+
   const menuItems = [
     { 
       label: 'Daftar Transaksi', 
@@ -31,7 +58,8 @@ export default function Profile() {
       icon: ClipboardList, 
       color: 'text-blue-500',
       bgColor: 'bg-blue-50',
-      path: '/akun/transaksi'
+      path: '/akun/transaksi',
+      protected: true
     },
     { 
       label: 'Wishlist Saya', 
@@ -39,8 +67,8 @@ export default function Profile() {
       icon: Heart, 
       color: 'text-red-500',
       bgColor: 'bg-red-50',
-      count: '0',
-      path: '/akun/wishlist'
+      path: '/akun/wishlist',
+      protected: true
     },
     { 
       label: 'Alamat Pengiriman', 
@@ -48,7 +76,8 @@ export default function Profile() {
       icon: MapPin, 
       color: 'text-emerald-500',
       bgColor: 'bg-emerald-50',
-      path: '/akun/alamat'
+      path: '/akun/alamat',
+      protected: true
     },
     { 
       label: 'Notifikasi', 
@@ -56,7 +85,8 @@ export default function Profile() {
       icon: Bell, 
       color: 'text-orange-500',
       bgColor: 'bg-orange-50',
-      path: '/akun/notifikasi'
+      path: '/akun/notifikasi',
+      protected: true
     },
     { 
       label: 'Pusat Bantuan', 
@@ -72,7 +102,8 @@ export default function Profile() {
       icon: ShieldCheck, 
       color: 'text-cyan-500',
       bgColor: 'bg-cyan-50',
-      path: '/akun/keamanan'
+      path: '/akun/keamanan',
+      protected: true
     },
     { 
       label: 'Pengaturan App', 
@@ -91,51 +122,84 @@ export default function Profile() {
     { label: 'Dibatalkan', icon: XCircle, path: '/akun/transaksi?status=cancelled' },
   ];
 
+  const isLoading = authLoading || (user && profileLoading);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+          <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Memuat Profil...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const isLoggedIn = !!user;
+  const userName = profileData?.name || "Masuk MarPay";
+  const userStatus = isLoggedIn ? "Pengguna MarPay" : "Belum Masuk";
+  const userSub = isLoggedIn ? (profileData?.email || user.email) : "Masuk atau daftar untuk menikmati semua fitur MarPay.";
+  const userPhoto = profileData?.photoURL || "/profil1.png";
+
   return (
     <div className="min-h-screen bg-gray-50 pb-32">
       <header className="bg-white px-6 pt-14 pb-8 border-b border-gray-100 relative overflow-hidden">
         <div className="flex items-center gap-4 relative z-10">
           <div className="relative">
-            <Avatar className="w-20 h-20 border-4 border-white shadow-xl">
-              <AvatarImage src="https://picsum.photos/seed/user-marpay/200/200" />
-              <AvatarFallback className="bg-primary text-white font-bold text-xl">BS</AvatarFallback>
+            <Avatar className="w-20 h-20 border-4 border-white shadow-xl bg-gray-50">
+              <AvatarImage src={userPhoto} />
+              <AvatarFallback className="bg-primary text-white font-bold text-xl uppercase">
+                {userName.charAt(0)}
+              </AvatarFallback>
             </Avatar>
-            <div className="absolute bottom-0 right-0 w-6 h-6 bg-primary border-2 border-white rounded-full flex items-center justify-center">
-              <CheckCircle className="w-3 h-3 text-white" />
-            </div>
+            {isLoggedIn && (
+              <div className="absolute bottom-0 right-0 w-6 h-6 bg-primary border-2 border-white rounded-full flex items-center justify-center">
+                <CheckCircle className="w-3 h-3 text-white" />
+              </div>
+            )}
           </div>
           <div className="flex-1">
-            <h2 className="text-xl font-black text-gray-900 leading-tight">Budi Santoso</h2>
-            <p className="text-xs font-bold text-primary mt-0.5 uppercase tracking-wider">Member Gold</p>
-            <p className="text-[10px] text-gray-400 font-medium mt-1">budi.santoso@example.com</p>
+            <h2 className="text-xl font-black text-gray-900 leading-tight">{userName}</h2>
+            <p className="text-[10px] font-bold text-primary mt-0.5 uppercase tracking-wider">{userStatus}</p>
+            <p className="text-[10px] text-gray-400 font-medium mt-1 leading-relaxed max-w-[200px]">{userSub}</p>
           </div>
-          <Link href="/akun/pengaturan">
-            <Button variant="ghost" size="icon" className="text-gray-400 bg-gray-50 rounded-full h-10 w-10">
-              <Settings className="w-5 h-5" />
-            </Button>
-          </Link>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 mt-8">
-          <Link href="/akun/transaksi" className="bg-primary/5 border border-primary/10 p-4 rounded-2xl flex items-center gap-3">
-            <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
-              <ShoppingBag className="w-5 h-5" />
+        {!isLoggedIn ? (
+          <div className="grid grid-cols-2 gap-3 mt-8">
+            <Link href="/login" className="w-full">
+              <Button className="w-full bg-primary text-white font-bold h-12 rounded-2xl shadow-lg shadow-primary/20 flex items-center gap-2">
+                <LogIn className="w-4 h-4" /> Masuk
+              </Button>
+            </Link>
+            <Link href="/register" className="w-full">
+              <Button variant="outline" className="w-full border-primary text-primary font-bold h-12 rounded-2xl flex items-center gap-2">
+                <UserPlus className="w-4 h-4" /> Daftar
+              </Button>
+            </Link>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-3 mt-8">
+            <div className="bg-primary/5 border border-primary/10 p-4 rounded-2xl flex items-center gap-3">
+              <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
+                <ShoppingBag className="w-5 h-5" />
+              </div>
+              <div>
+                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Total Pesanan</p>
+                <p className="text-base font-black text-gray-800">0</p>
+              </div>
             </div>
-            <div>
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Total Pesanan</p>
-              <p className="text-base font-black text-gray-800">0</p>
+            <div className="bg-red-50/50 border border-red-100 p-4 rounded-2xl flex items-center gap-3">
+              <div className="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center text-red-500">
+                <Heart className="w-5 h-5" />
+              </div>
+              <div>
+                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Produk Favorit</p>
+                <p className="text-base font-black text-gray-800">0</p>
+              </div>
             </div>
-          </Link>
-          <Link href="/akun/wishlist" className="bg-red-50/50 border border-red-100 p-4 rounded-2xl flex items-center gap-3">
-            <div className="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center text-red-500">
-              <Heart className="w-5 h-5" />
-            </div>
-            <div>
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Produk Favorit</p>
-              <p className="text-base font-black text-gray-800">0</p>
-            </div>
-          </Link>
-        </div>
+          </div>
+        )}
       </header>
 
       <main className="px-4 py-6 space-y-6">
@@ -145,55 +209,68 @@ export default function Profile() {
             <Link href="/akun/transaksi" className="text-[10px] font-bold text-primary">Lihat Semua</Link>
           </div>
           <div className="grid grid-cols-4 gap-2">
-            {transactionStatuses.map((status) => (
-              <Link key={status.label} href={status.path} className="flex flex-col items-center gap-2 group cursor-pointer">
-                <div className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-gray-400 group-active:scale-95 transition-all border border-gray-50">
-                  <status.icon className="w-6 h-6 stroke-[1.5px]" />
+            {transactionStatuses.map((status) => {
+              const content = (
+                <div className="flex flex-col items-center gap-2 group cursor-pointer">
+                  <div className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-gray-400 group-active:scale-95 transition-all border border-gray-50">
+                    <status.icon className="w-6 h-6 stroke-[1.5px]" />
+                  </div>
+                  <span className="text-[9px] font-bold text-gray-600 uppercase tracking-tighter">{status.label}</span>
                 </div>
-                <span className="text-[9px] font-bold text-gray-600 uppercase tracking-tighter">{status.label}</span>
-              </Link>
-            ))}
+              );
+              
+              return isLoggedIn ? (
+                <Link key={status.label} href={status.path}>{content}</Link>
+              ) : (
+                <div key={status.label} onClick={() => router.push('/login')}>{content}</div>
+              );
+            })}
           </div>
         </section>
 
         <section className="bg-white rounded-[22px] border border-gray-100 shadow-sm overflow-hidden">
-          {menuItems.map((item, idx) => (
-            <Link 
-              key={item.label} 
-              href={item.path}
-              className={cn(
-                "flex items-center justify-between p-4 active:bg-gray-50 cursor-pointer transition-colors",
-                idx !== menuItems.length - 1 ? 'border-b border-gray-50' : ''
-              )}
-            >
-              <div className="flex items-center gap-4">
-                <div className={cn("w-11 h-11 rounded-2xl flex items-center justify-center", item.bgColor, item.color)}>
-                  <item.icon className="w-5 h-5 stroke-[2px]" />
-                </div>
-                <div>
-                  <h4 className="text-sm font-bold text-gray-800">{item.label}</h4>
-                  <p className="text-[10px] text-gray-400 font-medium leading-tight">{item.description}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                {item.count !== undefined && item.count !== '0' && (
-                  <span className="bg-red-500 text-white text-[8px] font-black h-5 w-5 rounded-full flex items-center justify-center border-2 border-white shadow-sm">
-                    {item.count}
-                  </span>
+          {menuItems.map((item, idx) => {
+            const isItemActive = isLoggedIn || !item.protected;
+            
+            const content = (
+              <div 
+                className={cn(
+                  "flex items-center justify-between p-4 active:bg-gray-50 cursor-pointer transition-colors",
+                  idx !== menuItems.length - 1 ? 'border-b border-gray-50' : '',
+                  !isItemActive && "opacity-60"
                 )}
+              >
+                <div className="flex items-center gap-4">
+                  <div className={cn("w-11 h-11 rounded-2xl flex items-center justify-center", item.bgColor, item.color)}>
+                    <item.icon className="w-5 h-5 stroke-[2px]" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-bold text-gray-800">{item.label}</h4>
+                    <p className="text-[10px] text-gray-400 font-medium leading-tight">{item.description}</p>
+                  </div>
+                </div>
                 <ChevronRight className="w-4 h-4 text-gray-300" />
               </div>
-            </Link>
-          ))}
+            );
+
+            return isItemActive ? (
+              <Link key={item.label} href={item.path}>{content}</Link>
+            ) : (
+              <div key={item.label} onClick={() => router.push('/login')}>{content}</div>
+            );
+          })}
         </section>
 
-        <Button 
-          variant="ghost" 
-          className="w-full text-red-500 font-black gap-3 h-14 rounded-2xl border-2 border-transparent hover:bg-red-50 transition-all uppercase text-xs tracking-widest mt-4"
-        >
-          <LogOut className="w-5 h-5" />
-          Keluar dari Akun
-        </Button>
+        {isLoggedIn && (
+          <Button 
+            onClick={handleLogout}
+            variant="ghost" 
+            className="w-full text-red-500 font-black gap-3 h-14 rounded-2xl border-2 border-transparent hover:bg-red-50 transition-all uppercase text-xs tracking-widest mt-4"
+          >
+            <LogOut className="w-5 h-5" />
+            Keluar dari Akun
+          </Button>
+        )}
 
         <p className="text-center text-[10px] text-gray-300 font-bold uppercase tracking-[0.2em] pb-10">
           MarPay Marketplace v1.0.4

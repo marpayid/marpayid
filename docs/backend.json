@@ -1,0 +1,63 @@
+
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Informasi profil pengguna MarPay.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "ID unik pengguna dari Firebase Auth."
+        },
+        "name": {
+          "type": "string",
+          "description": "Nama lengkap pengguna."
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Alamat email pengguna."
+        },
+        "phone": {
+          "type": "string",
+          "description": "Nomor telepon/WhatsApp pengguna."
+        },
+        "photoURL": {
+          "type": "string",
+          "description": "URL foto profil pengguna."
+        },
+        "accountStatus": {
+          "type": "string",
+          "enum": ["active", "suspended"],
+          "description": "Status akun pengguna."
+        },
+        "role": {
+          "type": "string",
+          "enum": ["customer", "admin"],
+          "description": "Peran pengguna dalam aplikasi."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["uid", "name", "email", "phone"]
+    }
+  },
+  "auth": {
+    "providers": ["email"]
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": {
+        "$ref": "#/entities/UserProfile"
+      },
+      "description": "Koleksi data profil pengguna."
+    }
+  }
+}
