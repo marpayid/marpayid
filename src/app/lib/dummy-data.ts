@@ -72,6 +72,40 @@ Keunggulan:
 • Cocok untuk pajangan meja
 • Bisa custom nama, payout, tanggal, dan desain sertifikat
 • Cocok untuk trader, prop firm, dan hadiah pencapaian`
+  },
+  {
+    id: 3,
+    name: 'Wispie Money Magnet Fitted Shirt | Kemeja Kerja Wanita Press Body Pinstripe Salur Pink',
+    price: 132000,
+    originalPrice: 159900,
+    rating: 4.9,
+    reviews: '4.7rb',
+    sold: 10000,
+    category: 'Fashion',
+    image: '/wispie1.png',
+    stock: 50,
+    tag: 'Fashion Wanita',
+    variants: ['S', 'M', 'L', 'XL', '2XL', '3XL'],
+    description: `Wispie Money Magnet Fitted Shirt
+Kemeja wanita premium dengan desain fitted body yang memberikan tampilan lebih elegan, rapi, dan profesional. Motif pinstripe salur membuat penampilan terlihat lebih modern serta cocok digunakan untuk berbagai aktivitas sehari-hari.
+
+Keunggulan Produk:
+• Warna Pink eksklusif
+• Model fitted / press body
+• Motif pinstripe salur premium
+• Nyaman dipakai seharian
+• Bahan lembut dan tidak panas
+• Jahitan rapi dan berkualitas
+• Cocok untuk kerja, kuliah, meeting, kantor, maupun acara formal
+• Mudah dipadukan dengan rok maupun celana
+
+📏 Tersedia Ukuran:
+S, M, L, XL, 2XL, 3XL
+
+📦 Informasi:
+• Produk fisik
+• Diproses setelah pembayaran terverifikasi
+• Cocok untuk aktivitas formal maupun kasual`
   }
 ];
 

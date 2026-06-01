@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -74,8 +73,9 @@ export default function Checkout() {
   }, []);
 
   const totalItemsPrice = items.reduce((acc, curr) => acc + (curr.price * curr.quantity), 0);
+  const totalShipping = items.some(item => item.id === 3) ? 12000 : 0;
   const discount = 0; 
-  const totalBill = totalItemsPrice - discount;
+  const totalBill = totalItemsPrice + totalShipping - discount;
 
   const isDigital = items.length > 0 && items.every(item => item.type === 'digital');
 
@@ -326,7 +326,9 @@ export default function Checkout() {
                 <Truck className="w-4 h-4 text-green-500" />
                 <span className="text-xs text-gray-600">Pengiriman</span>
               </div>
-              <span className="text-xs font-bold text-green-600">Reguler (Gratis)</span>
+              <span className={cn("text-xs font-bold", totalShipping === 0 ? "text-green-600" : "text-gray-900")}>
+                {totalShipping === 0 ? "Reguler (Gratis)" : `Reguler (Rp ${totalShipping.toLocaleString()})`}
+              </span>
             </div>
           )}
         </div>
@@ -417,7 +419,9 @@ export default function Checkout() {
           {!isDigital && (
             <div className="flex justify-between text-xs text-gray-600">
               <span>Biaya Pengiriman</span>
-              <span className="text-green-600 font-bold">Gratis</span>
+              <span className={cn(totalShipping === 0 ? "text-green-600 font-bold" : "text-gray-900 font-medium")}>
+                {totalShipping === 0 ? "Gratis" : `Rp ${totalShipping.toLocaleString()}`}
+              </span>
             </div>
           )}
           <div className="border-t border-gray-50 pt-3 mt-2 flex justify-between font-bold">
