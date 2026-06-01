@@ -8,7 +8,7 @@ import { useAuth } from '@/firebase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, MessageCircle, AlertCircle, Loader2 } from 'lucide-react';
+import { ArrowLeft, MessageCircle, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 
@@ -46,10 +46,8 @@ export default function LoginPage() {
       router.push('/profile');
     } catch (error: any) {
       let message = "Terjadi kesalahan saat masuk.";
-      if (error.code === 'auth/user-not-found') {
-        message = "Akun tidak ditemukan. Silakan daftar terlebih dahulu.";
-      } else if (error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
-        message = "Password salah. Silakan coba lagi.";
+      if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
+        message = "Akun tidak ditemukan atau password salah. Silakan coba lagi.";
       } else if (error.code === 'auth/invalid-email') {
         message = "Format email tidak valid.";
       }
