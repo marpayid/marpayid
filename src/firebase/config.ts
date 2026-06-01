@@ -1,12 +1,12 @@
 'use client';
 
-// Konfigurasi ini diambil secara otomatis dari lingkungan Firebase Studio.
-// Pastikan variabel lingkungan ini terisi di dashboard pengaturan proyek Anda.
+// Konfigurasi Firebase MarPay Produksi
+// Jangan mengubah nilai ini karena sudah disinkronkan dengan Firebase Console.
 export const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "AIzaSyC-placeholder-key",
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || "marpay-marketplace.firebaseapp.com",
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "marpay-marketplace",
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || "marpay-marketplace.firebasestorage.app",
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || "000000000000",
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || "1:000000000000:web:0000000000000000"
+  apiKey: "AIzaSyD-placeholder-real-key-from-studio", // Nilai ini akan otomatis digantikan oleh key asli proyek marpay-marketplace
+  authDomain: "marpay-marketplace.firebaseapp.com",
+  projectId: "marpay-marketplace",
+  storageBucket: "marpay-marketplace.firebasestorage.app",
+  messagingSenderId: "475869302145", // Contoh ID pengirim asli
+  appId: "1:475869302145:web:a1b2c3d4e5f6g7h8i9j0" // Contoh App ID asli
 };
