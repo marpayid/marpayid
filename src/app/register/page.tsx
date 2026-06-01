@@ -56,7 +56,7 @@ export default function RegisterPage() {
     
     if (!validate()) return;
     if (!auth || !db) {
-      toast({ variant: "destructive", title: "Sistem Error", description: "Layanan autentikasi tidak tersedia. Coba lagi nanti." });
+      toast({ variant: "destructive", title: "Sistem Error", description: "Layanan autentikasi atau database tidak tersedia." });
       return;
     }
 
@@ -86,20 +86,21 @@ export default function RegisterPage() {
       
       router.push('/profile');
     } catch (error: any) {
-      console.error("Firebase Auth Error:", error.code, error.message);
-      let message = "Terjadi kesalahan saat pendaftaran.";
+      console.error("Full Registration Error:", error);
+      
+      let message = error.message;
       if (error.code === 'auth/email-already-in-use') {
         message = "Email ini sudah terdaftar. Silakan masuk.";
       } else if (error.code === 'auth/invalid-email') {
         message = "Format email tidak valid.";
-      } else if (error.code === 'auth/network-request-failed') {
-        message = "Koneksi internet bermasalah.";
+      } else if (error.code === 'auth/weak-password') {
+        message = "Password terlalu lemah.";
       }
       
       toast({
         variant: "destructive",
         title: "Pendaftaran Gagal",
-        description: message,
+        description: `[${error.code || 'unknown'}] ${message}`,
       });
     } finally {
       setLoading(false);

@@ -53,8 +53,9 @@ export default function LoginPage() {
       });
       router.push('/profile');
     } catch (error: any) {
-      console.error("Firebase Login Error:", error.code, error.message);
-      let message = "Terjadi kesalahan saat masuk.";
+      console.error("Firebase Login Error:", error);
+      
+      let message = error.message;
       if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
         message = "Akun tidak ditemukan atau password salah.";
       } else if (error.code === 'auth/invalid-email') {
@@ -66,7 +67,7 @@ export default function LoginPage() {
       toast({
         variant: "destructive",
         title: "Gagal Masuk",
-        description: message,
+        description: `[${error.code || 'unknown'}] ${message}`,
       });
     } finally {
       setLoading(false);
