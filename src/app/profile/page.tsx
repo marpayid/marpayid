@@ -21,7 +21,7 @@ import {
   UserPlus
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/avatar';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { useUser, useAuth, useDoc, useFirestore } from '@/firebase';
@@ -32,7 +32,7 @@ import { doc } from 'firebase/firestore';
 
 export default function Profile() {
   const router = useRouter();
-  const { auth } = useAuth();
+  const auth = useAuth();
   const db = useFirestore();
   const { user, loading: authLoading } = useUser();
 

@@ -15,7 +15,7 @@ import { useToast } from '@/hooks/use-toast';
 
 export default function RegisterPage() {
   const router = useRouter();
-  const { auth } = useAuth();
+  const auth = useAuth();
   const db = useFirestore();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -86,6 +86,7 @@ export default function RegisterPage() {
       
       router.push('/profile');
     } catch (error: any) {
+      console.error("Firebase Auth Error:", error.code, error.message);
       let message = "Terjadi kesalahan saat pendaftaran.";
       if (error.code === 'auth/email-already-in-use') {
         message = "Email ini sudah terdaftar. Silakan masuk.";

@@ -14,7 +14,7 @@ import { useToast } from '@/hooks/use-toast';
 
 export default function LoginPage() {
   const router = useRouter();
-  const { auth } = useAuth();
+  const auth = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -53,6 +53,7 @@ export default function LoginPage() {
       });
       router.push('/profile');
     } catch (error: any) {
+      console.error("Firebase Login Error:", error.code, error.message);
       let message = "Terjadi kesalahan saat masuk.";
       if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
         message = "Akun tidak ditemukan atau password salah.";
