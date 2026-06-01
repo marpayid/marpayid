@@ -24,13 +24,21 @@ export default function LoginPage() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!auth) return;
-
+    
     if (!formData.email || !formData.password) {
       toast({
         variant: "destructive",
         title: "Gagal Masuk",
         description: "Email dan password wajib diisi.",
+      });
+      return;
+    }
+
+    if (!auth) {
+      toast({
+        variant: "destructive",
+        title: "Sistem Error",
+        description: "Layanan autentikasi tidak tersedia.",
       });
       return;
     }
@@ -47,9 +55,11 @@ export default function LoginPage() {
     } catch (error: any) {
       let message = "Terjadi kesalahan saat masuk.";
       if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
-        message = "Akun tidak ditemukan atau password salah. Silakan coba lagi.";
+        message = "Akun tidak ditemukan atau password salah.";
       } else if (error.code === 'auth/invalid-email') {
         message = "Format email tidak valid.";
+      } else if (error.code === 'auth/too-many-requests') {
+        message = "Terlalu banyak percobaan. Silakan coba lagi nanti.";
       }
       
       toast({

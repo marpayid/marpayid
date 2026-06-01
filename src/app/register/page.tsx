@@ -28,15 +28,15 @@ export default function RegisterPage() {
   });
 
   const validate = () => {
-    if (!formData.name || !formData.email || !formData.phone || !formData.password) {
-      toast({ variant: "destructive", title: "Registrasi Gagal", description: "Semua bidang wajib diisi." });
+    if (!formData.name.trim()) {
+      toast({ variant: "destructive", title: "Registrasi Gagal", description: "Nama lengkap wajib diisi." });
       return false;
     }
-    if (!formData.email.includes('@')) {
+    if (!formData.email.trim() || !formData.email.includes('@')) {
       toast({ variant: "destructive", title: "Registrasi Gagal", description: "Email tidak valid." });
       return false;
     }
-    if (formData.phone.length < 10) {
+    if (!formData.phone.trim() || formData.phone.length < 10) {
       toast({ variant: "destructive", title: "Registrasi Gagal", description: "Nomor HP minimal 10 digit." });
       return false;
     }
@@ -53,7 +53,12 @@ export default function RegisterPage() {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!auth || !db || !validate()) return;
+    
+    if (!validate()) return;
+    if (!auth || !db) {
+      toast({ variant: "destructive", title: "Sistem Error", description: "Layanan autentikasi tidak tersedia. Coba lagi nanti." });
+      return;
+    }
 
     setLoading(true);
     try {
@@ -76,15 +81,18 @@ export default function RegisterPage() {
       toast({
         variant: "success",
         title: "Pendaftaran Berhasil",
-        description: "Selamat datang di MarPay!",
+        description: "Selamat bergabung di MarPay!",
       });
+      
       router.push('/profile');
     } catch (error: any) {
       let message = "Terjadi kesalahan saat pendaftaran.";
       if (error.code === 'auth/email-already-in-use') {
         message = "Email ini sudah terdaftar. Silakan masuk.";
       } else if (error.code === 'auth/invalid-email') {
-        message = "Email tidak valid.";
+        message = "Format email tidak valid.";
+      } else if (error.code === 'auth/network-request-failed') {
+        message = "Koneksi internet bermasalah.";
       }
       
       toast({
