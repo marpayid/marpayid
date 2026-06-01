@@ -10,21 +10,27 @@ import { FirebaseProvider } from './provider';
 export const FirebaseClientProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isInitialized, setIsInitialized] = useState(false);
 
+  // Inisialisasi Singleton
   const { app, db, auth } = useMemo(() => {
-    const app: FirebaseApp = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+    const existingApp = getApps().length > 0 ? getApp() : null;
+    const app: FirebaseApp = existingApp || initializeApp(firebaseConfig);
     const db: Firestore = getFirestore(app);
     const auth: Auth = getAuth(app);
     return { app, db, auth };
   }, []);
 
   useEffect(() => {
-    // Memastikan persistensi sesi disetel ke local agar login tidak hilang saat refresh
-    setPersistence(auth, browserLocalPersistence)
-      .then(() => setIsInitialized(true))
-      .catch((err) => {
-        console.error("Auth persistence error:", err);
+    // Memastikan sesi tetap tersimpan di browser
+    const initAuth = async () => {
+      try {
+        await setPersistence(auth, browserLocalPersistence);
+      } catch (err) {
+        console.error("Auth Persistence Error:", err);
+      } finally {
         setIsInitialized(true);
-      });
+      }
+    };
+    initAuth();
   }, [auth]);
 
   if (!isInitialized) {

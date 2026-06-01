@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -9,7 +8,7 @@ import { useAuth, useFirestore } from '@/firebase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, MessageCircle, Loader2 } from 'lucide-react';
+import { ArrowLeft, MessageCircle, Loader2, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 
@@ -56,7 +55,7 @@ export default function RegisterPage() {
     
     if (!validate()) return;
     if (!auth || !db) {
-      toast({ variant: "destructive", title: "Sistem Error", description: "Layanan autentikasi atau database tidak tersedia." });
+      toast({ variant: "destructive", title: "Sistem Error", description: "Layanan Firebase belum siap." });
       return;
     }
 
@@ -65,7 +64,7 @@ export default function RegisterPage() {
       const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
       const user = userCredential.user;
 
-      // Create user profile in Firestore
+      // Simpan data ke Firestore
       await setDoc(doc(db, 'users', user.uid), {
         uid: user.uid,
         name: formData.name,
@@ -86,21 +85,21 @@ export default function RegisterPage() {
       
       router.push('/profile');
     } catch (error: any) {
-      console.error("Full Registration Error:", error);
+      console.error("Firebase Registration Error:", error.code, error.message);
       
       let message = error.message;
       if (error.code === 'auth/email-already-in-use') {
         message = "Email ini sudah terdaftar. Silakan masuk.";
+      } else if (error.code === 'auth/api-key-not-valid') {
+        message = "Konfigurasi API tidak valid. Harap periksa file config.ts.";
       } else if (error.code === 'auth/invalid-email') {
         message = "Format email tidak valid.";
-      } else if (error.code === 'auth/weak-password') {
-        message = "Password terlalu lemah.";
       }
       
       toast({
         variant: "destructive",
         title: "Pendaftaran Gagal",
-        description: `[${error.code || 'unknown'}] ${message}`,
+        description: `[${error.code}] ${message}`,
       });
     } finally {
       setLoading(false);
