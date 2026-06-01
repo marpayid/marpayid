@@ -73,7 +73,14 @@ export default function Checkout() {
   }, []);
 
   const totalItemsPrice = items.reduce((acc, curr) => acc + (curr.price * curr.quantity), 0);
-  const totalShipping = items.some(item => item.id === 3) ? 12000 : 0;
+  
+  // Calculate shipping fee based on product rules
+  const totalShipping = items.reduce((acc, item) => {
+    if (item.id === 3) return Math.max(acc, 12000);
+    if (item.id === 4) return Math.max(acc, 9000);
+    return acc;
+  }, 0);
+
   const discount = 0; 
   const totalBill = totalItemsPrice + totalShipping - discount;
 

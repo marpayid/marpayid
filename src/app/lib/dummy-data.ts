@@ -108,6 +108,31 @@ S, M, L, XL, 2XL, 3XL
 • Produk fisik
 • Diproses setelah pembayaran terverifikasi
 • Cocok untuk aktivitas formal maupun kasual`
+  },
+  {
+    id: 4,
+    name: 'Rephatious T-shirt "Rpts412" Black Cotton Combed 24s',
+    price: 76000,
+    originalPrice: 95000,
+    rating: 4.8,
+    reviews: '124',
+    sold: 450,
+    category: 'Fashion',
+    image: '/rephatious1.png',
+    isFlashSale: false,
+    discount: '20%',
+    stock: 'Tersedia',
+    tag: 'Produk Viral',
+    variants: ['M', 'L', 'XL'],
+    description: `Kaos Rephatious Rpts412 berbahan Cotton Combed 24s yang nyaman, adem, dan cocok digunakan sehari-hari. Material berkualitas dengan desain simpel dan modern.
+
+Spesifikasi:
+- Brand: Rephatious
+- Model: Rpts412
+- Bahan: Cotton Combed 24s
+- Warna: Hitam
+- Ukuran: M, L, XL
+- Kondisi: Baru`
   }
 ];
 

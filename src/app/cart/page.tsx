@@ -49,7 +49,14 @@ export default function Cart() {
   };
 
   const total = items.reduce((acc, curr) => acc + (curr.price * curr.quantity), 0);
-  const shippingFee = items.some(item => item.id === 3) ? 12000 : 0;
+  
+  // Calculate shipping fee based on product rules
+  const shippingFee = items.reduce((acc, item) => {
+    if (item.id === 3) return Math.max(acc, 12000);
+    if (item.id === 4) return Math.max(acc, 9000);
+    return acc;
+  }, 0);
+
   const finalTotal = total + shippingFee;
 
   const renderProductImage = (item: any) => {
