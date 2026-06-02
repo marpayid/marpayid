@@ -27,7 +27,7 @@ export const Products = [
     stock: 'Tersedia',
     tag: 'Produk Viral',
     variants: ['M', 'L', 'XL', 'XXL'],
-    description: `Benidson Oversized Tshirt Benstylish hadir with desain oversized modern yang nyaman digunakan untuk aktivitas sehari-hari. Cocok dipadukan dengan berbagai outfit casual maupun streetwear. Material nyaman, cutting trendi, dan cocok untuk pria maupun wanita.`
+    description: `Benidson Oversized Tshirt Benstylish hadir dengan desain oversized modern yang nyaman digunakan untuk aktivitas sehari-hari. Cocok dipadukan dengan berbagai outfit casual maupun streetwear. Material nyaman, cutting trendi, dan cocok untuk pria maupun wanita.`
   },
   {
     id: 1,
