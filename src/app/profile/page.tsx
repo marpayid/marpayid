@@ -1,4 +1,3 @@
-
 'use client';
 
 import { BottomNav } from '@/components/bottom-nav';
@@ -25,7 +24,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
-import Link from 'link';
+import Link from 'next/link';
 import { useUser, useAuth, useDoc, useFirestore } from '@/firebase';
 import { signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
@@ -208,7 +207,7 @@ export default function Profile() {
   }
 
   const userName = profileData?.fullName || profileData?.name || user?.displayName || (isLoggedIn ? "Pengguna MarPay" : "Masuk MarPay");
-  const userStatus = isLoggedIn ? "Akun Terverifikasi" : "Belum Masuk";
+  const userStatus = isLoggedIn ? "AKUN TERVERIFIKASI" : "Belum Masuk";
   const userSub = isLoggedIn ? (profileData?.email || user.email) : "Masuk atau daftar untuk menikmati semua fitur MarPay.";
   const userPhoto = profileData?.photoURL || user?.photoURL || "/profil1.png";
 
