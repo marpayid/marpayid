@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Products, Categories } from '@/app/lib/dummy-data';
 import Image from 'next/image';
 import Link from 'next/link';
-import { getProductImage } from '@/lib/utils';
+import { getProductImage, cn } from '@/lib/utils';
 import * as LucideIcons from 'lucide-react';
 import { ProductCard } from '@/components/product-grid';
 
@@ -40,6 +40,13 @@ const SUGGESTIONS_MAP: Record<string, string[]> = {
   'can': ['canva pro', 'canva premium'],
   'gam': ['game', 'top up game', 'gaming'],
 };
+
+const PREMIUM_FILTERS = [
+  { name: 'INSTAN', gradient: 'from-green-500 to-emerald-600' },
+  { name: 'TERLARIS', gradient: 'from-orange-500 to-red-600' },
+  { name: 'RATING TINGGI', gradient: 'from-blue-500 to-purple-600' },
+  { name: 'PROMO', gradient: 'from-yellow-500 to-orange-500' },
+];
 
 export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
   const [query, setQuery] = useState('');
@@ -127,40 +134,58 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
 
   return (
     <div className="fixed inset-0 z-[1000] bg-white flex flex-col animate-in slide-in-from-bottom-2 duration-300">
-      <header className="px-4 py-3 border-b border-gray-100 flex items-center gap-2 sticky top-0 bg-white z-10">
-        <Button variant="ghost" size="icon" onClick={onClose} className="shrink-0 -ml-2">
-          <ArrowLeft className="w-5 h-5 text-gray-800" />
-        </Button>
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <Input 
-            ref={inputRef}
-            placeholder="Cari kebutuhanmu di MarPay..." 
-            value={query}
-            onFocus={() => setShowSuggestions(true)}
-            onChange={(e) => {
-              setQuery(e.target.value);
-              setShowSuggestions(true);
-            }}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                handleExecuteSearch(query);
-              }
-            }}
-            className="pl-9 pr-9 bg-gray-50 border-none rounded-full h-10 focus-visible:ring-primary/20 text-sm"
-          />
-          {query && (
-            <button 
-              onClick={() => {
-                setQuery('');
+      <header className="px-4 py-3 border-b border-gray-100 flex flex-col sticky top-0 bg-white z-10 shadow-sm">
+        <div className="flex items-center gap-2 mb-2">
+          <Button variant="ghost" size="icon" onClick={onClose} className="shrink-0 -ml-2 text-gray-800">
+            <ArrowLeft className="w-5 h-5" />
+          </Button>
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Input 
+              ref={inputRef}
+              placeholder="Cari kebutuhanmu di MarPay..." 
+              value={query}
+              onFocus={() => setShowSuggestions(true)}
+              onChange={(e) => {
+                setQuery(e.target.value);
                 setShowSuggestions(true);
               }}
-              className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 bg-gray-200 rounded-full text-gray-500"
-            >
-              <X className="w-3 h-3" />
-            </button>
-          )}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleExecuteSearch(query);
+                }
+              }}
+              className="pl-9 pr-9 bg-gray-50 border-none rounded-full h-10 focus-visible:ring-primary/20 text-sm"
+            />
+            {query && (
+              <button 
+                onClick={() => {
+                  setQuery('');
+                  setShowSuggestions(true);
+                }}
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 bg-gray-200 rounded-full text-gray-500"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            )}
+          </div>
         </div>
+
+        {!showSuggestions && query && (
+          <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1 -mx-2 px-2">
+            {PREMIUM_FILTERS.map((filter) => (
+              <button
+                key={filter.name}
+                className={cn(
+                  "flex items-center justify-center h-10 px-6 rounded-full text-[10px] font-black tracking-widest text-white shadow-lg shadow-black/5 whitespace-nowrap active:scale-95 transition-all bg-gradient-to-r",
+                  filter.gradient
+                )}
+              >
+                {filter.name}
+              </button>
+            ))}
+          </div>
+        )}
       </header>
 
       <main className="flex-1 overflow-y-auto bg-gray-50/30">
@@ -207,7 +232,6 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
           </div>
         ) : (
           <div className="pb-20">
-            {/* MODE 1: SEDANG MENGETIK (SUGGESTIONS) */}
             {showSuggestions ? (
               <div className="bg-white">
                 {results.suggestions.length > 0 && (
@@ -258,21 +282,8 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                 )}
               </div>
             ) : (
-              /* MODE 2: HASIL PENCARIAN (GRID) */
               <div className="space-y-0">
-                {/* Horizontal Filter Chips - Tightly below search bar */}
-                <div className="bg-white border-b border-gray-50 flex gap-2 overflow-x-auto no-scrollbar px-4 py-2.5 sticky top-0 z-20">
-                  {['⚡ Instan', '🔥 Terlaris', '⭐ Rating Tinggi', '💰 Promo', '🆕 Terbaru'].map((filter) => (
-                    <button
-                      key={filter}
-                      className="px-4 py-1.5 bg-gray-50 border border-gray-100 rounded-full text-[10px] font-bold text-gray-600 whitespace-nowrap active:bg-gray-100 transition-colors"
-                    >
-                      {filter}
-                    </button>
-                  ))}
-                </div>
-
-                <section className="px-4 pt-2 pb-10">
+                <section className="px-4 pt-4 pb-10">
                   {results.products.length > 0 ? (
                     <div className="grid grid-cols-2 gap-3">
                       {results.products.map((product) => (
