@@ -175,9 +175,9 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                 key={filter}
                 onClick={() => setActiveFilter(filter)}
                 className={cn(
-                  "flex items-center justify-center h-[34px] px-4 rounded-[12px] text-[10px] font-bold tracking-wider transition-all whitespace-nowrap active:scale-95 border",
+                  "flex items-center justify-center h-[34px] px-4 rounded-full text-[10px] font-bold tracking-wider transition-all whitespace-nowrap active:scale-95 border",
                   activeFilter === filter
-                    ? "bg-primary text-white border-transparent shadow-sm"
+                    ? "bg-primary text-white border-transparent"
                     : "bg-white text-gray-500 border-[#E5E7EB]"
                 )}
               >
@@ -283,11 +283,11 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
               </div>
             ) : (
               <div className="space-y-0">
-                {/* Koleksi Pilihan Section - Compact Premium Header */}
-                <section className="px-4 mt-[10px] mb-[10px]">
-                  <div className="bg-[#F5FBF8] rounded-[18px] border border-[#DDF5E8] px-4 py-2 flex flex-col justify-center h-[72px]">
-                    <h3 className="text-[22px] font-bold text-black leading-tight">Koleksi Pilihan</h3>
-                    <p className="text-[13px] text-[#00A859] font-medium mt-0.5 leading-tight">Produk terbaik untuk Anda</p>
+                {/* Koleksi Pilihan Section - Minimalist Premium Header */}
+                <section className="px-4 mt-3 mb-3">
+                  <div className="pb-3 border-b border-[#F1F5F9]">
+                    <h3 className="text-[20px] font-semibold text-[#111827] leading-tight">Koleksi Pilihan</h3>
+                    <p className="text-[13px] text-[#00A859] font-medium mt-0.5 leading-tight">Pilihan terbaik untuk Anda</p>
                   </div>
                 </section>
 
