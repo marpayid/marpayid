@@ -9,7 +9,7 @@ import { useAuth, useFirestore } from '@/firebase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, MessageCircle, Loader2, AlertCircle } from 'lucide-react';
+import { ArrowLeft, MessageCircle, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 
@@ -68,10 +68,10 @@ export default function RegisterPage() {
       // Simpan data ke Firestore dengan field fullName agar konsisten
       await setDoc(doc(db, 'users', user.uid), {
         uid: user.uid,
-        fullName: formData.name,
-        name: formData.name, // Backup field name
+        fullName: formData.name.trim(),
+        name: formData.name.trim(), // Backup field name
         email: formData.email,
-        phone: formData.phone,
+        phone: formData.phone.trim(),
         photoURL: '/profil1.png',
         accountStatus: 'active',
         role: 'customer',

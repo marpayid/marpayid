@@ -58,7 +58,13 @@ export default function Profile() {
     return doc(db, 'users', user.uid);
   }, [db, user?.uid]);
   
-  const { data: profileData, loading: profileLoading } = useDoc(userProfileRef);
+  const { data: profileData, loading: profileLoading, error: profileError } = useDoc(userProfileRef);
+
+  useEffect(() => {
+    if (profileError) {
+      console.error("Firestore Error on Profile:", profileError);
+    }
+  }, [profileError]);
 
   useEffect(() => {
     if (profileData && !isEditModalOpen) {
@@ -98,10 +104,9 @@ export default function Profile() {
     
     setIsSubmitting(true);
     try {
-      // Menyimpan data dengan field fullName sesuai instruksi
       await setDoc(userProfileRef, {
         fullName: editForm.name.trim(),
-        name: editForm.name.trim(), // Tetap simpan name untuk kompatibilitas jika ada komponen lain yang pakai
+        name: editForm.name.trim(),
         phone: editForm.phone.trim(),
         email: user.email,
         updatedAt: serverTimestamp()
