@@ -7,7 +7,7 @@ import { ArrowLeft, Trash2, Plus, Minus, ShoppingBag, Smartphone, Zap, Wallet } 
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import Link from 'next/link';
-import { cn } from '@/lib/utils';
+import { cn, getProductImage } from '@/lib/utils';
 
 export default function Cart() {
   const router = useRouter();
@@ -59,10 +59,17 @@ export default function Cart() {
   const finalTotal = total + shippingFee;
 
   const renderProductImage = (item: any) => {
+    // Premium Category logic check
+    if (item.category === 'Premium' || item.category?.toLowerCase() === 'premium') {
+      return <div className="relative w-full h-full"><Image src="/premium1.png" alt="Premium" fill className="object-cover" /></div>;
+    }
+    
     if (item.image === '/pulsa-icon.png') return <Smartphone className="w-10 h-10 text-primary" />;
     if (item.image === '/pln-icon.png') return <Zap className="w-10 h-10 text-primary" />;
     if (item.image === '/e-wallet-icon.png') return <Wallet className="w-10 h-10 text-primary" />;
-    if (item.image) return <Image src={item.image} alt={item.name} fill className="object-cover" />;
+    
+    const displayImage = getProductImage(item);
+    if (displayImage) return <Image src={displayImage} alt={item.name} fill className="object-cover" />;
     return <ShoppingBag className="w-10 h-10 text-gray-200" />;
   };
 

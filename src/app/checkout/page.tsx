@@ -22,7 +22,7 @@ import {
   DialogFooter 
 } from '@/components/ui/dialog';
 import Image from 'next/image';
-import { cn } from '@/lib/utils';
+import { cn, getProductImage } from '@/lib/utils';
 import Link from 'next/link';
 
 interface AddressData {
@@ -153,10 +153,17 @@ export default function Checkout() {
   };
 
   const renderProductImage = (item: any) => {
+    // Premium Category check
+    if (item.category === 'Premium' || item.category?.toLowerCase() === 'premium') {
+      return <div className="relative w-full h-full"><Image src="/premium1.png" alt="Premium" fill className="object-cover" /></div>;
+    }
+    
     if (item.image === '/pulsa-icon.png') return <Smartphone className="w-7 h-7 text-primary" />;
     if (item.image === '/pln-icon.png') return <Zap className="w-7 h-7 text-primary" />;
     if (item.image === '/e-wallet-icon.png') return <Wallet className="w-7 h-7 text-primary" />;
-    if (item.image) return <Image src={item.image} alt={item.name} fill className="object-cover" />;
+    
+    const displayImage = getProductImage(item);
+    if (displayImage) return <Image src={displayImage} alt={item.name} fill className="object-cover" />;
     return <Smartphone className="w-7 h-7 text-primary/40" />;
   };
 

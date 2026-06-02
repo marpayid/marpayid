@@ -12,7 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { Products } from '@/app/lib/dummy-data';
 import Image from 'next/image';
 import Link from 'next/link';
-import { cn, formatSold } from '@/lib/utils';
+import { cn, formatSold, getProductImage } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 
 export default function ProductDetail() {
@@ -25,6 +25,7 @@ export default function ProductDetail() {
 
   const product = useMemo(() => Products.find(p => p.id === Number(id)), [id]);
   const isOutOfStock = product?.stock === 'Stok Habis';
+  const displayImage = getProductImage(product);
 
   const currentPrice = useMemo(() => {
     if (!product) return 0;
@@ -60,10 +61,11 @@ export default function ProductDetail() {
       id: product.id,
       name: product.name,
       price: currentPrice,
-      image: product.image,
+      image: displayImage,
       variant: variants[selectedVariant],
       quantity: quantity,
-      type: product.type || 'physical'
+      type: product.type || 'physical',
+      category: product.category
     };
 
     if (redirect) {
@@ -125,7 +127,7 @@ export default function ProductDetail() {
         <section className="bg-white">
           <div className="relative aspect-square w-full">
             <Image 
-              src={product.image || ''} 
+              src={displayImage} 
               alt={product.name} 
               fill 
               className={cn("object-cover", isOutOfStock && "grayscale")}

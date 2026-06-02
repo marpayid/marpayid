@@ -79,7 +79,6 @@ export const Products = [
     variants: ['M', 'L', 'XL'],
     description: `Kaos Rephatious Rpts412 berbahan Cotton Combed 24s yang nyaman, adem, and cocok digunakan sehari-hari.`
   },
-  // Produk Premium Baru
   {
     id: 101,
     name: 'Canva Pro - Akun Premium Aktif 1 Bulan Full Garansi',
@@ -88,7 +87,7 @@ export const Products = [
     reviews: '2.1rb',
     sold: 3500,
     category: 'Premium',
-    image: 'https://picsum.photos/seed/canva/400/400',
+    image: '/premium1.png',
     stock: 'Tersedia',
     tag: 'Best Seller',
     description: 'Nikmati fitur premium Canva Pro untuk desain profesional tanpa batas.',
@@ -102,7 +101,7 @@ export const Products = [
     reviews: '5.4rb',
     sold: 8900,
     category: 'Premium',
-    image: 'https://picsum.photos/seed/youtube/400/400',
+    image: '/premium1.png',
     stock: 'Tersedia',
     tag: 'Terlaris',
     description: 'Nonton YouTube tanpa iklan dan bisa putar di latar belakang.',
@@ -116,7 +115,7 @@ export const Products = [
     reviews: '900',
     sold: 1200,
     category: 'Premium',
-    image: 'https://picsum.photos/seed/viu/400/400',
+    image: '/premium1.png',
     stock: 'Tersedia',
     description: 'Akses tanpa batas ke drama Korea terbaru dan film Asia lainnya.',
     type: 'digital'
@@ -129,7 +128,7 @@ export const Products = [
     reviews: '450',
     sold: 600,
     category: 'Premium',
-    image: 'https://picsum.photos/seed/chatgpt/400/400',
+    image: '/premium1.png',
     stock: 'Stok Habis',
     description: 'Akses kecerdasan buatan tercanggih GPT-4 dengan kecepatan tinggi.',
     type: 'digital'
@@ -142,7 +141,7 @@ export const Products = [
     reviews: '320',
     sold: 450,
     category: 'Premium',
-    image: 'https://picsum.photos/seed/capcut/400/400',
+    image: '/premium1.png',
     stock: 'Stok Habis',
     description: 'Edit video tanpa batas dengan fitur pro CapCut.',
     type: 'digital'
@@ -155,7 +154,7 @@ export const Products = [
     reviews: '8.2rb',
     sold: 12000,
     category: 'Premium',
-    image: 'https://picsum.photos/seed/netflix/400/400',
+    image: '/premium1.png',
     stock: 'Stok Habis',
     description: 'Nonton film dan serial TV kualitas 4K UHD.',
     type: 'digital'
@@ -168,7 +167,7 @@ export const Products = [
     reviews: '3.1rb',
     sold: 5000,
     category: 'Premium',
-    image: 'https://picsum.photos/seed/spotify/400/400',
+    image: '/premium1.png',
     stock: 'Stok Habis',
     description: 'Dengarkan musik tanpa iklan dengan kualitas suara terbaik.',
     type: 'digital'

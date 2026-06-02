@@ -1,3 +1,4 @@
+
 "use client"
 
 import { BottomNav } from '@/components/bottom-nav';
@@ -6,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Products } from '@/app/lib/dummy-data';
 import Image from 'next/image';
+import { getProductImage } from '@/lib/utils';
 
 export default function Orders() {
   const statuses = [
@@ -53,7 +55,7 @@ export default function Orders() {
                 </div>
                 <div className="flex gap-3 mb-4">
                    <div className="relative w-14 h-14 rounded-lg overflow-hidden flex-shrink-0">
-                      <Image src={Products[0].image || ''} alt="" fill className="object-cover" />
+                      <Image src={getProductImage(Products[0])} alt="" fill className="object-cover" />
                    </div>
                    <div className="flex-1">
                       <h4 className="text-xs font-bold line-clamp-1">{Products[0].name}</h4>
@@ -81,7 +83,7 @@ export default function Orders() {
                 </div>
                 <div className="flex gap-3 mb-4">
                    <div className="relative w-14 h-14 rounded-lg overflow-hidden flex-shrink-0">
-                      <Image src={Products[1].image || ''} alt="" fill className="object-cover" />
+                      <Image src={getProductImage(Products[1])} alt="" fill className="object-cover" />
                    </div>
                    <div className="flex-1">
                       <h4 className="text-xs font-bold line-clamp-1">{Products[1].name}</h4>

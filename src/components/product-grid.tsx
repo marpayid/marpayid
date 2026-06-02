@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { Star, ShoppingBag, Heart } from 'lucide-react';
 import { Products } from '@/app/lib/dummy-data';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { cn, formatSold } from '@/lib/utils';
+import { cn, formatSold, getProductImage } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 
 export function ProductGrid() {
@@ -54,6 +54,7 @@ export function ProductGrid() {
 export function ProductCard({ product, compact = false }: { product: any, compact?: boolean }) {
   const { toast } = useToast();
   const isOutOfStock = product.stock === 'Stok Habis';
+  const displayImage = getProductImage(product);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -73,10 +74,11 @@ export function ProductCard({ product, compact = false }: { product: any, compac
       id: product.id,
       name: product.name,
       price: product.price,
-      image: product.image,
+      image: displayImage,
       variant: product.variants?.[0] || 'Default',
       quantity: 1,
-      type: product.type || 'physical'
+      type: product.type || 'physical',
+      category: product.category
     };
 
     const savedCart = localStorage.getItem('marpay_cart');
@@ -108,7 +110,7 @@ export function ProductCard({ product, compact = false }: { product: any, compac
     )}>
       <Link href={`/product/${product.id}`} className="relative aspect-square block">
         <Image 
-          src={product.image || ''} 
+          src={displayImage} 
           alt={product.name} 
           fill 
           className={cn("object-cover", isOutOfStock && "grayscale")}
