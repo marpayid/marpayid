@@ -21,7 +21,9 @@ import {
   UserPlus,
   Edit,
   Loader2,
-  Search
+  Search,
+  MessageCircle,
+  Ticket
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -207,11 +209,27 @@ export default function Profile() {
     },
   ];
 
-  const transactionStatuses = [
-    { label: 'Menunggu', icon: Wallet, path: '/akun/transaksi?status=pending' },
-    { label: 'Diproses', icon: Package, path: '/akun/transaksi?status=processing' },
-    { label: 'Selesai', icon: CheckCircle, path: '/akun/transaksi?status=completed' },
-    { label: 'Dibatalkan', icon: XCircle, path: '/akun/transaksi?status=cancelled' },
+  const benefits = [
+    { 
+      label: 'Belanja Aman', 
+      icon: ShieldCheck, 
+      desc: 'Transaksi aman dan terpercaya.' 
+    },
+    { 
+      label: 'Cek Resi', 
+      icon: Search, 
+      desc: 'Lacak paket kapan saja.' 
+    },
+    { 
+      label: 'CS Respons Cepat', 
+      icon: MessageCircle, 
+      desc: 'Siap membantu setiap hari.' 
+    },
+    { 
+      label: 'Voucher Tersedia', 
+      icon: Ticket, 
+      desc: 'Promo dan voucher menarik.' 
+    },
   ];
 
   const isLoggedIn = !!user;
@@ -301,27 +319,22 @@ export default function Profile() {
 
       <main className="px-4 py-6 space-y-6">
         <section className="bg-white p-5 rounded-[22px] border border-gray-100 shadow-sm">
-          <div className="flex items-center justify-between mb-5">
-            <h3 className="text-sm font-black text-gray-800 uppercase tracking-tight">Status Pesanan</h3>
-            <Link href="/akun/transaksi" className="text-[10px] font-bold text-primary">Lihat Semua</Link>
+          <div className="mb-5">
+            <h3 className="text-sm font-black text-gray-800 uppercase tracking-tight">Keuntungan Belanja di MarPay</h3>
+            <p className="text-[10px] text-gray-400 font-medium mt-1 uppercase tracking-wider">Belanja Nyaman, Aman, dan Terpercaya.</p>
           </div>
           <div className="grid grid-cols-4 gap-2">
-            {transactionStatuses.map((status) => {
-              const content = (
-                <div className="flex flex-col items-center gap-2 group cursor-pointer">
-                  <div className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-gray-400 group-active:scale-95 transition-all border border-gray-50">
-                    <status.icon className="w-6 h-6 stroke-[1.5px]" />
-                  </div>
-                  <span className="text-[9px] font-bold text-gray-600 uppercase tracking-tighter">{status.label}</span>
+            {benefits.map((benefit) => (
+              <div key={benefit.label} className="flex flex-col items-center gap-2 text-center group">
+                <div className="w-11 h-11 bg-primary/10 rounded-2xl flex items-center justify-center text-primary border border-primary/5 transition-all group-active:scale-95 shadow-sm">
+                  <benefit.icon className="w-5 h-5 stroke-[2px]" />
                 </div>
-              );
-              
-              return isLoggedIn ? (
-                <Link key={status.label} href={status.path}>{content}</Link>
-              ) : (
-                <div key={status.label} onClick={() => router.push('/login')}>{content}</div>
-              );
-            })}
+                <div className="space-y-0.5">
+                  <span className="text-[8px] font-black text-gray-800 uppercase tracking-tighter leading-tight block">{benefit.label}</span>
+                  <p className="text-[7px] text-gray-400 leading-tight font-medium">{benefit.desc}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </section>
 
