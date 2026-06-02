@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect } from 'react';
@@ -84,8 +83,8 @@ export function ProductCard({ product, compact = false }: { product: any, compac
       wishlist.push({ ...product, price: product.price });
       toast({
         variant: "default",
-        title: "Favorit Ditambahkan",
-        description: `${product.name} masuk ke wishlist.`,
+        title: "Favorit Tersimpan",
+        description: "Produk berhasil disimpan",
         duration: 2000,
       });
     } else {
@@ -143,8 +142,9 @@ export function ProductCard({ product, compact = false }: { product: any, compac
     window.dispatchEvent(new Event('cart-updated'));
 
     toast({
-      variant: "success",
-      title: "Berhasil Ditambahkan",
+      variant: "default",
+      title: "Masuk Keranjang",
+      description: "Siap untuk checkout",
       duration: 2000,
     });
   };

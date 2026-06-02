@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useParams, useRouter } from 'next/navigation';
@@ -77,6 +76,7 @@ export default function ProductDetail() {
         variant: "destructive",
         title: "Stok Habis",
         description: "Maaf, produk ini sedang tidak tersedia.",
+        duration: 2000,
       });
       return;
     }
@@ -111,8 +111,9 @@ export default function ProductDetail() {
       window.dispatchEvent(new Event('cart-updated'));
 
       toast({
-        variant: "success",
-        title: "Berhasil Ditambahkan",
+        variant: "default",
+        title: "Masuk Keranjang",
+        description: "Siap untuk checkout",
         duration: 2000,
       });
     }
