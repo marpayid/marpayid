@@ -166,16 +166,6 @@ export default function Profile() {
       protected: true
     },
     { 
-      label: 'Hubungi Admin', 
-      description: 'Tanya admin via WhatsApp MarPay.',
-      icon: MessageCircle, 
-      color: 'text-green-600',
-      bgColor: 'bg-green-50',
-      path: 'https://wa.me/6283851278935',
-      protected: false,
-      isExternal: true
-    },
-    { 
       label: 'Pusat Bantuan', 
       description: 'Bantuan dan pertanyaan seputar MarPay.',
       icon: HelpCircle, 
@@ -185,8 +175,8 @@ export default function Profile() {
       protected: false
     },
     { 
-      label: 'Kebijakan Privasi', 
-      description: 'Informasi perlindungan data pribadi Anda.',
+      label: 'Keamanan Akun', 
+      description: 'Kelola keamanan akun dan privasi.',
       icon: ShieldCheck, 
       color: 'text-cyan-500',
       bgColor: 'bg-cyan-50',
@@ -194,7 +184,7 @@ export default function Profile() {
       protected: false
     },
     { 
-      label: 'Syarat & Ketentuan', 
+      label: 'Pengaturan App', 
       description: 'Aturan penggunaan layanan di MarPay.',
       icon: FileText, 
       color: 'text-blue-500',
@@ -232,7 +222,7 @@ export default function Profile() {
   if (authLoading || (isLoggedIn && profileLoading)) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        <div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
       </div>
     );
   }
@@ -353,14 +343,6 @@ export default function Profile() {
                 <ChevronRight className="w-4 h-4 text-gray-300" />
               </div>
             );
-
-            if (item.isExternal) {
-              return (
-                <a key={item.label} href={item.path} target="_blank" rel="noopener noreferrer">
-                  {content}
-                </a>
-              );
-            }
 
             return isItemActive ? (
               <Link key={item.label} href={item.path}>{content}</Link>
