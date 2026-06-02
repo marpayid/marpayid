@@ -2,7 +2,7 @@
 "use client"
 
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, MessageCircle, PhoneCall, ChevronRight } from 'lucide-react';
+import { ArrowLeft, MessageCircle, PhoneCall, ChevronRight, Package, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Accordion,
@@ -10,6 +10,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import Link from 'next/link';
 
 export default function HelpCenterPage() {
   const router = useRouter();
@@ -60,6 +61,22 @@ export default function HelpCenterPage() {
             Chat WhatsApp Admin
           </Button>
         </div>
+
+        {/* Cek Resi Quick Access */}
+        <Link href="/cek-resi" className="block">
+          <div className="bg-white p-5 rounded-[24px] border border-gray-100 shadow-sm flex items-center justify-between active:scale-[0.98] transition-all">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-orange-50 rounded-2xl flex items-center justify-center text-orange-500">
+                <Search className="w-6 h-6" />
+              </div>
+              <div>
+                <h4 className="text-sm font-bold text-gray-900">Cek Resi Pengiriman</h4>
+                <p className="text-[10px] text-gray-400 font-medium">Lacak paket fisik pesanan Anda</p>
+              </div>
+            </div>
+            <ChevronRight className="w-5 h-5 text-gray-300" />
+          </div>
+        </Link>
 
         <section className="space-y-3">
           <h3 className="text-sm font-bold text-gray-900 px-1">Pertanyaan Populer (FAQ)</h3>

@@ -20,7 +20,8 @@ import {
   LogIn,
   UserPlus,
   Edit,
-  Loader2
+  Loader2,
+  Search
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -142,6 +143,15 @@ export default function Profile() {
       bgColor: 'bg-blue-50',
       path: '/akun/transaksi',
       protected: true
+    },
+    { 
+      label: 'Cek Resi Pengiriman', 
+      description: 'Lacak status paket pesanan fisik Anda.',
+      icon: Search, 
+      color: 'text-orange-500',
+      bgColor: 'bg-orange-50',
+      path: '/cek-resi',
+      protected: false
     },
     { 
       label: 'Wishlist Saya', 
