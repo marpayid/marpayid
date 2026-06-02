@@ -285,9 +285,9 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
               <div className="space-y-0">
                 {/* Koleksi Pilihan Section - Compact Premium Header */}
                 <section className="px-4 mt-[10px] mb-[10px]">
-                  <div className="bg-[#F3FBF7] rounded-[14px] border border-[#DDF5E8] px-4 py-2 flex flex-col justify-center h-[60px]">
-                    <h3 className="text-[16px] font-semibold text-black leading-tight">Koleksi Pilihan</h3>
-                    <p className="text-[12px] text-gray-500 mt-0.5 leading-tight">Produk terbaik untuk Anda</p>
+                  <div className="bg-[#F5FBF8] rounded-[18px] border border-[#DDF5E8] px-4 py-2 flex flex-col justify-center h-[72px]">
+                    <h3 className="text-[22px] font-bold text-black leading-tight">Koleksi Pilihan</h3>
+                    <p className="text-[13px] text-[#00A859] font-medium mt-0.5 leading-tight">Produk terbaik untuk Anda</p>
                   </div>
                 </section>
 
