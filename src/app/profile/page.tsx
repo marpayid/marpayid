@@ -18,7 +18,9 @@ import {
   CheckCircle,
   XCircle,
   LogIn,
-  UserPlus
+  UserPlus,
+  Edit,
+  Loader2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -27,16 +29,30 @@ import Link from 'next/link';
 import { useUser, useAuth, useDoc, useFirestore } from '@/firebase';
 import { signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
-import { useMemo } from 'react';
-import { doc } from 'firebase/firestore';
+import { useMemo, useState, useEffect } from 'react';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useToast } from '@/hooks/use-toast';
 
 export default function Profile() {
   const router = useRouter();
   const auth = useAuth();
   const db = useFirestore();
   const { user, loading: authLoading } = useUser();
+  const { toast } = useToast();
 
-  // Fetch detailed profile from Firestore
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [editForm, setEditForm] = useState({ name: '', phone: '' });
+
   const userProfileRef = useMemo(() => {
     if (!db || !user?.uid) return null;
     return doc(db, 'users', user.uid);
@@ -44,10 +60,39 @@ export default function Profile() {
   
   const { data: profileData, loading: profileLoading } = useDoc(userProfileRef);
 
+  useEffect(() => {
+    if (profileData) {
+      setEditForm({
+        name: profileData.name || '',
+        phone: profileData.phone || ''
+      });
+    }
+  }, [profileData]);
+
   const handleLogout = async () => {
     if (auth) {
       await signOut(auth);
       router.push('/');
+    }
+  };
+
+  const handleUpdateProfile = async () => {
+    if (!userProfileRef || !editForm.name || !editForm.phone) return;
+    
+    setIsSubmitting(true);
+    try {
+      await setDoc(userProfileRef, {
+        name: editForm.name,
+        phone: editForm.phone,
+        updatedAt: serverTimestamp()
+      }, { merge: true });
+      
+      toast({ variant: "success", title: "Berhasil", description: "Profil telah diperbarui." });
+      setIsEditModalOpen(false);
+    } catch (e) {
+      toast({ variant: "destructive", title: "Error", description: "Gagal memperbarui profil." });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -127,10 +172,7 @@ export default function Profile() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Memuat Profil...</p>
-        </div>
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -153,9 +195,12 @@ export default function Profile() {
               </AvatarFallback>
             </Avatar>
             {isLoggedIn && (
-              <div className="absolute bottom-0 right-0 w-6 h-6 bg-primary border-2 border-white rounded-full flex items-center justify-center">
-                <CheckCircle className="w-3 h-3 text-white" />
-              </div>
+              <button 
+                onClick={() => setIsEditModalOpen(true)}
+                className="absolute bottom-0 right-0 w-6 h-6 bg-primary border-2 border-white rounded-full flex items-center justify-center text-white"
+              >
+                <Edit className="w-3 h-3" />
+              </button>
             )}
           </div>
           <div className="flex-1">
@@ -276,6 +321,39 @@ export default function Profile() {
           MarPay Marketplace v1.0.4
         </p>
       </main>
+
+      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+        <DialogContent className="sm:max-w-[425px] rounded-3xl">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-bold">Edit Profil</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-1.5">
+              <Label className="text-xs font-bold text-gray-700">Nama Lengkap</Label>
+              <Input 
+                placeholder="Masukkan nama lengkap" 
+                value={editForm.name}
+                onChange={(e) => setEditForm({...editForm, name: e.target.value})}
+                className="rounded-xl border-gray-200"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs font-bold text-gray-700">Nomor WhatsApp</Label>
+              <Input 
+                placeholder="Contoh: 081234567890" 
+                value={editForm.phone}
+                onChange={(e) => setEditForm({...editForm, phone: e.target.value})}
+                className="rounded-xl border-gray-200"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button disabled={isSubmitting} onClick={handleUpdateProfile} className="w-full bg-primary text-white font-bold h-12 rounded-xl">
+              {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Simpan Perubahan'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <BottomNav />
     </div>

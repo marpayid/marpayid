@@ -47,6 +47,21 @@
         }
       },
       "required": ["uid", "name", "email", "phone"]
+    },
+    "Address": {
+      "title": "Address",
+      "description": "Data alamat pengiriman pengguna.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "phone": { "type": "string" },
+        "province": { "type": "string" },
+        "city": { "type": "string" },
+        "district": { "type": "string" },
+        "fullAddress": { "type": "string" },
+        "notes": { "type": "string" },
+        "isPrimary": { "type": "boolean" }
+      }
     }
   },
   "auth": {
@@ -58,6 +73,12 @@
         "$ref": "#/entities/UserProfile"
       },
       "description": "Koleksi data profil pengguna."
+    },
+    "/users/{userId}/addresses/{addressId}": {
+      "schema": {
+        "$ref": "#/entities/Address"
+      },
+      "description": "Sub-koleksi alamat pengiriman pengguna."
     }
   }
 }
