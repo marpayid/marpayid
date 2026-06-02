@@ -22,7 +22,7 @@ const POPULAR_SEARCHES = [
 ];
 
 const CATEGORY_KEYWORDS_MAP: Record<string, string[]> = {
-  'Fashion': ['kaos', 'baju', 'kemeja', 'hoodie', 'pakaian', 'fashion', 't-shirt', 'distro'],
+  'Fashion': ['kaos', 'baju', 'kemeja', 'hoodie', 'pakaian', 'fashion', 't-shirt', 'distro', 'streetwear', 'benidson', 'benstylish', 'oversized'],
   'Kecantikan': ['skincare', 'serum', 'facial wash', 'sabun wajah', 'kecantikan', 'makeup', 'bioaqua', 'perawatan'],
   'Top Up': ['pulsa', 'isi pulsa', 'token', 'listrik', 'pln', 'token listrik', 'game', 'top up', 'mobile legends', 'ml', 'free fire', 'ff', 'pubg', 'roblox'],
   'E-Wallet': ['dana', 'ovo', 'gopay', 'shopeepay', 'ewallet', 'dompet digital'],

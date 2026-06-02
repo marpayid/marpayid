@@ -12,6 +12,23 @@ export const Categories = [
 
 export const Products = [
   {
+    id: 5,
+    name: 'Benidson Oversized Tshirt Benstylish',
+    price: 88000,
+    originalPrice: 119000,
+    rating: 4.9,
+    reviews: '1.1rb',
+    sold: 8000,
+    category: 'Fashion',
+    image: '/benidsondepan.png',
+    isFlashSale: true,
+    discount: '26%',
+    stock: 'Tersedia',
+    tag: 'Produk Viral',
+    variants: ['M', 'L', 'XL', 'XXL'],
+    description: `Benidson Oversized Tshirt Benstylish hadir dengan desain oversized modern yang nyaman digunakan untuk aktivitas sehari-hari. Cocok dipadukan dengan berbagai outfit casual maupun streetwear. Material nyaman, cutting trendi, dan cocok untuk pria maupun wanita.`
+  },
+  {
     id: 1,
     name: 'BIOAQUA Skincare 1 Set Lengkap 6pcs With Brightening Serum Wajah / Acne Essence / Day & Night Pelembab Wajah Cream Krim / Hydrating Toner Wajah / Facial Wash Sabun Cuci Muka Skincare Paket',
     price: 140000,
