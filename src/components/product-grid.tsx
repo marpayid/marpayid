@@ -79,7 +79,7 @@ export function FashionDiscoveryCard() {
           Koleksi Fashion Pilihan
         </h3>
         <p className="text-[9px] text-gray-400 font-medium leading-tight line-clamp-1 mb-2">
-          Kaos Oversized, Kemeja & Casual
+          Kaos Oversized, Kemeja Premium dan Fashion Casual
         </p>
         <div className="mt-auto flex items-center justify-between">
           <div className="flex flex-col">

@@ -12,6 +12,7 @@ import { Banners, Products } from '@/app/lib/dummy-data';
 import { cn } from '@/lib/utils';
 import { Smartphone, Gamepad2, CreditCard, Package, Truck, Tag } from 'lucide-react';
 import { PromotionalCards } from '@/components/promotional-cards';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function Home() {
   const [api, setApi] = useState<CarouselApi>();
@@ -134,14 +135,40 @@ export default function Home() {
         {/* 3. Flash Sale */}
         <FlashSale />
 
-        {/* 4. Produk Viral */}
+        {/* 4. Produk Viral (with Tabs) */}
         <section className="bg-white py-4 px-4">
-          <h2 className="text-base font-bold text-gray-900 mb-3">Produk Viral</h2>
-          <div className="grid grid-cols-2 gap-3">
-            {viralProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
+          <Tabs defaultValue="viral" className="w-full">
+            <TabsList className="bg-transparent border-b border-gray-100 w-full flex justify-start h-auto p-0 mb-4 gap-6 overflow-x-auto no-scrollbar">
+              <TabsTrigger 
+                value="viral" 
+                className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-primary font-bold text-base px-0 pb-2 shadow-none transition-none"
+              >
+                Produk Viral
+              </TabsTrigger>
+              <TabsTrigger 
+                value="semua" 
+                className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-primary font-bold text-base px-0 pb-2 shadow-none transition-none"
+              >
+                Semua Produk
+              </TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="viral">
+              <div className="grid grid-cols-2 gap-3">
+                {viralProducts.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="semua">
+              <div className="grid grid-cols-2 gap-3">
+                {Products.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+            </TabsContent>
+          </Tabs>
         </section>
 
         {/* 5. Rekomendasi Untukmu & Fashion Discovery Card */}
