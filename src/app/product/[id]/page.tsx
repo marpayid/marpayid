@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useParams, useRouter } from 'next/navigation';
@@ -89,7 +90,8 @@ export default function ProductDetail() {
       variant: variants[selectedVariant],
       quantity: quantity,
       type: product.type || 'physical',
-      category: product.category
+      category: product.category,
+      shippingFee: product.shippingFee || 0
     };
 
     if (redirect) {

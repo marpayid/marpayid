@@ -54,6 +54,7 @@ export default function GameDetailPage() {
       variant: `ID: ${userId}${zoneId ? ` (${zoneId})` : ''}`,
       quantity: 1,
       type: 'digital',
+      shippingFee: 0,
       details: {
         target: userId,
         operator: gameInfo.name,

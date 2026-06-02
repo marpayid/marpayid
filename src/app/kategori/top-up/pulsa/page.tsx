@@ -96,6 +96,7 @@ export default function PulsaPage() {
       variant: phoneNumber,
       quantity: 1,
       type: 'digital',
+      shippingFee: 0,
       details: {
         target: phoneNumber,
         operator: detectedOperator.name,

@@ -40,6 +40,7 @@ export default function TokenPLNPage() {
       variant: meterId,
       quantity: 1,
       type: 'digital',
+      shippingFee: 0,
       details: {
         target: meterId,
         customerName: customerName,

@@ -65,6 +65,7 @@ export default function EWalletPage() {
       variant: walletNumber,
       quantity: 1,
       type: 'digital',
+      shippingFee: 0,
       details: {
         target: walletNumber,
         customerName: customerName,

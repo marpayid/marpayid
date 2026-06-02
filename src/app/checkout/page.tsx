@@ -83,12 +83,10 @@ export default function Checkout() {
 
   const totalItemsPrice = items.reduce((acc, curr) => acc + (curr.price * curr.quantity), 0);
   
+  // LOGIKA BARU: Jumlahkan ongkir semua item (ongkir * quantity)
   const totalShipping = items.reduce((acc, item) => {
-    if (item.id === 3) return Math.max(acc, 12000);
-    if (item.id === 4) return Math.max(acc, 9000);
-    if (item.id === 5) return Math.max(acc, 11000);
-    if (item.id === 6) return Math.max(acc, 8000);
-    return acc;
+    const fee = item.shippingFee || 0;
+    return acc + (fee * item.quantity);
   }, 0);
 
   const totalBill = totalItemsPrice + totalShipping;
@@ -132,7 +130,7 @@ export default function Checkout() {
       message += `Operator: ${digitalDetails?.operator}\n`;
       message += `Nominal: ${digitalDetails?.nominal}\n\n`;
     } else if (address) {
-      const productList = items.map(item => `- ${item.name} (Varian: ${item.variant || 'Default'}) x ${item.quantity}`).join('\n');
+      const productList = items.map(item => `- ${item.name} (Varian: ${item.variant || 'Default'}) x ${item.quantity} (Ongkir: Rp ${(item.shippingFee * item.quantity).toLocaleString()})`).join('\n');
       message += `*Data Penerima:*\n`;
       message += `Nama: ${address.name}\n`;
       message += `Nomor WhatsApp: ${address.phone}\n`;
@@ -140,9 +138,12 @@ export default function Checkout() {
       message += `*Detail Pesanan:*\n${productList}\n\n`;
     }
 
-    message += `*Pembayaran:*\n`;
-    message += `Metode: ${paymentLabels[selectedPayment]}\n`;
+    message += `*Ringkasan Tagihan:*\n`;
+    message += `Total Produk: Rp ${totalItemsPrice.toLocaleString()}\n`;
+    message += `Total Ongkir: Rp ${totalShipping.toLocaleString()}\n`;
     message += `Total Bayar: Rp ${totalBill.toLocaleString()}\n\n`;
+    message += `*Pembayaran:*\n`;
+    message += `Metode: ${paymentLabels[selectedPayment]}\n\n`;
     message += `Mohon dibantu proses pesanannya.`;
 
     if (localStorage.getItem('marpay_checkout_temp')) {
@@ -294,7 +295,10 @@ export default function Checkout() {
                     <p className="text-xs font-bold text-primary">Rp {item.price.toLocaleString()}</p>
                     <p className="text-[10px] text-muted-foreground font-bold">x{item.quantity}</p>
                   </div>
-                  <p className="text-[9px] text-gray-400 font-medium">Varian: {item.variant || 'Default'}</p>
+                  <div className="flex justify-between items-center mt-1">
+                    <p className="text-[9px] text-gray-400 font-medium">Varian: {item.variant || 'Default'}</p>
+                    <p className="text-[9px] text-gray-500 italic">Ongkir: Rp {( (item.shippingFee || 0) * item.quantity).toLocaleString()}</p>
+                  </div>
                 </div>
               </div>
             ))}
@@ -303,9 +307,9 @@ export default function Checkout() {
           <div className="border-t border-gray-50 pt-3 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Truck className="w-3.5 h-3.5 text-primary" />
-              <span className="text-[10px] text-gray-500 font-bold uppercase">Pengiriman</span>
+              <span className="text-[10px] text-gray-500 font-bold uppercase">Total Pengiriman</span>
             </div>
-            <span className="text-[10px] font-bold text-primary">{totalShipping === 0 ? 'Reguler (Gratis)' : `Rp ${totalShipping.toLocaleString()}`}</span>
+            <span className="text-[10px] font-bold text-primary">{totalShipping === 0 ? 'Gratis' : `Rp ${totalShipping.toLocaleString()}`}</span>
           </div>
         </div>
 
@@ -376,11 +380,11 @@ export default function Checkout() {
           <h3 className="text-xs font-bold uppercase tracking-wide">Ringkasan Belanja</h3>
           <div className="space-y-2.5">
             <div className="flex justify-between items-center">
-              <span className="text-[11px] text-gray-500 font-medium">Total Harga ({items.length} Barang)</span>
+              <span className="text-[11px] text-gray-500 font-medium">Total Harga Produk</span>
               <span className="text-[11px] font-bold text-gray-800">Rp {totalItemsPrice.toLocaleString()}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-[11px] text-gray-500 font-medium">Biaya Pengiriman</span>
+              <span className="text-[11px] text-gray-500 font-medium">Total Biaya Pengiriman</span>
               <span className="text-[11px] font-bold text-primary">{totalShipping === 0 ? 'Gratis' : `Rp ${totalShipping.toLocaleString()}`}</span>
             </div>
             <div className="border-t border-gray-50 pt-2.5 flex justify-between items-center">

@@ -27,6 +27,7 @@ export const Products = [
     stock: 'Tersedia',
     tag: 'Produk Viral',
     variants: ['M', 'L', 'XL', 'XXL'],
+    shippingFee: 11000,
     description: `Benidson Oversized Tshirt Benstylish hadir dengan desain oversized modern yang nyaman digunakan untuk aktivitas sehari-hari. Cocok dipadukan dengan berbagai outfit casual maupun streetwear. Material nyaman, cutting trendi, dan cocok untuk pria maupun wanita.`
   },
   {
@@ -44,6 +45,7 @@ export const Products = [
     stock: 'Tersedia',
     tag: 'Produk Viral',
     variants: ['Whitening Set 6Pcs', 'Anti-Acne Set 6Pcs'],
+    shippingFee: 15000,
     description: `BIOAQUA Skincare Set Lengkap 6Pcs hadir sebagai solusi perawatan wajah harian dengan rangkaian produk yang saling melengkapi untuk membantu menjaga kelembapan, kebersihan, dan tampilan kulit agar terlihat lebih sehat dan terawat.`
   },
   {
@@ -61,6 +63,7 @@ export const Products = [
     stock: 'Tersedia',
     tag: 'Eksklusif',
     variants: ['20x10', '20x15'],
+    shippingFee: 20000,
     description: `Akrilik Sertifikat Funded premium cocok untuk pajangan meja, hadiah trader, dokumentasi payout, dan koleksi pencapaian funded account.`
   },
   {
@@ -78,6 +81,7 @@ export const Products = [
     stock: 'Tersedia',
     tag: 'Produk Viral',
     variants: ['M', 'L', 'XL'],
+    shippingFee: 8000,
     description: `Hoodie boxy oversize unisex berbahan fleece cotton yang nyaman, tebal, dan cocok untuk gaya casual harian. Desain simple dengan cutting modern, cocok digunakan pria maupun wanita.`
   },
   {
@@ -95,6 +99,7 @@ export const Products = [
     stock: 'Tersedia',
     tag: 'Produk Viral',
     variants: ['S', 'M', 'L', 'XL', '2XL', '3XL'],
+    shippingFee: 12000,
     description: `Kemeja wanita premium dengan desain fitted body yang memberikan tampilan lebih elegan, rapi, dan profesional.`
   },
   {
@@ -112,6 +117,7 @@ export const Products = [
     stock: 'Tersedia',
     tag: 'Produk Viral',
     variants: ['M', 'L', 'XL'],
+    shippingFee: 9000,
     description: `Kaos Rephatious Rpts412 berbahan Cotton Combed 24s yang nyaman, adem, and cocok digunakan sehari-hari.`
   },
   {
@@ -126,7 +132,8 @@ export const Products = [
     stock: 'Tersedia',
     tag: 'Best Seller',
     description: 'Nikmati fitur premium Canva Pro untuk desain profesional tanpa batas.',
-    type: 'digital'
+    type: 'digital',
+    shippingFee: 0
   },
   {
     id: 102,
@@ -140,7 +147,8 @@ export const Products = [
     stock: 'Tersedia',
     tag: 'Terlaris',
     description: 'Nonton YouTube tanpa iklan dan bisa putar di latar belakang.',
-    type: 'digital'
+    type: 'digital',
+    shippingFee: 0
   },
   {
     id: 103,
@@ -153,7 +161,8 @@ export const Products = [
     image: '/premium1.png',
     stock: 'Tersedia',
     description: 'Akses tanpa batas ke drama Korea terbaru dan film Asia lainnya.',
-    type: 'digital'
+    type: 'digital',
+    shippingFee: 0
   },
   {
     id: 104,
@@ -166,7 +175,8 @@ export const Products = [
     image: '/premium1.png',
     stock: 'Stok Habis',
     description: 'Akses kecerdasan buatan tercanggih GPT-4 dengan kecepatan tinggi.',
-    type: 'digital'
+    type: 'digital',
+    shippingFee: 0
   },
   {
     id: 105,
@@ -179,7 +189,8 @@ export const Products = [
     image: '/premium1.png',
     stock: 'Stok Habis',
     description: 'Edit video tanpa batas dengan fitur pro CapCut.',
-    type: 'digital'
+    type: 'digital',
+    shippingFee: 0
   },
   {
     id: 106,
@@ -192,7 +203,8 @@ export const Products = [
     image: '/premium1.png',
     stock: 'Stok Habis',
     description: 'Nonton film dan serial TV kualitas 4K UHD.',
-    type: 'digital'
+    type: 'digital',
+    shippingFee: 0
   },
   {
     id: 107,
@@ -205,7 +217,8 @@ export const Products = [
     image: '/premium1.png',
     stock: 'Stok Habis',
     description: 'Dengarkan musik tanpa iklan dengan kualitas suara terbaik.',
-    type: 'digital'
+    type: 'digital',
+    shippingFee: 0
   }
 ];
 
