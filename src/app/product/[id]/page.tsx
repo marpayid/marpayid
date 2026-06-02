@@ -26,8 +26,16 @@ export default function ProductDetail() {
 
   const product = useMemo(() => Products.find(p => p.id === Number(id)), [id]);
   const isOutOfStock = product?.stock === 'Stok Habis';
-  const displayImage = getProductImage(product);
   
+  // Debug Log for Image Path
+  useEffect(() => {
+    if (product && product.id === 5) {
+      console.log('Benidson Main Image Path:', product.image);
+      console.log('Benidson Gallery Paths:', product.images);
+    }
+  }, [product]);
+
+  const displayImage = getProductImage(product);
   const [activeImage, setActiveImage] = useState(displayImage);
 
   // Sync active image when product changes
