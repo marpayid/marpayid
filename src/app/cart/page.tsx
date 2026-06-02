@@ -50,8 +50,7 @@ export default function Cart() {
 
   const total = items.reduce((acc, curr) => acc + (curr.price * curr.quantity), 0);
   
-  // LOGIKA ONGKIR: Jumlahkan ongkir semua item (ongkir * quantity)
-  // Memastikan ongkir tetap dihitung jika ada, jika tidak ada/0 maka Gratis.
+  // LOGIKA ONGKIR: Jumlahkan (ongkir_per_produk * quantity) untuk semua item
   const shippingFee = items.reduce((acc, item) => {
     const fee = item.shippingFee || 0;
     return acc + (fee * item.quantity);
@@ -60,7 +59,6 @@ export default function Cart() {
   const finalTotal = total + shippingFee;
 
   const renderProductImage = (item: any) => {
-    // Premium Category logic check
     if (item.category === 'Premium' || item.category?.toLowerCase() === 'premium') {
       return <div className="relative w-full h-full"><Image src="/premium1.png" alt="Premium" fill className="object-cover" /></div>;
     }

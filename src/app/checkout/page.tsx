@@ -49,7 +49,6 @@ export default function Checkout() {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    // Load item from temp storage (Direct Buy) or Cart
     const tempItem = localStorage.getItem('marpay_checkout_temp');
     if (tempItem) {
       try {
@@ -83,8 +82,7 @@ export default function Checkout() {
 
   const totalItemsPrice = items.reduce((acc, curr) => acc + (curr.price * curr.quantity), 0);
   
-  // LOGIKA ONGKIR: Jumlahkan ongkir semua item (ongkir * quantity)
-  // Memastikan akumulasi ongkir per produk dan per jumlah unit.
+  // LOGIKA ONGKIR: Akumulasi (shippingFee * quantity) dari database produk
   const totalShipping = items.reduce((acc, item) => {
     const fee = item.shippingFee || 0;
     return acc + (fee * item.quantity);
@@ -162,7 +160,6 @@ export default function Checkout() {
   };
 
   const renderProductImage = (item: any) => {
-    // Premium Category check
     if (item.category === 'Premium' || item.category?.toLowerCase() === 'premium') {
       return <div className="relative w-full h-full"><Image src="/premium1.png" alt="Premium" fill className="object-cover" /></div>;
     }
@@ -200,7 +197,6 @@ export default function Checkout() {
       </header>
 
       <main className="pt-16 px-4 space-y-3.5">
-        {/* Section Alamat */}
         {!isDigital && (
           <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm space-y-3">
             <div className="flex items-center justify-between">
@@ -222,21 +218,11 @@ export default function Checkout() {
                   <div className="space-y-4 py-2">
                     <div className="space-y-1.5">
                       <Label className="text-xs font-bold text-gray-700">Nama Penerima</Label>
-                      <Input 
-                        placeholder="Masukkan nama lengkap" 
-                        value={tempAddress.name}
-                        onChange={(e) => setTempAddress({...tempAddress, name: e.target.value})}
-                        className="rounded-xl border-gray-200"
-                      />
+                      <Input placeholder="Masukkan nama lengkap" value={tempAddress.name} onChange={(e) => setTempAddress({...tempAddress, name: e.target.value})} className="rounded-xl border-gray-200" />
                     </div>
                     <div className="space-y-1.5">
                       <Label className="text-xs font-bold text-gray-700">Nomor WhatsApp</Label>
-                      <Input 
-                        placeholder="Contoh: 081234567890" 
-                        value={tempAddress.phone}
-                        onChange={(e) => setTempAddress({...tempAddress, phone: e.target.value})}
-                        className="rounded-xl border-gray-200"
-                      />
+                      <Input placeholder="Contoh: 081234567890" value={tempAddress.phone} onChange={(e) => setTempAddress({...tempAddress, phone: e.target.value})} className="rounded-xl border-gray-200" />
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       <div className="space-y-1.5">
@@ -283,7 +269,6 @@ export default function Checkout() {
           </div>
         )}
 
-        {/* Section Daftar Barang */}
         <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm space-y-3.5">
           <div className="flex items-center gap-2">
             <span className="bg-primary text-white text-[9px] font-black w-4.5 h-4.5 flex items-center justify-center rounded uppercase">M</span>
@@ -326,7 +311,6 @@ export default function Checkout() {
           </div>
         </div>
 
-        {/* Section Metode Pembayaran */}
         <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm space-y-3.5">
           <div className="flex items-center gap-2">
             <CreditCard className="w-4 h-4 text-blue-500" />
@@ -339,10 +323,7 @@ export default function Checkout() {
             )} onClick={() => setSelectedPayment('bank_transfer')}>
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center text-blue-500"><Banknote className="w-5 h-5" /></div>
-                <div>
-                  <p className="text-[11px] font-bold">Bank Transfer</p>
-                  <p className="text-[9px] text-gray-400 font-medium uppercase tracking-tighter">Konfirmasi Manual</p>
-                </div>
+                <div><p className="text-[11px] font-bold">Bank Transfer</p><p className="text-[9px] text-gray-400 font-medium uppercase tracking-tighter">Konfirmasi Manual</p></div>
               </div>
               <RadioGroupItem value="bank_transfer" id="bank_transfer" className="sr-only" />
               {selectedPayment === 'bank_transfer' && <div className="w-2 h-2 rounded-full bg-primary" />}
@@ -354,10 +335,7 @@ export default function Checkout() {
             )} onClick={() => setSelectedPayment('e_wallet')}>
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-xl bg-purple-50 flex items-center justify-center text-purple-500"><Smartphone className="w-5 h-5" /></div>
-                <div>
-                  <p className="text-[11px] font-bold">E-Wallet</p>
-                  <p className="text-[9px] text-gray-400 font-medium uppercase tracking-tighter">OVO / DANA / GoPay</p>
-                </div>
+                <div><p className="text-[11px] font-bold">E-Wallet</p><p className="text-[9px] text-gray-400 font-medium uppercase tracking-tighter">OVO / DANA / GoPay</p></div>
               </div>
               <RadioGroupItem value="e_wallet" id="e_wallet" className="sr-only" />
               {selectedPayment === 'e_wallet' && <div className="w-2 h-2 rounded-full bg-primary" />}
@@ -369,17 +347,12 @@ export default function Checkout() {
             )} onClick={() => setSelectedPayment('qris')}>
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-xl bg-orange-50 flex items-center justify-center text-orange-500"><QrCode className="w-5 h-5" /></div>
-                <div>
-                  <p className="text-[11px] font-bold">QRIS</p>
-                  <p className="text-[9px] text-gray-400 font-medium uppercase tracking-tighter">Scan & Bayar</p>
-                </div>
+                <div><p className="text-[11px] font-bold">QRIS</p><p className="text-[9px] text-gray-400 font-medium uppercase tracking-tighter">Scan & Bayar</p></div>
               </div>
               <RadioGroupItem value="qris" id="qris" className="sr-only" />
               {selectedPayment === 'qris' && <div className="w-2 h-2 rounded-full bg-primary" />}
             </div>
           </RadioGroup>
-
-          {/* Info Box */}
           <div className="bg-blue-50/50 p-3 rounded-2xl flex gap-2.5 border border-blue-100">
             <Info className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
             <p className="text-[10px] text-blue-600 font-medium leading-relaxed">
@@ -388,29 +361,21 @@ export default function Checkout() {
           </div>
         </div>
 
-        {/* Ringkasan Belanja */}
         <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm space-y-3">
           <h3 className="text-xs font-bold uppercase tracking-wide">Ringkasan Belanja</h3>
           <div className="space-y-2.5">
-            <div className="flex justify-between items-center">
-              <span className="text-[11px] text-gray-500 font-medium">Total Harga Produk</span>
-              <span className="text-[11px] font-bold text-gray-800">Rp {totalItemsPrice.toLocaleString()}</span>
-            </div>
+            <div className="flex justify-between items-center"><span className="text-[11px] text-gray-500 font-medium">Total Harga Produk</span><span className="text-[11px] font-bold text-gray-800">Rp {totalItemsPrice.toLocaleString()}</span></div>
             <div className="flex justify-between items-center">
               <span className="text-[11px] text-gray-500 font-medium">Total Biaya Pengiriman</span>
               <span className={cn("text-[11px] font-bold", totalShipping === 0 ? "text-green-500" : "text-primary")}>
                 {totalShipping === 0 ? 'Gratis' : `Rp ${totalShipping.toLocaleString()}`}
               </span>
             </div>
-            <div className="border-t border-gray-50 pt-2.5 flex justify-between items-center">
-              <span className="text-xs font-bold text-gray-900 uppercase">Total Tagihan</span>
-              <span className="text-base font-black text-primary">Rp {totalBill.toLocaleString()}</span>
-            </div>
+            <div className="border-t border-gray-50 pt-2.5 flex justify-between items-center"><span className="text-xs font-bold text-gray-900 uppercase">Total Tagihan</span><span className="text-base font-black text-primary">Rp {totalBill.toLocaleString()}</span></div>
           </div>
         </div>
       </main>
 
-      {/* Bottom Bar - Z-index disesuaikan agar di bawah Modal (z-40) */}
       <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-100 flex items-center justify-between z-40 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
         <div className="flex flex-col">
           <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest leading-none mb-1">Total Pembayaran</p>
