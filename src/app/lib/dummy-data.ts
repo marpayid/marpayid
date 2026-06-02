@@ -12,6 +12,42 @@ export const Categories = [
 
 export const Products = [
   {
+    id: 7,
+    name: 'Kemeja Wanita Fitted Luna Stripe Atasan Salur Korean Style Terbaru',
+    price: 59000,
+    originalPrice: 85000,
+    rating: 4.8,
+    reviews: '326',
+    sold: 2400,
+    category: 'Fashion',
+    image: '/fitted1.png',
+    isFlashSale: true,
+    discount: '30%',
+    stock: 'Tersedia',
+    tag: 'Produk Viral',
+    variants: ['M', 'L', 'XL'],
+    shippingFee: 0,
+    description: `Luna Stripe Kemeja Fitted berbahan SemiWoll Stripe dengan model fitted slimfit yang menyesuaikan bentuk tubuh. Bagian belakang terdapat tali sabuk yang bisa di-adjust untuk menyesuaikan bentuk tubuh / slimfit / press body.
+
+Kemeja lengan panjang ini cocok digunakan untuk acara formal maupun santai, dengan tampilan Korean style yang rapi, anggun, dan modern.
+
+Detail Ukuran:
+
+M - L:
+- Lingkar Dada: 100 cm
+- Panjang Baju: 60 cm
+- Panjang Lengan: ±55 cm
+
+XL:
+- Lingkar Dada: 110 cm
+- Panjang Baju: 65 cm
+- Panjang Lengan: ±55 cm
+
+Catatan:
+Warna produk mungkin sedikit berbeda karena efek cahaya.
+Toleransi ukuran 1–2 cm karena proses jahit.`
+  },
+  {
     id: 5,
     name: 'Benidson Oversized Tshirt Benstylish',
     price: 88000,
@@ -82,7 +118,7 @@ export const Products = [
     tag: 'Produk Viral',
     variants: ['M', 'L', 'XL'],
     shippingFee: 8000,
-    description: `Hoodie boxy oversize unisex berbahan fleece cotton yang nyaman, tebal, dan cocok untuk gaya casual harian. Desain simple dengan cutting modern, cocok digunakan pria maupun wanita.`
+    description: `Hoodie boxy oversize unisex berbahan fleece cotton yang nyaman, tebal, and cocok untuk gaya casual harian. Desain simple dengan cutting modern, cocok digunakan pria maupun wanita.`
   },
   {
     id: 3,
