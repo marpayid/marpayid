@@ -283,12 +283,12 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
               </div>
             ) : (
               <div className="space-y-0">
-                {/* Koleksi Pilihan Section - Minimalist Premium Header */}
-                <section className="px-4 mt-3 mb-3">
-                  <div className="pb-3 border-b border-[#F1F5F9]">
-                    <h3 className="text-[20px] font-semibold text-[#111827] leading-tight">Koleksi Pilihan</h3>
-                    <p className="text-[13px] text-[#00A859] font-medium mt-0.5 leading-tight">Pilihan terbaik untuk Anda</p>
-                  </div>
+                {/* Compact Recommendation Section */}
+                <section className="px-4 mt-3 mb-2 flex items-center gap-2 h-[40px]">
+                  <span className="bg-[#E6F6EF] text-[#00A859] text-[10px] font-bold px-2 py-0.5 rounded-full border border-[#D1F0E0] uppercase tracking-wide">
+                    TERPILIH
+                  </span>
+                  <h3 className="text-[15px] font-semibold text-[#111827]">Rekomendasi Untuk Anda</h3>
                 </section>
 
                 <section className="px-4 pb-10">
