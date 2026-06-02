@@ -20,24 +20,26 @@ const POPULAR_SEARCHES = [
   "DANA", "OVO", "GoPay", "Pulsa Telkomsel", "Token PLN", "Netflix Premium", "Canva Pro"
 ];
 
-// Mapping Kategori ke Kata Kunci untuk Sugesti & Matching
-const CATEGORY_KEYWORDS: Record<string, string[]> = {
-  'Fashion': ['kaos', 'baju', 'kemeja', 'celana', 'hoodie', 'jaket', 'fashion', 't-shirt'],
+// Mapping Kategori ke Kata Kunci (Sinonim & Keyword Umum)
+const CATEGORY_KEYWORDS_MAP: Record<string, string[]> = {
+  'Fashion': ['kaos', 'baju', 'kemeja', 'hoodie', 'pakaian', 'fashion', 't-shirt', 'distro'],
   'Kecantikan': ['skincare', 'serum', 'facial wash', 'sabun wajah', 'kecantikan', 'makeup', 'bioaqua', 'perawatan'],
-  'Elektronik': ['hp', 'smartphone', 'charger', 'earphone', 'elektronik', 'gadget'],
-  'Top Up': ['pulsa', 'token', 'pln', 'ewallet', 'dana', 'ovo', 'gopay', 'top up', 'game', 'ml', 'free fire'],
+  'Top Up': ['pulsa', 'isi pulsa', 'token', 'listrik', 'pln', 'token listrik', 'game', 'top up', 'mobile legends', 'ml', 'free fire', 'ff', 'pubg', 'roblox'],
+  'E-Wallet': ['dana', 'ovo', 'gopay', 'shopeepay', 'ewallet', 'dompet digital'],
+  'Premium': ['premium', 'netflix', 'spotify', 'canva', 'chatgpt', 'youtube premium', 'akun premium'],
 };
 
 // Map Sugesti Berdasarkan Awalan Kata
 const SUGGESTIONS_MAP: Record<string, string[]> = {
   'ka': ['kaos', 'kemeja', 'kamera', 'kartu perdana'],
-  'skin': ['skincare', 'serum wajah', 'facial wash', 'perawatan wajah'],
   'ba': ['baju', 'batik', 'bayar tagihan'],
-  'pu': ['pulsa', 'pulsa telkomsel', 'pulsa indosat'],
+  'skin': ['skincare', 'serum wajah', 'facial wash', 'perawatan wajah'],
+  'pu': ['pulsa', 'pulsa telkomsel', 'pulsa indosat', 'pulsa murah'],
   'to': ['token pln', 'top up game', 'token listrik'],
   'ew': ['ewallet', 'e-wallet dana', 'e-wallet gopay'],
   'net': ['netflix premium', 'nonton film'],
   'can': ['canva pro', 'canva premium'],
+  'gam': ['game', 'top up game', 'gaming'],
 };
 
 export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
@@ -76,43 +78,51 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
     localStorage.removeItem('marpay_recent_searches');
   };
 
-  // Logic Pencarian Terintegrasi (Sugesti, Kategori, Produk)
+  // Logic Pencarian Terintegrasi Profesional
   const results = useMemo(() => {
     const q = query.toLowerCase().trim();
     if (!q) return { suggestions: [], categories: [], products: [] };
 
-    // 1. Get Suggestions
+    // 1. Get Dynamic Suggestions
     let suggestions: string[] = [];
     Object.keys(SUGGESTIONS_MAP).forEach(key => {
       if (q.startsWith(key)) {
         suggestions = [...suggestions, ...SUGGESTIONS_MAP[key]];
       }
     });
-    // Add dynamic suggestions from product names
+    
+    // Add suggestions from product and category names
     const productSuggestions = Products
       .filter(p => p.name.toLowerCase().includes(q))
       .map(p => p.name.split(' ').slice(0, 2).join(' '))
       .slice(0, 3);
+      
+    suggestions = Array.from(new Set([...suggestions, ...productSuggestions])).slice(0, 6);
+
+    // 2. Identify Relevant Categories by Keywords
+    const matchedCategoryNames: string[] = [];
+    Object.entries(CATEGORY_KEYWORDS_MAP).forEach(([catName, keywords]) => {
+      if (catName.toLowerCase().includes(q) || keywords.some(k => k.includes(q) || q.includes(k))) {
+        matchedCategoryNames.push(catName);
+      }
+    });
+
+    const matchedCategories = Categories.filter(cat => matchedCategoryNames.includes(cat.name));
+
+    // 3. Match Products (Priority: Exact Name > Category Keyword Match > Tag/Desc)
+    const productsByName = Products.filter(p => p.name.toLowerCase().includes(q));
     
-    suggestions = Array.from(new Set([...suggestions, ...productSuggestions])).slice(0, 5);
+    // If query matches a category keyword, include all items from that category
+    const productsByCategory = Products.filter(p => matchedCategoryNames.includes(p.category || ''));
 
-    // 2. Match Categories
-    const matchedCategories = Categories.filter(cat => {
-      const nameMatch = cat.name.toLowerCase().includes(q);
-      const keywords = CATEGORY_KEYWORDS[cat.name] || [];
-      const keywordMatch = keywords.some(k => k.includes(q) || q.includes(k));
-      return nameMatch || keywordMatch;
-    });
+    // Merge and deduplicate
+    const allMatchedProducts = Array.from(new Set([...productsByName, ...productsByCategory]));
 
-    // 3. Match Products
-    const matchedProducts = Products.filter(product => {
-      const nameMatch = product.name.toLowerCase().includes(q);
-      const catMatch = product.category?.toLowerCase().includes(q);
-      const tagMatch = product.tag?.toLowerCase().includes(q);
-      return nameMatch || catMatch || tagMatch;
-    });
-
-    return { suggestions, categories: matchedCategories, products: matchedProducts };
+    return { 
+      suggestions, 
+      categories: matchedCategories, 
+      products: allMatchedProducts 
+    };
   }, [query]);
 
   if (!isOpen) return null;
@@ -131,7 +141,11 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
             placeholder="Cari kebutuhanmu di MarPay..." 
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && saveSearch(query)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                saveSearch(query);
+              }
+            }}
             className="pl-9 pr-9 bg-gray-50 border-none rounded-full h-10 focus-visible:ring-primary/20 text-sm"
           />
           {query && (
@@ -145,7 +159,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
         </div>
       </header>
 
-      <main className="flex-1 overflow-y-auto">
+      <main className="flex-1 overflow-y-auto bg-white">
         {!query ? (
           <div className="p-4 space-y-8">
             {/* Recent Searches */}
@@ -160,7 +174,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                     <button 
                       key={term}
                       onClick={() => setQuery(term)}
-                      className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 rounded-full text-xs text-gray-600 hover:bg-gray-200"
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 rounded-full text-xs text-gray-600 hover:bg-gray-200 active:scale-95 transition-all"
                     >
                       <Clock className="w-3 h-3" />
                       {term}
@@ -178,7 +192,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                   <button 
                     key={term}
                     onClick={() => { setQuery(term); saveSearch(term); }}
-                    className="flex items-center gap-3 p-3 bg-white border border-gray-100 rounded-xl text-left hover:border-primary/30 active:bg-gray-50 transition-all"
+                    className="flex items-center gap-3 p-3 bg-white border border-gray-100 rounded-xl text-left hover:border-primary/30 active:bg-gray-50 active:scale-[0.98] transition-all"
                   >
                     <div className="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center text-orange-500">
                       <TrendingUp className="w-4 h-4" />
@@ -191,10 +205,10 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
           </div>
         ) : (
           <div className="pb-10">
-            {/* A. Saran Pencarian */}
+            {/* 1. Saran Pencarian (Search Suggestions) */}
             {results.suggestions.length > 0 && (
               <section className="border-b border-gray-50 pb-2">
-                <div className="px-4 py-2">
+                <div className="px-4 py-2 mt-2">
                   <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Saran Pencarian</p>
                 </div>
                 {results.suggestions.map((s, i) => (
@@ -210,11 +224,11 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
               </section>
             )}
 
-            {/* B. Kategori Terkait */}
+            {/* 2. Kategori Terkait (Related Categories) */}
             {results.categories.length > 0 && (
               <section className="p-4 border-b border-gray-50">
                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Kategori Terkait</p>
-                <div className="flex gap-2 overflow-x-auto no-scrollbar">
+                <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
                   {results.categories.map((cat) => {
                     const LucideIcon = (LucideIcons as any)[cat.icon];
                     const catPath = cat.name === 'Top Up' ? '/kategori/top-up' : 
@@ -240,9 +254,9 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
               </section>
             )}
 
-            {/* C. Hasil Produk */}
+            {/* 3. Hasil Produk (Products) */}
             <section className="p-4 space-y-4">
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Produk</p>
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Hasil Produk</p>
               {results.products.length > 0 ? (
                 <div className="space-y-3">
                   {results.products.map((product) => (
@@ -252,7 +266,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                       onClick={() => { saveSearch(query); onClose(); }}
                       className="flex items-center gap-4 p-2 active:bg-gray-50 rounded-2xl transition-colors group"
                     >
-                      <div className="relative w-14 h-14 rounded-xl overflow-hidden bg-gray-100 border border-gray-50 flex-shrink-0">
+                      <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-gray-50 border border-gray-50 flex-shrink-0">
                         <Image 
                           src={getProductImage(product)} 
                           alt={product.name} 
@@ -261,24 +275,28 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                         />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h4 className="text-xs font-bold text-gray-800 line-clamp-1 group-hover:text-primary transition-colors">
+                        <h4 className="text-xs font-bold text-gray-800 line-clamp-2 group-hover:text-primary transition-colors leading-snug">
                           {product.name}
                         </h4>
-                        <p className="text-[10px] text-gray-400 font-medium mt-0.5">{product.category}</p>
-                        <p className="text-sm font-black text-primary mt-1">Rp {product.price.toLocaleString()}</p>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-[9px] font-bold px-1.5 py-0.5 bg-gray-100 text-gray-500 rounded uppercase">
+                            {product.category}
+                          </span>
+                        </div>
+                        <p className="text-sm font-black text-primary mt-1.5">Rp {product.price.toLocaleString()}</p>
                       </div>
-                      <ChevronRight className="w-4 h-4 text-gray-200 group-hover:text-primary" />
+                      <ChevronRight className="w-4 h-4 text-gray-200 group-hover:text-primary transition-colors" />
                     </Link>
                   ))}
                 </div>
               ) : (
-                <div className="flex flex-col items-center justify-center py-16 text-center space-y-3 opacity-60">
-                  <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center text-gray-300">
-                    <Search className="w-8 h-8" />
+                <div className="flex flex-col items-center justify-center py-20 text-center space-y-3 opacity-60">
+                  <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center text-gray-300">
+                    <Search className="w-10 h-10" />
                   </div>
                   <div className="space-y-1">
                     <h3 className="text-sm font-bold text-gray-900">Produk tidak ditemukan</h3>
-                    <p className="text-[10px] text-gray-400 max-w-[200px]">Gunakan kata kunci lain atau cek kategori populer di atas.</p>
+                    <p className="text-[10px] text-gray-400 max-w-[220px]">Maaf, kami tidak dapat menemukan produk yang sesuai dengan kata kunci Anda.</p>
                   </div>
                 </div>
               )}
@@ -289,3 +307,4 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
     </div>
   );
 }
+
