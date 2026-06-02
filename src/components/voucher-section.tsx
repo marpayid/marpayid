@@ -30,12 +30,9 @@ export function VoucherSection() {
 
   return (
     <section className="px-4 py-6 bg-white border-y border-gray-50">
-      <div className="flex items-center justify-between mb-4 px-1">
-        <div className="flex items-center gap-2">
-           <div className="w-1.5 h-4 bg-primary rounded-full"></div>
-           <h2 className="text-sm font-black text-gray-800 uppercase tracking-tight">Voucher MarPay</h2>
-        </div>
-        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Terbatas</span>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-base font-bold text-gray-900">Voucher Spesial Untukmu</h2>
+        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">TERBATAS</span>
       </div>
 
       <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2 -mx-4 px-4">
