@@ -44,7 +44,6 @@ export default function AdminOrdersPage() {
     ordersRef ? query(ordersRef, orderBy('createdAt', 'desc')) : null
   );
 
-  // Keamanan: Cek Admin
   if (!authLoading && user?.email !== ADMIN_EMAIL) {
     toast({ variant: "destructive", title: "Akses Ditolak", description: "Halaman ini hanya untuk admin." });
     router.replace('/');
@@ -113,7 +112,6 @@ export default function AdminOrdersPage() {
             filteredOrders.map((order: any) => (
               <div key={order.id} className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
                 <div className="p-5 space-y-4">
-                  {/* Header Pesanan */}
                   <div className="flex items-start justify-between">
                     <div className="space-y-0.5">
                       <div className="flex items-center gap-2">
@@ -136,7 +134,6 @@ export default function AdminOrdersPage() {
                     </div>
                   </div>
 
-                  {/* Info Kontak & Detail */}
                   <div className="grid grid-cols-2 gap-3 pt-2">
                     <div className="flex items-center gap-2 text-[11px] text-gray-600">
                       <Phone className="w-3.5 h-3.5 text-gray-400" />
@@ -148,7 +145,6 @@ export default function AdminOrdersPage() {
                     </div>
                   </div>
 
-                  {/* List Produk */}
                   <div className="bg-gray-50/50 rounded-2xl p-3 space-y-2 border border-dashed border-gray-100">
                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Produk yang Dibeli</p>
                     {order.items?.map((item: any, idx: number) => (
@@ -163,7 +159,6 @@ export default function AdminOrdersPage() {
                     </div>
                   </div>
 
-                  {/* Update Status & Resi */}
                   <div className="space-y-4 pt-2">
                     <div className="space-y-1.5">
                       <label className="text-[10px] font-bold text-gray-400 uppercase ml-1">Update Status Pesanan</label>

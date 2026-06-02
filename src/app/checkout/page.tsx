@@ -134,7 +134,6 @@ export default function Checkout() {
         createdAt: serverTimestamp(),
       };
 
-      // Mutation call without await for instant local cache update, but we await here to ensure storage before WA
       await addDoc(collection(db, 'orders'), orderData);
 
       // 2. Siapkan Pesan WhatsApp
@@ -178,14 +177,12 @@ export default function Checkout() {
       message += `Metode: ${paymentLabels[selectedPayment]}\n\n`;
       message += `Mohon dibantu proses pesanannya.`;
 
-      // 3. Bersihkan data temp
       localStorage.removeItem('marpay_checkout_temp');
       
       const encodedMessage = encodeURIComponent(message);
       const whatsappUrl = `https://wa.me/${adminWhatsApp}?text=${encodedMessage}`;
       window.open(whatsappUrl, '_blank');
       
-      // Arahkan ke halaman riwayat setelah checkout
       router.push('/akun/transaksi');
 
     } catch (e) {
