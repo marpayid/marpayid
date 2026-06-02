@@ -12,24 +12,27 @@ export default function CategoriesPage() {
   const router = useRouter();
 
   const handleCategoryClick = (catName: string) => {
-    // Specific routing for Top Up
     if (catName === 'Top Up') {
       router.push('/kategori/top-up');
       return;
     }
     
-    // Premium redirection
     if (catName === 'Premium') {
       router.push('/kategori/premium');
       return;
     }
-    
-    // Redirect other digital categories to PPOB page
-    const digitalCategories = ['E-Wallet', 'Voucher'];
-    if (digitalCategories.includes(catName)) {
-      router.push('/ppob');
+
+    if (catName === 'E-Wallet') {
+      router.push('/kategori/top-up/e-wallet');
       return;
     }
+
+    if (catName === 'Hobi') {
+      router.push('/kategori/top-up');
+      return;
+    }
+
+    router.push(`/kategori/${catName.toLowerCase()}`);
   };
 
   return (

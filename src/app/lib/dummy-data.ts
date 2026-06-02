@@ -1,7 +1,7 @@
 
 export const Categories = [
   { id: 1, name: 'Top Up', icon: 'Zap' },
-  { id: 2, name: 'Skincare', icon: 'Sparkles' },
+  { id: 2, name: 'Kecantikan', icon: 'Sparkles' },
   { id: 3, name: 'Fashion', icon: 'Shirt' },
   { id: 4, name: 'Elektronik', icon: 'Smartphone' },
   { id: 5, name: 'Hobi', icon: 'Gamepad2' },
@@ -19,7 +19,7 @@ export const Products = [
     rating: 4.9,
     reviews: '1.2rb',
     sold: 10500,
-    category: 'Skincare',
+    category: 'Kecantikan',
     image: '/bioaqua24k.png',
     isFlashSale: true,
     discount: '30%',

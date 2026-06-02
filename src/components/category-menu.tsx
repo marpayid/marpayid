@@ -13,8 +13,12 @@ export function CategoryMenu() {
       router.push('/kategori/top-up');
     } else if (catName === 'Premium') {
       router.push('/kategori/premium');
+    } else if (catName === 'E-Wallet') {
+      router.push('/kategori/top-up/e-wallet');
+    } else if (catName === 'Hobi') {
+      router.push('/kategori/top-up');
     } else {
-      router.push('/categories');
+      router.push(`/kategori/${catName.toLowerCase()}`);
     }
   };
 
