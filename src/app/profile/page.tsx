@@ -1,3 +1,4 @@
+
 'use client';
 
 import { BottomNav } from '@/components/bottom-nav';
@@ -51,6 +52,7 @@ export default function Profile() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editForm, setEditForm] = useState({ name: '', phone: '' });
+  const [wishlistCount, setWishlistCount] = useState(0);
 
   const userProfileRef = useMemo(() => {
     if (!db || !user?.uid) return null;
@@ -60,10 +62,16 @@ export default function Profile() {
   const { data: profileData, loading: profileLoading, error: profileError } = useDoc(userProfileRef);
 
   useEffect(() => {
-    if (profileError) {
-      console.error("Firestore Error on Profile:", profileError);
-    }
-  }, [profileError]);
+    const updateCounts = () => {
+      const saved = localStorage.getItem('marpay_wishlist');
+      if (saved) {
+        setWishlistCount(JSON.parse(saved).length);
+      }
+    };
+    updateCounts();
+    window.addEventListener('wishlist-updated', updateCounts);
+    return () => window.removeEventListener('wishlist-updated', updateCounts);
+  }, []);
 
   useEffect(() => {
     if (profileData && !isEditModalOpen) {
@@ -141,8 +149,8 @@ export default function Profile() {
       icon: Heart, 
       color: 'text-red-500',
       bgColor: 'bg-red-50',
-      path: '/akun/wishlist',
-      protected: true
+      path: '/favorit',
+      protected: false
     },
     { 
       label: 'Alamat Pengiriman', 
@@ -268,15 +276,15 @@ export default function Profile() {
                 <p className="text-base font-black text-gray-800">0</p>
               </div>
             </div>
-            <div className="bg-red-50/50 border border-red-100 p-4 rounded-2xl flex items-center gap-3">
+            <Link href="/favorit" className="bg-red-50/50 border border-red-100 p-4 rounded-2xl flex items-center gap-3 transition-colors active:bg-red-50">
               <div className="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center text-red-500">
-                <Heart className="w-5 h-5" />
+                <Heart className="w-5 h-5 fill-red-500" />
               </div>
               <div>
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Produk Favorit</p>
-                <p className="text-base font-black text-gray-800">0</p>
+                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Favorit</p>
+                <p className="text-base font-black text-gray-800">{wishlistCount}</p>
               </div>
-            </div>
+            </Link>
           </div>
         )}
       </header>

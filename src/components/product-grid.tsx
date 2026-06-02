@@ -1,6 +1,7 @@
 
 "use client"
 
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Star, ShoppingBag, Heart } from 'lucide-react';
@@ -53,8 +54,54 @@ export function ProductGrid() {
 
 export function ProductCard({ product, compact = false }: { product: any, compact?: boolean }) {
   const { toast } = useToast();
+  const [isFavorited, setIsFavorited] = useState(false);
   const isOutOfStock = product.stock === 'Stok Habis';
   const displayImage = getProductImage(product);
+
+  useEffect(() => {
+    const checkFavorite = () => {
+      const saved = localStorage.getItem('marpay_wishlist');
+      if (saved) {
+        const wishlist = JSON.parse(saved);
+        setIsFavorited(wishlist.some((item: any) => item.id === product.id));
+      }
+    };
+    checkFavorite();
+    window.addEventListener('wishlist-updated', checkFavorite);
+    return () => window.removeEventListener('wishlist-updated', checkFavorite);
+  }, [product.id]);
+
+  const handleToggleFavorite = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const saved = localStorage.getItem('marpay_wishlist');
+    let wishlist = saved ? JSON.parse(saved) : [];
+    
+    const isNowFavorited = !isFavorited;
+    
+    if (isNowFavorited) {
+      wishlist.push({ ...product, price: product.price });
+      toast({
+        variant: "default",
+        title: "Favorit Ditambahkan",
+        description: `${product.name} masuk ke wishlist.`,
+        duration: 2000,
+      });
+    } else {
+      wishlist = wishlist.filter((item: any) => item.id !== product.id);
+      toast({
+        variant: "default",
+        title: "Favorit Dihapus",
+        description: "Produk dihapus dari wishlist.",
+        duration: 2000,
+      });
+    }
+
+    localStorage.setItem('marpay_wishlist', JSON.stringify(wishlist));
+    setIsFavorited(isNowFavorited);
+    window.dispatchEvent(new Event('wishlist-updated'));
+  };
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -125,8 +172,14 @@ export function ProductCard({ product, compact = false }: { product: any, compac
             <span className="bg-red-600 text-white text-[10px] font-black px-2 py-1 rounded-md uppercase tracking-wider">Stok Habis</span>
           </div>
         )}
-        <button className="absolute top-1.5 right-1.5 p-1.5 bg-white/80 rounded-full shadow-sm text-gray-400 active:text-red-500 backdrop-blur-sm">
-          <Heart className="w-3.5 h-3.5" />
+        <button 
+          onClick={handleToggleFavorite}
+          className={cn(
+            "absolute top-1.5 right-1.5 p-1.5 bg-white/80 rounded-full shadow-sm backdrop-blur-sm transition-all active:scale-150 duration-200",
+            isFavorited ? "text-red-500" : "text-gray-400"
+          )}
+        >
+          <Heart className={cn("w-3.5 h-3.5", isFavorited && "fill-red-500")} />
         </button>
       </Link>
       <div className="p-2.5 flex-1 flex flex-col">
