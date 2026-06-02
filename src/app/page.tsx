@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect } from 'react';
@@ -11,6 +10,7 @@ import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from '@/com
 import { Banners, Products } from '@/app/lib/dummy-data';
 import { cn } from '@/lib/utils';
 import { Smartphone, Gamepad2, CreditCard, Package, Truck, Tag } from 'lucide-react';
+import { PromotionalCards } from '@/components/promotional-cards';
 
 export default function Home() {
   const [api, setApi] = useState<CarouselApi>();
@@ -157,7 +157,10 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 5. Product Tabs & Grid */}
+        {/* 5. Promotional Cards */}
+        <PromotionalCards />
+
+        {/* 6. Product Tabs & Grid */}
         <div className="bg-white">
           <ProductGrid />
         </div>
