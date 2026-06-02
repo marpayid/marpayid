@@ -4,7 +4,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Star, ShoppingBag, Heart, ArrowRight } from 'lucide-react';
+import { Star, ShoppingBag, Heart, ArrowRight, Shirt } from 'lucide-react';
 import { Products } from '@/app/lib/dummy-data';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn, formatSold, getProductImage } from '@/lib/utils';
@@ -55,50 +55,44 @@ export function FashionDiscoveryCard() {
   return (
     <Link 
       href="/kategori/fashion" 
-      className="bg-white rounded-[14px] border border-gray-100 overflow-hidden shadow-md flex flex-col group relative active:scale-[0.98] transition-all h-full"
+      className="bg-gradient-to-br from-[#00A859] via-[#008F4C] to-[#00703C] rounded-[14px] overflow-hidden shadow-xl flex flex-col group relative active:scale-[0.98] transition-all h-full min-h-[285px] border-none text-white"
     >
-      {/* Visual Area - Taller aspect ratio (4:4.5) to make it ~15-20% taller than normal cards */}
-      <div className="relative aspect-[4/4.5] bg-[#F9FAFB] flex items-center justify-center p-0 overflow-hidden">
-        <Image 
-          src="https://picsum.photos/seed/fashion-3d-premium-v3/600/600" 
-          alt="Premium Fashion Discovery" 
-          fill 
-          className="object-cover transition-transform duration-700 group-hover:scale-110"
-          data-ai-hint="3D fashion"
-        />
-        
-        {/* Premium Background Visual Elements (Family Style with Game & Wallet Cards) */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent pointer-events-none" />
-        
-        {/* Soft Blue-Purple Glow Accents */}
-        <div className="absolute -top-10 -right-10 w-32 h-32 bg-indigo-500/20 rounded-full blur-3xl" />
-        <div className="absolute -bottom-10 -left-10 w-24 h-24 bg-purple-500/10 rounded-full blur-3xl" />
-        
-        {/* Subtle Glass Overlay for 3D depth */}
-        <div className="absolute top-2 right-2 px-2 py-1 bg-white/10 backdrop-blur-md rounded-lg border border-white/20 opacity-0 group-hover:opacity-100 transition-opacity">
-           <span className="text-[7px] text-white font-black uppercase tracking-widest">Eksklusif</span>
-        </div>
+      {/* Background Visual Elements (Family Style with Game & Wallet Cards) */}
+      <div className="absolute -right-8 -bottom-8 opacity-20 transition-transform duration-700 group-hover:scale-110 group-hover:-rotate-6 pointer-events-none">
+        <Shirt className="w-44 h-44 rotate-12" />
       </div>
       
-      <div className="p-3.5 flex-1 flex flex-col justify-center gap-1.5">
-        <div className="inline-flex">
-          <span className="bg-[#E6F6EF] text-[#00A859] text-[8px] font-black px-2.5 py-1 rounded uppercase tracking-[0.05em] border border-[#D1F0E0]">
-            FASHION TREND
-          </span>
-        </div>
-        <h3 className="text-[12px] font-bold text-gray-900 leading-tight">
-          Koleksi Fashion Pilihan
-        </h3>
-        <p className="text-[9px] text-gray-400 font-medium leading-tight line-clamp-2">
-          Kaos Oversized, Kemeja Premium dan Fashion Casual
-        </p>
-        <div className="mt-auto pt-2 flex items-center justify-between">
-          <div className="flex flex-col">
-            <p className="text-[8px] text-gray-400 font-bold uppercase leading-none mb-0.5">Mulai</p>
-            <p className="text-[14px] font-black text-primary leading-none">Rp49.000</p>
+      {/* Premium Background Glow Accents */}
+      <div className="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-10 -left-10 w-24 h-24 bg-emerald-400/20 rounded-full blur-3xl pointer-events-none" />
+      
+      {/* Content Container */}
+      <div className="p-4 flex-1 flex flex-col justify-between relative z-10">
+        <div className="space-y-4">
+          <div className="inline-flex">
+            <span className="bg-white/20 backdrop-blur-md border border-white/20 text-[7px] font-black px-3 py-1 rounded-full uppercase tracking-[0.15em] leading-none">
+              FASHION TREND
+            </span>
           </div>
-          <div className="bg-primary text-white text-[9px] font-bold px-3 py-2 rounded-xl flex items-center gap-1.5 shadow-lg shadow-primary/15 group-hover:bg-primary/90 transition-colors">
-            Cek <ArrowRight className="w-2.5 h-2.5" />
+          
+          <div className="space-y-1.5">
+            <h3 className="text-[14px] font-black leading-tight tracking-tight uppercase">
+              KOLEKSI FASHION PILIHAN
+            </h3>
+            <p className="text-[9px] text-white/80 font-medium leading-tight">
+              Kaos Oversized • Kemeja Premium • Fashion Casual
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-auto pt-8 space-y-4">
+          <div className="flex flex-col">
+            <p className="text-[8px] text-white/50 font-bold uppercase leading-none mb-1 tracking-widest">Mulai</p>
+            <p className="text-[16px] font-black text-white leading-none">Rp49.000</p>
+          </div>
+          
+          <div className="bg-white text-[#00A859] text-[9px] font-black px-4 py-3 rounded-xl flex items-center gap-2 shadow-lg shadow-black/10 group-hover:bg-white/95 transition-all w-fit uppercase tracking-tighter">
+            LIHAT KOLEKSI <ArrowRight className="w-3 h-3" />
           </div>
         </div>
       </div>
