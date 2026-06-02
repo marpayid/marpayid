@@ -2,13 +2,13 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { ArrowLeft, X, Search, Clock, TrendingUp, ShoppingBag } from 'lucide-react';
+import { ArrowLeft, X, Search, Clock, TrendingUp } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Products } from '@/app/lib/dummy-data';
 import Image from 'next/image';
 import Link from 'next/link';
-import { cn, getProductImage } from '@/lib/utils';
+import { getProductImage } from '@/lib/utils';
 
 interface SearchOverlayProps {
   isOpen: boolean;
@@ -18,6 +18,15 @@ interface SearchOverlayProps {
 const POPULAR_SEARCHES = [
   "DANA", "OVO", "GoPay", "Pulsa Telkomsel", "Token PLN", "Netflix Premium", "Canva Pro"
 ];
+
+// Mapping kata kunci ke kategori untuk meningkatkan relevansi pencarian
+const CATEGORY_SYNONYMS: Record<string, string[]> = {
+  'fashion': ['fashion', 'baju', 'kaos', 'kemeja', 'pakaian', 'celana', 'topi', 'jaket'],
+  'kecantikan': ['skincare', 'serum', 'facial wash', 'sabun muka', 'kecantikan', 'bioaqua', 'perawatan', 'wajah', 'glowing'],
+  'premium': ['premium', 'netflix', 'spotify', 'canva', 'chatgpt', 'youtube premium', 'streaming', 'akun', 'nonton'],
+  'top up': ['pulsa', 'isi pulsa', 'token listrik', 'listrik', 'pln', 'token', 'game', 'top up', 'top up game', 'ml', 'mobile legends', 'ff', 'free fire', 'pubg', 'roblox'],
+  'e-wallet': ['dana', 'ovo', 'gopay', 'shopeepay', 'ewallet', 'dompet digital', 'saldo'],
+};
 
 export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
   const [query, setQuery] = useState('');
@@ -55,12 +64,35 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
     localStorage.removeItem('marpay_recent_searches');
   };
 
-  const filteredProducts = query.trim() 
-    ? Products.filter(p => 
-        p.name.toLowerCase().includes(query.toLowerCase()) || 
-        p.category?.toLowerCase().includes(query.toLowerCase())
+  // Algoritma pencarian yang ditingkatkan
+  const getFilteredProducts = () => {
+    const searchLower = query.toLowerCase().trim();
+    if (!searchLower) return [];
+
+    // Mencari kategori yang cocok berdasarkan sinonim
+    const matchedCategoryKeys = Object.keys(CATEGORY_SYNONYMS).filter(catKey => 
+      CATEGORY_SYNONYMS[catKey].some(keyword => 
+        searchLower.includes(keyword) || keyword.includes(searchLower)
       )
-    : [];
+    );
+
+    return Products.filter(product => {
+      const nameMatch = product.name.toLowerCase().includes(searchLower);
+      const categoryMatch = product.category?.toLowerCase().includes(searchLower);
+      const tagMatch = product.tag?.toLowerCase().includes(searchLower);
+      const descMatch = product.description?.toLowerCase().includes(searchLower);
+      
+      // Jika kata kunci pencarian cocok dengan daftar sinonim kategori, tampilkan produk di kategori tersebut
+      const synonymCategoryMatch = matchedCategoryKeys.some(catKey => 
+        product.category?.toLowerCase().includes(catKey)
+      );
+
+      // Prioritas: Nama > Kategori/Tag > Deskripsi > Sinonim
+      return nameMatch || categoryMatch || tagMatch || descMatch || synonymCategoryMatch;
+    });
+  };
+
+  const filteredProducts = getFilteredProducts();
 
   if (!isOpen) return null;
 
@@ -173,7 +205,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                 </div>
                 <div className="space-y-1">
                   <h3 className="text-sm font-bold text-gray-900">Produk tidak ditemukan</h3>
-                  <p className="text-[10px] text-gray-400 max-w-[200px]">Coba gunakan kata kunci lain yang lebih umum.</p>
+                  <p className="text-[10px] text-gray-400 max-w-[200px]">Coba gunakan kata kunci lain seperti "baju", "token", atau "premium".</p>
                 </div>
               </div>
             )}
