@@ -83,7 +83,7 @@ export default function Checkout() {
 
   const totalItemsPrice = items.reduce((acc, curr) => acc + (curr.price * curr.quantity), 0);
   
-  // LOGIKA BARU: Jumlahkan ongkir semua item (ongkir * quantity)
+  // LOGIKA ONGKIR: Jumlahkan ongkir semua item (ongkir * quantity)
   const totalShipping = items.reduce((acc, item) => {
     const fee = item.shippingFee || 0;
     return acc + (fee * item.quantity);
@@ -130,7 +130,12 @@ export default function Checkout() {
       message += `Operator: ${digitalDetails?.operator}\n`;
       message += `Nominal: ${digitalDetails?.nominal}\n\n`;
     } else if (address) {
-      const productList = items.map(item => `- ${item.name} (Varian: ${item.variant || 'Default'}) x ${item.quantity} (Ongkir: Rp ${(item.shippingFee * item.quantity).toLocaleString()})`).join('\n');
+      const productList = items.map(item => {
+        const itemShipping = (item.shippingFee || 0) * item.quantity;
+        const shippingStr = itemShipping > 0 ? `Rp ${itemShipping.toLocaleString()}` : 'Gratis';
+        return `- ${item.name} (Varian: ${item.variant || 'Default'}) x ${item.quantity} (Ongkir: ${shippingStr})`;
+      }).join('\n');
+
       message += `*Data Penerima:*\n`;
       message += `Nama: ${address.name}\n`;
       message += `Nomor WhatsApp: ${address.phone}\n`;
@@ -284,24 +289,27 @@ export default function Checkout() {
             <h3 className="text-xs font-bold uppercase tracking-wide">Daftar Barang</h3>
           </div>
           <div className="space-y-3.5">
-            {items.map((item, idx) => (
-              <div key={`${item.id}-${idx}`} className="flex gap-3.5">
-                <div className="relative w-14 h-14 rounded-xl overflow-hidden flex-shrink-0 border border-gray-50 bg-gray-50 flex items-center justify-center">
-                  {renderProductImage(item)}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h4 className="text-[11px] font-bold text-gray-800 truncate">{item.name}</h4>
-                  <div className="flex items-center justify-between mt-0.5">
-                    <p className="text-xs font-bold text-primary">Rp {item.price.toLocaleString()}</p>
-                    <p className="text-[10px] text-muted-foreground font-bold">x{item.quantity}</p>
+            {items.map((item, idx) => {
+              const itemShipping = (item.shippingFee || 0) * item.quantity;
+              return (
+                <div key={`${item.id}-${idx}`} className="flex gap-3.5">
+                  <div className="relative w-14 h-14 rounded-xl overflow-hidden flex-shrink-0 border border-gray-50 bg-gray-50 flex items-center justify-center">
+                    {renderProductImage(item)}
                   </div>
-                  <div className="flex justify-between items-center mt-1">
-                    <p className="text-[9px] text-gray-400 font-medium">Varian: {item.variant || 'Default'}</p>
-                    <p className="text-[9px] text-gray-500 italic">Ongkir: Rp {( (item.shippingFee || 0) * item.quantity).toLocaleString()}</p>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-[11px] font-bold text-gray-800 truncate">{item.name}</h4>
+                    <div className="flex items-center justify-between mt-0.5">
+                      <p className="text-xs font-bold text-primary">Rp {item.price.toLocaleString()}</p>
+                      <p className="text-[10px] text-muted-foreground font-bold">x{item.quantity}</p>
+                    </div>
+                    <div className="flex justify-between items-center mt-1">
+                      <p className="text-[9px] text-gray-400 font-medium">Varian: {item.variant || 'Default'}</p>
+                      <p className="text-[9px] text-gray-500 italic">Ongkir: {itemShipping > 0 ? `Rp ${itemShipping.toLocaleString()}` : 'Gratis'}</p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           <div className="border-t border-gray-50 pt-3 flex items-center justify-between">

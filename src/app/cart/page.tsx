@@ -50,7 +50,7 @@ export default function Cart() {
 
   const total = items.reduce((acc, curr) => acc + (curr.price * curr.quantity), 0);
   
-  // LOGIKA BARU: Jumlahkan ongkir semua item (ongkir * quantity)
+  // LOGIKA ONGKIR: Jumlahkan ongkir semua item (ongkir * quantity)
   const shippingFee = items.reduce((acc, item) => {
     const fee = item.shippingFee || 0;
     return acc + (fee * item.quantity);

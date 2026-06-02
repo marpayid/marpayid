@@ -226,7 +226,8 @@ export function ProductCard({ product, compact = false }: { product: any, compac
       variant: product.variants?.[0] || 'Default',
       quantity: 1,
       type: product.type || 'physical',
-      category: product.category
+      category: product.category,
+      shippingFee: product.shippingFee || 0
     };
 
     const savedCart = localStorage.getItem('marpay_cart');
