@@ -61,13 +61,13 @@ export default function Profile() {
   const { data: profileData, loading: profileLoading } = useDoc(userProfileRef);
 
   useEffect(() => {
-    if (profileData) {
+    if (profileData && !isEditModalOpen) {
       setEditForm({
         name: profileData.name || '',
         phone: profileData.phone || ''
       });
     }
-  }, [profileData]);
+  }, [profileData, isEditModalOpen]);
 
   const handleLogout = async () => {
     if (auth) {
@@ -77,21 +77,36 @@ export default function Profile() {
   };
 
   const handleUpdateProfile = async () => {
-    if (!userProfileRef || !editForm.name || !editForm.phone) return;
+    if (!user?.uid || !userProfileRef) {
+      toast({ variant: "destructive", title: "Error", description: "Sesi Anda telah berakhir. Silakan login kembali." });
+      return;
+    }
+
+    if (!editForm.name.trim() || !editForm.phone.trim()) {
+      toast({ variant: "destructive", title: "Gagal", description: "Nama dan Nomor WhatsApp wajib diisi." });
+      return;
+    }
     
     setIsSubmitting(true);
     try {
+      // Menggunakan setDoc dengan merge: true untuk memperbarui atau membuat profil
       await setDoc(userProfileRef, {
-        name: editForm.name,
-        phone: editForm.phone,
+        name: editForm.name.trim(),
+        phone: editForm.phone.trim(),
         updatedAt: serverTimestamp()
       }, { merge: true });
       
       toast({ variant: "success", title: "Berhasil", description: "Profil telah diperbarui." });
       setIsEditModalOpen(false);
-    } catch (e) {
-      toast({ variant: "destructive", title: "Error", description: "Gagal memperbarui profil." });
+    } catch (e: any) {
+      console.error("Firestore Update Error:", e);
+      toast({ 
+        variant: "destructive", 
+        title: "Error", 
+        description: e.message || "Gagal memperbarui profil. Periksa koneksi Anda." 
+      });
     } finally {
+      // Memastikan loading selalu berhenti baik berhasil maupun gagal
       setIsSubmitting(false);
     }
   };
@@ -178,10 +193,10 @@ export default function Profile() {
   }
 
   const isLoggedIn = !!user;
-  const userName = profileData?.name || "Masuk MarPay";
+  const userName = profileData?.name || (user?.displayName) || "Masuk MarPay";
   const userStatus = isLoggedIn ? "Pengguna MarPay" : "Belum Masuk";
   const userSub = isLoggedIn ? (profileData?.email || user.email) : "Masuk atau daftar untuk menikmati semua fitur MarPay.";
-  const userPhoto = profileData?.photoURL || "/profil1.png";
+  const userPhoto = profileData?.photoURL || user?.photoURL || "/profil1.png";
 
   return (
     <div className="min-h-screen bg-gray-50 pb-32">
@@ -196,7 +211,13 @@ export default function Profile() {
             </Avatar>
             {isLoggedIn && (
               <button 
-                onClick={() => setIsEditModalOpen(true)}
+                onClick={() => {
+                  setEditForm({
+                    name: profileData?.name || '',
+                    phone: profileData?.phone || ''
+                  });
+                  setIsEditModalOpen(true);
+                }}
                 className="absolute bottom-0 right-0 w-6 h-6 bg-primary border-2 border-white rounded-full flex items-center justify-center text-white"
               >
                 <Edit className="w-3 h-3" />
