@@ -168,23 +168,21 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
         </div>
 
         {!showSuggestions && query && (
-          <div className="bg-[#F8FAFC] border border-[#E5E7EB] rounded-[16px] p-[10px] mt-1">
-            <div className="flex gap-2 overflow-x-auto no-scrollbar px-1">
-              {FILTER_OPTIONS.map((filter) => (
-                <button
-                  key={filter}
-                  onClick={() => setActiveFilter(filter)}
-                  className={cn(
-                    "flex items-center justify-center h-9 px-5 rounded-[12px] text-[10px] font-black tracking-widest transition-all whitespace-nowrap active:scale-95 border",
-                    activeFilter === filter
-                      ? "bg-primary text-white border-primary shadow-sm"
-                      : "bg-white text-gray-600 border-gray-100"
-                  )}
-                >
-                  {filter}
-                </button>
-              ))}
-            </div>
+          <div className="flex gap-[10px] overflow-x-auto no-scrollbar px-1 mt-1 pb-1">
+            {FILTER_OPTIONS.map((filter) => (
+              <button
+                key={filter}
+                onClick={() => setActiveFilter(filter)}
+                className={cn(
+                  "flex items-center justify-center h-[34px] px-4 rounded-full text-[10px] font-bold tracking-wider transition-all whitespace-nowrap active:scale-95 border",
+                  activeFilter === filter
+                    ? "bg-primary text-white border-transparent"
+                    : "bg-white text-gray-700 border-[#E5E7EB]"
+                )}
+              >
+                {filter}
+              </button>
+            ))}
           </div>
         )}
       </header>
@@ -284,6 +282,17 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
               </div>
             ) : (
               <div className="space-y-0">
+                <section className="p-4 border-b border-gray-100 bg-white">
+                  <div className="bg-white rounded-2xl border border-gray-100 p-4 flex items-center gap-4 shadow-sm">
+                    <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary shrink-0">
+                      <Sparkles className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h3 className="text-xs font-bold text-gray-900 leading-tight">✨ Rekomendasi MarPay</h3>
+                      <p className="text-[9px] text-gray-400 mt-0.5 font-medium uppercase tracking-tight">Pilihan produk terbaik untuk Anda</p>
+                    </div>
+                  </div>
+                </section>
                 <section className="px-4 pt-4 pb-10">
                   {results.products.length > 0 ? (
                     <div className="grid grid-cols-2 gap-3">
