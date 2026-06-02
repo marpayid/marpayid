@@ -72,7 +72,7 @@ export const Products = [
     reviews: '438',
     sold: 3200,
     category: 'Fashion',
-    image: 'https://picsum.photos/seed/hoodie/400/400',
+    image: '/hoodie1.png',
     isFlashSale: true,
     discount: '22%',
     stock: 'Tersedia',
