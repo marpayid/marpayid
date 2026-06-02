@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Gamepad2, Smartphone, Wallet, ShieldCheck, Zap, Clock } from 'lucide-react';
@@ -8,49 +7,49 @@ import Image from 'next/image';
 import { Products } from '@/app/lib/dummy-data';
 
 export function PromotionalCards() {
-  // Ambil 3 produk fashion untuk thumbnail di kartu
-  const fashionThumbs = Products.filter(p => p.category === 'Fashion').slice(0, 3);
+  // Ambil produk fashion spesifik untuk thumbnail di kartu
+  const fashionThumbs = Products.filter(p => 
+    ['Benidson Oversized Tshirt Benstylish', 
+     'Wispie Money Magnet Fitted Shirt', 
+     'Rephatious T-shirt "Rpts412"'].includes(p.name)
+  ).slice(0, 3);
 
   return (
     <section className="px-4 space-y-4 my-8">
-      {/* 1. Fashion Recommendation Card (Shopee Style) - Revised Compact Version */}
+      {/* 1. Fashion Recommendation Card (Shopee Style) - Vertical Stacked Thumbnails */}
       <Link href="/kategori/fashion" className="block">
-        <div className="relative overflow-hidden rounded-[20px] bg-white border border-gray-100 shadow-[0_4px_20px_rgba(0,0,0,0.04)] flex items-stretch min-h-[160px] max-h-[190px] group active:scale-[0.98] transition-all">
+        <div className="relative overflow-hidden rounded-[20px] bg-white border border-gray-100 shadow-[0_4px_20px_rgba(0,0,0,0.04)] flex items-stretch min-h-[170px] max-h-[190px] group active:scale-[0.98] transition-all">
           {/* Left Side: Content */}
-          <div className="flex-1 p-4 flex flex-col justify-center space-y-2">
+          <div className="flex-1 p-5 flex flex-col justify-center space-y-2">
             <div className="inline-flex">
-              <span className="bg-orange-50 text-orange-600 text-[8px] font-black px-2 py-0.5 rounded uppercase tracking-wider border border-orange-100">
+              <span className="bg-[#E6F6EF] text-[#00A859] text-[8px] font-black px-2 py-0.5 rounded uppercase tracking-wider border border-[#D1F0E0]">
                 FASHION TREND
               </span>
             </div>
             <div className="space-y-0.5">
-              <h3 className="text-sm font-black text-gray-900 leading-tight">
+              <h3 className="text-[15px] font-black text-gray-900 leading-tight">
                 Koleksi Fashion Pilihan
               </h3>
-              <p className="text-[9px] text-gray-400 font-medium leading-tight line-clamp-2">
+              <p className="text-[10px] text-gray-400 font-medium leading-tight line-clamp-2">
                 Kaos Oversized, Kemeja Premium dan Fashion Casual
               </p>
             </div>
             <div className="pt-1">
-              <p className="text-[10px] font-bold text-gray-800">
-                Mulai <span className="text-primary text-xs font-black">Rp49.000</span>
+              <p className="text-[11px] font-bold text-gray-800">
+                Mulai <span className="text-[#00A859] text-sm font-black">Rp49.000</span>
               </p>
-              <button className="mt-2 bg-primary text-white px-3 py-1.5 rounded-lg text-[9px] font-bold uppercase shadow-sm">
+              <button className="mt-2 bg-[#00A859] text-white px-4 py-1.5 rounded-lg text-[9px] font-bold uppercase shadow-sm active:scale-95 transition-transform">
                 Lihat Koleksi
               </button>
             </div>
           </div>
 
-          {/* Right Side: Product Thumbnails Grid */}
-          <div className="w-[140px] bg-gray-50/50 p-2 grid grid-cols-2 gap-1.5 items-center justify-center">
-            {fashionThumbs.map((product, idx) => (
+          {/* Right Side: Product Thumbnails Stacked Vertically */}
+          <div className="w-[100px] bg-gray-50/30 p-2 flex flex-col gap-1.5 justify-center items-center">
+            {fashionThumbs.map((product) => (
               <div 
                 key={product.id} 
-                className={cn(
-                  "relative aspect-square rounded-lg overflow-hidden border border-white shadow-sm bg-white",
-                  idx === 0 ? "col-span-1 row-span-1" : "col-span-1 row-span-1",
-                  idx === 2 ? "col-span-2 aspect-[2/1]" : ""
-                )}
+                className="relative w-full h-[52px] rounded-[12px] overflow-hidden border border-white shadow-sm bg-white shrink-0"
               >
                 <Image 
                   src={getProductImage(product)} 
