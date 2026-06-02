@@ -23,7 +23,8 @@ import {
   Loader2,
   Search,
   MessageCircle,
-  Ticket
+  Ticket,
+  FileText
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -138,15 +139,6 @@ export default function Profile() {
 
   const menuItems = [
     { 
-      label: 'Daftar Transaksi', 
-      description: 'Lihat semua pesanan dan status transaksi Anda.',
-      icon: ClipboardList, 
-      color: 'text-blue-500',
-      bgColor: 'bg-blue-50',
-      path: '/akun/transaksi',
-      protected: true
-    },
-    { 
       label: 'Cek Resi Pengiriman', 
       description: 'Lacak status paket pesanan fisik Anda.',
       icon: Search, 
@@ -174,13 +166,14 @@ export default function Profile() {
       protected: true
     },
     { 
-      label: 'Notifikasi', 
-      description: 'Informasi pesanan dan promo terbaru.',
-      icon: Bell, 
-      color: 'text-orange-500',
-      bgColor: 'bg-orange-50',
-      path: '/akun/notifikasi',
-      protected: true
+      label: 'Hubungi Admin', 
+      description: 'Tanya admin via WhatsApp MarPay.',
+      icon: MessageCircle, 
+      color: 'text-green-600',
+      bgColor: 'bg-green-50',
+      path: 'https://wa.me/6283851278935',
+      protected: false,
+      isExternal: true
     },
     { 
       label: 'Pusat Bantuan', 
@@ -188,24 +181,26 @@ export default function Profile() {
       icon: HelpCircle, 
       color: 'text-purple-500',
       bgColor: 'bg-purple-50',
-      path: '/akun/bantuan'
+      path: '/akun/bantuan',
+      protected: false
     },
     { 
-      label: 'Keamanan Akun', 
-      description: 'Kelola keamanan akun dan data pribadi.',
+      label: 'Kebijakan Privasi', 
+      description: 'Informasi perlindungan data pribadi Anda.',
       icon: ShieldCheck, 
       color: 'text-cyan-500',
       bgColor: 'bg-cyan-50',
-      path: '/akun/keamanan',
-      protected: true
+      path: '/akun/pengaturan',
+      protected: false
     },
     { 
-      label: 'Pengaturan App', 
-      description: 'Tema, preferensi, dan pengaturan aplikasi.',
-      icon: Settings, 
-      color: 'text-gray-500',
-      bgColor: 'bg-gray-50',
-      path: '/akun/pengaturan'
+      label: 'Syarat & Ketentuan', 
+      description: 'Aturan penggunaan layanan di MarPay.',
+      icon: FileText, 
+      color: 'text-blue-500',
+      bgColor: 'bg-blue-50',
+      path: '/akun/pengaturan',
+      protected: false
     },
   ];
 
@@ -294,23 +289,19 @@ export default function Profile() {
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-3 mt-8">
-            <div className="bg-primary/5 border border-primary/10 p-4 rounded-2xl flex items-center gap-3">
-              <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
-                <ShoppingBag className="w-5 h-5" />
-              </div>
-              <div>
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Total Pesanan</p>
-                <p className="text-base font-black text-gray-800">0</p>
-              </div>
-            </div>
-            <Link href="/favorit" className="bg-red-50/50 border border-red-100 p-4 rounded-2xl flex items-center gap-3 transition-colors active:bg-red-50">
-              <div className="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center text-red-500">
-                <Heart className="w-5 h-5 fill-red-500" />
-              </div>
-              <div>
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Favorit</p>
-                <p className="text-base font-black text-gray-800">{wishlistCount}</p>
+          <div className="mt-8">
+            <Link href="/favorit" className="block w-full">
+              <div className="bg-red-50/50 border border-red-100 p-4 rounded-2xl flex items-center justify-between transition-colors active:bg-red-50">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center text-red-500">
+                    <Heart className="w-5 h-5 fill-red-500" />
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Produk Favorit</p>
+                    <p className="text-base font-black text-gray-800">{wishlistCount}</p>
+                  </div>
+                </div>
+                <ChevronRight className="w-4 h-4 text-red-200" />
               </div>
             </Link>
           </div>
@@ -362,6 +353,14 @@ export default function Profile() {
                 <ChevronRight className="w-4 h-4 text-gray-300" />
               </div>
             );
+
+            if (item.isExternal) {
+              return (
+                <a key={item.label} href={item.path} target="_blank" rel="noopener noreferrer">
+                  {content}
+                </a>
+              );
+            }
 
             return isItemActive ? (
               <Link key={item.label} href={item.path}>{content}</Link>
