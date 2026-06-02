@@ -84,6 +84,7 @@ export default function Checkout() {
   const totalItemsPrice = items.reduce((acc, curr) => acc + (curr.price * curr.quantity), 0);
   
   // LOGIKA ONGKIR: Jumlahkan ongkir semua item (ongkir * quantity)
+  // Memastikan akumulasi ongkir per produk dan per jumlah unit.
   const totalShipping = items.reduce((acc, item) => {
     const fee = item.shippingFee || 0;
     return acc + (fee * item.quantity);
@@ -304,7 +305,9 @@ export default function Checkout() {
                     </div>
                     <div className="flex justify-between items-center mt-1">
                       <p className="text-[9px] text-gray-400 font-medium">Varian: {item.variant || 'Default'}</p>
-                      <p className="text-[9px] text-gray-500 italic">Ongkir: {itemShipping > 0 ? `Rp ${itemShipping.toLocaleString()}` : 'Gratis'}</p>
+                      <p className="text-[9px] text-gray-500 italic">
+                        Ongkir: {itemShipping > 0 ? `Rp ${itemShipping.toLocaleString()}` : 'Gratis'}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -317,7 +320,9 @@ export default function Checkout() {
               <Truck className="w-3.5 h-3.5 text-primary" />
               <span className="text-[10px] text-gray-500 font-bold uppercase">Total Pengiriman</span>
             </div>
-            <span className="text-[10px] font-bold text-primary">{totalShipping === 0 ? 'Gratis' : `Rp ${totalShipping.toLocaleString()}`}</span>
+            <span className={cn("text-[10px] font-bold", totalShipping === 0 ? "text-green-500" : "text-primary")}>
+              {totalShipping === 0 ? 'Gratis' : `Rp ${totalShipping.toLocaleString()}`}
+            </span>
           </div>
         </div>
 
@@ -393,7 +398,9 @@ export default function Checkout() {
             </div>
             <div className="flex justify-between items-center">
               <span className="text-[11px] text-gray-500 font-medium">Total Biaya Pengiriman</span>
-              <span className="text-[11px] font-bold text-primary">{totalShipping === 0 ? 'Gratis' : `Rp ${totalShipping.toLocaleString()}`}</span>
+              <span className={cn("text-[11px] font-bold", totalShipping === 0 ? "text-green-500" : "text-primary")}>
+                {totalShipping === 0 ? 'Gratis' : `Rp ${totalShipping.toLocaleString()}`}
+              </span>
             </div>
             <div className="border-t border-gray-50 pt-2.5 flex justify-between items-center">
               <span className="text-xs font-bold text-gray-900 uppercase">Total Tagihan</span>

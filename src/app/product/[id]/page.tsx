@@ -65,6 +65,9 @@ export default function ProductDetail() {
   const totalPrice = currentPrice * quantity;
   const hasDiscount = !!product.originalPrice;
 
+  // LOGIKA ONGKIR: Gunakan shippingFee dari data produk
+  const hasShippingFee = (product.shippingFee || 0) > 0;
+
   const handleQuantity = (type: 'inc' | 'dec') => {
     if (isOutOfStock) return;
     if (type === 'inc') setQuantity(prev => prev + 1);
@@ -194,8 +197,12 @@ export default function ProductDetail() {
               <Truck className="w-7 h-7" />
             </div>
             <div className="flex-1">
-              <p className="text-[12px] font-bold text-blue-500 uppercase tracking-tight mb-0">GRATIS ONGKIR</p>
-              <p className="text-[14px] font-semibold text-gray-900 leading-tight">Potongan Maksimal Rp20.000</p>
+              <p className="text-[12px] font-bold text-blue-500 uppercase tracking-tight mb-0">
+                {hasShippingFee ? `ONGKIR: RP ${product.shippingFee.toLocaleString()}` : 'GRATIS ONGKIR'}
+              </p>
+              <p className="text-[14px] font-semibold text-gray-900 leading-tight">
+                {hasShippingFee ? 'Pengiriman Reguler' : 'Potongan Maksimal Rp20.000'}
+              </p>
             </div>
           </section>
         )}
@@ -236,6 +243,12 @@ export default function ProductDetail() {
                 <span className="text-sm text-gray-400 line-through mb-1">Rp {product.originalPrice?.toLocaleString()}</span>
               )}
             </div>
+            {/* Tampilan Ongkir Sesuai Nominal */}
+            <p className="text-[11px] font-bold text-gray-400 uppercase mt-1">
+              Ongkos Kirim: <span className={cn("ml-1", hasShippingFee ? "text-gray-700" : "text-green-500")}>
+                {hasShippingFee ? `Rp ${product.shippingFee.toLocaleString()}` : 'Gratis'}
+              </span>
+            </p>
           </div>
         </section>
 

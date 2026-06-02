@@ -4,7 +4,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Star, ShoppingBag, Heart, ArrowRight, Shirt, Sparkles } from 'lucide-react';
+import { Star, ShoppingBag, Heart, ArrowRight, Shirt, Sparkles, Truck } from 'lucide-react';
 import { Products } from '@/app/lib/dummy-data';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn, formatSold, getProductImage } from '@/lib/utils';
@@ -252,6 +252,9 @@ export function ProductCard({ product, compact = false }: { product: any, compac
     });
   };
 
+  // LOGIKA ONGKIR: Tampilkan badge jika ada biaya pengiriman
+  const hasShippingFee = (product.shippingFee || 0) > 0;
+
   return (
     <div className={cn(
       "bg-white rounded-[14px] border border-gray-100 overflow-hidden shadow-sm flex flex-col group relative",
@@ -292,7 +295,14 @@ export function ProductCard({ product, compact = false }: { product: any, compac
           </h3>
         </Link>
         <div className="mt-auto">
-          <p className="text-sm font-bold text-red-600 mb-1.5">Rp {product.price.toLocaleString()}</p>
+          <div className="flex justify-between items-center mb-1">
+            <p className="text-sm font-bold text-red-600">Rp {product.price.toLocaleString()}</p>
+            {hasShippingFee && product.type !== 'digital' && (
+              <div className="flex items-center text-[8px] text-gray-400 font-bold uppercase gap-0.5">
+                <Truck className="w-2.5 h-2.5" /> Ongkir
+              </div>
+            )}
+          </div>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1 overflow-hidden">
               <Star className="w-2.5 h-2.5 fill-yellow-400 text-yellow-400 flex-shrink-0" />

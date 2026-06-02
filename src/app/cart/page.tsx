@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Trash2, Plus, Minus, ShoppingBag, Smartphone, Zap, Wallet } from 'lucide-react';
+import { ArrowLeft, Trash2, Plus, Minus, ShoppingBag, Smartphone, Zap, Wallet, Truck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -51,6 +51,7 @@ export default function Cart() {
   const total = items.reduce((acc, curr) => acc + (curr.price * curr.quantity), 0);
   
   // LOGIKA ONGKIR: Jumlahkan ongkir semua item (ongkir * quantity)
+  // Memastikan ongkir tetap dihitung jika ada, jika tidak ada/0 maka Gratis.
   const shippingFee = items.reduce((acc, item) => {
     const fee = item.shippingFee || 0;
     return acc + (fee * item.quantity);
@@ -87,33 +88,50 @@ export default function Cart() {
       <main className="pt-20 px-4 space-y-3">
         {items.length > 0 ? (
           <>
-            {items.map((item, idx) => (
-              <div key={`${item.id}-${item.variant || idx}`} className="bg-white p-3 rounded-2xl flex gap-3 border border-gray-100 shadow-sm">
-                <div className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 bg-gray-50 flex items-center justify-center">
-                  {renderProductImage(item)}
-                </div>
-                <div className="flex-1 flex flex-col justify-between">
-                  <div>
-                    <h3 className="text-sm font-medium line-clamp-1">{item.name}</h3>
-                    <p className="text-xs text-muted-foreground mt-1">Varian: {item.variant || 'Default'}</p>
-                    <p className="text-sm font-bold text-gray-900 mt-1">Rp {item.price.toLocaleString()}</p>
+            {items.map((item, idx) => {
+              const itemShipping = (item.shippingFee || 0) * item.quantity;
+              return (
+                <div key={`${item.id}-${item.variant || idx}`} className="bg-white p-3 rounded-2xl flex gap-3 border border-gray-100 shadow-sm">
+                  <div className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 bg-gray-50 flex items-center justify-center">
+                    {renderProductImage(item)}
                   </div>
-                  <div className="flex items-center justify-between mt-2">
-                    <Button variant="ghost" size="icon" className="text-gray-400 h-8 w-8 hover:text-red-500 hover:bg-red-50" onClick={() => handleRemove(item.id, item.variant)}>
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                    <div className="flex items-center gap-3 bg-gray-50 rounded-lg px-2 py-1">
-                      <button className="text-primary hover:bg-white p-1 rounded disabled:opacity-30" onClick={() => updateQuantity(item.id, item.variant, -1)} disabled={item.quantity <= 1}><Minus className="w-3 h-3" /></button>
-                      <span className="text-xs font-bold w-4 text-center">{item.quantity}</span>
-                      <button className="text-primary hover:bg-white p-1 rounded" onClick={() => updateQuantity(item.id, item.variant, 1)}><Plus className="w-3 h-3" /></button>
+                  <div className="flex-1 flex flex-col justify-between">
+                    <div>
+                      <h3 className="text-sm font-medium line-clamp-1">{item.name}</h3>
+                      <div className="flex justify-between items-center mt-1">
+                        <p className="text-xs text-muted-foreground">Varian: {item.variant || 'Default'}</p>
+                        {itemShipping > 0 ? (
+                          <span className="text-[9px] font-bold text-gray-400 flex items-center gap-0.5">
+                            <Truck className="w-2.5 h-2.5" /> Rp {itemShipping.toLocaleString()}
+                          </span>
+                        ) : (
+                          <span className="text-[9px] font-bold text-green-500 uppercase tracking-tighter">Gratis Ongkir</span>
+                        )}
+                      </div>
+                      <p className="text-sm font-bold text-gray-900 mt-1">Rp {item.price.toLocaleString()}</p>
+                    </div>
+                    <div className="flex items-center justify-between mt-2">
+                      <Button variant="ghost" size="icon" className="text-gray-400 h-8 w-8 hover:text-red-500 hover:bg-red-50" onClick={() => handleRemove(item.id, item.variant)}>
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                      <div className="flex items-center gap-3 bg-gray-50 rounded-lg px-2 py-1">
+                        <button className="text-primary hover:bg-white p-1 rounded disabled:opacity-30" onClick={() => updateQuantity(item.id, item.variant, -1)} disabled={item.quantity <= 1}><Minus className="w-3 h-3" /></button>
+                        <span className="text-xs font-bold w-4 text-center">{item.quantity}</span>
+                        <button className="text-primary hover:bg-white p-1 rounded" onClick={() => updateQuantity(item.id, item.variant, 1)}><Plus className="w-3 h-3" /></button>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
             <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm mt-6">
               <div className="flex justify-between mb-2"><span className="text-sm text-gray-600">Total Harga</span><span className="text-sm font-medium">Rp {total.toLocaleString()}</span></div>
-              <div className="flex justify-between mb-2"><span className="text-sm text-gray-600">Total Ongkir</span><span className={cn("text-sm font-medium", shippingFee === 0 ? "text-green-500" : "text-gray-900")}>{shippingFee === 0 ? "Gratis" : `Rp ${shippingFee.toLocaleString()}`}</span></div>
+              <div className="flex justify-between mb-2">
+                <span className="text-sm text-gray-600">Total Ongkir</span>
+                <span className={cn("text-sm font-medium", shippingFee === 0 ? "text-green-500" : "text-gray-900")}>
+                  {shippingFee === 0 ? "Gratis" : `Rp ${shippingFee.toLocaleString()}`}
+                </span>
+              </div>
               <div className="border-t border-gray-100 my-3 pt-3 flex justify-between"><span className="font-bold">Total Bayar</span><span className="font-bold text-primary">Rp {finalTotal.toLocaleString()}</span></div>
             </div>
           </>
