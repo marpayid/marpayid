@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useMemo } from 'react';
@@ -24,8 +23,6 @@ import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
-import { errorEmitter } from '@/firebase/error-emitter';
-import { FirestorePermissionError } from '@/firebase/errors';
 
 const ADMIN_EMAIL = 'dksplaybot@gmail.com';
 
@@ -58,18 +55,11 @@ export default function AdminOrdersPage() {
     setIsUpdatingId(orderId);
     try {
       const orderDoc = doc(db, 'orders', orderId);
-      await updateDoc(orderDoc, { ...updates, updatedAt: new Date() })
-        .catch(async (e) => {
-          const permissionError = new FirestorePermissionError({
-            path: `/orders/${orderId}`,
-            operation: 'update',
-            requestResourceData: updates,
-          });
-          errorEmitter.emit('permission-error', permissionError);
-        });
+      await updateDoc(orderDoc, { ...updates, updatedAt: new Date() });
       
       toast({ variant: "success", title: "Berhasil", description: "Status pesanan diperbarui." });
     } catch (e) {
+      console.error("Update error:", e);
       toast({ variant: "destructive", title: "Gagal", description: "Terjadi kesalahan sistem." });
     } finally {
       setIsUpdatingId(null);

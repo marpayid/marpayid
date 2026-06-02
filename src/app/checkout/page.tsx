@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -26,8 +25,6 @@ import { cn, getProductImage } from '@/lib/utils';
 import Link from 'next/link';
 import { useUser, useFirestore } from '@/firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { errorEmitter } from '@/firebase/error-emitter';
-import { FirestorePermissionError } from '@/firebase/errors';
 
 interface AddressData {
   name: string;
@@ -137,15 +134,8 @@ export default function Checkout() {
         createdAt: serverTimestamp(),
       };
 
-      await addDoc(collection(db, 'orders'), orderData)
-        .catch(async (e) => {
-          const permissionError = new FirestorePermissionError({
-            path: '/orders',
-            operation: 'create',
-            requestResourceData: orderData,
-          });
-          errorEmitter.emit('permission-error', permissionError);
-        });
+      // Mutation call without await for instant local cache update, but we await here to ensure storage before WA
+      await addDoc(collection(db, 'orders'), orderData);
 
       // 2. Siapkan Pesan WhatsApp
       const adminWhatsApp = "6283851278935";
