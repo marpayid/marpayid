@@ -63,16 +63,25 @@ export default function Profile() {
   useEffect(() => {
     if (profileData && !isEditModalOpen) {
       setEditForm({
-        name: profileData.name || '',
+        name: profileData.fullName || profileData.name || '',
         phone: profileData.phone || ''
       });
+    } else if (user && !profileData && !profileLoading && !isEditModalOpen) {
+      setEditForm({
+        name: user.displayName || '',
+        phone: ''
+      });
     }
-  }, [profileData, isEditModalOpen]);
+  }, [profileData, user, profileLoading, isEditModalOpen]);
 
   const handleLogout = async () => {
-    if (auth) {
-      await signOut(auth);
-      router.push('/');
+    try {
+      if (auth) {
+        await signOut(auth);
+        router.push('/');
+      }
+    } catch (error) {
+      console.error("Logout Error:", error);
     }
   };
 
@@ -89,10 +98,12 @@ export default function Profile() {
     
     setIsSubmitting(true);
     try {
-      // Menggunakan setDoc dengan merge: true untuk memperbarui atau membuat profil
+      // Menyimpan data dengan field fullName sesuai instruksi
       await setDoc(userProfileRef, {
-        name: editForm.name.trim(),
+        fullName: editForm.name.trim(),
+        name: editForm.name.trim(), // Tetap simpan name untuk kompatibilitas jika ada komponen lain yang pakai
         phone: editForm.phone.trim(),
+        email: user.email,
         updatedAt: serverTimestamp()
       }, { merge: true });
       
@@ -103,10 +114,9 @@ export default function Profile() {
       toast({ 
         variant: "destructive", 
         title: "Error", 
-        description: e.message || "Gagal memperbarui profil. Periksa koneksi Anda." 
+        description: e.message || "Gagal memperbarui profil." 
       });
     } finally {
-      // Memastikan loading selalu berhenti baik berhasil maupun gagal
       setIsSubmitting(false);
     }
   };
@@ -182,9 +192,7 @@ export default function Profile() {
     { label: 'Dibatalkan', icon: XCircle, path: '/akun/transaksi?status=cancelled' },
   ];
 
-  const isLoading = authLoading || (user && profileLoading);
-
-  if (isLoading) {
+  if (authLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -193,7 +201,8 @@ export default function Profile() {
   }
 
   const isLoggedIn = !!user;
-  const userName = profileData?.name || (user?.displayName) || "Masuk MarPay";
+  // Menampilkan fullName dari Firestore sebagai prioritas utama
+  const userName = profileData?.fullName || profileData?.name || user?.displayName || (isLoggedIn ? "Pengguna MarPay" : "Masuk MarPay");
   const userStatus = isLoggedIn ? "Pengguna MarPay" : "Belum Masuk";
   const userSub = isLoggedIn ? (profileData?.email || user.email) : "Masuk atau daftar untuk menikmati semua fitur MarPay.";
   const userPhoto = profileData?.photoURL || user?.photoURL || "/profil1.png";
@@ -213,12 +222,12 @@ export default function Profile() {
               <button 
                 onClick={() => {
                   setEditForm({
-                    name: profileData?.name || '',
+                    name: profileData?.fullName || profileData?.name || user?.displayName || '',
                     phone: profileData?.phone || ''
                   });
                   setIsEditModalOpen(true);
                 }}
-                className="absolute bottom-0 right-0 w-6 h-6 bg-primary border-2 border-white rounded-full flex items-center justify-center text-white"
+                className="absolute bottom-0 right-0 w-6 h-6 bg-primary border-2 border-white rounded-full flex items-center justify-center text-white hover:bg-primary/90 transition-colors"
               >
                 <Edit className="w-3 h-3" />
               </button>
@@ -343,6 +352,7 @@ export default function Profile() {
         </p>
       </main>
 
+      {/* Edit Profile Modal */}
       <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
         <DialogContent className="sm:max-w-[425px] rounded-3xl">
           <DialogHeader>

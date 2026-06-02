@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -64,10 +65,11 @@ export default function RegisterPage() {
       const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
       const user = userCredential.user;
 
-      // Simpan data ke Firestore
+      // Simpan data ke Firestore dengan field fullName agar konsisten
       await setDoc(doc(db, 'users', user.uid), {
         uid: user.uid,
-        name: formData.name,
+        fullName: formData.name,
+        name: formData.name, // Backup field name
         email: formData.email,
         phone: formData.phone,
         photoURL: '/profil1.png',
