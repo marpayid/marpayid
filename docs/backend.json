@@ -6,45 +6,15 @@
       "description": "Informasi profil pengguna MarPay.",
       "type": "object",
       "properties": {
-        "uid": {
-          "type": "string",
-          "description": "ID unik pengguna dari Firebase Auth."
-        },
-        "name": {
-          "type": "string",
-          "description": "Nama lengkap pengguna."
-        },
-        "email": {
-          "type": "string",
-          "format": "email",
-          "description": "Alamat email pengguna."
-        },
-        "phone": {
-          "type": "string",
-          "description": "Nomor telepon/WhatsApp pengguna."
-        },
-        "photoURL": {
-          "type": "string",
-          "description": "URL foto profil pengguna."
-        },
-        "accountStatus": {
-          "type": "string",
-          "enum": ["active", "suspended"],
-          "description": "Status akun pengguna."
-        },
-        "role": {
-          "type": "string",
-          "enum": ["customer", "admin"],
-          "description": "Peran pengguna dalam aplikasi."
-        },
-        "createdAt": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "updatedAt": {
-          "type": "string",
-          "format": "date-time"
-        }
+        "uid": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "phone": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "accountStatus": { "type": "string", "enum": ["active", "suspended"] },
+        "role": { "type": "string", "enum": ["customer", "admin"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
       },
       "required": ["uid", "name", "email", "phone"]
     },
@@ -62,6 +32,24 @@
         "notes": { "type": "string" },
         "isPrimary": { "type": "boolean" }
       }
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Data transaksi pesanan pelanggan.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "customerName": { "type": "string" },
+        "customerEmail": { "type": "string" },
+        "customerPhone": { "type": "string" },
+        "items": { "type": "array" },
+        "totalAmount": { "type": "number" },
+        "status": { "type": "string", "enum": ["Menunggu Pembayaran", "Pembayaran Diterima", "Diproses", "Dikirim", "Selesai", "Dibatalkan"] },
+        "courier": { "type": "string" },
+        "trackingNumber": { "type": "string" },
+        "shippingAddress": { "type": "object" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      }
     }
   },
   "auth": {
@@ -69,16 +57,16 @@
   },
   "firestore": {
     "/users/{userId}": {
-      "schema": {
-        "$ref": "#/entities/UserProfile"
-      },
+      "schema": { "$ref": "#/entities/UserProfile" },
       "description": "Koleksi data profil pengguna."
     },
     "/users/{userId}/addresses/{addressId}": {
-      "schema": {
-        "$ref": "#/entities/Address"
-      },
+      "schema": { "$ref": "#/entities/Address" },
       "description": "Sub-koleksi alamat pengiriman pengguna."
+    },
+    "/orders/{orderId}": {
+      "schema": { "$ref": "#/entities/Order" },
+      "description": "Koleksi transaksi pesanan seluruh pelanggan (Admin View)."
     }
   }
 }

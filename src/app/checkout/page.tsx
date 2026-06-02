@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { 
   ArrowLeft, MapPin, CreditCard, Truck, 
   Smartphone, QrCode, Banknote, Edit3, MessageCircle, AlertCircle, Zap, Wallet,
-  Info
+  Info, Loader2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -24,6 +24,10 @@ import {
 import Image from 'next/image';
 import { cn, getProductImage } from '@/lib/utils';
 import Link from 'next/link';
+import { useUser, useFirestore } from '@/firebase';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { errorEmitter } from '@/firebase/error-emitter';
+import { FirestorePermissionError } from '@/firebase/errors';
 
 interface AddressData {
   name: string;
@@ -37,6 +41,8 @@ interface AddressData {
 
 export default function Checkout() {
   const router = useRouter();
+  const db = useFirestore();
+  const { user } = useUser();
   
   const [items, setItems] = useState<any[]>([]);
   const [address, setAddress] = useState<AddressData | null>(null);
@@ -47,6 +53,7 @@ export default function Checkout() {
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const tempItem = localStorage.getItem('marpay_checkout_temp');
@@ -82,9 +89,6 @@ export default function Checkout() {
 
   const totalItemsPrice = items.reduce((acc, curr) => acc + (curr.price * curr.quantity), 0);
   
-  // LOGIKA ONGKIR REVISI: 
-  // - Item ke-1: Ongkir penuh
-  // - Item ke-2 dst: Tambah Rp 5.000 per item
   const totalShipping = items.reduce((acc, item) => {
     if (!item.shippingFee || item.shippingFee <= 0) return acc;
     const baseFee = item.shippingFee;
@@ -107,7 +111,7 @@ export default function Checkout() {
     setIsAddressModalOpen(false);
   };
 
-  const handleWhatsAppCheckout = () => {
+  const handleWhatsAppCheckout = async () => {
     if (items.length === 0) return;
 
     if (!isDigital && !address) {
@@ -116,54 +120,89 @@ export default function Checkout() {
       return;
     }
 
-    const adminWhatsApp = "6283851278935";
-    const paymentLabels: Record<string, string> = {
-      'bank_transfer': 'Bank Transfer',
-      'e_wallet': 'E-Wallet (OVO/DANA/GoPay)',
-      'qris': 'QRIS'
-    };
+    setIsSubmitting(true);
 
-    let message = `Halo Admin MarPay, saya ingin konfirmasi pesanan.\n\n`;
+    try {
+      // 1. Simpan pesanan ke Firestore terlebih dahulu
+      const orderData = {
+        userId: user?.uid || 'guest',
+        customerName: isDigital ? (items[0].details?.customerName || 'Digital Customer') : (address?.name || 'Customer'),
+        customerEmail: user?.email || 'N/A',
+        customerPhone: isDigital ? (items[0].details?.target || 'N/A') : (address?.phone || 'N/A'),
+        items: items,
+        totalAmount: totalBill,
+        status: 'Menunggu Pembayaran',
+        paymentMethod: selectedPayment,
+        shippingAddress: address || null,
+        createdAt: serverTimestamp(),
+      };
 
-    if (isDigital) {
-      const digitalDetails = items[0].details;
-      message += `*Detail Pesanan Digital:*\n`;
-      message += `Produk: ${items[0].name}\n`;
-      message += `Nomor Tujuan: ${digitalDetails?.target}\n`;
-      message += `Operator: ${digitalDetails?.operator}\n`;
-      message += `Nominal: ${digitalDetails?.nominal}\n\n`;
-    } else if (address) {
-      const productList = items.map(item => {
-        // Hitung ongkir per item line untuk detail WhatsApp dengan logika revisi
-        const itemShipping = (item.shippingFee || 0) > 0 
-          ? item.shippingFee + (Math.max(0, item.quantity - 1) * 5000) 
-          : 0;
-        const shippingStr = itemShipping > 0 ? `Rp ${itemShipping.toLocaleString()}` : 'Gratis';
-        return `- ${item.name} (Varian: ${item.variant || 'Default'}) x ${item.quantity} (Ongkir: ${shippingStr})`;
-      }).join('\n');
+      await addDoc(collection(db, 'orders'), orderData)
+        .catch(async (e) => {
+          const permissionError = new FirestorePermissionError({
+            path: '/orders',
+            operation: 'create',
+            requestResourceData: orderData,
+          });
+          errorEmitter.emit('permission-error', permissionError);
+        });
 
-      message += `*Data Penerima:*\n`;
-      message += `Nama: ${address.name}\n`;
-      message += `Nomor WhatsApp: ${address.phone}\n`;
-      message += `Alamat: ${address.fullAddress}, ${address.district}, ${address.city}, ${address.province} ${address.notes ? `(${address.notes})` : ''}\n\n`;
-      message += `*Detail Pesanan:*\n${productList}\n\n`;
-    }
+      // 2. Siapkan Pesan WhatsApp
+      const adminWhatsApp = "6283851278935";
+      const paymentLabels: Record<string, string> = {
+        'bank_transfer': 'Bank Transfer',
+        'e_wallet': 'E-Wallet (OVO/DANA/GoPay)',
+        'qris': 'QRIS'
+      };
 
-    message += `*Ringkasan Tagihan:*\n`;
-    message += `Total Produk: Rp ${totalItemsPrice.toLocaleString()}\n`;
-    message += `Total Ongkir: Rp ${totalShipping.toLocaleString()}\n`;
-    message += `Total Bayar: Rp ${totalBill.toLocaleString()}\n\n`;
-    message += `*Pembayaran:*\n`;
-    message += `Metode: ${paymentLabels[selectedPayment]}\n\n`;
-    message += `Mohon dibantu proses pesanannya.`;
+      let message = `Halo Admin MarPay, saya ingin konfirmasi pesanan.\n\n`;
 
-    if (localStorage.getItem('marpay_checkout_temp')) {
+      if (isDigital) {
+        const digitalDetails = items[0].details;
+        message += `*Detail Pesanan Digital:*\n`;
+        message += `Produk: ${items[0].name}\n`;
+        message += `Nomor Tujuan: ${digitalDetails?.target}\n`;
+        message += `Operator: ${digitalDetails?.operator}\n`;
+        message += `Nominal: ${digitalDetails?.nominal}\n\n`;
+      } else if (address) {
+        const productList = items.map(item => {
+          const itemShipping = (item.shippingFee || 0) > 0 
+            ? item.shippingFee + (Math.max(0, item.quantity - 1) * 5000) 
+            : 0;
+          const shippingStr = itemShipping > 0 ? `Rp ${itemShipping.toLocaleString()}` : 'Gratis';
+          return `- ${item.name} (Varian: ${item.variant || 'Default'}) x ${item.quantity} (Ongkir: ${shippingStr})`;
+        }).join('\n');
+
+        message += `*Data Penerima:*\n`;
+        message += `Nama: ${address.name}\n`;
+        message += `Nomor WhatsApp: ${address.phone}\n`;
+        message += `Alamat: ${address.fullAddress}, ${address.district}, ${address.city}, ${address.province} ${address.notes ? `(${address.notes})` : ''}\n\n`;
+        message += `*Detail Pesanan:*\n${productList}\n\n`;
+      }
+
+      message += `*Ringkasan Tagihan:*\n`;
+      message += `Total Produk: Rp ${totalItemsPrice.toLocaleString()}\n`;
+      message += `Total Ongkir: Rp ${totalShipping.toLocaleString()}\n`;
+      message += `Total Bayar: Rp ${totalBill.toLocaleString()}\n\n`;
+      message += `*Pembayaran:*\n`;
+      message += `Metode: ${paymentLabels[selectedPayment]}\n\n`;
+      message += `Mohon dibantu proses pesanannya.`;
+
+      // 3. Bersihkan data temp
       localStorage.removeItem('marpay_checkout_temp');
-    }
+      
+      const encodedMessage = encodeURIComponent(message);
+      const whatsappUrl = `https://wa.me/${adminWhatsApp}?text=${encodedMessage}`;
+      window.open(whatsappUrl, '_blank');
+      
+      // Arahkan ke halaman riwayat setelah checkout
+      router.push('/akun/transaksi');
 
-    const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/${adminWhatsApp}?text=${encodedMessage}`;
-    window.open(whatsappUrl, '_blank');
+    } catch (e) {
+      console.error("Checkout Error:", e);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const renderProductImage = (item: any) => {
@@ -283,7 +322,6 @@ export default function Checkout() {
           </div>
           <div className="space-y-3.5">
             {items.map((item, idx) => {
-              // Hitung ongkir per item dengan logika revisi
               const itemShipping = (item.shippingFee || 0) > 0 
                 ? item.shippingFee + (Math.max(0, item.quantity - 1) * 5000) 
                 : 0;
@@ -392,8 +430,13 @@ export default function Checkout() {
           <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest leading-none mb-1">Total Pembayaran</p>
           <p className="text-base font-black text-primary leading-none">Rp {totalBill.toLocaleString()}</p>
         </div>
-        <Button onClick={handleWhatsAppCheckout} className="bg-primary text-white font-bold h-11 px-6 rounded-xl flex items-center gap-2 shadow-lg shadow-primary/20 active:scale-95 transition-transform">
-          <MessageCircle className="w-4 h-4" /> Bayar Sekarang
+        <Button 
+          onClick={handleWhatsAppCheckout} 
+          disabled={isSubmitting}
+          className="bg-primary text-white font-bold h-11 px-6 rounded-xl flex items-center gap-2 shadow-lg shadow-primary/20 active:scale-95 transition-transform"
+        >
+          {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <MessageCircle className="w-4 h-4" />}
+          Bayar Sekarang
         </Button>
       </div>
     </div>
