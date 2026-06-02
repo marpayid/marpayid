@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { ArrowLeft, X, Search, Clock, TrendingUp, ChevronRight, Sparkles } from 'lucide-react';
+import { ArrowLeft, X, Search, Clock, TrendingUp, ChevronRight } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Products, Categories } from '@/app/lib/dummy-data';
@@ -9,6 +9,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { getProductImage } from '@/lib/utils';
 import * as LucideIcons from 'lucide-react';
+import { ProductCard } from '@/components/product-grid';
 
 interface SearchOverlayProps {
   isOpen: boolean;
@@ -19,7 +20,6 @@ const POPULAR_SEARCHES = [
   "DANA", "OVO", "GoPay", "Pulsa Telkomsel", "Token PLN", "Netflix Premium", "Canva Pro"
 ];
 
-// Mapping Kategori ke Kata Kunci (Sinonim & Keyword Umum)
 const CATEGORY_KEYWORDS_MAP: Record<string, string[]> = {
   'Fashion': ['kaos', 'baju', 'kemeja', 'hoodie', 'pakaian', 'fashion', 't-shirt', 'distro'],
   'Kecantikan': ['skincare', 'serum', 'facial wash', 'sabun wajah', 'kecantikan', 'makeup', 'bioaqua', 'perawatan'],
@@ -28,7 +28,6 @@ const CATEGORY_KEYWORDS_MAP: Record<string, string[]> = {
   'Premium': ['premium', 'netflix', 'spotify', 'canva', 'chatgpt', 'youtube premium', 'akun premium'],
 };
 
-// Map Sugesti Berdasarkan Awalan Kata
 const SUGGESTIONS_MAP: Record<string, string[]> = {
   'ka': ['kaos', 'kamera', 'kartu perdana'],
   'ke': ['kemeja', 'kecantikan', 'kesehatan'],
@@ -48,7 +47,6 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Load recent searches
   useEffect(() => {
     const saved = localStorage.getItem('marpay_recent_searches');
     if (saved) {
@@ -56,7 +54,6 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
     }
   }, [isOpen]);
 
-  // Focus input
   useEffect(() => {
     if (isOpen) {
       setTimeout(() => inputRef.current?.focus(), 100);
@@ -86,12 +83,10 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
     localStorage.removeItem('marpay_recent_searches');
   };
 
-  // Logic Pencarian Terintegrasi Profesional
   const results = useMemo(() => {
     const q = query.toLowerCase().trim();
     if (!q) return { suggestions: [], categories: [], products: [] };
 
-    // 1. Get Dynamic Suggestions
     let suggestions: string[] = [];
     Object.keys(SUGGESTIONS_MAP).forEach(key => {
       if (q.startsWith(key)) {
@@ -99,7 +94,6 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
       }
     });
     
-    // Add suggestions from product and category names
     const productSuggestions = Products
       .filter(p => p.name.toLowerCase().includes(q))
       .map(p => p.name.split(' ').slice(0, 2).join(' '))
@@ -109,7 +103,6 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
       .filter(s => s.toLowerCase() !== q) 
       .slice(0, 6);
 
-    // 2. Identify Relevant Categories by Keywords
     const matchedCategoryNames: string[] = [];
     Object.entries(CATEGORY_KEYWORDS_MAP).forEach(([catName, keywords]) => {
       if (catName.toLowerCase().includes(q) || keywords.some(k => k.includes(q) || q.includes(k))) {
@@ -119,13 +112,8 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
 
     const matchedCategories = Categories.filter(cat => matchedCategoryNames.includes(cat.name));
 
-    // 3. Match Products (Priority: Exact Name > Category Keyword Match > Tag/Desc)
     const productsByName = Products.filter(p => p.name.toLowerCase().includes(q));
-    
-    // If query matches a category keyword, include all items from that category
     const productsByCategory = Products.filter(p => matchedCategoryNames.includes(p.category || ''));
-
-    // Merge and deduplicate
     const allMatchedProducts = Array.from(new Set([...productsByName, ...productsByCategory]));
 
     return { 
@@ -139,7 +127,6 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
 
   return (
     <div className="fixed inset-0 z-[1000] bg-white flex flex-col animate-in slide-in-from-bottom-2 duration-300">
-      {/* Header */}
       <header className="px-4 py-3 border-b border-gray-100 flex items-center gap-2 sticky top-0 bg-white z-10">
         <Button variant="ghost" size="icon" onClick={onClose} className="shrink-0 -ml-2">
           <ArrowLeft className="w-5 h-5 text-gray-800" />
@@ -176,10 +163,9 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
         </div>
       </header>
 
-      <main className="flex-1 overflow-y-auto bg-white">
+      <main className="flex-1 overflow-y-auto bg-gray-50/30">
         {!query ? (
-          <div className="p-4 space-y-8">
-            {/* Recent Searches */}
+          <div className="p-4 space-y-8 bg-white">
             {recentSearches.length > 0 && (
               <section>
                 <div className="flex items-center justify-between mb-3">
@@ -201,7 +187,6 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
               </section>
             )}
 
-            {/* Popular Searches */}
             <section>
               <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Pencarian Populer</h3>
               <div className="grid grid-cols-2 gap-2">
@@ -221,103 +206,117 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
             </section>
           </div>
         ) : (
-          <div className="pb-10">
-            {/* 1. Saran Pencarian (Search Suggestions) */}
-            {showSuggestions && results.suggestions.length > 0 && (
-              <section className="border-b border-gray-50 pb-2">
-                <div className="px-4 py-2 mt-2">
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Saran Pencarian</p>
-                </div>
-                {results.suggestions.map((s, i) => (
-                  <button 
-                    key={i} 
-                    onClick={() => handleExecuteSearch(s)}
-                    className="w-full flex items-center gap-3 px-4 py-3 active:bg-gray-50 transition-colors"
-                  >
-                    <Search className="w-3.5 h-3.5 text-gray-300" />
-                    <span className="text-sm text-gray-700">{s}</span>
-                  </button>
-                ))}
-              </section>
-            )}
-
-            {/* 2. Kategori Terkait (Related Categories) */}
-            {results.categories.length > 0 && (
-              <section className="p-4 border-b border-gray-50">
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Kategori Terkait</p>
-                <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
-                  {results.categories.map((cat) => {
-                    const LucideIcon = (LucideIcons as any)[cat.icon];
-                    const catPath = cat.name === 'Top Up' ? '/kategori/top-up' : 
-                                   cat.name === 'E-Wallet' ? '/kategori/top-up/e-wallet' :
-                                   cat.name === 'Premium' ? '/kategori/premium' :
-                                   `/kategori/${cat.name.toLowerCase()}`;
-
-                    return (
-                      <Link 
-                        key={cat.id} 
-                        href={catPath}
-                        onClick={() => { saveSearch(query); onClose(); }}
-                        className="flex items-center gap-2.5 px-4 py-2.5 bg-white border border-gray-100 rounded-xl shadow-sm hover:border-primary/30 active:scale-95 transition-all shrink-0"
+          <div className="pb-20">
+            {/* MODE 1: SEDANG MENGETIK (SUGGESTIONS) */}
+            {showSuggestions ? (
+              <div className="bg-white">
+                {results.suggestions.length > 0 && (
+                  <section className="border-b border-gray-50 pb-2">
+                    <div className="px-4 py-3">
+                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Saran Pencarian</p>
+                    </div>
+                    {results.suggestions.map((s, i) => (
+                      <button 
+                        key={i} 
+                        onClick={() => handleExecuteSearch(s)}
+                        className="w-full flex items-center gap-3 px-4 py-3 active:bg-gray-50 transition-colors"
                       >
-                        <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
-                          {LucideIcon && <LucideIcon className="w-4 h-4" />}
-                        </div>
-                        <span className="text-xs font-bold text-gray-700">{cat.name}</span>
-                      </Link>
-                    );
-                  })}
-                </div>
-              </section>
-            )}
+                        <Search className="w-3.5 h-3.5 text-gray-300" />
+                        <span className="text-sm text-gray-700">{s}</span>
+                      </button>
+                    ))}
+                  </section>
+                )}
 
-            {/* 3. Hasil Produk (Products) */}
-            <section className="p-4 space-y-4">
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Hasil Produk</p>
-              {results.products.length > 0 ? (
-                <div className="space-y-3">
-                  {results.products.map((product) => (
-                    <Link 
-                      key={product.id} 
-                      href={`/product/${product.id}`}
-                      onClick={() => { saveSearch(query); onClose(); }}
-                      className="flex items-center gap-4 p-2 active:bg-gray-50 rounded-2xl transition-colors group"
-                    >
-                      <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-gray-50 border border-gray-50 flex-shrink-0">
-                        <Image 
-                          src={getProductImage(product)} 
-                          alt={product.name} 
-                          fill 
-                          className="object-cover"
-                        />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h4 className="text-xs font-bold text-gray-800 line-clamp-2 group-hover:text-primary transition-colors leading-snug">
-                          {product.name}
-                        </h4>
-                        <div className="flex items-center gap-2 mt-1">
-                          <span className="text-[9px] font-bold px-1.5 py-0.5 bg-gray-100 text-gray-500 rounded uppercase">
-                            {product.category}
-                          </span>
-                        </div>
-                        <p className="text-sm font-black text-primary mt-1.5">Rp {product.price.toLocaleString()}</p>
-                      </div>
-                      <ChevronRight className="w-4 h-4 text-gray-200 group-hover:text-primary transition-colors" />
-                    </Link>
-                  ))}
-                </div>
-              ) : (
-                <div className="flex flex-col items-center justify-center py-20 text-center space-y-3 opacity-60">
-                  <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center text-gray-300">
-                    <Search className="w-10 h-10" />
+                {results.categories.length > 0 && (
+                  <section className="p-4 border-b border-gray-50">
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Kategori Terkait</p>
+                    <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+                      {results.categories.map((cat) => {
+                        const LucideIcon = (LucideIcons as any)[cat.icon];
+                        const catPath = cat.name === 'Top Up' ? '/kategori/top-up' : 
+                                       cat.name === 'E-Wallet' ? '/kategori/top-up/e-wallet' :
+                                       cat.name === 'Premium' ? '/kategori/premium' :
+                                       `/kategori/${cat.name.toLowerCase()}`;
+
+                        return (
+                          <Link 
+                            key={cat.id} 
+                            href={catPath}
+                            onClick={() => { saveSearch(query); onClose(); }}
+                            className="flex items-center gap-2.5 px-4 py-2.5 bg-white border border-gray-100 rounded-xl shadow-sm hover:border-primary/30 active:scale-95 transition-all shrink-0"
+                          >
+                            <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                              {LucideIcon && <LucideIcon className="w-4 h-4" />}
+                            </div>
+                            <span className="text-xs font-bold text-gray-700">{cat.name}</span>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  </section>
+                )}
+              </div>
+            ) : (
+              /* MODE 2: HASIL PENCARIAN (GRID) */
+              <div className="space-y-3">
+                {results.categories.length > 0 && (
+                  <section className="p-4 bg-white border-b border-gray-100">
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Kategori Terkait</p>
+                    <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+                      {results.categories.map((cat) => {
+                        const LucideIcon = (LucideIcons as any)[cat.icon];
+                        const catPath = cat.name === 'Top Up' ? '/kategori/top-up' : 
+                                       cat.name === 'E-Wallet' ? '/kategori/top-up/e-wallet' :
+                                       cat.name === 'Premium' ? '/kategori/premium' :
+                                       `/kategori/${cat.name.toLowerCase()}`;
+
+                        return (
+                          <Link 
+                            key={cat.id} 
+                            href={catPath}
+                            onClick={() => { saveSearch(query); onClose(); }}
+                            className="flex items-center gap-2.5 px-4 py-2.5 bg-white border border-gray-100 rounded-xl shadow-sm hover:border-primary/30 active:scale-95 transition-all shrink-0"
+                          >
+                            <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                              {LucideIcon && <LucideIcon className="w-4 h-4" />}
+                            </div>
+                            <span className="text-xs font-bold text-gray-700">{cat.name}</span>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  </section>
+                )}
+
+                <section className="px-4 py-4">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">
+                      Hasil Pencarian "{query}"
+                    </h3>
+                    <span className="text-[10px] font-bold text-gray-400">{results.products.length} Produk</span>
                   </div>
-                  <div className="space-y-1">
-                    <h3 className="text-sm font-bold text-gray-900">Produk tidak ditemukan</h3>
-                    <p className="text-[10px] text-gray-400 max-w-[220px]">Maaf, kami tidak dapat menemukan produk yang sesuai dengan kata kunci Anda.</p>
-                  </div>
-                </div>
-              )}
-            </section>
+
+                  {results.products.length > 0 ? (
+                    <div className="grid grid-cols-2 gap-3">
+                      {results.products.map((product) => (
+                        <ProductCard key={product.id} product={product} />
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center py-20 text-center space-y-3 bg-white rounded-3xl border border-gray-100 p-6">
+                      <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center text-gray-300">
+                        <Search className="w-10 h-10" />
+                      </div>
+                      <div className="space-y-1">
+                        <h3 className="text-sm font-bold text-gray-900">Produk tidak ditemukan</h3>
+                        <p className="text-[10px] text-gray-400 max-w-[220px]">Maaf, kami tidak dapat menemukan produk yang sesuai dengan kata kunci "{query}".</p>
+                      </div>
+                    </div>
+                  )}
+                </section>
+              </div>
+            )}
           </div>
         )}
       </main>
