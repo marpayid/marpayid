@@ -8,7 +8,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 
-// Operator Data
 const OPERATORS = [
   {
     name: 'TELKOMSEL',
@@ -104,14 +103,13 @@ export default function PulsaPage() {
       }
     };
 
-    localStorage.setItem('marpay_cart', JSON.stringify([digitalItem]));
-    window.dispatchEvent(new Event('cart-updated'));
+    // LOGIC: Save to temp storage for Direct Buy, do NOT add to cart
+    localStorage.setItem('marpay_checkout_temp', JSON.stringify([digitalItem]));
     router.push('/checkout');
   };
 
   return (
     <div className="min-h-screen bg-gray-50 pb-32">
-      {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white px-4 py-4 border-b border-gray-100 flex items-center gap-4">
         <Button variant="ghost" size="icon" onClick={() => router.back()}>
           <ArrowLeft className="w-5 h-5" />
@@ -120,7 +118,6 @@ export default function PulsaPage() {
       </header>
 
       <main className="pt-20 px-4">
-        {/* Phone Number Input Section */}
         <section className="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm mb-4">
           <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-2 block">Nomor Telepon</label>
           <div className="relative">
@@ -139,40 +136,30 @@ export default function PulsaPage() {
                 detectedOperator === 'not_found' ? "bg-red-50 text-red-500" :
                 "bg-gray-50 text-gray-300"
               )}>
-                {isSearching ? (
-                  <Search className="w-5 h-5" />
-                ) : detectedOperator === 'not_found' ? (
-                  <AlertCircle className="w-5 h-5" />
-                ) : (
-                  <Signal className="w-5 h-5" />
-                )}
+                {isSearching ? <Search className="w-5 h-5" /> : detectedOperator === 'not_found' ? <AlertCircle className="w-5 h-5" /> : <Signal className="w-5 h-5" />}
               </div>
             </div>
           </div>
-          
           {detectedOperator === 'not_found' && (
-            <div className="mt-3 flex items-center gap-2 text-red-500 bg-red-50 p-2.5 rounded-xl border border-red-100 animate-in fade-in slide-in-from-top-1">
+            <div className="mt-3 flex items-center gap-2 text-red-500 bg-red-50 p-2.5 rounded-xl border border-red-100">
               <AlertCircle className="w-4 h-4 shrink-0" />
               <span className="text-[10px] font-bold">Operator tidak dikenali</span>
             </div>
           )}
-          
           {detectedOperator && detectedOperator !== 'not_found' && (
-            <div className="mt-3 flex items-center gap-2 text-primary bg-primary/5 p-2.5 rounded-xl border border-primary/10 animate-in fade-in slide-in-from-top-1">
+            <div className="mt-3 flex items-center gap-2 text-primary bg-primary/5 p-2.5 rounded-xl border border-primary/10">
               <CheckCircle2 className="w-4 h-4 shrink-0" />
               <span className="text-[10px] font-bold">Operator Terdeteksi: <span className="uppercase">{detectedOperator.name}</span></span>
             </div>
           )}
         </section>
 
-        {/* Product Selection Section */}
         {detectedOperator && detectedOperator !== 'not_found' ? (
           <div className="space-y-4">
             <div className="flex items-center gap-2 px-1">
               <div className="w-1 h-4 bg-primary rounded-full"></div>
               <h2 className="text-sm font-bold text-gray-800">Pilih Nominal</h2>
             </div>
-            
             <div className="grid grid-cols-2 gap-3">
               {detectedOperator.products.map((product: any) => (
                 <button
@@ -180,16 +167,9 @@ export default function PulsaPage() {
                   onClick={() => setSelectedProduct(product)}
                   className={cn(
                     "bg-white p-4 rounded-2xl border text-left transition-all relative overflow-hidden group",
-                    selectedProduct?.nominal === product.nominal 
-                      ? "border-primary bg-primary/5 ring-1 ring-primary/20 shadow-md shadow-primary/5" 
-                      : "border-gray-100 active:bg-gray-50 active:scale-95"
+                    selectedProduct?.nominal === product.nominal ? "border-primary bg-primary/5 ring-1 ring-primary/20 shadow-md" : "border-gray-100 active:bg-gray-50"
                   )}
                 >
-                  {selectedProduct?.nominal === product.nominal && (
-                    <div className="absolute top-0 right-0 p-1 bg-primary text-white rounded-bl-xl">
-                      <CheckCircle2 className="w-3.5 h-3.5" />
-                    </div>
-                  )}
                   <p className="text-[10px] font-bold text-gray-400 mb-1">PULSA</p>
                   <p className="text-base font-black text-gray-800 tracking-tight">{product.nominal}</p>
                   <p className="text-xs font-bold text-primary mt-2">Rp {product.price.toLocaleString()}</p>
@@ -205,29 +185,15 @@ export default function PulsaPage() {
              <p className="text-sm font-medium text-gray-500 max-w-[200px]">Masukkan nomor telepon untuk melihat pilihan pulsa.</p>
           </div>
         )}
-
-        {/* Info Card */}
-        <div className="mt-8 bg-blue-50/50 p-4 rounded-2xl border border-blue-100 flex gap-3">
-          <Info className="w-5 h-5 text-blue-500 shrink-0" />
-          <p className="text-[10px] text-blue-700 leading-relaxed font-medium">
-            Pulsa akan langsung terkirim secara otomatis setelah pembayaran dikonfirmasi oleh admin. Pastikan nomor yang Anda masukkan sudah benar.
-          </p>
-        </div>
       </main>
 
-      {/* Sticky Bottom Summary */}
       {selectedProduct && (
-        <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-100 flex items-center justify-between z-50 shadow-[0_-10px_20px_rgba(0,0,0,0.05)] animate-in slide-in-from-bottom-full duration-300">
+        <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-100 flex items-center justify-between z-50 shadow-[0_-10px_20px_rgba(0,0,0,0.05)]">
           <div className="flex flex-col">
             <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Total Pembayaran</p>
             <p className="text-lg font-bold text-primary leading-tight">Rp {selectedProduct.price.toLocaleString()}</p>
           </div>
-          <Button 
-            onClick={handleCheckout}
-            className="w-1/2 bg-primary text-white font-bold h-12 rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
-          >
-            Lanjut Bayar
-          </Button>
+          <Button onClick={handleCheckout} className="w-1/2 bg-primary text-white font-bold h-12 rounded-xl shadow-lg shadow-primary/20">Lanjut Bayar</Button>
         </div>
       )}
     </div>

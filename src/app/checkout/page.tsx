@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -36,7 +37,6 @@ interface AddressData {
 export default function Checkout() {
   const router = useRouter();
   
-  // State for checkout data
   const [items, setItems] = useState<any[]>([]);
   const [address, setAddress] = useState<AddressData | null>(null);
   const [tempAddress, setTempAddress] = useState<AddressData>({
@@ -48,17 +48,26 @@ export default function Checkout() {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    // Load items from cart
-    const savedCart = localStorage.getItem('marpay_cart');
-    if (savedCart) {
+    // LOGIC: Check for direct buy (Beli Sekarang) item first
+    const tempItem = localStorage.getItem('marpay_checkout_temp');
+    if (tempItem) {
       try {
-        setItems(JSON.parse(savedCart));
+        setItems(JSON.parse(tempItem));
       } catch (e) {
-        console.error("Failed to parse cart");
+        console.error("Failed to parse temp checkout item");
+      }
+    } else {
+      // Load from cart if no direct buy
+      const savedCart = localStorage.getItem('marpay_cart');
+      if (savedCart) {
+        try {
+          setItems(JSON.parse(savedCart));
+        } catch (e) {
+          console.error("Failed to parse cart");
+        }
       }
     }
 
-    // Load saved address from localStorage
     const savedAddress = localStorage.getItem('marpay_address');
     if (savedAddress) {
       try {
@@ -74,16 +83,13 @@ export default function Checkout() {
 
   const totalItemsPrice = items.reduce((acc, curr) => acc + (curr.price * curr.quantity), 0);
   
-  // Calculate shipping fee based on product rules
   const totalShipping = items.reduce((acc, item) => {
     if (item.id === 3) return Math.max(acc, 12000);
     if (item.id === 4) return Math.max(acc, 9000);
     return acc;
   }, 0);
 
-  const discount = 0; 
-  const totalBill = totalItemsPrice + totalShipping - discount;
-
+  const totalBill = totalItemsPrice + totalShipping;
   const isDigital = items.length > 0 && items.every(item => item.type === 'digital');
 
   const saveAddress = () => {
@@ -137,24 +143,24 @@ export default function Checkout() {
     message += `Total Bayar: Rp ${totalBill.toLocaleString()}\n\n`;
     message += `Mohon dibantu proses pesanannya.`;
 
+    // LOGIC: Clear appropriate storage after purchase
+    if (localStorage.getItem('marpay_checkout_temp')) {
+      localStorage.removeItem('marpay_checkout_temp');
+    } else {
+      localStorage.removeItem('marpay_cart');
+      window.dispatchEvent(new Event('cart-updated'));
+    }
+
     const encodedMessage = encodeURIComponent(message);
     const whatsappUrl = `https://wa.me/${adminWhatsApp}?text=${encodedMessage}`;
     window.open(whatsappUrl, '_blank');
   };
 
   const renderProductImage = (item: any) => {
-    if (item.image === '/pulsa-icon.png') {
-      return <Smartphone className="w-8 h-8 text-primary" />;
-    }
-    if (item.image === '/pln-icon.png') {
-      return <Zap className="w-8 h-8 text-primary" />;
-    }
-    if (item.image === '/e-wallet-icon.png') {
-      return <Wallet className="w-8 h-8 text-primary" />;
-    }
-    if (item.image) {
-      return <Image src={item.image} alt={item.name} fill className="object-cover" />;
-    }
+    if (item.image === '/pulsa-icon.png') return <Smartphone className="w-8 h-8 text-primary" />;
+    if (item.image === '/pln-icon.png') return <Zap className="w-8 h-8 text-primary" />;
+    if (item.image === '/e-wallet-icon.png') return <Wallet className="w-8 h-8 text-primary" />;
+    if (item.image) return <Image src={item.image} alt={item.name} fill className="object-cover" />;
     return <Smartphone className="w-8 h-8 text-primary/40" />;
   };
 
@@ -182,7 +188,6 @@ export default function Checkout() {
       </header>
 
       <main className="pt-20 px-4 space-y-4">
-        {/* Address Section - Hidden for digital items */}
         {!isDigital && (
           <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm space-y-3">
             <div className="flex items-center justify-between">
@@ -223,49 +228,20 @@ export default function Checkout() {
                     <div className="grid grid-cols-2 gap-3">
                       <div className="space-y-1.5">
                         <Label className="text-xs font-bold text-gray-700">Provinsi</Label>
-                        <Input 
-                          placeholder="Provinsi" 
-                          value={tempAddress.province}
-                          onChange={(e) => setTempAddress({...tempAddress, province: e.target.value})}
-                          className="rounded-xl border-gray-200"
-                        />
+                        <Input placeholder="Provinsi" value={tempAddress.province} onChange={(e) => setTempAddress({...tempAddress, province: e.target.value})} className="rounded-xl border-gray-200" />
                       </div>
                       <div className="space-y-1.5">
                         <Label className="text-xs font-bold text-gray-700">Kota/Kabupaten</Label>
-                        <Input 
-                          placeholder="Kota/Kab" 
-                          value={tempAddress.city}
-                          onChange={(e) => setTempAddress({...tempAddress, city: e.target.value})}
-                          className="rounded-xl border-gray-200"
-                        />
+                        <Input placeholder="Kota/Kab" value={tempAddress.city} onChange={(e) => setTempAddress({...tempAddress, city: e.target.value})} className="rounded-xl border-gray-200" />
                       </div>
                     </div>
                     <div className="space-y-1.5">
                       <Label className="text-xs font-bold text-gray-700">Kecamatan</Label>
-                      <Input 
-                        placeholder="Kecamatan" 
-                        value={tempAddress.district}
-                        onChange={(e) => setTempAddress({...tempAddress, district: e.target.value})}
-                        className="rounded-xl border-gray-200"
-                      />
+                      <Input placeholder="Kecamatan" value={tempAddress.district} onChange={(e) => setTempAddress({...tempAddress, district: e.target.value})} className="rounded-xl border-gray-200" />
                     </div>
                     <div className="space-y-1.5">
                       <Label className="text-xs font-bold text-gray-700">Alamat Lengkap</Label>
-                      <Textarea 
-                        placeholder="Nama jalan, nomor rumah, RT/RW, kelurahan" 
-                        value={tempAddress.fullAddress}
-                        onChange={(e) => setTempAddress({...tempAddress, fullAddress: e.target.value})}
-                        className="rounded-xl border-gray-200 min-h-[100px]"
-                      />
-                    </div>
-                    <div className="space-y-1.5">
-                      <Label className="text-xs font-bold text-gray-700">Catatan (Opsional)</Label>
-                      <Input 
-                        placeholder="Warna pagar, patokan, dll" 
-                        value={tempAddress.notes}
-                        onChange={(e) => setTempAddress({...tempAddress, notes: e.target.value})}
-                        className="rounded-xl border-gray-200"
-                      />
+                      <Textarea placeholder="Nama jalan, nomor rumah, RT/RW, kelurahan" value={tempAddress.fullAddress} onChange={(e) => setTempAddress({...tempAddress, fullAddress: e.target.value})} className="rounded-xl border-gray-200 min-h-[100px]" />
                     </div>
                     {error && (
                       <div className="flex items-center gap-2 text-red-500 bg-red-50 p-3 rounded-xl border border-red-100">
@@ -275,41 +251,27 @@ export default function Checkout() {
                     )}
                   </div>
                   <DialogFooter>
-                    <Button onClick={saveAddress} className="w-full bg-primary text-white font-bold h-12 rounded-xl shadow-lg shadow-primary/20">
-                      Simpan Alamat
-                    </Button>
+                    <Button onClick={saveAddress} className="w-full bg-primary text-white font-bold h-12 rounded-xl shadow-lg shadow-primary/20">Simpan Alamat</Button>
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
             </div>
-
             {address ? (
               <div className="space-y-0.5 border-t border-gray-50 pt-2">
                 <p className="text-sm font-bold text-gray-900">{address.name} <span className="text-gray-400 font-normal ml-1">({address.phone})</span></p>
                 <p className="text-xs text-gray-600 leading-relaxed">{address.fullAddress}, {address.district}, {address.city}, {address.province}</p>
-                {address.notes && <p className="text-[10px] text-primary font-medium mt-1 bg-primary/5 inline-block px-2 py-0.5 rounded">Catatan: {address.notes}</p>}
               </div>
             ) : (
               <div className="border-t border-gray-50 pt-3 text-center py-4 bg-gray-50/50 rounded-xl border border-dashed border-gray-200">
                 <p className="text-xs text-gray-400 font-medium">Belum ada alamat pengiriman</p>
-                <Button 
-                  variant="link" 
-                  onClick={() => setIsAddressModalOpen(true)}
-                  className="text-primary font-bold text-xs"
-                >
-                  + Tambah Alamat
-                </Button>
+                <Button variant="link" onClick={() => setIsAddressModalOpen(true)} className="text-primary font-bold text-xs">+ Tambah Alamat</Button>
               </div>
             )}
           </div>
         )}
 
-        {/* Product Items */}
         <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm space-y-4">
           <div className="flex items-center gap-2 mb-2">
-            <div className="w-5 h-5 bg-primary/10 rounded flex items-center justify-center">
-               <span className="text-[10px] font-bold text-primary">{isDigital ? 'D' : 'M'}</span>
-            </div>
             <span className="text-sm font-bold">{isDigital ? 'Detail Pesanan' : 'Daftar Barang'}</span>
           </div>
           {items.map((item, idx) => (
@@ -323,132 +285,51 @@ export default function Checkout() {
                   <p className="text-xs font-bold text-primary">Rp {item.price.toLocaleString()}</p>
                   <p className="text-[10px] text-muted-foreground">x{item.quantity}</p>
                 </div>
-                {item.variant && <p className="text-[10px] text-gray-400 mt-0.5">{isDigital ? `Tujuan: ${item.variant}` : `Varian: ${item.variant}`}</p>}
               </div>
             </div>
           ))}
-          {!isDigital && (
-            <div className="border-t border-gray-100 pt-3 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Truck className="w-4 h-4 text-green-500" />
-                <span className="text-xs text-gray-600">Pengiriman</span>
-              </div>
-              <span className={cn("text-xs font-bold", totalShipping === 0 ? "text-green-600" : "text-gray-900")}>
-                {totalShipping === 0 ? "Reguler (Gratis)" : `Reguler (Rp ${totalShipping.toLocaleString()})`}
-              </span>
-            </div>
-          )}
         </div>
 
-        {/* Payment Methods */}
         <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm space-y-4">
           <div className="flex items-center gap-2 mb-1">
             <CreditCard className="w-5 h-5 text-blue-500" />
             <h3 className="text-sm font-bold">Metode Pembayaran</h3>
           </div>
           <RadioGroup value={selectedPayment} onValueChange={setSelectedPayment} className="grid grid-cols-1 gap-2">
-            <div 
-              className={cn(
-                "flex items-center justify-between p-3 rounded-xl border transition-all cursor-pointer",
-                selectedPayment === 'bank_transfer' ? "border-primary bg-primary/5" : "border-gray-100"
-              )}
-              onClick={() => setSelectedPayment('bank_transfer')}
-            >
+            <div className={cn("flex items-center justify-between p-3 rounded-xl border cursor-pointer", selectedPayment === 'bank_transfer' ? "border-primary bg-primary/5" : "border-gray-100")} onClick={() => setSelectedPayment('bank_transfer')}>
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-500">
-                  <Banknote className="w-5 h-5" />
-                </div>
-                <div>
-                  <p className="text-xs font-bold">Bank Transfer</p>
-                  <p className="text-[10px] text-gray-400">Manual Confirmation</p>
-                </div>
+                <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-500"><Banknote className="w-5 h-5" /></div>
+                <div><p className="text-xs font-bold">Bank Transfer</p></div>
               </div>
               <RadioGroupItem value="bank_transfer" id="bank_transfer" className="sr-only" />
               {selectedPayment === 'bank_transfer' && <div className="w-2 h-2 rounded-full bg-primary" />}
             </div>
-
-            <div 
-              className={cn(
-                "flex items-center justify-between p-3 rounded-xl border transition-all cursor-pointer",
-                selectedPayment === 'e_wallet' ? "border-primary bg-primary/5" : "border-gray-100"
-              )}
-              onClick={() => setSelectedPayment('e_wallet')}
-            >
+            <div className={cn("flex items-center justify-between p-3 rounded-xl border cursor-pointer", selectedPayment === 'qris' ? "border-primary bg-primary/5" : "border-gray-100")} onClick={() => setSelectedPayment('qris')}>
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center text-purple-500">
-                  <Smartphone className="w-5 h-5" />
-                </div>
-                <div>
-                  <p className="text-xs font-bold">E-Wallet</p>
-                  <p className="text-[10px] text-gray-400">OVO / DANA / GoPay</p>
-                </div>
-              </div>
-              <RadioGroupItem value="e_wallet" id="e_wallet" className="sr-only" />
-              {selectedPayment === 'e_wallet' && <div className="w-2 h-2 rounded-full bg-primary" />}
-            </div>
-
-            <div 
-              className={cn(
-                "flex items-center justify-between p-3 rounded-xl border transition-all cursor-pointer",
-                selectedPayment === 'qris' ? "border-primary bg-primary/5" : "border-gray-100"
-              )}
-              onClick={() => setSelectedPayment('qris')}
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center text-orange-500">
-                  <QrCode className="w-5 h-5" />
-                </div>
-                <div>
-                  <p className="text-xs font-bold">QRIS</p>
-                  <p className="text-[10px] text-gray-400">Scan & Pay Instantly</p>
-                </div>
+                <div className="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center text-orange-500"><QrCode className="w-5 h-5" /></div>
+                <div><p className="text-xs font-bold">QRIS</p></div>
               </div>
               <RadioGroupItem value="qris" id="qris" className="sr-only" />
               {selectedPayment === 'qris' && <div className="w-2 h-2 rounded-full bg-primary" />}
             </div>
           </RadioGroup>
-
-          <div className="bg-blue-50 p-3 rounded-xl border border-blue-100 flex gap-3">
-            <MessageCircle className="w-5 h-5 text-blue-500 shrink-0" />
-            <p className="text-[10px] text-blue-700 leading-relaxed">
-              Silakan lakukan pembayaran sesuai metode yang dipilih. Setelah itu konfirmasi pesanan melalui WhatsApp admin MarPay untuk proses pengiriman.
-            </p>
-          </div>
         </div>
 
-        {/* Price Summary */}
         <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm space-y-2">
-          <h3 className="text-sm font-bold mb-2">Ringkasan Belanja</h3>
-          <div className="flex justify-between text-xs text-gray-600">
-            <span>Total Harga ({items.length} Barang)</span>
-            <span>Rp {totalItemsPrice.toLocaleString()}</span>
-          </div>
-          {!isDigital && (
-            <div className="flex justify-between text-xs text-gray-600">
-              <span>Biaya Pengiriman</span>
-              <span className={cn(totalShipping === 0 ? "text-green-600 font-bold" : "text-gray-900 font-medium")}>
-                {totalShipping === 0 ? "Gratis" : `Rp ${totalShipping.toLocaleString()}`}
-              </span>
-            </div>
-          )}
-          <div className="border-t border-gray-50 pt-3 mt-2 flex justify-between font-bold">
+          <div className="flex justify-between font-bold">
             <span className="text-sm">Total Tagihan</span>
             <span className="text-lg text-primary">Rp {totalBill.toLocaleString()}</span>
           </div>
         </div>
       </main>
 
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-100 flex items-center justify-between z-[100] shadow-[0_-10px_20px_rgba(0,0,0,0.03)]">
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-100 flex items-center justify-between z-[100]">
         <div className="flex flex-col">
           <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Total Pembayaran</p>
           <p className="text-lg font-bold text-primary leading-tight">Rp {totalBill.toLocaleString()}</p>
         </div>
-        <Button 
-          onClick={handleWhatsAppCheckout}
-          className="w-1/2 bg-primary text-white font-bold h-12 rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center gap-2"
-        >
-          <MessageCircle className="w-5 h-5" />
-          Bayar Sekarang
+        <Button onClick={handleWhatsAppCheckout} className="w-1/2 bg-primary text-white font-bold h-12 rounded-xl flex items-center gap-2">
+          <MessageCircle className="w-5 h-5" /> Bayar Sekarang
         </Button>
       </div>
     </div>

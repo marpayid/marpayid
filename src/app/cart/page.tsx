@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect } from 'react';
@@ -28,7 +29,6 @@ export default function Cart() {
   const saveCart = (newItems: any[]) => {
     setItems(newItems);
     localStorage.setItem('marpay_cart', JSON.stringify(newItems));
-    // Trigger event for other components (like badges) if necessary
     window.dispatchEvent(new Event('cart-updated'));
   };
 
@@ -50,7 +50,6 @@ export default function Cart() {
 
   const total = items.reduce((acc, curr) => acc + (curr.price * curr.quantity), 0);
   
-  // Calculate shipping fee based on product rules
   const shippingFee = items.reduce((acc, item) => {
     if (item.id === 3) return Math.max(acc, 12000);
     if (item.id === 4) return Math.max(acc, 9000);
@@ -60,18 +59,10 @@ export default function Cart() {
   const finalTotal = total + shippingFee;
 
   const renderProductImage = (item: any) => {
-    if (item.image === '/pulsa-icon.png') {
-      return <Smartphone className="w-10 h-10 text-primary" />;
-    }
-    if (item.image === '/pln-icon.png') {
-      return <Zap className="w-10 h-10 text-primary" />;
-    }
-    if (item.image === '/e-wallet-icon.png') {
-      return <Wallet className="w-10 h-10 text-primary" />;
-    }
-    if (item.image) {
-      return <Image src={item.image} alt={item.name} fill className="object-cover" />;
-    }
+    if (item.image === '/pulsa-icon.png') return <Smartphone className="w-10 h-10 text-primary" />;
+    if (item.image === '/pln-icon.png') return <Zap className="w-10 h-10 text-primary" />;
+    if (item.image === '/e-wallet-icon.png') return <Wallet className="w-10 h-10 text-primary" />;
+    if (item.image) return <Image src={item.image} alt={item.name} fill className="object-cover" />;
     return <ShoppingBag className="w-10 h-10 text-gray-200" />;
   };
 
@@ -97,90 +88,42 @@ export default function Cart() {
                 <div className="flex-1 flex flex-col justify-between">
                   <div>
                     <h3 className="text-sm font-medium line-clamp-1">{item.name}</h3>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {item.type === 'digital' ? `Tujuan: ${item.variant}` : `Varian: ${item.variant || 'Default'}`}
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm font-bold text-gray-900 mt-1">Rp {item.price.toLocaleString()}</p>
-                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">Varian: {item.variant || 'Default'}</p>
+                    <p className="text-sm font-bold text-gray-900 mt-1">Rp {item.price.toLocaleString()}</p>
                   </div>
                   <div className="flex items-center justify-between mt-2">
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      className="text-gray-400 h-8 w-8 hover:text-red-500 hover:bg-red-50 transition-colors"
-                      onClick={() => handleRemove(item.id, item.variant)}
-                    >
+                    <Button variant="ghost" size="icon" className="text-gray-400 h-8 w-8 hover:text-red-500 hover:bg-red-50" onClick={() => handleRemove(item.id, item.variant)}>
                       <Trash2 className="w-4 h-4" />
                     </Button>
-                    {item.type !== 'digital' && (
-                      <div className="flex items-center gap-3 bg-gray-50 rounded-lg px-2 py-1">
-                        <button 
-                          className="text-primary hover:bg-white p-1 rounded disabled:opacity-30 disabled:cursor-not-allowed transition-all"
-                          onClick={() => updateQuantity(item.id, item.variant, -1)}
-                          disabled={item.quantity <= 1}
-                        >
-                          <Minus className="w-3 h-3" />
-                        </button>
-                        <span className="text-xs font-bold w-4 text-center">{item.quantity}</span>
-                        <button 
-                          className="text-primary hover:bg-white p-1 rounded transition-all"
-                          onClick={() => updateQuantity(item.id, item.variant, 1)}
-                        >
-                          <Plus className="w-3 h-3" />
-                        </button>
-                      </div>
-                    )}
+                    <div className="flex items-center gap-3 bg-gray-50 rounded-lg px-2 py-1">
+                      <button className="text-primary hover:bg-white p-1 rounded disabled:opacity-30" onClick={() => updateQuantity(item.id, item.variant, -1)} disabled={item.quantity <= 1}><Minus className="w-3 h-3" /></button>
+                      <span className="text-xs font-bold w-4 text-center">{item.quantity}</span>
+                      <button className="text-primary hover:bg-white p-1 rounded" onClick={() => updateQuantity(item.id, item.variant, 1)}><Plus className="w-3 h-3" /></button>
+                    </div>
                   </div>
                 </div>
               </div>
             ))}
-
             <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm mt-6">
-              <div className="flex justify-between mb-2">
-                <span className="text-sm text-gray-600">Total Harga ({items.length} Barang)</span>
-                <span className="text-sm font-medium">Rp {total.toLocaleString()}</span>
-              </div>
-              <div className="flex justify-between mb-2">
-                <span className="text-sm text-gray-600">Total Ongkir</span>
-                <span className={cn("text-sm font-medium", shippingFee === 0 ? "text-green-500" : "text-gray-900")}>
-                  {shippingFee === 0 ? "Gratis" : `Rp ${shippingFee.toLocaleString()}`}
-                </span>
-              </div>
-              <div className="border-t border-gray-100 my-3 pt-3 flex justify-between">
-                <span className="font-bold text-gray-900">Total Bayar</span>
-                <span className="font-bold text-primary">Rp {finalTotal.toLocaleString()}</span>
-              </div>
+              <div className="flex justify-between mb-2"><span className="text-sm text-gray-600">Total Harga</span><span className="text-sm font-medium">Rp {total.toLocaleString()}</span></div>
+              <div className="flex justify-between mb-2"><span className="text-sm text-gray-600">Total Ongkir</span><span className={cn("text-sm font-medium", shippingFee === 0 ? "text-green-500" : "text-gray-900")}>{shippingFee === 0 ? "Gratis" : `Rp ${shippingFee.toLocaleString()}`}</span></div>
+              <div className="border-t border-gray-100 my-3 pt-3 flex justify-between"><span className="font-bold">Total Bayar</span><span className="font-bold text-primary">Rp {finalTotal.toLocaleString()}</span></div>
             </div>
           </>
         ) : (
           <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
-            <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center text-gray-300">
-              <ShoppingBag className="w-10 h-10" />
-            </div>
-            <div>
-              <h2 className="text-lg font-bold text-gray-900">Keranjang Kosong</h2>
-              <p className="text-sm text-muted-foreground mt-1 px-10">Yuk temukan produk favoritmu sekarang.</p>
-            </div>
-            <Link href="/">
-              <Button className="bg-primary text-white rounded-xl px-10 h-12 font-bold shadow-lg shadow-primary/20">
-                Mulai Belanja
-              </Button>
-            </Link>
+            <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center text-gray-300"><ShoppingBag className="w-10 h-10" /></div>
+            <h2 className="text-lg font-bold text-gray-900">Keranjang Kosong</h2>
+            <Link href="/"><Button className="bg-primary text-white rounded-xl px-10 h-12 font-bold shadow-lg shadow-primary/20">Mulai Belanja</Button></Link>
           </div>
         )}
       </main>
 
       {items.length > 0 && (
         <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-100 flex items-center justify-between z-[100] shadow-[0_-4px_15px_rgba(0,0,0,0.08)]">
-          <div>
-            <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">Total Belanja</p>
-            <p className="text-lg font-bold text-primary leading-tight">Rp {finalTotal.toLocaleString()}</p>
-          </div>
-          <Link href="/checkout" className="w-1/2">
-            <Button className="w-full bg-primary text-white font-bold h-12 rounded-xl shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all">
-              Checkout
-            </Button>
+          <div><p className="text-[10px] text-muted-foreground font-bold uppercase">Total Belanja</p><p className="text-lg font-bold text-primary">Rp {finalTotal.toLocaleString()}</p></div>
+          <Link href="/checkout" className="w-1/2" onClick={() => localStorage.removeItem('marpay_checkout_temp')}>
+            <Button className="w-full bg-primary text-white font-bold h-12 rounded-xl shadow-lg shadow-primary/20">Checkout</Button>
           </Link>
         </div>
       )}

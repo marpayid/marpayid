@@ -28,7 +28,6 @@ export default function ProductDetail() {
 
   const currentPrice = useMemo(() => {
     if (!product) return 0;
-    // Dynamic pricing for Akrilik product (id: 2)
     if (product.id === 2) {
       return selectedVariant === 1 ? 309000 : 269000;
     }
@@ -47,33 +46,38 @@ export default function ProductDetail() {
     else if (type === 'dec' && quantity > 1) setQuantity(prev => prev - 1);
   };
 
-  const handleAddToCart = (redirect = false) => {
-    const cartItem = {
+  const handleAction = (redirect = false) => {
+    const item = {
       id: product.id,
       name: product.name,
       price: currentPrice,
       image: product.image,
       variant: variants[selectedVariant],
-      quantity: quantity
+      quantity: quantity,
+      type: 'physical'
     };
 
-    const savedCart = localStorage.getItem('marpay_cart');
-    let cart = savedCart ? JSON.parse(savedCart) : [];
-
-    const existingIndex = cart.findIndex((item: any) => item.id === cartItem.id && item.variant === cartItem.variant);
-
-    if (existingIndex > -1) {
-      cart[existingIndex].quantity += quantity;
-    } else {
-      cart.push(cartItem);
-    }
-
-    localStorage.setItem('marpay_cart', JSON.stringify(cart));
-    window.dispatchEvent(new Event('cart-updated'));
-
     if (redirect) {
+      // LOGIC: Beli Sekarang / Checkout Langsung
+      // Simpan ke storage sementara, bukan keranjang utama
+      localStorage.setItem('marpay_checkout_temp', JSON.stringify([item]));
       router.push('/checkout');
     } else {
+      // LOGIC: Tambah ke Keranjang
+      const savedCart = localStorage.getItem('marpay_cart');
+      let cart = savedCart ? JSON.parse(savedCart) : [];
+
+      const existingIndex = cart.findIndex((i: any) => i.id === item.id && i.variant === item.variant);
+
+      if (existingIndex > -1) {
+        cart[existingIndex].quantity += quantity;
+      } else {
+        cart.push(item);
+      }
+
+      localStorage.setItem('marpay_cart', JSON.stringify(cart));
+      window.dispatchEvent(new Event('cart-updated'));
+
       toast({
         variant: "success",
         title: "Berhasil Ditambahkan",
@@ -84,7 +88,6 @@ export default function ProductDetail() {
 
   return (
     <div className="min-h-screen bg-gray-50 pb-32">
-      {/* Top Navbar */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md px-4 py-3 border-b border-gray-100 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => router.back()}>
@@ -105,7 +108,6 @@ export default function ProductDetail() {
       </header>
 
       <main className="pt-14">
-        {/* Breadcrumb */}
         <div className="px-4 py-3 flex items-center gap-2 text-[10px] text-gray-400 font-medium">
           <Link href="/" className="hover:text-primary">Beranda</Link>
           <ChevronRight className="w-3 h-3" />
@@ -114,7 +116,6 @@ export default function ProductDetail() {
           <span className="text-gray-600 truncate">{product.name}</span>
         </div>
 
-        {/* Product Image Section */}
         <section className="bg-white">
           <div className="relative aspect-square w-full">
             <Image 
@@ -125,19 +126,8 @@ export default function ProductDetail() {
               priority
             />
           </div>
-          <div className="flex gap-2 px-4 py-4 overflow-x-auto no-scrollbar">
-            <div className="relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 border-2 border-primary">
-              <Image 
-                src={product.image || ''} 
-                alt="" 
-                fill 
-                className="object-cover opacity-80"
-              />
-            </div>
-          </div>
         </section>
 
-        {/* Compact Promo Section */}
         <section className="mx-4 my-2 bg-white border border-[#22c55e]/15 rounded-[10px] px-3 py-2 shadow-[0_2px_6px_rgba(0,0,0,0.02)] flex items-center gap-3 h-[60px]">
           <div className="w-9 h-9 bg-blue-50 rounded-lg flex items-center justify-center text-blue-500 shrink-0">
             <Truck className="w-7 h-7" />
@@ -148,7 +138,6 @@ export default function ProductDetail() {
           </div>
         </section>
 
-        {/* Product Info Section */}
         <section className="mt-2 bg-white p-4">
           <div className="flex items-center gap-2 mb-2">
             <Badge variant="secondary" className="bg-primary/10 text-primary text-[10px] font-bold px-2 py-0">
@@ -160,11 +149,9 @@ export default function ProductDetail() {
               </Badge>
             )}
           </div>
-
           <h1 className="text-md font-medium text-gray-800 mb-2 leading-tight">
             {product.name}
           </h1>
-
           <div className="flex items-center gap-3 mb-4">
             <div className="flex items-center gap-1">
               <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
@@ -175,26 +162,16 @@ export default function ProductDetail() {
             <div className="h-3 w-px bg-gray-200" />
             <span className="text-xs text-gray-500">{formatSold(product.sold)}</span>
           </div>
-
           <div className="space-y-1">
             <div className="flex items-end gap-2">
               <span className="text-2xl font-bold text-primary font-headline">Rp {currentPrice.toLocaleString()}</span>
               {hasDiscount && (
                 <span className="text-sm text-gray-400 line-through mb-1">Rp {product.originalPrice?.toLocaleString()}</span>
               )}
-              {product.discount && (
-                <span className="bg-red-100 text-red-600 text-[10px] font-bold px-1.5 py-0.5 rounded mb-1">
-                  {product.discount}
-                </span>
-              )}
             </div>
-            {hasDiscount && (
-              <p className="text-[10px] text-green-600 font-bold">Hemat Rp {savings.toLocaleString()}</p>
-            )}
           </div>
         </section>
 
-        {/* Selection Section */}
         <section className="mt-2 bg-white p-4 space-y-4">
           <div>
             <h3 className="text-xs font-bold text-gray-800 mb-3">Pilih Varian</h3>
@@ -215,7 +192,6 @@ export default function ProductDetail() {
               ))}
             </div>
           </div>
-
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-xs font-bold text-gray-800">Atur Jumlah</h3>
@@ -244,7 +220,6 @@ export default function ProductDetail() {
           </div>
         </section>
 
-        {/* Trust Badges */}
         <section className="mt-2 bg-white p-4">
           <div className="grid grid-cols-3 gap-2">
             <div className="flex flex-col items-center text-center gap-1.5">
@@ -268,44 +243,14 @@ export default function ProductDetail() {
           </div>
         </section>
 
-        {/* Description Section */}
         <section className="mt-2 bg-white p-4">
           <h3 className="text-sm font-bold mb-3">Deskripsi Produk</h3>
           <div className="text-xs text-gray-600 whitespace-pre-wrap leading-relaxed mb-6">
-            {product.description || `Produk unggulan dari MarPay dengan kualitas material terbaik dan desain modern yang cocok untuk kebutuhan gaya hidup digital Anda saat ini. Kami menjamin setiap produk yang dikirimkan telah melalui tahap inspeksi kualitas yang ketat.`}
-          </div>
-
-          <h3 className="text-sm font-bold mb-3">Cara Pemesanan</h3>
-          <div className="space-y-4">
-            {[
-              "Pilih produk dan varian yang Anda inginkan.",
-              "Klik tombol 'Beli Sekarang' atau hubungi admin via WhatsApp.",
-              "Lakukan pembayaran melalui metode yang tersedia.",
-              "Pesanan akan segera diproses secara otomatis atau oleh admin kami."
-            ].map((step, i) => (
-              <div key={i} className="flex gap-3">
-                <CheckCircle2 className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-                <p className="text-xs text-gray-600">{step}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Related Products Section */}
-        <section className="mt-2 bg-white p-4">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-bold">Produk Serupa</h3>
-            <Link href="/" className="text-[10px] font-bold text-primary">Lihat Semua</Link>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            {Products.filter(p => p.id !== product.id).slice(0, 4).map((p) => (
-              <ProductCard key={p.id} product={p} />
-            ))}
+            {product.description}
           </div>
         </section>
       </main>
 
-      {/* Sticky Bottom Action Bar */}
       <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-100 flex items-center justify-between z-[100] shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
         <div className="flex flex-col mr-4">
           <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Total Harga</p>
@@ -315,13 +260,13 @@ export default function ProductDetail() {
           <Button 
             variant="outline" 
             className="flex-1 border-primary text-primary font-bold h-11 rounded-xl active:scale-95 transition-transform text-xs"
-            onClick={() => handleAddToCart(false)}
+            onClick={() => handleAction(false)}
           >
             + Keranjang
           </Button>
           <Button 
             className="flex-1 bg-primary text-white font-bold h-11 rounded-xl shadow-lg shadow-primary/20 active:scale-95 transition-transform text-xs"
-            onClick={() => handleAddToCart(true)}
+            onClick={() => handleAction(true)}
           >
             Beli Sekarang
           </Button>
