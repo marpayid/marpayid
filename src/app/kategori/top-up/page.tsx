@@ -1,7 +1,8 @@
+
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Smartphone, Zap, Wallet, Wifi, ReceiptText, ShieldCheck, Clock } from 'lucide-react';
+import { ArrowLeft, Smartphone, Zap, Wallet, Wifi, ReceiptText, ShieldCheck, Clock, Gamepad2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
@@ -10,10 +11,11 @@ export default function TopUpPage() {
   const router = useRouter();
 
   const services = [
+    { id: 'game', name: 'TOP UP GAME', icon: Gamepad2, active: true, path: '/kategori/top-up/game' },
     { id: 'pulsa', name: 'PULSA', icon: Smartphone, active: true, path: '/kategori/top-up/pulsa' },
-    { id: 'paket-data', name: 'PAKET DATA', icon: Wifi, active: false, badge: 'COMING SOON' },
     { id: 'token-pln', name: 'TOKEN PLN', icon: Zap, active: true, path: '/kategori/top-up/token-pln' },
     { id: 'e-wallet', name: 'E-WALLET', icon: Wallet, active: true, path: '/kategori/top-up/e-wallet' },
+    { id: 'paket-data', name: 'PAKET DATA', icon: Wifi, active: false, badge: 'COMING SOON' },
     { id: 'pln-pasca', name: 'PLN PASCABAYAR', icon: ReceiptText, active: false, badge: 'COMING SOON' },
   ];
 

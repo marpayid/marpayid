@@ -15,8 +15,8 @@ export function CategoryMenu() {
       router.push('/kategori/premium');
     } else if (catName === 'E-Wallet') {
       router.push('/kategori/top-up/e-wallet');
-    } else if (catName === 'Hobi') {
-      router.push('/kategori/top-up');
+    } else if (catName === 'Game') {
+      router.push('/kategori/top-up/game');
     } else {
       router.push(`/kategori/${catName.toLowerCase()}`);
     }

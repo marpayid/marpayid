@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Gamepad2, Smartphone, Wallet, ShieldCheck, Zap, Clock } from 'lucide-react';
@@ -7,7 +8,7 @@ export function PromotionalCards() {
   return (
     <section className="px-4 space-y-4 my-8">
       {/* 1. Card Top Up Game */}
-      <Link href="/kategori/top-up" className="block">
+      <Link href="/kategori/top-up/game" className="block">
         <div className="relative overflow-hidden rounded-[28px] bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 p-6 shadow-xl shadow-indigo-500/20 text-white group active:scale-[0.98] transition-all">
           
           {/* Background 3D Visual Effect */}

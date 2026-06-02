@@ -27,8 +27,8 @@ export default function CategoriesPage() {
       return;
     }
 
-    if (catName === 'Hobi') {
-      router.push('/kategori/top-up');
+    if (catName === 'Game') {
+      router.push('/kategori/top-up/game');
       return;
     }
 

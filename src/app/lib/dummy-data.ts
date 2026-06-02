@@ -4,7 +4,7 @@ export const Categories = [
   { id: 2, name: 'Kecantikan', icon: 'Sparkles' },
   { id: 3, name: 'Fashion', icon: 'Shirt' },
   { id: 4, name: 'Elektronik', icon: 'Smartphone' },
-  { id: 5, name: 'Hobi', icon: 'Gamepad2' },
+  { id: 5, name: 'Game', icon: 'Gamepad2' },
   { id: 6, name: 'Voucher', icon: 'Ticket' },
   { id: 7, name: 'E-Wallet', icon: 'Wallet' },
   { id: 8, name: 'Premium', icon: 'Crown' },
