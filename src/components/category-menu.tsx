@@ -11,6 +11,8 @@ export function CategoryMenu() {
   const handleCategoryClick = (catName: string) => {
     if (catName === 'Top Up') {
       router.push('/kategori/top-up');
+    } else if (catName === 'Premium') {
+      router.push('/kategori/premium');
     } else {
       router.push('/categories');
     }

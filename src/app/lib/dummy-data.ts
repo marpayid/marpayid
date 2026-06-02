@@ -1,3 +1,4 @@
+
 export const Categories = [
   { id: 1, name: 'Top Up', icon: 'Zap' },
   { id: 2, name: 'Skincare', icon: 'Sparkles' },
@@ -25,29 +26,7 @@ export const Products = [
     stock: 'Tersedia',
     tag: 'Produk Viral',
     variants: ['Whitening Set 6Pcs', 'Anti-Acne Set 6Pcs'],
-    description: `BIOAQUA Skincare Set Lengkap 6Pcs hadir sebagai solusi perawatan wajah harian dengan rangkaian produk yang saling melengkapi untuk membantu menjaga kelembapan, kebersihan, dan tampilan kulit agar terlihat lebih sehat dan terawat.
-
-Isi Paket:
-• Facial Wash
-• Hydrating Toner
-• Brightening Serum / Acne Essence
-• Day Cream
-• Night Cream
-• Perawatan pendukung lainnya sesuai varian
-
-Keunggulan:
-• Membantu menjaga kelembapan kulit
-• Membersihkan wajah dari kotoran dan minyak berlebih
-• Cocok digunakan pagi dan malam hari
-• Praktis dalam satu paket lengkap
-• Kemasan premium dan aman digunakan sehari-hari
-
-Varian:
-1. Whitening Set 6Pcs
-Membantu membuat kulit tampak lebih cerah dan segar.
-
-2. Anti-Acne Set 6Pcs
-Membantu merawat kulit berjerawat dan menjaga kondisi kulit tetap nyaman.`
+    description: `BIOAQUA Skincare Set Lengkap 6Pcs hadir sebagai solusi perawatan wajah harian dengan rangkaian produk yang saling melengkapi untuk membantu menjaga kelembapan, kebersihan, dan tampilan kulit agar terlihat lebih sehat dan terawat.`
   },
   {
     id: 2,
@@ -64,14 +43,7 @@ Membantu merawat kulit berjerawat dan menjaga kondisi kulit tetap nyaman.`
     stock: 'Tersedia',
     tag: 'Eksklusif',
     variants: ['20x10', '20x15'],
-    description: `Akrilik Sertifikat Funded premium cocok untuk pajangan meja, hadiah trader, dokumentasi payout, dan koleksi pencapaian funded account. Menggunakan bahan akrilik tebal 2cm dengan tampilan elegan, jernih, dan eksklusif.
-
-Keunggulan:
-• Bahan akrilik premium tebal 2cm
-• Tampilan elegan dan profesional
-• Cocok untuk pajangan meja
-• Bisa custom nama, payout, tanggal, dan desain sertifikat
-• Cocok untuk trader, prop firm, dan hadiah pencapaian`
+    description: `Akrilik Sertifikat Funded premium cocok untuk pajangan meja, hadiah trader, dokumentasi payout, dan koleksi pencapaian funded account.`
   },
   {
     id: 3,
@@ -85,29 +57,10 @@ Keunggulan:
     image: '/wispie1.png',
     isFlashSale: true,
     discount: '25%',
-    stock: 50,
+    stock: 'Tersedia',
     tag: 'Produk Viral',
     variants: ['S', 'M', 'L', 'XL', '2XL', '3XL'],
-    description: `Wispie Money Magnet Fitted Shirt
-Kemeja wanita premium dengan desain fitted body yang memberikan tampilan lebih elegan, rapi, dan profesional. Motif pinstripe salur membuat penampilan terlihat lebih modern serta cocok digunakan untuk berbagai aktivitas sehari-hari.
-
-Keunggulan Produk:
-• Warna Pink eksklusif
-• Model fitted / press body
-• Motif pinstripe salur premium
-• Nyaman dipakai seharian
-• Bahan lembut dan tidak panas
-• Jahitan rapi dan berkualitas
-• Cocok untuk kerja, kuliah, meeting, kantor, maupun acara formal
-• Mudah dipadukan dengan rok maupun celana
-
-📏 Tersedia Ukuran:
-S, M, L, XL, 2XL, 3XL
-
-📦 Informasi:
-• Produk fisik
-• Diproses setelah pembayaran terverifikasi
-• Cocok untuk aktivitas formal maupun kasual`
+    description: `Kemeja wanita premium dengan desain fitted body yang memberikan tampilan lebih elegan, rapi, dan profesional.`
   },
   {
     id: 4,
@@ -124,15 +77,101 @@ S, M, L, XL, 2XL, 3XL
     stock: 'Tersedia',
     tag: 'Produk Viral',
     variants: ['M', 'L', 'XL'],
-    description: `Kaos Rephatious Rpts412 berbahan Cotton Combed 24s yang nyaman, adem, and cocok digunakan sehari-hari. Material berkualitas dengan desain simpel dan modern.
-
-Spesifikasi:
-- Brand: Rephatious
-- Model: Rpts412
-- Bahan: Cotton Combed 24s
-- Warna: Hitam
-- Ukuran: M, L, XL
-- Kondisi: Baru`
+    description: `Kaos Rephatious Rpts412 berbahan Cotton Combed 24s yang nyaman, adem, and cocok digunakan sehari-hari.`
+  },
+  // Produk Premium Baru
+  {
+    id: 101,
+    name: 'Canva Pro - Akun Premium Aktif 1 Bulan Full Garansi',
+    price: 12000,
+    rating: 4.9,
+    reviews: '2.1rb',
+    sold: 3500,
+    category: 'Premium',
+    image: 'https://picsum.photos/seed/canva/400/400',
+    stock: 'Tersedia',
+    tag: 'Best Seller',
+    description: 'Nikmati fitur premium Canva Pro untuk desain profesional tanpa batas.',
+    type: 'digital'
+  },
+  {
+    id: 102,
+    name: 'YouTube Premium 1 Bulan - No Ads & Background Play',
+    price: 27999,
+    rating: 5.0,
+    reviews: '5.4rb',
+    sold: 8900,
+    category: 'Premium',
+    image: 'https://picsum.photos/seed/youtube/400/400',
+    stock: 'Tersedia',
+    tag: 'Terlaris',
+    description: 'Nonton YouTube tanpa iklan dan bisa putar di latar belakang.',
+    type: 'digital'
+  },
+  {
+    id: 103,
+    name: 'Viu Premium 1 Bulan - Akses Semua Drama Korea & Film',
+    price: 10000,
+    rating: 4.8,
+    reviews: '900',
+    sold: 1200,
+    category: 'Premium',
+    image: 'https://picsum.photos/seed/viu/400/400',
+    stock: 'Tersedia',
+    description: 'Akses tanpa batas ke drama Korea terbaru dan film Asia lainnya.',
+    type: 'digital'
+  },
+  {
+    id: 104,
+    name: 'ChatGPT Plus Premium Account - Akses GPT-4 Turbo',
+    price: 30000,
+    rating: 4.9,
+    reviews: '450',
+    sold: 600,
+    category: 'Premium',
+    image: 'https://picsum.photos/seed/chatgpt/400/400',
+    stock: 'Stok Habis',
+    description: 'Akses kecerdasan buatan tercanggih GPT-4 dengan kecepatan tinggi.',
+    type: 'digital'
+  },
+  {
+    id: 105,
+    name: 'CapCut Pro Premium - Unlock All Effects & Features',
+    price: 10000,
+    rating: 4.7,
+    reviews: '320',
+    sold: 450,
+    category: 'Premium',
+    image: 'https://picsum.photos/seed/capcut/400/400',
+    stock: 'Stok Habis',
+    description: 'Edit video tanpa batas dengan fitur pro CapCut.',
+    type: 'digital'
+  },
+  {
+    id: 106,
+    name: 'Netflix Premium UHD 4K - Akun Sharing Private',
+    price: 15000,
+    rating: 4.9,
+    reviews: '8.2rb',
+    sold: 12000,
+    category: 'Premium',
+    image: 'https://picsum.photos/seed/netflix/400/400',
+    stock: 'Stok Habis',
+    description: 'Nonton film dan serial TV kualitas 4K UHD.',
+    type: 'digital'
+  },
+  {
+    id: 107,
+    name: 'Spotify Premium 1 Bulan - Akun Individual / Family',
+    price: 25000,
+    rating: 4.9,
+    reviews: '3.1rb',
+    sold: 5000,
+    category: 'Premium',
+    image: 'https://picsum.photos/seed/spotify/400/400',
+    stock: 'Stok Habis',
+    description: 'Dengarkan musik tanpa iklan dengan kualitas suara terbaik.',
+    type: 'digital'
   }
 ];
 

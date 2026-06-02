@@ -5,12 +5,11 @@ import { useParams, useRouter } from 'next/navigation';
 import { useState, useMemo } from 'react';
 import { 
   ArrowLeft, Share2, ShoppingBag, Heart, Star, ShieldCheck, 
-  Truck, ChevronRight, Minus, Plus, MessageCircle, CheckCircle2
+  Truck, ChevronRight, Minus, Plus, MessageCircle, AlertCircle
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Products } from '@/app/lib/dummy-data';
-import { ProductCard } from '@/components/product-grid';
 import Image from 'next/image';
 import Link from 'next/link';
 import { cn, formatSold } from '@/lib/utils';
@@ -25,6 +24,7 @@ export default function ProductDetail() {
   const [selectedVariant, setSelectedVariant] = useState(0);
 
   const product = useMemo(() => Products.find(p => p.id === Number(id)), [id]);
+  const isOutOfStock = product?.stock === 'Stok Habis';
 
   const currentPrice = useMemo(() => {
     if (!product) return 0;
@@ -34,19 +34,28 @@ export default function ProductDetail() {
     return product.price;
   }, [product, selectedVariant]);
 
-  if (!product) return <div className="p-8 text-center">Product not found</div>;
+  if (!product) return <div className="p-8 text-center font-bold">Produk tidak ditemukan</div>;
 
   const variants = product.variants || ['Default'];
   const totalPrice = currentPrice * quantity;
   const hasDiscount = !!product.originalPrice;
-  const savings = hasDiscount ? (product.originalPrice! - currentPrice) * quantity : 0;
 
   const handleQuantity = (type: 'inc' | 'dec') => {
+    if (isOutOfStock) return;
     if (type === 'inc') setQuantity(prev => prev + 1);
     else if (type === 'dec' && quantity > 1) setQuantity(prev => prev - 1);
   };
 
   const handleAction = (redirect = false) => {
+    if (isOutOfStock) {
+      toast({
+        variant: "destructive",
+        title: "Stok Habis",
+        description: "Maaf, produk ini sedang tidak tersedia.",
+      });
+      return;
+    }
+
     const item = {
       id: product.id,
       name: product.name,
@@ -54,16 +63,13 @@ export default function ProductDetail() {
       image: product.image,
       variant: variants[selectedVariant],
       quantity: quantity,
-      type: 'physical'
+      type: product.type || 'physical'
     };
 
     if (redirect) {
-      // LOGIC: Beli Sekarang / Checkout Langsung
-      // Simpan ke storage sementara, bukan keranjang utama
       localStorage.setItem('marpay_checkout_temp', JSON.stringify([item]));
       router.push('/checkout');
     } else {
-      // LOGIC: Tambah ke Keranjang
       const savedCart = localStorage.getItem('marpay_cart');
       let cart = savedCart ? JSON.parse(savedCart) : [];
 
@@ -122,21 +128,30 @@ export default function ProductDetail() {
               src={product.image || ''} 
               alt={product.name} 
               fill 
-              className="object-cover"
+              className={cn("object-cover", isOutOfStock && "grayscale")}
               priority
             />
+            {isOutOfStock && (
+              <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                <div className="bg-red-600 text-white px-6 py-2 rounded-xl font-black uppercase tracking-[0.2em] shadow-2xl">
+                  Stok Habis
+                </div>
+              </div>
+            )}
           </div>
         </section>
 
-        <section className="mx-4 my-2 bg-white border border-[#22c55e]/15 rounded-[10px] px-3 py-2 shadow-[0_2px_6px_rgba(0,0,0,0.02)] flex items-center gap-3 h-[60px]">
-          <div className="w-9 h-9 bg-blue-50 rounded-lg flex items-center justify-center text-blue-500 shrink-0">
-            <Truck className="w-7 h-7" />
-          </div>
-          <div className="flex-1">
-            <p className="text-[12px] font-bold text-blue-500 uppercase tracking-tight mb-0">GRATIS ONGKIR</p>
-            <p className="text-[14px] font-semibold text-gray-900 leading-tight">Potongan Maksimal Rp20.000</p>
-          </div>
-        </section>
+        {product.type !== 'digital' && !isOutOfStock && (
+          <section className="mx-4 my-2 bg-white border border-[#22c55e]/15 rounded-[10px] px-3 py-2 shadow-[0_2px_6px_rgba(0,0,0,0.02)] flex items-center gap-3 h-[60px]">
+            <div className="w-9 h-9 bg-blue-50 rounded-lg flex items-center justify-center text-blue-500 shrink-0">
+              <Truck className="w-7 h-7" />
+            </div>
+            <div className="flex-1">
+              <p className="text-[12px] font-bold text-blue-500 uppercase tracking-tight mb-0">GRATIS ONGKIR</p>
+              <p className="text-[14px] font-semibold text-gray-900 leading-tight">Potongan Maksimal Rp20.000</p>
+            </div>
+          </section>
+        )}
 
         <section className="mt-2 bg-white p-4">
           <div className="flex items-center gap-2 mb-2">
@@ -148,6 +163,11 @@ export default function ProductDetail() {
                 {product.tag}
               </Badge>
             )}
+            {isOutOfStock && (
+              <Badge variant="destructive" className="bg-red-50 text-red-600 border-red-100 text-[10px] font-bold px-2 py-0">
+                Stok Habis
+              </Badge>
+            )}
           </div>
           <h1 className="text-md font-medium text-gray-800 mb-2 leading-tight">
             {product.name}
@@ -155,12 +175,12 @@ export default function ProductDetail() {
           <div className="flex items-center gap-3 mb-4">
             <div className="flex items-center gap-1">
               <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-              <span className="text-sm font-bold text-gray-700">{product.rating}</span>
+              <span className="text-sm font-bold text-gray-700">{product.rating || '0.0'}</span>
             </div>
             <div className="h-3 w-px bg-gray-200" />
-            <span className="text-xs text-gray-500">{product.reviews || '42'} Ulasan</span>
+            <span className="text-xs text-gray-500">{product.reviews || '0'} Ulasan</span>
             <div className="h-3 w-px bg-gray-200" />
-            <span className="text-xs text-gray-500">{formatSold(product.sold)}</span>
+            <span className="text-xs text-gray-500">{formatSold(product.sold || 0)}</span>
           </div>
           <div className="space-y-1">
             <div className="flex items-end gap-2">
@@ -195,7 +215,7 @@ export default function ProductDetail() {
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-xs font-bold text-gray-800">Atur Jumlah</h3>
-              <p className="text-[10px] text-gray-400 mt-0.5">Stok: {product.stock || 120}</p>
+              <p className="text-[10px] text-gray-400 mt-0.5">Stok: {isOutOfStock ? '0' : (product.stock || 120)}</p>
             </div>
             <div className="flex items-center gap-4 bg-gray-50 rounded-xl p-1 border border-gray-100">
               <Button 
@@ -203,7 +223,7 @@ export default function ProductDetail() {
                 size="icon" 
                 className="h-8 w-8 text-primary" 
                 onClick={() => handleQuantity('dec')}
-                disabled={quantity <= 1}
+                disabled={quantity <= 1 || isOutOfStock}
               >
                 <Minus className="w-4 h-4" />
               </Button>
@@ -213,32 +233,10 @@ export default function ProductDetail() {
                 size="icon" 
                 className="h-8 w-8 text-primary" 
                 onClick={() => handleQuantity('inc')}
+                disabled={isOutOfStock}
               >
                 <Plus className="w-4 h-4" />
               </Button>
-            </div>
-          </div>
-        </section>
-
-        <section className="mt-2 bg-white p-4">
-          <div className="grid grid-cols-3 gap-2">
-            <div className="flex flex-col items-center text-center gap-1.5">
-              <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center text-primary">
-                <Truck className="w-5 h-5" />
-              </div>
-              <p className="text-[10px] font-bold text-gray-700">Proses Cepat</p>
-            </div>
-            <div className="flex flex-col items-center text-center gap-1.5">
-              <div className="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center text-blue-500">
-                <ShieldCheck className="w-5 h-5" />
-              </div>
-              <p className="text-[10px] font-bold text-gray-700">Transaksi Aman</p>
-            </div>
-            <div className="flex flex-col items-center text-center gap-1.5">
-              <div className="w-10 h-10 bg-green-50 rounded-full flex items-center justify-center text-green-500">
-                <MessageCircle className="w-5 h-5" />
-              </div>
-              <p className="text-[10px] font-bold text-gray-700">Via WhatsApp</p>
             </div>
           </div>
         </section>
@@ -259,16 +257,24 @@ export default function ProductDetail() {
         <div className="flex gap-2 flex-1">
           <Button 
             variant="outline" 
-            className="flex-1 border-primary text-primary font-bold h-11 rounded-xl active:scale-95 transition-transform text-xs"
+            disabled={isOutOfStock}
+            className={cn(
+              "flex-1 border-primary text-primary font-bold h-11 rounded-xl active:scale-95 transition-transform text-xs",
+              isOutOfStock && "opacity-50 grayscale cursor-not-allowed"
+            )}
             onClick={() => handleAction(false)}
           >
             + Keranjang
           </Button>
           <Button 
-            className="flex-1 bg-primary text-white font-bold h-11 rounded-xl shadow-lg shadow-primary/20 active:scale-95 transition-transform text-xs"
+            disabled={isOutOfStock}
+            className={cn(
+              "flex-1 bg-primary text-white font-bold h-11 rounded-xl shadow-lg shadow-primary/20 active:scale-95 transition-transform text-xs",
+              isOutOfStock && "bg-gray-400 shadow-none cursor-not-allowed"
+            )}
             onClick={() => handleAction(true)}
           >
-            Beli Sekarang
+            {isOutOfStock ? 'Stok Habis' : 'Beli Sekarang'}
           </Button>
         </div>
       </div>

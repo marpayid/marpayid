@@ -18,14 +18,18 @@ export default function CategoriesPage() {
       return;
     }
     
+    // Premium redirection
+    if (catName === 'Premium') {
+      router.push('/kategori/premium');
+      return;
+    }
+    
     // Redirect other digital categories to PPOB page
-    const digitalCategories = ['E-Wallet', 'Voucher', 'Premium'];
+    const digitalCategories = ['E-Wallet', 'Voucher'];
     if (digitalCategories.includes(catName)) {
       router.push('/ppob');
       return;
     }
-
-    // Default to search or same page for other categories
   };
 
   return (

@@ -1,3 +1,4 @@
+
 "use client"
 
 import Image from 'next/image';
@@ -52,10 +53,21 @@ export function ProductGrid() {
 
 export function ProductCard({ product, compact = false }: { product: any, compact?: boolean }) {
   const { toast } = useToast();
+  const isOutOfStock = product.stock === 'Stok Habis';
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+
+    if (isOutOfStock) {
+      toast({
+        variant: "destructive",
+        title: "Stok Habis",
+        description: "Maaf, stok produk ini sedang kosong.",
+        duration: 2000,
+      });
+      return;
+    }
 
     const cartItem = {
       id: product.id,
@@ -63,7 +75,8 @@ export function ProductCard({ product, compact = false }: { product: any, compac
       price: product.price,
       image: product.image,
       variant: product.variants?.[0] || 'Default',
-      quantity: 1
+      quantity: 1,
+      type: product.type || 'physical'
     };
 
     const savedCart = localStorage.getItem('marpay_cart');
@@ -90,18 +103,24 @@ export function ProductCard({ product, compact = false }: { product: any, compac
   return (
     <div className={cn(
       "bg-white rounded-[14px] border border-gray-100 overflow-hidden shadow-sm flex flex-col group relative",
-      compact ? "min-w-[145px] w-[145px]" : "w-full"
+      compact ? "min-w-[145px] w-[145px]" : "w-full",
+      isOutOfStock && "opacity-75"
     )}>
       <Link href={`/product/${product.id}`} className="relative aspect-square block">
         <Image 
           src={product.image || ''} 
           alt={product.name} 
           fill 
-          className="object-cover"
+          className={cn("object-cover", isOutOfStock && "grayscale")}
         />
-        {product.discount && (
+        {product.discount && !isOutOfStock && (
           <div className="absolute top-0 left-0 bg-orange-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-br-lg shadow-sm">
             {product.discount} OFF
+          </div>
+        )}
+        {isOutOfStock && (
+          <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+            <span className="bg-red-600 text-white text-[10px] font-black px-2 py-1 rounded-md uppercase tracking-wider">Stok Habis</span>
           </div>
         )}
         <button className="absolute top-1.5 right-1.5 p-1.5 bg-white/80 rounded-full shadow-sm text-gray-400 active:text-red-500 backdrop-blur-sm">
@@ -119,13 +138,19 @@ export function ProductCard({ product, compact = false }: { product: any, compac
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1 overflow-hidden">
               <Star className="w-2.5 h-2.5 fill-yellow-400 text-yellow-400 flex-shrink-0" />
-              <span className="text-[10px] font-bold text-gray-700">{product.rating}</span>
+              <span className="text-[10px] font-bold text-gray-700">{product.rating || '0.0'}</span>
               <span className="text-[10px] text-gray-400 mx-0.5 flex-shrink-0">|</span>
-              <span className="text-[10px] text-gray-500 truncate">{formatSold(product.sold)}</span>
+              <span className="text-[10px] text-gray-500 truncate">{formatSold(product.sold || 0)}</span>
             </div>
             <button 
               onClick={handleAddToCart}
-              className="w-6 h-6 rounded-full border border-primary/20 bg-primary/5 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-colors flex-shrink-0 ml-1"
+              disabled={isOutOfStock}
+              className={cn(
+                "w-6 h-6 rounded-full border flex items-center justify-center transition-colors flex-shrink-0 ml-1",
+                isOutOfStock 
+                  ? "bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed" 
+                  : "border-primary/20 bg-primary/5 text-primary hover:bg-primary hover:text-white"
+              )}
             >
               <ShoppingBag className="w-3 h-3" />
             </button>
