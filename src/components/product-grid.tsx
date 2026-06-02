@@ -58,18 +58,26 @@ export function FashionDiscoveryCard() {
       className="bg-white rounded-[14px] border border-gray-100 overflow-hidden shadow-md flex flex-col group relative active:scale-[0.98] transition-all h-full"
     >
       {/* Visual Area - Taller aspect ratio (4:4.5) to make it ~15-20% taller than normal cards */}
-      <div className="relative aspect-[4/4.5] bg-[#F9FAFB] flex items-center justify-center p-0">
+      <div className="relative aspect-[4/4.5] bg-[#F9FAFB] flex items-center justify-center p-0 overflow-hidden">
         <Image 
-          src="https://picsum.photos/seed/fashion-3d-lux-v2/600/600" 
+          src="https://picsum.photos/seed/fashion-3d-premium-v3/600/600" 
           alt="Premium Fashion Discovery" 
           fill 
-          className="object-cover"
-          data-ai-hint="luxury 3D apparel display"
+          className="object-cover transition-transform duration-700 group-hover:scale-110"
+          data-ai-hint="3D fashion"
         />
-        {/* Glass effect gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
-        {/* Soft glow effect for premium feel */}
-        <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary/10 rounded-full blur-3xl" />
+        
+        {/* Premium Background Visual Elements (Family Style with Game & Wallet Cards) */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent pointer-events-none" />
+        
+        {/* Soft Blue-Purple Glow Accents */}
+        <div className="absolute -top-10 -right-10 w-32 h-32 bg-indigo-500/20 rounded-full blur-3xl" />
+        <div className="absolute -bottom-10 -left-10 w-24 h-24 bg-purple-500/10 rounded-full blur-3xl" />
+        
+        {/* Subtle Glass Overlay for 3D depth */}
+        <div className="absolute top-2 right-2 px-2 py-1 bg-white/10 backdrop-blur-md rounded-lg border border-white/20 opacity-0 group-hover:opacity-100 transition-opacity">
+           <span className="text-[7px] text-white font-black uppercase tracking-widest">Eksklusif</span>
+        </div>
       </div>
       
       <div className="p-3.5 flex-1 flex flex-col justify-center gap-1.5">
