@@ -113,7 +113,10 @@ export default function Cart() {
         ) : (
           <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
             <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center text-gray-300"><ShoppingBag className="w-10 h-10" /></div>
-            <h2 className="text-lg font-bold text-gray-900">Keranjang Kosong</h2>
+            <div className="space-y-1">
+              <h2 className="text-lg font-bold text-gray-900">Keranjang Kosong</h2>
+              <p className="text-sm text-gray-400">Yuk mulai belanja sekarang!</p>
+            </div>
             <Link href="/"><Button className="bg-primary text-white rounded-xl px-10 h-12 font-bold shadow-lg shadow-primary/20">Mulai Belanja</Button></Link>
           </div>
         )}
