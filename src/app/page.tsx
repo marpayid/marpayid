@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect } from 'react';
@@ -5,7 +6,7 @@ import { TopSearch } from '@/components/top-search';
 import { BottomNav } from '@/components/bottom-nav';
 import { CategoryMenu } from '@/components/category-menu';
 import { FlashSale } from '@/components/flash-sale';
-import { ProductGrid, ProductCard } from '@/components/product-grid';
+import { ProductCard, FashionDiscoveryCard } from '@/components/product-grid';
 import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from '@/components/ui/carousel';
 import { Banners, Products } from '@/app/lib/dummy-data';
 import { cn } from '@/lib/utils';
@@ -31,12 +32,14 @@ export default function Home() {
     return () => clearInterval(intervalId);
   }, [api]);
 
+  const viralProducts = Products.filter(p => p.tag === 'Produk Viral');
+
   return (
     <div className="min-h-screen bg-gray-50 pb-32">
       <TopSearch />
       
       <main className="pt-16 space-y-2">
-        {/* 1. Hero Banner Slider */}
+        {/* 1. Banner Utama */}
         <section className="px-4 pt-3 bg-white">
           <Carousel 
             className="w-full" 
@@ -48,19 +51,9 @@ export default function Home() {
                 <CarouselItem key={banner.id}>
                   <div className={`relative h-[170px] w-full overflow-hidden rounded-[22px] bg-gradient-to-br ${banner.gradient} shadow-md border border-white/10 group`}>
                     
-                    {/* Visual Decor Elements */}
                     <div className="absolute top-0 right-0 w-full h-full pointer-events-none overflow-hidden">
                       <div className="absolute -right-10 -top-10 w-48 h-48 bg-white/10 rounded-full blur-3xl group-hover:bg-white/20 transition-colors"></div>
                       <div className="absolute right-10 bottom-0 w-32 h-32 bg-cyan-400/20 rounded-full blur-2xl"></div>
-                    </div>
-
-                    {/* Premium 3D Glassmorphism Watermark */}
-                    <div className="absolute right-32 bottom-4 z-0 pointer-events-none select-none animate-float-3d-watermark">
-                      <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl px-4 py-2 shadow-2xl flex items-center justify-center">
-                         <span className="text-white/20 font-black text-xl tracking-tighter drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]">
-                           MARPAY
-                         </span>
-                      </div>
                     </div>
 
                     <div className="absolute inset-0 p-5 pb-6 flex flex-col justify-center max-w-[70%] z-20">
@@ -84,16 +77,13 @@ export default function Home() {
                       </p>
                     </div>
 
-                    {/* Professional 3D Simulated Visuals */}
                     <div className="absolute right-4 top-1/2 -translate-y-1/2 w-28 h-28 z-10 flex items-center justify-center">
                        {banner.type === 'digital' ? (
                          <div className="relative w-full h-full scale-110">
-                           {/* Smartphone Glassmorphism */}
                            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-24 bg-white/10 backdrop-blur-lg rounded-2xl border border-white/30 rotate-12 shadow-2xl overflow-hidden animate-float">
                              <div className="absolute top-2 left-1/2 -translate-x-1/2 w-4 h-1 bg-white/20 rounded-full"></div>
                              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-6 h-6 bg-cyan-400/30 rounded-full blur-sm"></div>
                            </div>
-                           {/* Floating Icons */}
                            <div className="absolute top-2 right-2 p-1.5 bg-white/20 backdrop-blur-md rounded-lg border border-white/20 animate-float-reverse">
                              <CreditCard className="w-5 h-5 text-cyan-300" />
                            </div>
@@ -106,11 +96,9 @@ export default function Home() {
                          </div>
                        ) : (
                          <div className="relative w-full h-full scale-110">
-                           {/* Package Box Glassmorphism */}
                            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 bg-white/10 backdrop-blur-lg rounded-xl border border-white/30 rotate-12 shadow-2xl flex items-center justify-center animate-float">
                              <Package className="w-10 h-10 text-white/50" />
                            </div>
-                           {/* Floating Items */}
                            <div className="absolute -top-1 right-2 p-2 bg-white/20 backdrop-blur-md rounded-full border border-white/20 shadow-lg animate-float-reverse">
                              <Truck className="w-6 h-6 text-emerald-300" />
                            </div>
@@ -127,7 +115,6 @@ export default function Home() {
             </CarouselContent>
           </Carousel>
           
-          {/* Slider Indicators */}
           <div className="flex justify-center gap-1.5 mt-3 pb-1">
              {Banners.map((_, index) => (
                <div 
@@ -141,29 +128,46 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 2. Category Scroll Menu */}
+        {/* 2. Kategori */}
         <CategoryMenu />
 
         {/* 3. Flash Sale */}
         <FlashSale />
 
-        {/* 4. Rekomendasi Untukmu Section */}
+        {/* 4. Produk Viral */}
+        <section className="bg-white py-4 px-4">
+          <h2 className="text-base font-bold text-gray-900 mb-3">Produk Viral</h2>
+          <div className="grid grid-cols-2 gap-3">
+            {viralProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        </section>
+
+        {/* 5. Rekomendasi Untukmu & Fashion Discovery Card */}
         <section className="bg-white py-4 px-4">
           <h2 className="text-base font-bold text-gray-900 mb-3">Rekomendasi Untukmu</h2>
           <div className="grid grid-cols-2 gap-3">
             {Products.slice(0, 4).map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
+            {/* Native Fashion Discovery Card */}
+            <FashionDiscoveryCard />
           </div>
         </section>
 
-        {/* 5. Promotional Cards */}
+        {/* 6. Promotional Cards */}
         <PromotionalCards />
 
-        {/* 6. Product Tabs & Grid */}
-        <div className="bg-white">
-          <ProductGrid />
-        </div>
+        {/* 7. Semua Produk */}
+        <section className="bg-white px-4 pb-24">
+          <h2 className="text-base font-bold text-gray-900 mb-3 pt-4 border-t border-gray-100">Semua Produk</h2>
+          <div className="grid grid-cols-2 gap-3">
+            {Products.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        </section>
       </main>
 
       <BottomNav />
