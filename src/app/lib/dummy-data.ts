@@ -21,6 +21,7 @@ export const Products = [
     sold: 8000,
     category: 'Fashion',
     image: '/benidsondepan.png',
+    images: ['/benidsondepan.png', '/benidsonbelakang.png'],
     isFlashSale: true,
     discount: '26%',
     stock: 'Tersedia',

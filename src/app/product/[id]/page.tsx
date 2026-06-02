@@ -2,7 +2,7 @@
 "use client"
 
 import { useParams, useRouter } from 'next/navigation';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { 
   ArrowLeft, Share2, ShoppingBag, Heart, Star, ShieldCheck, 
   Truck, ChevronRight, Minus, Plus, MessageCircle, AlertCircle
@@ -27,6 +27,15 @@ export default function ProductDetail() {
   const product = useMemo(() => Products.find(p => p.id === Number(id)), [id]);
   const isOutOfStock = product?.stock === 'Stok Habis';
   const displayImage = getProductImage(product);
+  
+  const [activeImage, setActiveImage] = useState(displayImage);
+
+  // Sync active image when product changes
+  useEffect(() => {
+    if (product) {
+      setActiveImage(getProductImage(product));
+    }
+  }, [product]);
 
   // Filter Produk Serupa (Kategori yang sama, kecualikan produk ini)
   const similarProducts = useMemo(() => {
@@ -76,7 +85,7 @@ export default function ProductDetail() {
       id: product.id,
       name: product.name,
       price: currentPrice,
-      image: displayImage,
+      image: activeImage,
       variant: variants[selectedVariant],
       quantity: quantity,
       type: product.type || 'physical',
@@ -142,7 +151,7 @@ export default function ProductDetail() {
         <section className="bg-white">
           <div className="relative aspect-square w-full">
             <Image 
-              src={displayImage} 
+              src={activeImage} 
               alt={product.name} 
               fill 
               className={cn("object-cover", isOutOfStock && "grayscale")}
@@ -156,6 +165,24 @@ export default function ProductDetail() {
               </div>
             )}
           </div>
+          
+          {/* Thumbnail Gallery */}
+          {product.images && product.images.length > 1 && (
+            <div className="flex gap-2.5 px-4 py-4 overflow-x-auto no-scrollbar bg-white">
+              {product.images.map((img: string, idx: number) => (
+                <button
+                  key={idx}
+                  onClick={() => setActiveImage(img)}
+                  className={cn(
+                    "relative w-16 h-16 rounded-xl overflow-hidden border-2 flex-shrink-0 transition-all",
+                    activeImage === img ? "border-primary shadow-sm" : "border-gray-100 bg-gray-50 opacity-70"
+                  )}
+                >
+                  <Image src={img} alt={`${product.name} detail ${idx + 1}`} fill className="object-cover" />
+                </button>
+              ))}
+            </div>
+          )}
         </section>
 
         {product.type !== 'digital' && !isOutOfStock && (
