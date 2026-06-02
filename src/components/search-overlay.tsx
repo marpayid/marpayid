@@ -260,8 +260,8 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
             ) : (
               /* MODE 2: HASIL PENCARIAN (GRID) */
               <div className="space-y-0">
-                {/* Horizontal Filter Chips */}
-                <div className="bg-white border-b border-gray-50 flex gap-2 overflow-x-auto no-scrollbar px-4 py-3 sticky top-[52px] z-20">
+                {/* Horizontal Filter Chips - Tightly below search bar */}
+                <div className="bg-white border-b border-gray-50 flex gap-2 overflow-x-auto no-scrollbar px-4 py-2.5 sticky top-0 z-20">
                   {['⚡ Instan', '🔥 Terlaris', '⭐ Rating Tinggi', '💰 Promo', '🆕 Terbaru'].map((filter) => (
                     <button
                       key={filter}
@@ -272,7 +272,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                   ))}
                 </div>
 
-                <section className="px-4 py-4">
+                <section className="px-4 pt-2 pb-10">
                   {results.products.length > 0 ? (
                     <div className="grid grid-cols-2 gap-3">
                       {results.products.map((product) => (
