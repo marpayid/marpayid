@@ -5,7 +5,11 @@ import { FirebaseClientProvider } from '@/firebase';
 
 export const metadata: Metadata = {
   title: 'MarPay Marketplace',
-  description: 'The modern marketplace for fast and secure shopping.',
+  description: 'Belanja Lebih Mudah Dengan MarPay. Semua Kebutuhan Digital Dalam Satu Tempat. Pulsa, Paket Data, Token PLN, E-Wallet, Top Up Game, dan Tagihan Internet.',
+  openGraph: {
+    title: 'MarPay Marketplace',
+    description: 'Belanja Lebih Mudah Dengan MarPay. Semua Kebutuhan Digital Dalam Satu Tempat. Pulsa, Paket Data, Token PLN, E-Wallet, Top Up Game, dan Tagihan Internet.',
+  }
 };
 
 export const viewport: Viewport = {
