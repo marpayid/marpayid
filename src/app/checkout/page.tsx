@@ -199,11 +199,11 @@ export default function Checkout() {
                     {address ? 'Ubah' : 'Tambah'}
                   </button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px] rounded-3xl max-h-[90vh] overflow-y-auto">
-                  <DialogHeader>
+                <DialogContent className="sm:max-w-[425px] rounded-3xl max-h-[85vh] overflow-y-auto outline-none">
+                  <DialogHeader className="pb-2">
                     <DialogTitle className="text-lg font-bold">Lengkapi Alamat</DialogTitle>
                   </DialogHeader>
-                  <div className="space-y-4 py-4">
+                  <div className="space-y-4 py-2">
                     <div className="space-y-1.5">
                       <Label className="text-xs font-bold text-gray-700">Nama Penerima</Label>
                       <Input 
@@ -247,7 +247,7 @@ export default function Checkout() {
                       </div>
                     )}
                   </div>
-                  <DialogFooter>
+                  <DialogFooter className="pt-4 pb-6 sm:pb-4">
                     <Button onClick={saveAddress} className="w-full bg-primary text-white font-bold h-12 rounded-xl shadow-lg shadow-primary/20">Simpan Alamat</Button>
                   </DialogFooter>
                 </DialogContent>
@@ -362,7 +362,7 @@ export default function Checkout() {
           </div>
         </div>
 
-        {/* Section Ringkasan Belanja */}
+        {/* Ringkasan Belanja */}
         <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm space-y-3">
           <h3 className="text-xs font-bold uppercase tracking-wide">Ringkasan Belanja</h3>
           <div className="space-y-2.5">
@@ -382,8 +382,8 @@ export default function Checkout() {
         </div>
       </main>
 
-      {/* Bottom Bar */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-100 flex items-center justify-between z-[100] shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
+      {/* Bottom Bar - Z-index disesuaikan agar di bawah Modal (z-40) */}
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-100 flex items-center justify-between z-40 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
         <div className="flex flex-col">
           <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest leading-none mb-1">Total Pembayaran</p>
           <p className="text-base font-black text-primary leading-none">Rp {totalBill.toLocaleString()}</p>
