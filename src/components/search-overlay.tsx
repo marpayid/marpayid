@@ -1,14 +1,14 @@
-
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { ArrowLeft, X, Search, Clock, TrendingUp } from 'lucide-react';
+import { ArrowLeft, X, Search, Clock, TrendingUp, ChevronRight } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Products } from '@/app/lib/dummy-data';
+import { Products, Categories } from '@/app/lib/dummy-data';
 import Image from 'next/image';
 import Link from 'next/link';
 import { getProductImage } from '@/lib/utils';
+import * as LucideIcons from 'lucide-react';
 
 interface SearchOverlayProps {
   isOpen: boolean;
@@ -26,6 +26,8 @@ const CATEGORY_SYNONYMS: Record<string, string[]> = {
   'premium': ['premium', 'netflix', 'spotify', 'canva', 'chatgpt', 'youtube premium', 'streaming', 'akun', 'nonton'],
   'top up': ['pulsa', 'isi pulsa', 'token listrik', 'listrik', 'pln', 'token', 'game', 'top up', 'top up game', 'ml', 'mobile legends', 'ff', 'free fire', 'pubg', 'roblox'],
   'e-wallet': ['dana', 'ovo', 'gopay', 'shopeepay', 'ewallet', 'dompet digital', 'saldo'],
+  'hobi': ['game', 'hobi', 'mainan', 'console', 'nintendo', 'ps5', 'xbox'],
+  'elektronik': ['hp', 'smartphone', 'laptop', 'komputer', 'elektronik', 'gadget'],
 };
 
 export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
@@ -65,34 +67,41 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
   };
 
   // Algoritma pencarian yang ditingkatkan
-  const getFilteredProducts = () => {
+  const getResults = () => {
     const searchLower = query.toLowerCase().trim();
-    if (!searchLower) return [];
+    if (!searchLower) return { products: [], categories: [] };
 
-    // Mencari kategori yang cocok berdasarkan sinonim
+    // 1. Mencari kategori yang cocok berdasarkan sinonim
     const matchedCategoryKeys = Object.keys(CATEGORY_SYNONYMS).filter(catKey => 
       CATEGORY_SYNONYMS[catKey].some(keyword => 
         searchLower.includes(keyword) || keyword.includes(searchLower)
       )
     );
 
-    return Products.filter(product => {
+    // 2. Ambil objek kategori asli dari dummy-data
+    const matchedCategories = Categories.filter(cat => 
+      matchedCategoryKeys.includes(cat.name.toLowerCase()) ||
+      cat.name.toLowerCase().includes(searchLower)
+    );
+
+    // 3. Filter produk
+    const filteredProducts = Products.filter(product => {
       const nameMatch = product.name.toLowerCase().includes(searchLower);
       const categoryMatch = product.category?.toLowerCase().includes(searchLower);
       const tagMatch = product.tag?.toLowerCase().includes(searchLower);
       const descMatch = product.description?.toLowerCase().includes(searchLower);
       
-      // Jika kata kunci pencarian cocok dengan daftar sinonim kategori, tampilkan produk di kategori tersebut
       const synonymCategoryMatch = matchedCategoryKeys.some(catKey => 
         product.category?.toLowerCase().includes(catKey)
       );
 
-      // Prioritas: Nama > Kategori/Tag > Deskripsi > Sinonim
       return nameMatch || categoryMatch || tagMatch || descMatch || synonymCategoryMatch;
     });
+
+    return { products: filteredProducts, categories: matchedCategories };
   };
 
-  const filteredProducts = getFilteredProducts();
+  const { products: filteredProducts, categories: matchedCategories } = getResults();
 
   if (!isOpen) return null;
 
@@ -124,7 +133,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
         </div>
       </header>
 
-      <main className="flex-1 overflow-y-auto">
+      <main className="flex-1 overflow-y-auto pb-10">
         {!query ? (
           <div className="p-4 space-y-8">
             {/* Pencarian Terbaru */}
@@ -169,46 +178,80 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
             </section>
           </div>
         ) : (
-          <div className="p-4">
-            {filteredProducts.length > 0 ? (
-              <div className="space-y-4">
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Hasil Pencarian</p>
-                {filteredProducts.map((product) => (
-                  <Link 
-                    key={product.id} 
-                    href={`/product/${product.id}`}
-                    onClick={() => { saveSearch(query); onClose(); }}
-                    className="flex items-center gap-4 p-2 active:bg-gray-50 rounded-2xl transition-colors group"
-                  >
-                    <div className="relative w-14 h-14 rounded-xl overflow-hidden bg-gray-100 border border-gray-50 flex-shrink-0">
-                      <Image 
-                        src={getProductImage(product)} 
-                        alt={product.name} 
-                        fill 
-                        className="object-cover"
-                      />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="text-xs font-bold text-gray-800 line-clamp-1 group-hover:text-primary transition-colors">
-                        {product.name}
-                      </h4>
-                      <p className="text-[10px] text-gray-400 font-medium mt-0.5">{product.category}</p>
-                      <p className="text-sm font-black text-primary mt-1">Rp {product.price.toLocaleString()}</p>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
-                <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center text-gray-300">
-                  <Search className="w-8 h-8" />
+          <div className="p-4 space-y-6">
+            {/* 1. Kategori Terkait Section */}
+            {matchedCategories.length > 0 && (
+              <section className="space-y-3">
+                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Kategori Terkait</p>
+                <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+                  {matchedCategories.map((cat) => {
+                    const LucideIcon = (LucideIcons as any)[cat.icon];
+                    const catPath = cat.name === 'Top Up' ? '/kategori/top-up' : 
+                                   cat.name === 'E-Wallet' ? '/kategori/top-up/e-wallet' :
+                                   cat.name === 'Premium' ? '/kategori/premium' :
+                                   cat.name === 'Hobi' ? '/kategori/top-up' :
+                                   `/kategori/${cat.name.toLowerCase()}`;
+
+                    return (
+                      <Link 
+                        key={cat.id} 
+                        href={catPath}
+                        onClick={() => { saveSearch(query); onClose(); }}
+                        className="flex items-center gap-2.5 px-4 py-2.5 bg-white border border-gray-100 rounded-xl shadow-sm hover:border-primary/30 active:scale-95 transition-all shrink-0"
+                      >
+                        <div className="w-6 h-6 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                          {LucideIcon && <LucideIcon className="w-3.5 h-3.5" />}
+                        </div>
+                        <span className="text-xs font-bold text-gray-700">{cat.name}</span>
+                      </Link>
+                    );
+                  })}
                 </div>
-                <div className="space-y-1">
-                  <h3 className="text-sm font-bold text-gray-900">Produk tidak ditemukan</h3>
-                  <p className="text-[10px] text-gray-400 max-w-[200px]">Coba gunakan kata kunci lain seperti "baju", "token", atau "premium".</p>
-                </div>
-              </div>
+              </section>
             )}
+
+            {/* 2. Daftar Produk Section */}
+            <div className="space-y-4">
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Produk</p>
+              {filteredProducts.length > 0 ? (
+                <div className="space-y-3">
+                  {filteredProducts.map((product) => (
+                    <Link 
+                      key={product.id} 
+                      href={`/product/${product.id}`}
+                      onClick={() => { saveSearch(query); onClose(); }}
+                      className="flex items-center gap-4 p-2 active:bg-gray-50 rounded-2xl transition-colors group"
+                    >
+                      <div className="relative w-14 h-14 rounded-xl overflow-hidden bg-gray-100 border border-gray-50 flex-shrink-0">
+                        <Image 
+                          src={getProductImage(product)} 
+                          alt={product.name} 
+                          fill 
+                          className="object-cover"
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="text-xs font-bold text-gray-800 line-clamp-1 group-hover:text-primary transition-colors">
+                          {product.name}
+                        </h4>
+                        <p className="text-[10px] text-gray-400 font-medium mt-0.5">{product.category}</p>
+                        <p className="text-sm font-black text-primary mt-1">Rp {product.price.toLocaleString()}</p>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
+                  <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center text-gray-300">
+                    <Search className="w-8 h-8" />
+                  </div>
+                  <div className="space-y-1">
+                    <h3 className="text-sm font-bold text-gray-900">Produk tidak ditemukan</h3>
+                    <p className="text-[10px] text-gray-400 max-w-[200px]">Coba gunakan kata kunci lain seperti "baju", "token", atau "premium".</p>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </main>
