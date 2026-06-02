@@ -72,7 +72,9 @@ export function FashionDiscoveryCard() {
       title: 'KOLEKSI FASHION PILIHAN',
       subtitle: 'Kaos Oversized • Kemeja Premium • Fashion Casual',
       path: '/kategori/fashion',
-      icon: Shirt
+      icon: Shirt,
+      gradient: 'from-[#004D2C] via-[#008F4C] to-[#00A859]',
+      glow: 'bg-emerald-400/20'
     },
     {
       id: 'beauty',
@@ -80,7 +82,9 @@ export function FashionDiscoveryCard() {
       title: 'KOLEKSI BEAUTY PILIHAN',
       subtitle: 'Skincare • Bodycare • Makeup',
       path: '/kategori/kecantikan',
-      icon: Sparkles
+      icon: Sparkles,
+      gradient: 'from-[#6D28D9] via-[#DB2777] to-[#F43F5E]',
+      glow: 'bg-rose-400/20'
     }
   ];
 
@@ -96,7 +100,10 @@ export function FashionDiscoveryCard() {
             <CarouselItem key={slide.id} className="pl-0 h-full">
               <Link 
                 href={slide.path} 
-                className="bg-gradient-to-br from-[#00A859] via-[#008F4C] to-[#00703C] flex flex-col group relative active:scale-[0.98] transition-all h-full min-h-[285px] border-none text-white"
+                className={cn(
+                  "bg-gradient-to-br flex flex-col group relative active:scale-[0.98] transition-all h-full min-h-[285px] border-none text-white",
+                  slide.gradient
+                )}
               >
                 {/* Background Visual Elements */}
                 <div className="absolute -right-8 -bottom-8 opacity-20 transition-transform duration-700 group-hover:scale-110 group-hover:-rotate-6 pointer-events-none">
@@ -104,8 +111,8 @@ export function FashionDiscoveryCard() {
                 </div>
                 
                 {/* Premium Background Glow Accents */}
-                <div className="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-3xl pointer-events-none" />
-                <div className="absolute -bottom-10 -left-10 w-24 h-24 bg-emerald-400/20 rounded-full blur-3xl pointer-events-none" />
+                <div className={cn("absolute -top-10 -right-10 w-32 h-32 rounded-full blur-3xl pointer-events-none", slide.glow)} />
+                <div className="absolute -bottom-10 -left-10 w-24 h-24 bg-white/5 rounded-full blur-3xl pointer-events-none" />
                 
                 {/* Content Container */}
                 <div className="p-4 flex-1 flex flex-col justify-between relative z-10">
@@ -132,7 +139,7 @@ export function FashionDiscoveryCard() {
                       <p className="text-[16px] font-black text-white leading-none">Rp49.000</p>
                     </div>
                     
-                    <div className="bg-white text-[#00A859] text-[9px] font-black px-4 py-3 rounded-xl flex items-center gap-2 shadow-lg shadow-black/10 group-hover:bg-white/95 transition-all w-fit uppercase tracking-tighter">
+                    <div className="bg-white text-gray-900 text-[9px] font-black px-4 py-3 rounded-xl flex items-center gap-2 shadow-lg shadow-black/10 group-hover:bg-white/95 transition-all w-fit uppercase tracking-tighter">
                       LIHAT KOLEKSI <ArrowRight className="w-3 h-3" />
                     </div>
                   </div>
