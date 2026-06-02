@@ -82,10 +82,14 @@ export default function Checkout() {
 
   const totalItemsPrice = items.reduce((acc, curr) => acc + (curr.price * curr.quantity), 0);
   
-  // LOGIKA ONGKIR: Akumulasi (shippingFee * quantity) dari database produk
+  // LOGIKA ONGKIR REVISI: 
+  // - Item ke-1: Ongkir penuh
+  // - Item ke-2 dst: Tambah Rp 5.000 per item
   const totalShipping = items.reduce((acc, item) => {
-    const fee = item.shippingFee || 0;
-    return acc + (fee * item.quantity);
+    if (!item.shippingFee || item.shippingFee <= 0) return acc;
+    const baseFee = item.shippingFee;
+    const additionalFee = Math.max(0, item.quantity - 1) * 5000;
+    return acc + (baseFee + additionalFee);
   }, 0);
 
   const totalBill = totalItemsPrice + totalShipping;
@@ -130,7 +134,10 @@ export default function Checkout() {
       message += `Nominal: ${digitalDetails?.nominal}\n\n`;
     } else if (address) {
       const productList = items.map(item => {
-        const itemShipping = (item.shippingFee || 0) * item.quantity;
+        // Hitung ongkir per item line untuk detail WhatsApp dengan logika revisi
+        const itemShipping = (item.shippingFee || 0) > 0 
+          ? item.shippingFee + (Math.max(0, item.quantity - 1) * 5000) 
+          : 0;
         const shippingStr = itemShipping > 0 ? `Rp ${itemShipping.toLocaleString()}` : 'Gratis';
         return `- ${item.name} (Varian: ${item.variant || 'Default'}) x ${item.quantity} (Ongkir: ${shippingStr})`;
       }).join('\n');
@@ -276,7 +283,11 @@ export default function Checkout() {
           </div>
           <div className="space-y-3.5">
             {items.map((item, idx) => {
-              const itemShipping = (item.shippingFee || 0) * item.quantity;
+              // Hitung ongkir per item dengan logika revisi
+              const itemShipping = (item.shippingFee || 0) > 0 
+                ? item.shippingFee + (Math.max(0, item.quantity - 1) * 5000) 
+                : 0;
+
               return (
                 <div key={`${item.id}-${idx}`} className="flex gap-3.5">
                   <div className="relative w-14 h-14 rounded-xl overflow-hidden flex-shrink-0 border border-gray-50 bg-gray-50 flex items-center justify-center">

@@ -50,10 +50,14 @@ export default function Cart() {
 
   const total = items.reduce((acc, curr) => acc + (curr.price * curr.quantity), 0);
   
-  // LOGIKA ONGKIR: Jumlahkan (ongkir_per_produk * quantity) untuk semua item
+  // LOGIKA ONGKIR REVISI: 
+  // - Item ke-1: Ongkir penuh
+  // - Item ke-2 dst: Tambah Rp 5.000 per item
   const shippingFee = items.reduce((acc, item) => {
-    const fee = item.shippingFee || 0;
-    return acc + (fee * item.quantity);
+    if (!item.shippingFee || item.shippingFee <= 0) return acc;
+    const baseFee = item.shippingFee;
+    const additionalFee = Math.max(0, item.quantity - 1) * 5000;
+    return acc + (baseFee + additionalFee);
   }, 0);
 
   const finalTotal = total + shippingFee;
@@ -87,7 +91,11 @@ export default function Cart() {
         {items.length > 0 ? (
           <>
             {items.map((item, idx) => {
-              const itemShipping = (item.shippingFee || 0) * item.quantity;
+              // Hitung ongkir per baris produk dengan logika baru
+              const itemShipping = (item.shippingFee || 0) > 0 
+                ? item.shippingFee + (Math.max(0, item.quantity - 1) * 5000) 
+                : 0;
+                
               return (
                 <div key={`${item.id}-${item.variant || idx}`} className="bg-white p-3 rounded-2xl flex gap-3 border border-gray-100 shadow-sm">
                   <div className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 bg-gray-50 flex items-center justify-center">
