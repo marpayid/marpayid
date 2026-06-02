@@ -57,8 +57,8 @@ export function FashionDiscoveryCard() {
       href="/kategori/fashion" 
       className="bg-white rounded-[14px] border border-gray-100 overflow-hidden shadow-md flex flex-col group relative active:scale-[0.98] transition-all h-full"
     >
-      {/* 3D Premium Fashion Visual Area - Aspect ratio set to 4:5 to increase height by ~20% */}
-      <div className="relative aspect-[4/5] bg-[#F9FAFB] flex items-center justify-center p-0">
+      {/* Visual Area - Aspect ratio adjusted to be slightly taller than square (4:4.5) but not like a vertical banner */}
+      <div className="relative aspect-[4/4.5] bg-[#F9FAFB] flex items-center justify-center p-0">
         <Image 
           src="https://picsum.photos/seed/fashion-3d-lux/600/600" 
           alt="Premium Fashion" 
@@ -66,28 +66,28 @@ export function FashionDiscoveryCard() {
           className="object-cover"
           data-ai-hint="luxury 3D apparel display"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/15 via-transparent to-transparent pointer-events-none" />
       </div>
       
-      <div className="p-4 flex-1 flex flex-col justify-center gap-1.5">
-        <div className="inline-flex mb-1">
-          <span className="bg-[#E6F6EF] text-[#00A859] text-[9px] font-black px-2.5 py-1 rounded uppercase tracking-wider border border-[#D1F0E0]">
+      <div className="p-3 flex-1 flex flex-col justify-center gap-1">
+        <div className="inline-flex mb-0.5">
+          <span className="bg-[#E6F6EF] text-[#00A859] text-[8px] font-black px-2 py-0.5 rounded uppercase tracking-wider border border-[#D1F0E0]">
             FASHION TREND
           </span>
         </div>
-        <h3 className="text-[12px] font-bold text-gray-900 leading-tight">
+        <h3 className="text-[11px] font-bold text-gray-900 leading-tight">
           Koleksi Fashion Pilihan
         </h3>
-        <p className="text-[10px] text-gray-400 font-medium leading-tight line-clamp-2">
+        <p className="text-[9px] text-gray-400 font-medium leading-tight line-clamp-2">
           Kaos Oversized, Kemeja Premium dan Fashion Casual
         </p>
-        <div className="mt-auto pt-3 flex items-center justify-between">
+        <div className="mt-auto pt-2 flex items-center justify-between">
           <div className="flex flex-col">
-            <p className="text-[9px] text-gray-400 font-bold uppercase leading-none mb-1">Mulai</p>
-            <p className="text-sm font-black text-primary leading-none">Rp49.000</p>
+            <p className="text-[8px] text-gray-400 font-bold uppercase leading-none mb-0.5">Mulai</p>
+            <p className="text-[13px] font-black text-primary leading-none">Rp49.000</p>
           </div>
-          <div className="bg-primary text-white text-[10px] font-bold px-4 py-2 rounded-xl flex items-center gap-1.5 shadow-lg shadow-primary/20">
-            Cek <ArrowRight className="w-3 h-3" />
+          <div className="bg-primary text-white text-[9px] font-bold px-3 py-1.5 rounded-xl flex items-center gap-1 shadow-lg shadow-primary/10">
+            Cek <ArrowRight className="w-2.5 h-2.5" />
           </div>
         </div>
       </div>
