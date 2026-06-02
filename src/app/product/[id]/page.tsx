@@ -14,6 +14,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { cn, formatSold, getProductImage } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { ProductCard } from '@/components/product-grid';
 
 export default function ProductDetail() {
   const params = useParams();
@@ -26,6 +27,20 @@ export default function ProductDetail() {
   const product = useMemo(() => Products.find(p => p.id === Number(id)), [id]);
   const isOutOfStock = product?.stock === 'Stok Habis';
   const displayImage = getProductImage(product);
+
+  // Filter Produk Serupa (Kategori yang sama, kecualikan produk ini)
+  const similarProducts = useMemo(() => {
+    if (!product) return [];
+    return Products.filter(p => p.category === product.category && p.id !== product.id).slice(0, 8);
+  }, [product]);
+
+  // Filter Produk Lainnya (Prioritas kategori yang sama, kemudian produk lain)
+  const otherProducts = useMemo(() => {
+    if (!product) return [];
+    const inCategory = Products.filter(p => p.category === product.category && p.id !== product.id);
+    const others = Products.filter(p => p.category !== product.category && p.id !== product.id);
+    return [...inCategory, ...others].slice(0, 10);
+  }, [product]);
 
   const currentPrice = useMemo(() => {
     if (!product) return 0;
@@ -247,6 +262,34 @@ export default function ProductDetail() {
           <h3 className="text-sm font-bold mb-3">Deskripsi Produk</h3>
           <div className="text-xs text-gray-600 whitespace-pre-wrap leading-relaxed mb-6">
             {product.description}
+          </div>
+        </section>
+
+        {/* Section 1: Produk Serupa */}
+        {similarProducts.length > 0 && (
+          <section className="mt-6 bg-white py-6">
+            <div className="px-4 mb-4">
+              <h3 className="text-sm font-black text-gray-900 uppercase tracking-tight">Produk Serupa</h3>
+              <p className="text-[10px] text-gray-400 font-medium">Rekomendasi dalam kategori yang sama</p>
+            </div>
+            <div className="flex gap-4 overflow-x-auto no-scrollbar px-4 pb-4">
+              {similarProducts.map((p) => (
+                <ProductCard key={p.id} product={p} compact={true} />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Section 2: Produk Lainnya */}
+        <section className="mt-6 bg-white py-6 px-4">
+          <div className="mb-6">
+            <h3 className="text-sm font-black text-gray-900 uppercase tracking-tight">Mungkin Anda Suka</h3>
+            <p className="text-[10px] text-gray-400 font-medium">Pilihan produk terbaik untuk Anda</p>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            {otherProducts.map((p) => (
+              <ProductCard key={p.id} product={p} />
+            ))}
           </div>
         </section>
       </main>
