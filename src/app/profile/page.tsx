@@ -25,7 +25,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
-import Link from 'next/link';
+import Link from 'link';
 import { useUser, useAuth, useDoc, useFirestore } from '@/firebase';
 import { signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
@@ -199,7 +199,6 @@ export default function Profile() {
 
   const isLoggedIn = !!user;
 
-  // FIX: Tunggu Firestore selesai loading jika user sudah login agar tidak menampilkan "Pengguna MarPay" di awal
   if (authLoading || (isLoggedIn && profileLoading)) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -208,9 +207,8 @@ export default function Profile() {
     );
   }
 
-  // Gunakan fullName dari Firestore sebagai prioritas utama
   const userName = profileData?.fullName || profileData?.name || user?.displayName || (isLoggedIn ? "Pengguna MarPay" : "Masuk MarPay");
-  const userStatus = isLoggedIn ? "Pengguna MarPay" : "Belum Masuk";
+  const userStatus = isLoggedIn ? "Akun Terverifikasi" : "Belum Masuk";
   const userSub = isLoggedIn ? (profileData?.email || user.email) : "Masuk atau daftar untuk menikmati semua fitur MarPay.";
   const userPhoto = profileData?.photoURL || user?.photoURL || "/profil1.png";
 
