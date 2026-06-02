@@ -1,69 +1,12 @@
 'use client';
 
 import { Gamepad2, Smartphone, Wallet, ShieldCheck, Zap, Clock } from 'lucide-react';
-import { cn, getProductImage } from '@/lib/utils';
 import Link from 'next/link';
-import Image from 'next/image';
-import { Products } from '@/app/lib/dummy-data';
 
 export function PromotionalCards() {
-  // Ambil produk fashion spesifik untuk thumbnail di kartu
-  const fashionThumbs = Products.filter(p => 
-    ['Benidson Oversized Tshirt Benstylish', 
-     'Wispie Money Magnet Fitted Shirt', 
-     'Rephatious T-shirt "Rpts412"'].includes(p.name)
-  ).slice(0, 3);
-
   return (
     <section className="px-4 space-y-4 my-8">
-      {/* 1. Fashion Recommendation Card (Shopee Style) - Vertical Stacked Thumbnails */}
-      <Link href="/kategori/fashion" className="block">
-        <div className="relative overflow-hidden rounded-[20px] bg-white border border-gray-100 shadow-[0_4px_20px_rgba(0,0,0,0.04)] flex items-stretch min-h-[170px] max-h-[190px] group active:scale-[0.98] transition-all">
-          {/* Left Side: Content */}
-          <div className="flex-1 p-5 flex flex-col justify-center space-y-2">
-            <div className="inline-flex">
-              <span className="bg-[#E6F6EF] text-[#00A859] text-[8px] font-black px-2 py-0.5 rounded uppercase tracking-wider border border-[#D1F0E0]">
-                FASHION TREND
-              </span>
-            </div>
-            <div className="space-y-0.5">
-              <h3 className="text-[15px] font-black text-gray-900 leading-tight">
-                Koleksi Fashion Pilihan
-              </h3>
-              <p className="text-[10px] text-gray-400 font-medium leading-tight line-clamp-2">
-                Kaos Oversized, Kemeja Premium dan Fashion Casual
-              </p>
-            </div>
-            <div className="pt-1">
-              <p className="text-[11px] font-bold text-gray-800">
-                Mulai <span className="text-[#00A859] text-sm font-black">Rp49.000</span>
-              </p>
-              <button className="mt-2 bg-[#00A859] text-white px-4 py-1.5 rounded-lg text-[9px] font-bold uppercase shadow-sm active:scale-95 transition-transform">
-                Lihat Koleksi
-              </button>
-            </div>
-          </div>
-
-          {/* Right Side: Product Thumbnails Stacked Vertically */}
-          <div className="w-[100px] bg-gray-50/30 p-2 flex flex-col gap-1.5 justify-center items-center">
-            {fashionThumbs.map((product) => (
-              <div 
-                key={product.id} 
-                className="relative w-full h-[52px] rounded-[12px] overflow-hidden border border-white shadow-sm bg-white shrink-0"
-              >
-                <Image 
-                  src={getProductImage(product)} 
-                  alt={product.name} 
-                  fill 
-                  className="object-cover"
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-      </Link>
-
-      {/* 2. Card Top Up Game */}
+      {/* 1. Card Top Up Game */}
       <Link href="/kategori/top-up" className="block">
         <div className="relative overflow-hidden rounded-[28px] bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 p-6 shadow-xl shadow-indigo-500/20 text-white group active:scale-[0.98] transition-all">
           
@@ -101,7 +44,7 @@ export function PromotionalCards() {
         </div>
       </Link>
 
-      {/* 3. Card Pulsa & E-Wallet */}
+      {/* 2. Card Pulsa & E-Wallet */}
       <Link href="/kategori/top-up/e-wallet" className="block">
         <div className="relative overflow-hidden rounded-[28px] bg-gradient-to-br from-emerald-500 via-teal-600 to-blue-600 p-6 shadow-xl shadow-emerald-500/20 text-white group active:scale-[0.98] transition-all">
           

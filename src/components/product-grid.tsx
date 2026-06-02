@@ -1,9 +1,9 @@
 "use client"
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Star, ShoppingBag, Heart } from 'lucide-react';
+import { Star, ShoppingBag, Heart, ArrowRight } from 'lucide-react';
 import { Products } from '@/app/lib/dummy-data';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn, formatSold, getProductImage } from '@/lib/utils';
@@ -11,7 +11,15 @@ import { useToast } from '@/hooks/use-toast';
 
 export function ProductGrid() {
   const viralProducts = Products.filter(p => p.tag === 'Produk Viral');
-  const allProducts = Products;
+  
+  // Menambahkan Fashion Discovery Card di index 4 pada tab "Semua Produk"
+  const allProductsWithAd = useMemo(() => {
+    const list = [...Products];
+    if (list.length >= 4) {
+      list.splice(4, 0, { isDiscoveryCard: true } as any);
+    }
+    return list;
+  }, []);
 
   return (
     <section className="mt-6 px-4 pb-24">
@@ -41,13 +49,65 @@ export function ProductGrid() {
         
         <TabsContent value="semua">
           <div className="grid grid-cols-2 gap-3">
-            {allProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
+            {allProductsWithAd.map((item, idx) => (
+              item.isDiscoveryCard ? (
+                <FashionDiscoveryCard key="discovery-card" />
+              ) : (
+                <ProductCard key={item.id || idx} product={item} />
+              )
             ))}
           </div>
         </TabsContent>
       </Tabs>
     </section>
+  );
+}
+
+export function FashionDiscoveryCard() {
+  const fashionThumbs = Products.filter(p => 
+    ['Benidson Oversized Tshirt Benstylish', 
+     'Wispie Money Magnet Fitted Shirt', 
+     'Rephatious T-shirt "Rpts412"'].includes(p.name)
+  ).slice(0, 3);
+
+  return (
+    <Link 
+      href="/kategori/fashion" 
+      className="bg-white rounded-[14px] border border-gray-100 overflow-hidden shadow-sm flex flex-col group relative active:scale-[0.98] transition-all"
+    >
+      <div className="relative aspect-square bg-[#F8FAFC] p-2 grid grid-cols-2 grid-rows-2 gap-1.5">
+        <div className="relative row-span-2 rounded-lg overflow-hidden border border-white shadow-sm">
+          <Image src={getProductImage(fashionThumbs[0])} alt="" fill className="object-cover" />
+        </div>
+        <div className="relative rounded-lg overflow-hidden border border-white shadow-sm">
+          <Image src={getProductImage(fashionThumbs[1])} alt="" fill className="object-cover" />
+        </div>
+        <div className="relative rounded-lg overflow-hidden border border-white shadow-sm">
+          <Image src={getProductImage(fashionThumbs[2])} alt="" fill className="object-cover" />
+        </div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
+      </div>
+      
+      <div className="p-2.5 flex-1 flex flex-col justify-center">
+        <div className="inline-flex mb-1.5">
+          <span className="bg-[#E6F6EF] text-[#00A859] text-[8px] font-black px-2 py-0.5 rounded uppercase tracking-wider border border-[#D1F0E0]">
+            FASHION TREND
+          </span>
+        </div>
+        <h3 className="text-[11px] font-bold text-gray-900 leading-tight mb-1">
+          Koleksi Fashion Pilihan
+        </h3>
+        <p className="text-[9px] text-gray-400 font-medium leading-tight line-clamp-1 mb-2">
+          Kaos & Kemeja Premium
+        </p>
+        <div className="mt-auto flex items-center justify-between">
+          <p className="text-[11px] font-bold text-primary">Mulai <span className="text-xs">Rp49rb</span></p>
+          <div className="w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center">
+            <ArrowRight className="w-3 h-3" />
+          </div>
+        </div>
+      </div>
+    </Link>
   );
 }
 
