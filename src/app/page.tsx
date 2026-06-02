@@ -34,6 +34,8 @@ export default function Home() {
   }, [api]);
 
   const viralProducts = Products.filter(p => p.tag === 'Produk Viral');
+  const hoodieProduct = Products.find(p => p.id === 6);
+  const otherProductsForRecommendations = Products.filter(p => p.id !== 6);
 
   return (
     <div className="min-h-screen bg-gray-50 pb-32">
@@ -139,11 +141,21 @@ export default function Home() {
         <section className="bg-white py-4 px-4">
           <h2 className="text-base font-bold text-gray-900 mb-3">Rekomendasi Untukmu</h2>
           <div className="grid grid-cols-2 gap-3">
-            {Products.slice(0, 4).map((product) => (
+            {/* Tampilkan 2-4 produk lain sebelum kartu promo */}
+            {otherProductsForRecommendations.slice(0, 4).map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
-            {/* Native Fashion Discovery Card */}
+            
+            {/* Pasangan Fashion Discovery Card + BRTWL Hoodie (Berdampingan) */}
             <FashionDiscoveryCard />
+            {hoodieProduct && (
+              <ProductCard product={hoodieProduct} />
+            )}
+            
+            {/* Lanjutkan rekomendasi lainnya jika ada */}
+            {otherProductsForRecommendations.slice(4, 6).map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
           </div>
         </section>
 

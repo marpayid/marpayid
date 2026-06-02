@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { 
-  ArrowLeft, MapPin, CreditCard, ChevronRight, Truck, 
+  ArrowLeft, MapPin, CreditCard, Truck, 
   Smartphone, QrCode, Banknote, Edit3, MessageCircle, AlertCircle, Zap, Wallet,
   Info
 } from 'lucide-react';
@@ -160,9 +160,9 @@ export default function Checkout() {
       return <div className="relative w-full h-full"><Image src="/premium1.png" alt="Premium" fill className="object-cover" /></div>;
     }
     
-    if (item.image === '/pulsa-icon.png') return <Smartphone className="w-7 h-7 text-primary" />;
-    if (item.image === '/pln-icon.png') return <Zap className="w-7 h-7 text-primary" />;
-    if (item.image === '/e-wallet-icon.png') return <Wallet className="w-7 h-7 text-primary" />;
+    if (item.image === '/pulsa-icon.png') return <div className="flex items-center justify-center w-full h-full bg-primary/10 rounded-lg text-primary"><Smartphone className="w-7 h-7" /></div>;
+    if (item.image === '/pln-icon.png') return <div className="flex items-center justify-center w-full h-full bg-primary/10 rounded-lg text-primary"><Zap className="w-7 h-7" /></div>;
+    if (item.image === '/e-wallet-icon.png') return <div className="flex items-center justify-center w-full h-full bg-primary/10 rounded-lg text-primary"><Wallet className="w-7 h-7" /></div>;
     
     const displayImage = getProductImage(item);
     if (displayImage) return <Image src={displayImage} alt={item.name} fill className="object-cover" />;
