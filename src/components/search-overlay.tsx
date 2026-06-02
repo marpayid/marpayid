@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useRef, useMemo } from 'react';
@@ -31,7 +30,8 @@ const CATEGORY_KEYWORDS_MAP: Record<string, string[]> = {
 
 // Map Sugesti Berdasarkan Awalan Kata
 const SUGGESTIONS_MAP: Record<string, string[]> = {
-  'ka': ['kaos', 'kemeja', 'kamera', 'kartu perdana'],
+  'ka': ['kaos', 'kamera', 'kartu perdana'],
+  'ke': ['kemeja', 'kecantikan', 'kesehatan'],
   'ba': ['baju', 'batik', 'bayar tagihan'],
   'skin': ['skincare', 'serum wajah', 'facial wash', 'perawatan wajah'],
   'pu': ['pulsa', 'pulsa telkomsel', 'pulsa indosat', 'pulsa murah'],
@@ -44,6 +44,7 @@ const SUGGESTIONS_MAP: Record<string, string[]> = {
 
 export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
   const [query, setQuery] = useState('');
+  const [showSuggestions, setShowSuggestions] = useState(true);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -73,6 +74,13 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
     localStorage.setItem('marpay_recent_searches', JSON.stringify(updated));
   };
 
+  const handleExecuteSearch = (term: string) => {
+    setQuery(term);
+    saveSearch(term);
+    setShowSuggestions(false);
+    inputRef.current?.blur();
+  };
+
   const clearRecent = () => {
     setRecentSearches([]);
     localStorage.removeItem('marpay_recent_searches');
@@ -97,7 +105,9 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
       .map(p => p.name.split(' ').slice(0, 2).join(' '))
       .slice(0, 3);
       
-    suggestions = Array.from(new Set([...suggestions, ...productSuggestions])).slice(0, 6);
+    suggestions = Array.from(new Set([...suggestions, ...productSuggestions]))
+      .filter(s => s.toLowerCase() !== q) 
+      .slice(0, 6);
 
     // 2. Identify Relevant Categories by Keywords
     const matchedCategoryNames: string[] = [];
@@ -140,17 +150,24 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
             ref={inputRef}
             placeholder="Cari kebutuhanmu di MarPay..." 
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onFocus={() => setShowSuggestions(true)}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              setShowSuggestions(true);
+            }}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
-                saveSearch(query);
+                handleExecuteSearch(query);
               }
             }}
             className="pl-9 pr-9 bg-gray-50 border-none rounded-full h-10 focus-visible:ring-primary/20 text-sm"
           />
           {query && (
             <button 
-              onClick={() => setQuery('')}
+              onClick={() => {
+                setQuery('');
+                setShowSuggestions(true);
+              }}
               className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 bg-gray-200 rounded-full text-gray-500"
             >
               <X className="w-3 h-3" />
@@ -173,7 +190,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                   {recentSearches.map((term) => (
                     <button 
                       key={term}
-                      onClick={() => setQuery(term)}
+                      onClick={() => handleExecuteSearch(term)}
                       className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 rounded-full text-xs text-gray-600 hover:bg-gray-200 active:scale-95 transition-all"
                     >
                       <Clock className="w-3 h-3" />
@@ -191,7 +208,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                 {POPULAR_SEARCHES.map((term) => (
                   <button 
                     key={term}
-                    onClick={() => { setQuery(term); saveSearch(term); }}
+                    onClick={() => handleExecuteSearch(term)}
                     className="flex items-center gap-3 p-3 bg-white border border-gray-100 rounded-xl text-left hover:border-primary/30 active:bg-gray-50 active:scale-[0.98] transition-all"
                   >
                     <div className="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center text-orange-500">
@@ -206,7 +223,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
         ) : (
           <div className="pb-10">
             {/* 1. Saran Pencarian (Search Suggestions) */}
-            {results.suggestions.length > 0 && (
+            {showSuggestions && results.suggestions.length > 0 && (
               <section className="border-b border-gray-50 pb-2">
                 <div className="px-4 py-2 mt-2">
                   <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Saran Pencarian</p>
@@ -214,7 +231,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                 {results.suggestions.map((s, i) => (
                   <button 
                     key={i} 
-                    onClick={() => { setQuery(s); saveSearch(s); }}
+                    onClick={() => handleExecuteSearch(s)}
                     className="w-full flex items-center gap-3 px-4 py-3 active:bg-gray-50 transition-colors"
                   >
                     <Search className="w-3.5 h-3.5 text-gray-300" />
@@ -307,4 +324,3 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
     </div>
   );
 }
-
