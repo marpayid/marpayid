@@ -197,7 +197,10 @@ export default function Profile() {
     { label: 'Dibatalkan', icon: XCircle, path: '/akun/transaksi?status=cancelled' },
   ];
 
-  if (authLoading) {
+  const isLoggedIn = !!user;
+
+  // FIX: Tunggu Firestore selesai loading jika user sudah login agar tidak menampilkan "Pengguna MarPay" di awal
+  if (authLoading || (isLoggedIn && profileLoading)) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -205,8 +208,7 @@ export default function Profile() {
     );
   }
 
-  const isLoggedIn = !!user;
-  // Menampilkan fullName dari Firestore sebagai prioritas utama
+  // Gunakan fullName dari Firestore sebagai prioritas utama
   const userName = profileData?.fullName || profileData?.name || user?.displayName || (isLoggedIn ? "Pengguna MarPay" : "Masuk MarPay");
   const userStatus = isLoggedIn ? "Pengguna MarPay" : "Belum Masuk";
   const userSub = isLoggedIn ? (profileData?.email || user.email) : "Masuk atau daftar untuk menikmati semua fitur MarPay.";

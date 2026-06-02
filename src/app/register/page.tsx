@@ -65,11 +65,10 @@ export default function RegisterPage() {
       const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
       const user = userCredential.user;
 
-      // Simpan data ke Firestore dengan field fullName agar konsisten
+      // Simpan data ke Firestore dengan field fullName secara eksplisit
       await setDoc(doc(db, 'users', user.uid), {
         uid: user.uid,
         fullName: formData.name.trim(),
-        name: formData.name.trim(), // Backup field name
         email: formData.email,
         phone: formData.phone.trim(),
         photoURL: '/profil1.png',
@@ -92,8 +91,6 @@ export default function RegisterPage() {
       let message = error.message;
       if (error.code === 'auth/email-already-in-use') {
         message = "Email ini sudah terdaftar. Silakan masuk.";
-      } else if (error.code === 'auth/api-key-not-valid') {
-        message = "Konfigurasi API tidak valid. Harap periksa file config.ts.";
       } else if (error.code === 'auth/invalid-email') {
         message = "Format email tidak valid.";
       }
