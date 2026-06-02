@@ -167,7 +167,7 @@ export function ProductCard({ product, compact = false }: { product: any, compac
       quantity: 1,
       type: product.type || 'physical',
       category: product.category,
-      shippingFee: product.shippingFee || 0 // MENGGUNAKAN DATA ASLI PRODUK
+      shippingFee: product.shippingFee || 0
     };
 
     const savedCart = localStorage.getItem('marpay_cart');
@@ -198,10 +198,20 @@ export function ProductCard({ product, compact = false }: { product: any, compac
         <div className="mt-auto">
           <div className="flex justify-between items-center mb-1">
             <p className="text-sm font-bold text-red-600">Rp {product.price.toLocaleString()}</p>
-            {hasShippingFee && product.type !== 'digital' && <div className="flex items-center text-[8px] text-gray-400 font-bold uppercase gap-0.5"><Truck className="w-2.5 h-2.5" /> Ongkir</div>}
+            {/* REVISI: Hanya tampilkan info jika GRATIS ONGKIR */}
+            {!hasShippingFee && product.type !== 'digital' && (
+              <div className="flex items-center text-[8px] text-green-500 font-black uppercase gap-0.5">
+                <Truck className="w-2.5 h-2.5" /> Gratis
+              </div>
+            )}
           </div>
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1 overflow-hidden"><Star className="w-2.5 h-2.5 fill-yellow-400 text-yellow-400 flex-shrink-0" /><span className="text-[10px] font-bold text-gray-700">{product.rating || '0.0'}</span><span className="text-[10px] text-gray-400 mx-0.5 flex-shrink-0">|</span><span className="text-[10px] text-gray-500 truncate">{formatSold(product.sold || 0)}</span></div>
+            <div className="flex items-center gap-1 overflow-hidden">
+              <Star className="w-2.5 h-2.5 fill-yellow-400 text-yellow-400 flex-shrink-0" />
+              <span className="text-[10px] font-bold text-gray-700">{product.rating || '0.0'}</span>
+              <span className="text-[10px] text-gray-400 mx-0.5 flex-shrink-0">|</span>
+              <span className="text-[10px] text-gray-500 truncate">{formatSold(product.sold || 0)}</span>
+            </div>
             <button onClick={handleAddToCart} disabled={isOutOfStock} className={cn("w-6 h-6 rounded-full border flex items-center justify-center transition-colors flex-shrink-0 ml-1", isOutOfStock ? "bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed" : "border-primary/20 bg-primary/5 text-primary hover:bg-primary hover:text-white")}><ShoppingBag className="w-3 h-3" /></button>
           </div>
         </div>

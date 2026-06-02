@@ -62,7 +62,7 @@ export default function ProductDetail() {
   const totalPrice = currentPrice * quantity;
   const hasDiscount = !!product.originalPrice;
 
-  // LOGIKA ONGKIR: Gunakan data asli dari objek produk
+  // REVISI LOGIKA TAMPILAN: Hanya tampilkan info jika GRATIS ONGKIR
   const hasShippingFee = (product.shippingFee || 0) > 0;
 
   const handleQuantity = (type: 'inc' | 'dec') => {
@@ -140,15 +140,16 @@ export default function ProductDetail() {
           )}
         </section>
 
-        {product.type !== 'digital' && !isOutOfStock && (
+        {/* REVISI: Hanya tampilkan spanduk ongkir jika GRATIS ONGKIR */}
+        {product.type !== 'digital' && !isOutOfStock && !hasShippingFee && (
           <section className="mx-4 my-2 bg-white border border-[#22c55e]/15 rounded-[10px] px-3 py-2 shadow-[0_2px_6px_rgba(0,0,0,0.02)] flex items-center gap-3 h-[60px]">
-            <div className="w-9 h-9 bg-blue-50 rounded-lg flex items-center justify-center text-blue-500 shrink-0"><Truck className="w-7 h-7" /></div>
+            <div className="w-9 h-9 bg-green-50 rounded-lg flex items-center justify-center text-green-500 shrink-0"><Truck className="w-7 h-7" /></div>
             <div className="flex-1">
-              <p className="text-[12px] font-bold text-blue-500 uppercase tracking-tight mb-0">
-                {hasShippingFee ? `ONGKIR: RP ${product.shippingFee.toLocaleString()}` : 'GRATIS ONGKIR'}
+              <p className="text-[12px] font-black text-green-600 uppercase tracking-tight mb-0">
+                GRATIS ONGKIR
               </p>
               <p className="text-[14px] font-semibold text-gray-900 leading-tight">
-                {hasShippingFee ? 'Pengiriman Reguler' : 'Potongan Maksimal Rp20.000'}
+                Potongan Maksimal Rp20.000
               </p>
             </div>
           </section>
@@ -171,11 +172,12 @@ export default function ProductDetail() {
               <span className="text-2xl font-bold text-primary font-headline">Rp {currentPrice.toLocaleString()}</span>
               {hasDiscount && <span className="text-sm text-gray-400 line-through mb-1">Rp {product.originalPrice?.toLocaleString()}</span>}
             </div>
-            <p className="text-[11px] font-bold text-gray-400 uppercase mt-1">
-              Ongkos Kirim: <span className={cn("ml-1", hasShippingFee ? "text-gray-700" : "text-green-500")}>
-                {hasShippingFee ? `Rp ${product.shippingFee.toLocaleString()}` : 'Gratis'}
-              </span>
-            </p>
+            {/* REVISI: Info biaya pengiriman diringkas untuk menjaga psikologi pembeli */}
+            {!hasShippingFee && (
+              <p className="text-[11px] font-bold text-green-500 uppercase mt-1">
+                Layanan: <span className="ml-1">Gratis Ongkir</span>
+              </p>
+            )}
           </div>
         </section>
 
