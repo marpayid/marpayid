@@ -57,25 +57,28 @@ export function FashionDiscoveryCard() {
       href="/kategori/fashion" 
       className="bg-white rounded-[14px] border border-gray-100 overflow-hidden shadow-md flex flex-col group relative active:scale-[0.98] transition-all h-full"
     >
-      {/* Visual Area - Aspect ratio adjusted to be slightly taller than square (4:4.5) but not like a vertical banner */}
+      {/* Visual Area - Taller aspect ratio (4:4.5) to make it ~15-20% taller than normal cards */}
       <div className="relative aspect-[4/4.5] bg-[#F9FAFB] flex items-center justify-center p-0">
         <Image 
-          src="https://picsum.photos/seed/fashion-3d-lux/600/600" 
-          alt="Premium Fashion" 
+          src="https://picsum.photos/seed/fashion-3d-lux-v2/600/600" 
+          alt="Premium Fashion Discovery" 
           fill 
           className="object-cover"
           data-ai-hint="luxury 3D apparel display"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/15 via-transparent to-transparent pointer-events-none" />
+        {/* Glass effect gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
+        {/* Soft glow effect for premium feel */}
+        <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary/10 rounded-full blur-3xl" />
       </div>
       
-      <div className="p-3 flex-1 flex flex-col justify-center gap-1">
-        <div className="inline-flex mb-0.5">
-          <span className="bg-[#E6F6EF] text-[#00A859] text-[8px] font-black px-2 py-0.5 rounded uppercase tracking-wider border border-[#D1F0E0]">
+      <div className="p-3.5 flex-1 flex flex-col justify-center gap-1.5">
+        <div className="inline-flex">
+          <span className="bg-[#E6F6EF] text-[#00A859] text-[8px] font-black px-2.5 py-1 rounded uppercase tracking-[0.05em] border border-[#D1F0E0]">
             FASHION TREND
           </span>
         </div>
-        <h3 className="text-[11px] font-bold text-gray-900 leading-tight">
+        <h3 className="text-[12px] font-bold text-gray-900 leading-tight">
           Koleksi Fashion Pilihan
         </h3>
         <p className="text-[9px] text-gray-400 font-medium leading-tight line-clamp-2">
@@ -84,9 +87,9 @@ export function FashionDiscoveryCard() {
         <div className="mt-auto pt-2 flex items-center justify-between">
           <div className="flex flex-col">
             <p className="text-[8px] text-gray-400 font-bold uppercase leading-none mb-0.5">Mulai</p>
-            <p className="text-[13px] font-black text-primary leading-none">Rp49.000</p>
+            <p className="text-[14px] font-black text-primary leading-none">Rp49.000</p>
           </div>
-          <div className="bg-primary text-white text-[9px] font-bold px-3 py-1.5 rounded-xl flex items-center gap-1 shadow-lg shadow-primary/10">
+          <div className="bg-primary text-white text-[9px] font-bold px-3 py-2 rounded-xl flex items-center gap-1.5 shadow-lg shadow-primary/15 group-hover:bg-primary/90 transition-colors">
             Cek <ArrowRight className="w-2.5 h-2.5" />
           </div>
         </div>
