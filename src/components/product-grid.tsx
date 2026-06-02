@@ -4,11 +4,12 @@
 import { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Star, ShoppingBag, Heart, ArrowRight, Shirt } from 'lucide-react';
+import { Star, ShoppingBag, Heart, ArrowRight, Shirt, Sparkles } from 'lucide-react';
 import { Products } from '@/app/lib/dummy-data';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn, formatSold, getProductImage } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from '@/components/ui/carousel';
 
 export function ProductGrid() {
   const viralProducts = Products.filter(p => p.tag === 'Produk Viral');
@@ -52,51 +53,96 @@ export function ProductGrid() {
 }
 
 export function FashionDiscoveryCard() {
-  return (
-    <Link 
-      href="/kategori/fashion" 
-      className="bg-gradient-to-br from-[#00A859] via-[#008F4C] to-[#00703C] rounded-[14px] overflow-hidden shadow-xl flex flex-col group relative active:scale-[0.98] transition-all h-full min-h-[285px] border-none text-white"
-    >
-      {/* Background Visual Elements (Family Style with Game & Wallet Cards) */}
-      <div className="absolute -right-8 -bottom-8 opacity-20 transition-transform duration-700 group-hover:scale-110 group-hover:-rotate-6 pointer-events-none">
-        <Shirt className="w-44 h-44 rotate-12" />
-      </div>
-      
-      {/* Premium Background Glow Accents */}
-      <div className="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-10 -left-10 w-24 h-24 bg-emerald-400/20 rounded-full blur-3xl pointer-events-none" />
-      
-      {/* Content Container */}
-      <div className="p-4 flex-1 flex flex-col justify-between relative z-10">
-        <div className="space-y-4">
-          <div className="inline-flex">
-            <span className="bg-white/20 backdrop-blur-md border border-white/20 text-[7px] font-black px-3 py-1 rounded-full uppercase tracking-[0.15em] leading-none">
-              FASHION TREND
-            </span>
-          </div>
-          
-          <div className="space-y-1.5">
-            <h3 className="text-[14px] font-black leading-tight tracking-tight uppercase">
-              KOLEKSI FASHION PILIHAN
-            </h3>
-            <p className="text-[9px] text-white/80 font-medium leading-tight">
-              Kaos Oversized • Kemeja Premium • Fashion Casual
-            </p>
-          </div>
-        </div>
+  const [api, setApi] = useState<CarouselApi>();
 
-        <div className="mt-auto pt-8 space-y-4">
-          <div className="flex flex-col">
-            <p className="text-[8px] text-white/50 font-bold uppercase leading-none mb-1 tracking-widest">Mulai</p>
-            <p className="text-[16px] font-black text-white leading-none">Rp49.000</p>
-          </div>
-          
-          <div className="bg-white text-[#00A859] text-[9px] font-black px-4 py-3 rounded-xl flex items-center gap-2 shadow-lg shadow-black/10 group-hover:bg-white/95 transition-all w-fit uppercase tracking-tighter">
-            LIHAT KOLEKSI <ArrowRight className="w-3 h-3" />
-          </div>
-        </div>
-      </div>
-    </Link>
+  useEffect(() => {
+    if (!api) return;
+
+    const intervalId = setInterval(() => {
+      api.scrollNext();
+    }, 4000);
+
+    return () => clearInterval(intervalId);
+  }, [api]);
+
+  const slides = [
+    {
+      id: 'fashion',
+      badge: 'FASHION TREND',
+      title: 'KOLEKSI FASHION PILIHAN',
+      subtitle: 'Kaos Oversized • Kemeja Premium • Fashion Casual',
+      path: '/kategori/fashion',
+      icon: Shirt
+    },
+    {
+      id: 'beauty',
+      badge: 'BEAUTY TREND',
+      title: 'KOLEKSI BEAUTY PILIHAN',
+      subtitle: 'Skincare • Bodycare • Makeup',
+      path: '/kategori/kecantikan',
+      icon: Sparkles
+    }
+  ];
+
+  return (
+    <div className="rounded-[14px] overflow-hidden shadow-xl h-full min-h-[285px] relative">
+      <Carousel 
+        setApi={setApi} 
+        opts={{ loop: true }} 
+        className="w-full h-full"
+      >
+        <CarouselContent className="h-full ml-0">
+          {slides.map((slide) => (
+            <CarouselItem key={slide.id} className="pl-0 h-full">
+              <Link 
+                href={slide.path} 
+                className="bg-gradient-to-br from-[#00A859] via-[#008F4C] to-[#00703C] flex flex-col group relative active:scale-[0.98] transition-all h-full min-h-[285px] border-none text-white"
+              >
+                {/* Background Visual Elements */}
+                <div className="absolute -right-8 -bottom-8 opacity-20 transition-transform duration-700 group-hover:scale-110 group-hover:-rotate-6 pointer-events-none">
+                  <slide.icon className="w-44 h-44 rotate-12" />
+                </div>
+                
+                {/* Premium Background Glow Accents */}
+                <div className="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-3xl pointer-events-none" />
+                <div className="absolute -bottom-10 -left-10 w-24 h-24 bg-emerald-400/20 rounded-full blur-3xl pointer-events-none" />
+                
+                {/* Content Container */}
+                <div className="p-4 flex-1 flex flex-col justify-between relative z-10">
+                  <div className="space-y-4">
+                    <div className="inline-flex">
+                      <span className="bg-white/20 backdrop-blur-md border border-white/20 text-[7px] font-black px-3 py-1 rounded-full uppercase tracking-[0.15em] leading-none">
+                        {slide.badge}
+                      </span>
+                    </div>
+                    
+                    <div className="space-y-1.5">
+                      <h3 className="text-[14px] font-black leading-tight tracking-tight uppercase">
+                        {slide.title}
+                      </h3>
+                      <p className="text-[9px] text-white/80 font-medium leading-tight">
+                        {slide.subtitle}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="mt-auto pt-8 space-y-4">
+                    <div className="flex flex-col">
+                      <p className="text-[8px] text-white/50 font-bold uppercase leading-none mb-1 tracking-widest">Mulai</p>
+                      <p className="text-[16px] font-black text-white leading-none">Rp49.000</p>
+                    </div>
+                    
+                    <div className="bg-white text-[#00A859] text-[9px] font-black px-4 py-3 rounded-xl flex items-center gap-2 shadow-lg shadow-black/10 group-hover:bg-white/95 transition-all w-fit uppercase tracking-tighter">
+                      LIHAT KOLEKSI <ArrowRight className="w-3 h-3" />
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+      </Carousel>
+    </div>
   );
 }
 
