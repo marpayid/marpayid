@@ -29,7 +29,7 @@ const CATEGORY_KEYWORDS_MAP: Record<string, string[]> = {
 };
 
 const SUGGESTIONS_MAP: Record<string, string[]> = {
-  'ka': ['kaos', 'kamera', 'kartu perdana'],
+  'ka': ['kaos', 'kemeja', 'kamera', 'kartu perdana'],
   'ke': ['kemeja', 'kecantikan', 'kesehatan'],
   'ba': ['baju', 'batik', 'bayar tagihan'],
   'skin': ['skincare', 'serum wajah', 'facial wash', 'perawatan wajah'],
@@ -259,48 +259,20 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
               </div>
             ) : (
               /* MODE 2: HASIL PENCARIAN (GRID) */
-              <div className="space-y-3">
-                {results.categories.length > 0 && (
-                  <section className="p-4 bg-white border-b border-gray-100">
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Kategori Terkait</p>
-                    <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
-                      {results.categories.map((cat) => {
-                        const LucideIcon = (LucideIcons as any)[cat.icon];
-                        const catPath = cat.name === 'Top Up' ? '/kategori/top-up' : 
-                                       cat.name === 'E-Wallet' ? '/kategori/top-up/e-wallet' :
-                                       cat.name === 'Premium' ? '/kategori/premium' :
-                                       `/kategori/${cat.name.toLowerCase()}`;
+              <div className="space-y-0">
+                {/* Horizontal Filter Chips */}
+                <div className="bg-white border-b border-gray-50 flex gap-2 overflow-x-auto no-scrollbar px-4 py-3 sticky top-[52px] z-20">
+                  {['⚡ Instan', '🔥 Terlaris', '⭐ Rating Tinggi', '💰 Promo', '🆕 Terbaru'].map((filter) => (
+                    <button
+                      key={filter}
+                      className="px-4 py-1.5 bg-gray-50 border border-gray-100 rounded-full text-[10px] font-bold text-gray-600 whitespace-nowrap active:bg-gray-100 transition-colors"
+                    >
+                      {filter}
+                    </button>
+                  ))}
+                </div>
 
-                        return (
-                          <Link 
-                            key={cat.id} 
-                            href={catPath}
-                            onClick={() => { saveSearch(query); onClose(); }}
-                            className="flex items-center gap-2.5 px-4 py-2.5 bg-white border border-gray-100 rounded-xl shadow-sm hover:border-primary/30 active:scale-95 transition-all shrink-0"
-                          >
-                            <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
-                              {LucideIcon && <LucideIcon className="w-4 h-4" />}
-                            </div>
-                            <span className="text-xs font-bold text-gray-700">{cat.name}</span>
-                          </Link>
-                        );
-                      })}
-                    </div>
-                  </section>
-                )}
-
-                <section className="px-4 py-4 space-y-4">
-                  {/* Premium Recommendation Section */}
-                  <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4">
-                    <div className="w-10 h-10 bg-yellow-50 rounded-xl flex items-center justify-center text-yellow-500 shrink-0">
-                      <Sparkles className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <h3 className="text-xs font-bold text-gray-900">✨ Rekomendasi MarPay</h3>
-                      <p className="text-[10px] text-gray-500 mt-0.5">Pilihan produk terbaik berdasarkan pencarian Anda</p>
-                    </div>
-                  </div>
-
+                <section className="px-4 py-4">
                   {results.products.length > 0 ? (
                     <div className="grid grid-cols-2 gap-3">
                       {results.products.map((product) => (
