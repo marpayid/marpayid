@@ -1,4 +1,3 @@
-
 'use client';
 
 import { BottomNav } from '@/components/bottom-nav';
@@ -69,7 +68,11 @@ export default function Profile() {
     const updateCounts = () => {
       const saved = localStorage.getItem('marpay_wishlist');
       if (saved) {
-        setWishlistCount(JSON.parse(saved).length);
+        try {
+          setWishlistCount(JSON.parse(saved).length);
+        } catch (e) {
+          setWishlistCount(0);
+        }
       }
     };
     updateCounts();
@@ -279,19 +282,31 @@ export default function Profile() {
             </Link>
           </div>
         ) : (
-          <div className="mt-8">
+          <div className="mt-8 grid grid-cols-2 gap-3">
             <Link href="/favorit" className="block w-full">
-              <div className="bg-red-50/50 border border-red-100 p-4 rounded-2xl flex items-center justify-between transition-colors active:bg-red-50">
+              <div className="bg-red-50/50 border border-red-100 p-4 rounded-2xl flex items-center justify-between transition-colors active:bg-red-50 h-full">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center text-red-500">
+                  <div className="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center text-red-500 shrink-0">
                     <Heart className="w-5 h-5 fill-red-500" />
                   </div>
-                  <div>
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Produk Favorit</p>
+                  <div className="min-w-0">
+                    <p className="text-[9px] font-bold text-gray-400 uppercase tracking-tighter truncate">Produk Favorit</p>
                     <p className="text-base font-black text-gray-800">{wishlistCount}</p>
                   </div>
                 </div>
-                <ChevronRight className="w-4 h-4 text-red-200" />
+              </div>
+            </Link>
+            <Link href="/akun/voucher" className="block w-full">
+              <div className="bg-emerald-50/50 border border-emerald-100 p-4 rounded-2xl flex items-center justify-between transition-colors active:bg-emerald-50 h-full">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-500 shrink-0">
+                    <Ticket className="w-5 h-5 fill-emerald-500" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[9px] font-bold text-gray-400 uppercase tracking-tighter truncate">Voucher Tersedia</p>
+                    <p className="text-base font-black text-gray-800">0</p>
+                  </div>
+                </div>
               </div>
             </Link>
           </div>
