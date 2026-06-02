@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { ArrowLeft, X, Search, Clock, TrendingUp, ChevronRight } from 'lucide-react';
+import { ArrowLeft, X, Search, Clock, TrendingUp, ChevronRight, Sparkles } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Products, Categories } from '@/app/lib/dummy-data';
@@ -289,12 +289,16 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                   </section>
                 )}
 
-                <section className="px-4 py-4">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">
-                      Hasil Pencarian "{query}"
-                    </h3>
-                    <span className="text-[10px] font-bold text-gray-400">{results.products.length} Produk</span>
+                <section className="px-4 py-4 space-y-4">
+                  {/* Premium Recommendation Section */}
+                  <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4">
+                    <div className="w-10 h-10 bg-yellow-50 rounded-xl flex items-center justify-center text-yellow-500 shrink-0">
+                      <Sparkles className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h3 className="text-xs font-bold text-gray-900">✨ Rekomendasi MarPay</h3>
+                      <p className="text-[10px] text-gray-500 mt-0.5">Pilihan produk terbaik berdasarkan pencarian Anda</p>
+                    </div>
                   </div>
 
                   {results.products.length > 0 ? (
