@@ -180,8 +180,8 @@ export default function Profile() {
       icon: ShieldCheck, 
       color: 'text-cyan-500',
       bgColor: 'bg-cyan-50',
-      path: '/akun/pengaturan',
-      protected: false
+      path: '/akun/keamanan',
+      protected: true
     },
     { 
       label: 'Pengaturan App', 
