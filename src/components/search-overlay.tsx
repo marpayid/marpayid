@@ -114,11 +114,11 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
       }
     });
 
-    const matchedCategories = Categories.filter(cat => matchedCategoryNames.includes(cat.name));
-
     const productsByName = Products.filter(p => p.name.toLowerCase().includes(q));
     const productsByCategory = Products.filter(p => matchedCategoryNames.includes(p.category || ''));
     const allMatchedProducts = Array.from(new Set([...productsByName, ...productsByCategory]));
+
+    const matchedCategories = Categories.filter(cat => matchedCategoryNames.includes(cat.name));
 
     return { 
       suggestions, 
@@ -177,8 +177,8 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                 className={cn(
                   "flex items-center justify-center h-[34px] px-4 rounded-[12px] text-[10px] font-bold tracking-wider transition-all whitespace-nowrap active:scale-95 border",
                   activeFilter === filter
-                    ? "bg-primary text-white border-transparent"
-                    : "bg-white text-gray-700 border-[#E5E7EB]"
+                    ? "bg-primary text-white border-transparent shadow-sm"
+                    : "bg-white text-gray-500 border-[#E5E7EB]"
                 )}
               >
                 {filter}
@@ -283,15 +283,15 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
               </div>
             ) : (
               <div className="space-y-0">
-                {/* Koleksi Pilihan Section - Premium Visual Break */}
-                <section className="px-4 mt-4">
-                  <div className="bg-[#F0FDF4] rounded-[16px] border border-[#DCFCE7] px-5 py-4 flex flex-col justify-center h-[70px] md:h-[80px]">
-                    <h3 className="text-[20px] font-bold text-black leading-none">Koleksi Pilihan</h3>
-                    <p className="text-[14px] text-gray-500 mt-1 leading-none font-medium">Produk terbaik untuk Anda</p>
+                {/* Koleksi Pilihan Section - Compact Premium Header */}
+                <section className="px-4 mt-[10px] mb-[10px]">
+                  <div className="bg-[#F3FBF7] rounded-[14px] border border-[#DDF5E8] px-4 py-2 flex flex-col justify-center h-[60px]">
+                    <h3 className="text-[16px] font-semibold text-black leading-tight">Koleksi Pilihan</h3>
+                    <p className="text-[12px] text-gray-500 mt-0.5 leading-tight">Produk terbaik untuk Anda</p>
                   </div>
                 </section>
 
-                <section className="px-4 pt-4 pb-10">
+                <section className="px-4 pb-10">
                   {results.products.length > 0 ? (
                     <div className="grid grid-cols-2 gap-3">
                       {results.products.map((product) => (
