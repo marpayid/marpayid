@@ -1,3 +1,4 @@
+
 {
   "placeholderImages": [
     {
@@ -47,6 +48,12 @@
       "description": "Leather Backpack",
       "imageUrl": "https://picsum.photos/seed/bag/400/400",
       "imageHint": "backpack accessories"
+    },
+    {
+      "id": "prod-hoodie",
+      "description": "BRTWL Boxy Hoodie",
+      "imageUrl": "https://picsum.photos/seed/hoodie/400/400",
+      "imageHint": "hoodie fashion"
     }
   ]
 }

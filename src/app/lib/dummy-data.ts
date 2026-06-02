@@ -64,6 +64,23 @@ export const Products = [
     description: `Akrilik Sertifikat Funded premium cocok untuk pajangan meja, hadiah trader, dokumentasi payout, dan koleksi pencapaian funded account.`
   },
   {
+    id: 6,
+    name: 'BRTWL Hoodie Boxy | Hoodie Oversize Unisex Fleece Cotton - Mercy Series',
+    price: 203230,
+    originalPrice: 259000,
+    rating: 4.8,
+    reviews: '438',
+    sold: 3200,
+    category: 'Fashion',
+    image: 'https://picsum.photos/seed/hoodie/400/400',
+    isFlashSale: true,
+    discount: '22%',
+    stock: 'Tersedia',
+    tag: 'Produk Viral',
+    variants: ['M', 'L', 'XL'],
+    description: `Hoodie boxy oversize unisex berbahan fleece cotton yang nyaman, tebal, dan cocok untuk gaya casual harian. Desain simple dengan cutting modern, cocok digunakan pria maupun wanita.`
+  },
+  {
     id: 3,
     name: 'Wispie Money Magnet Fitted Shirt | Kemeja Kerja Wanita Press Body Pinstripe Salur Pink',
     price: 132000,

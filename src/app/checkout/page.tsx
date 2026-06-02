@@ -87,6 +87,7 @@ export default function Checkout() {
     if (item.id === 3) return Math.max(acc, 12000);
     if (item.id === 4) return Math.max(acc, 9000);
     if (item.id === 5) return Math.max(acc, 11000);
+    if (item.id === 6) return Math.max(acc, 8000);
     return acc;
   }, 0);
 
