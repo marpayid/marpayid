@@ -41,16 +41,12 @@ const SUGGESTIONS_MAP: Record<string, string[]> = {
   'gam': ['game', 'top up game', 'gaming'],
 };
 
-const PREMIUM_FILTERS = [
-  { name: 'INSTAN', gradient: 'from-green-500 to-emerald-600' },
-  { name: 'TERLARIS', gradient: 'from-orange-500 to-red-600' },
-  { name: 'RATING TINGGI', gradient: 'from-blue-500 to-purple-600' },
-  { name: 'PROMO', gradient: 'from-yellow-500 to-orange-500' },
-];
+const FILTER_OPTIONS = ['INSTAN', 'TERLARIS', 'RATING TINGGI', 'PROMO'];
 
 export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
   const [query, setQuery] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(true);
+  const [activeFilter, setActiveFilter] = useState('INSTAN');
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -135,7 +131,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
   return (
     <div className="fixed inset-0 z-[1000] bg-white flex flex-col animate-in slide-in-from-bottom-2 duration-300">
       <header className="px-4 py-3 border-b border-gray-100 flex flex-col sticky top-0 bg-white z-10 shadow-sm">
-        <div className="flex items-center gap-2 mb-2">
+        <div className="flex items-center gap-2 mb-3">
           <Button variant="ghost" size="icon" onClick={onClose} className="shrink-0 -ml-2 text-gray-800">
             <ArrowLeft className="w-5 h-5" />
           </Button>
@@ -172,18 +168,23 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
         </div>
 
         {!showSuggestions && query && (
-          <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1 -mx-2 px-2">
-            {PREMIUM_FILTERS.map((filter) => (
-              <button
-                key={filter.name}
-                className={cn(
-                  "flex items-center justify-center h-10 px-6 rounded-full text-[10px] font-black tracking-widest text-white shadow-lg shadow-black/5 whitespace-nowrap active:scale-95 transition-all bg-gradient-to-r",
-                  filter.gradient
-                )}
-              >
-                {filter.name}
-              </button>
-            ))}
+          <div className="bg-[#F8FAFC] border border-[#E5E7EB] rounded-[16px] p-[10px] mt-1">
+            <div className="flex gap-2 overflow-x-auto no-scrollbar px-1">
+              {FILTER_OPTIONS.map((filter) => (
+                <button
+                  key={filter}
+                  onClick={() => setActiveFilter(filter)}
+                  className={cn(
+                    "flex items-center justify-center h-9 px-5 rounded-[12px] text-[10px] font-black tracking-widest transition-all whitespace-nowrap active:scale-95 border",
+                    activeFilter === filter
+                      ? "bg-primary text-white border-primary shadow-sm"
+                      : "bg-white text-gray-600 border-gray-100"
+                  )}
+                >
+                  {filter}
+                </button>
+              ))}
+            </div>
           </div>
         )}
       </header>
