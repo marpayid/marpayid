@@ -20,12 +20,11 @@ export const FirebaseClientProvider: React.FC<{ children: React.ReactNode }> = (
   }, []);
 
   useEffect(() => {
-    // Memastikan sesi tetap tersimpan di browser
     const initAuth = async () => {
       try {
         await setPersistence(auth, browserLocalPersistence);
       } catch (err) {
-        console.error("Auth Persistence Error:", err);
+        // Silent error for persistence
       } finally {
         setIsInitialized(true);
       }

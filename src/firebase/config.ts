@@ -2,13 +2,13 @@
 
 /**
  * Konfigurasi Produksi MarPay.
- * Menggunakan kredensial asli untuk menghubungkan ke proyek marpay-marketplace.
+ * Menggunakan kredensial resmi dari Firebase Console.
  */
 export const firebaseConfig = {
-  apiKey: "AIzaSyD475869302145_RealKeyFromConsole", // Ganti nilai ini dengan API Key asli dari Firebase Console Anda jika error berlanjut
-  authDomain: "marpay-marketplace.firebaseapp.com",
-  projectId: "marpay-marketplace",
-  storageBucket: "marpay-marketplace.appspot.com",
-  messagingSenderId: "475869302145",
-  appId: "1:475869302145:web:a1b2c3d4e5f6g7h8i9j0"
+  apiKey: "AIzaSyBNScUKAFe0CaG186OBzT6oKA2sfWGNHSE",
+  authDomain: "studio-6822083807-2f53e.firebaseapp.com",
+  projectId: "studio-6822083807-2f53e",
+  storageBucket: "studio-6822083807-2f53e.firebasestorage.app",
+  messagingSenderId: "802769196698",
+  appId: "1:802769196698:web:f20b821341d1ac0c577123"
 };
