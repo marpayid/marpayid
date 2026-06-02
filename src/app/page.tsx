@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect } from 'react';
@@ -13,6 +12,7 @@ import { cn } from '@/lib/utils';
 import { Smartphone, Gamepad2, CreditCard, Package, Truck, Tag } from 'lucide-react';
 import { PromotionalCards } from '@/components/promotional-cards';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { VoucherSection } from '@/components/voucher-section';
 
 export default function Home() {
   const [api, setApi] = useState<CarouselApi>();
@@ -137,7 +137,10 @@ export default function Home() {
         {/* 3. Flash Sale */}
         <FlashSale />
 
-        {/* 4. Rekomendasi Untukmu & Fashion Discovery Card */}
+        {/* 4. Voucher MarPay */}
+        <VoucherSection />
+
+        {/* 5. Rekomendasi Untukmu & Fashion Discovery Card */}
         <section className="bg-white py-4 px-4">
           <h2 className="text-base font-bold text-gray-900 mb-3">Rekomendasi Untukmu</h2>
           <div className="grid grid-cols-2 gap-3">
@@ -159,10 +162,10 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 5. Promotional Cards (Top Up Game & E-Wallet) */}
+        {/* 6. Promotional Cards (Top Up Game & E-Wallet) */}
         <PromotionalCards />
 
-        {/* 6. Produk Viral | Semua Produk (with Tabs) */}
+        {/* 7. Produk Viral | Semua Produk (with Tabs) */}
         <section className="bg-white py-4 px-4 pb-24">
           <Tabs defaultValue="viral" className="w-full">
             <TabsList className="bg-transparent border-b border-gray-100 w-full flex justify-start h-auto p-0 mb-4 gap-6 overflow-x-auto no-scrollbar">
