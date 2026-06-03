@@ -33,9 +33,20 @@ export default function Home() {
     return () => clearInterval(intervalId);
   }, [api]);
 
+  // Section: Produk Viral (Tabs at bottom)
   const viralProducts = Products.filter(p => p.tag === 'Produk Viral');
+  
+  // Section: Rekomendasi Untukmu
+  // Logic: 
+  // 1. Wispie (ID: 3) must be first.
+  // 2. Exclude Akrilik (ID: 2) from this section.
+  // 3. Exclude Hoodie (ID: 6) as it's shown in a specific pair card.
+  const wispieProduct = Products.find(p => p.id === 3);
+  const otherRecsBase = Products.filter(p => p.id !== 3 && p.id !== 2 && p.id !== 6);
+  const recommendationList = wispieProduct ? [wispieProduct, ...otherRecsBase] : otherRecsBase;
+
+  // Specific Hoodie Product for the discovery pair
   const hoodieProduct = Products.find(p => p.id === 6);
-  const otherProductsForRecommendations = Products.filter(p => p.id !== 6);
 
   return (
     <div className="min-h-screen bg-gray-50 pb-32">
@@ -144,8 +155,8 @@ export default function Home() {
         <section className="bg-white py-4 px-4">
           <h2 className="text-base font-bold text-gray-900 mb-3">Rekomendasi Untukmu</h2>
           <div className="grid grid-cols-2 gap-3">
-            {/* Tampilkan 2-4 produk lain sebelum kartu promo */}
-            {otherProductsForRecommendations.slice(0, 4).map((product) => (
+            {/* Tampilkan 2-4 produk lain sebelum kartu promo (Wispie di urutan pertama) */}
+            {recommendationList.slice(0, 4).map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
             
@@ -156,7 +167,7 @@ export default function Home() {
             )}
             
             {/* Lanjutkan rekomendasi lainnya jika ada */}
-            {otherProductsForRecommendations.slice(4, 6).map((product) => (
+            {recommendationList.slice(4, 6).map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
