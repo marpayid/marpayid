@@ -9,20 +9,30 @@ import {
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
+import { useToast } from '@/hooks/use-toast';
 
 const GAMES = [
-  { id: 'mlbb', name: 'Mobile Legends', icon: Swords, slug: 'mobile-legends', color: 'bg-blue-500' },
-  { id: 'ff', name: 'Free Fire', icon: Trophy, slug: 'free-fire', color: 'bg-orange-500' },
-  { id: 'pubgm', name: 'PUBG Mobile', icon: Smartphone, slug: 'pubg-mobile', color: 'bg-emerald-500' },
-  { id: 'roblox', name: 'Roblox', icon: Ghost, slug: 'roblox', color: 'bg-red-500' },
-  { id: 'valorant', name: 'Valorant', icon: Swords, slug: 'valorant', color: 'bg-rose-500' },
-  { id: 'hok', name: 'Honor of Kings', icon: Trophy, slug: 'honor-of-kings', color: 'bg-indigo-500' },
-  { id: 'genshin', name: 'Genshin Impact', icon: Zap, slug: 'genshin-impact', color: 'bg-purple-500' },
-  { id: 'fc', name: 'FC Mobile', icon: Trophy, slug: 'fc-mobile', color: 'bg-green-600' },
+  { id: 'mlbb', name: 'Mobile Legends', icon: Swords, slug: 'mobile-legends', color: 'bg-blue-500', active: true },
+  { id: 'ff', name: 'Free Fire', icon: Trophy, slug: 'free-fire', color: 'bg-orange-500', active: true },
+  { id: 'pubgm', name: 'PUBG Mobile', icon: Smartphone, slug: 'pubg-mobile', color: 'bg-emerald-500', active: true },
+  { id: 'roblox', name: 'Roblox', icon: Ghost, slug: 'roblox', color: 'bg-red-500', active: true },
+  { id: 'valorant', name: 'Valorant', icon: Swords, slug: 'valorant', color: 'bg-rose-500', active: false },
+  { id: 'hok', name: 'Honor of Kings', icon: Trophy, slug: 'honor-of-kings', color: 'bg-indigo-500', active: false },
+  { id: 'genshin', name: 'Genshin Impact', icon: Zap, slug: 'genshin-impact', color: 'bg-purple-500', active: false },
+  { id: 'fc', name: 'FC Mobile', icon: Trophy, slug: 'fc-mobile', color: 'bg-green-600', active: false },
 ];
 
 export default function TopUpGamePage() {
   const router = useRouter();
+  const { toast } = useToast();
+
+  const handleComingSoon = (gameName: string) => {
+    toast({
+      title: "Coming Soon",
+      description: `Top Up ${gameName} akan segera tersedia di MarPay.`,
+      duration: 3000,
+    });
+  };
 
   return (
     <div className="min-h-screen bg-[#0F172A] text-white pb-24">
@@ -53,28 +63,46 @@ export default function TopUpGamePage() {
         <section className="mb-8">
           <div className="flex items-center gap-2 mb-4 px-1">
              <TrendingUp className="w-4 h-4 text-cyan-400" />
-             <h3 className="text-sm font-bold uppercase tracking-widest text-gray-400">Game Populer</h3>
+             <h3 className="text-sm font-bold uppercase tracking-widest text-gray-400">Pilih Game</h3>
           </div>
           
           <div className="grid grid-cols-4 gap-y-6 gap-x-3">
-             {GAMES.map((game) => (
-               <Link 
-                 key={game.id} 
-                 href={`/kategori/top-up/game/${game.slug}`}
-                 className="flex flex-col items-center gap-2 group"
-               >
-                 <div className={cn(
-                   "w-14 h-14 rounded-2xl flex items-center justify-center relative overflow-hidden transition-all duration-300 group-active:scale-90 border border-white/10 shadow-lg",
-                   game.color
-                 )}>
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-                    <game.icon className="w-7 h-7 text-white relative z-10" />
+             {GAMES.map((game) => {
+               const content = (
+                 <div className="flex flex-col items-center gap-2 group relative">
+                   <div className={cn(
+                     "w-14 h-14 rounded-2xl flex items-center justify-center relative overflow-hidden transition-all duration-300 group-active:scale-90 border border-white/10 shadow-lg",
+                     game.color,
+                     !game.active && "grayscale opacity-50"
+                   )}>
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+                      <game.icon className="w-7 h-7 text-white relative z-10" />
+                      
+                      {!game.active && (
+                        <div className="absolute inset-0 flex items-center justify-center z-20">
+                          <span className="bg-black/60 text-[6px] font-black text-white px-1 py-0.5 rounded-sm uppercase tracking-tighter">SOON</span>
+                        </div>
+                      )}
+                   </div>
+                   <span className={cn(
+                     "text-[9px] font-bold text-center leading-tight uppercase tracking-tighter transition-colors",
+                     game.active ? "text-gray-300 group-hover:text-white" : "text-gray-500"
+                   )}>
+                     {game.name}
+                   </span>
                  </div>
-                 <span className="text-[9px] font-bold text-center leading-tight text-gray-300 uppercase tracking-tighter group-hover:text-white">
-                   {game.name}
-                 </span>
-               </Link>
-             ))}
+               );
+
+               return game.active ? (
+                 <Link key={game.id} href={`/kategori/top-up/game/${game.slug}`}>
+                   {content}
+                 </Link>
+               ) : (
+                 <button key={game.id} onClick={() => handleComingSoon(game.name)}>
+                   {content}
+                 </button>
+               );
+             })}
           </div>
         </section>
 
