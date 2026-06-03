@@ -115,6 +115,7 @@ export default function Checkout() {
       'qris': 'QRIS'
     };
 
+    // Variabel dinamis dari form
     const customerName = isDigital ? (items[0].details?.customerName || user?.displayName || 'Pelanggan Digital') : (address?.name || 'N/A');
     const customerPhone = isDigital ? (items[0].details?.target || 'N/A') : (address?.phone || 'N/A');
     const customerAddress = isDigital 
@@ -127,6 +128,7 @@ export default function Checkout() {
 
     const paymentMethodLabel = paymentLabels[selectedPayment] || selectedPayment;
 
+    // Format Pesan Profesional sesuai permintaan
     let message = `🛍️ ORDER BARU MARPAY\n\n`;
     message += `━━━━━━━━━━━━━━\n\n`;
     message += `👤 DATA PEMBELI\n`;
@@ -151,6 +153,8 @@ export default function Checkout() {
 
     localStorage.removeItem('marpay_checkout_temp');
     const whatsappUrl = `https://wa.me/${adminWhatsApp}?text=${encodeURIComponent(message)}`;
+    
+    // Langsung redirect tanpa loading lama
     window.location.href = whatsappUrl;
   };
 
