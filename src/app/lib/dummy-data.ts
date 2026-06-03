@@ -76,7 +76,7 @@ export const Products = [
     variants: ['Standar (BB 35-55Kg)', 'Jumbo (BB 56-70Kg)', 'Super Jumbo (BB 71-85Kg)'],
     colors: ['Abu Grey', 'Hitam', 'Putih', 'Navi', 'Mahogani', 'Khaki', 'Ice Blue'],
     shippingFee: 12000,
-    description: `Everyday Stripe Pants merupakan celana wanita model baggy kulot premium.`,
+    description: `Everyday Stripe Pants merupakan celana wanita model baggy kulot premium dengan motif garis pinstripe yang cocok digunakan untuk kuliah, kerja, kantor, jalan-jalan, maupun aktivitas sehari-hari. Menggunakan bahan yang nyaman, adem, tidak menerawang, dan memiliki potongan loose fit sehingga tetap stylish digunakan sepanjang hari.`,
   },
   {
     id: 3,
@@ -105,7 +105,7 @@ export const Products = [
     reviews: '84',
     sold: 84,
     category: 'Sertifikat Funded',
-    image: '/akrilik1.png',
+    image: '/aklik1.png',
     isFlashSale: false,
     discount: '23%',
     stock: 'Tersedia',
