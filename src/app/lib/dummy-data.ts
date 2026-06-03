@@ -77,7 +77,6 @@ export const Products = [
     colors: ['Abu Grey', 'Hitam', 'Putih', 'Navi', 'Mahogani', 'Khaki', 'Ice Blue'],
     shippingFee: 12000,
     description: `Everyday Stripe Pants merupakan celana wanita model baggy kulot premium.`,
-    keywords: 'baggy pants, stripe pants, kulot wanita, celana kantor wanita, pinstripe'
   },
   {
     id: 3,
@@ -114,7 +113,6 @@ export const Products = [
     variants: ['20x10', '20x15'],
     shippingFee: 20000,
     description: `Akrilik Sertifikat Funded premium cocok untuk trader.`,
-    keywords: 'akrilik, sertifikat, funded, prop firm, payout, custom, hadiah, trader'
   },
   {
     id: 6,
