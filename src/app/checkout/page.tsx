@@ -19,7 +19,17 @@ import {
   DialogTitle, 
   DialogTrigger,
   DialogFooter 
-} from '@/components/ui/dialog';
+} from '@/dialog'; // Updated import assuming Dialog is in root components/ui or provided by user. Original was '@/components/ui/dialog'
+// Correcting common shadcn paths based on the project structure
+import {
+  Dialog as UIDialog,
+  DialogContent as UIDialogContent,
+  DialogHeader as UIDialogHeader,
+  DialogTitle as UIDialogTitle,
+  DialogTrigger as UIDialogTrigger,
+  DialogFooter as UIDialogFooter
+} from "@/components/ui/dialog";
+
 import Image from 'next/image';
 import { cn, getProductImage } from '@/lib/utils';
 import Link from 'next/link';
@@ -115,7 +125,6 @@ export default function Checkout() {
       return;
     }
 
-    // 1. Konstruksi Pesan WhatsApp Profesional
     const adminWhatsApp = "6283851278935";
     const paymentLabels: Record<string, string> = {
       'bank_transfer': 'Bank Transfer',
@@ -123,40 +132,47 @@ export default function Checkout() {
       'qris': 'QRIS'
     };
 
-    let message = `Halo Admin MarPay, saya ingin melakukan pembayaran pesanan.\n\n`;
+    // 1. Prepare Dynamic Variables
+    const customerName = isDigital ? (items[0].details?.customerName || 'Pelanggan Digital') : (address?.name || 'N/A');
+    const customerPhone = isDigital ? (items[0].details?.target || 'N/A') : (address?.phone || 'N/A');
     
-    if (!isDigital && address) {
-      message += `*DATA CUSTOMER*\n`;
-      message += `Nama: ${address.name}\n`;
-      message += `No. WhatsApp: ${address.phone}\n`;
-      message += `Alamat: ${address.fullAddress}, ${address.district}, ${address.city}, ${address.province} ${address.notes ? `(${address.notes})` : ''}\n\n`;
-    } else if (isDigital) {
-      message += `*DATA CUSTOMER*\n`;
-      message += `Nama: ${items[0].details?.customerName || 'Pelanggan Digital'}\n`;
-      message += `Target: ${items[0].details?.target || 'N/A'}\n\n`;
-    }
+    const customerAddress = isDigital 
+      ? 'Produk Digital (Pengiriman Instan)' 
+      : `${address?.fullAddress}, ${address?.district}, ${address?.city}, ${address?.province}${address?.notes ? ` (${address?.notes})` : ''}`;
 
-    message += `*DAFTAR PRODUK*\n`;
-    items.forEach((item, index) => {
-      message += `${index + 1}. ${item.name}\n`;
-      message += `   Varian: ${item.variant || 'Default'}\n`;
-      message += `   Jumlah: ${item.quantity} pcs\n`;
-      message += `   Harga: Rp ${item.price.toLocaleString()}\n`;
-    });
-    message += `\n`;
+    const orderItemsList = items.map((item, index) => {
+      return `${index + 1}. ${item.name}\n   Varian: ${item.variant || 'Default'}\n   Jumlah: ${item.quantity} pcs\n   Harga: Rp ${item.price.toLocaleString()}`;
+    }).join('\n\n');
 
-    message += `*RINGKASAN PEMBAYARAN*\n`;
-    message += `Subtotal: Rp ${totalItemsPrice.toLocaleString()}\n`;
-    message += `Ongkir: Rp ${totalShipping.toLocaleString()}\n`;
-    message += `*Total Bayar: Rp ${totalBill.toLocaleString()}*\n`;
-    message += `Metode: ${paymentLabels[selectedPayment]}\n\n`;
-    
-    message += `Mohon segera dibantu proses pesanannya. Terima kasih!`;
+    const paymentMethodLabel = paymentLabels[selectedPayment] || selectedPayment;
 
-    // Hapus cache temp setelah checkout
+    // 2. Construct the Message Template
+    let message = `🛍️ ORDER BARU MARPAY\n\n`;
+    message += `━━━━━━━━━━━━━━\n\n`;
+    message += `👤 DATA PEMBELI\n`;
+    message += `Nama : ${customerName}\n`;
+    message += `No. WA : ${customerPhone}\n\n`;
+    message += `📍 ALAMAT PENGIRIMAN\n`;
+    message += `${customerAddress}\n\n`;
+    message += `━━━━━━━━━━━━━━\n\n`;
+    message += `📦 DETAIL PESANAN\n\n`;
+    message += `${orderItemsList}\n\n`;
+    message += `━━━━━━━━━━━━━━\n\n`;
+    message += `💳 RINGKASAN PEMBAYARAN\n\n`;
+    message += `Subtotal : Rp ${totalItemsPrice.toLocaleString()}\n`;
+    message += `Ongkir : Rp ${totalShipping.toLocaleString()}\n`;
+    message += `Total Bayar : Rp ${totalBill.toLocaleString()}\n\n`;
+    message += `Metode Pembayaran :\n${paymentMethodLabel}\n\n`;
+    message += `━━━━━━━━━━━━━━\n\n`;
+    message += `📌 STATUS\n`;
+    message += `Menunggu Konfirmasi Admin\n\n`;
+    message += `Mohon diproses.\n`;
+    message += `Terima kasih 🙏`;
+
+    // Clear temporary checkout storage
     localStorage.removeItem('marpay_checkout_temp');
     
-    // Buka WhatsApp
+    // Open WhatsApp URL
     const encodedMessage = encodeURIComponent(message);
     const whatsappUrl = `https://wa.me/${adminWhatsApp}?text=${encodedMessage}`;
     
@@ -208,17 +224,17 @@ export default function Checkout() {
                 <MapPin className="w-4 h-4 text-primary" />
                 <h3 className="text-xs font-bold uppercase tracking-wide">Alamat Pengiriman</h3>
               </div>
-              <Dialog open={isAddressModalOpen} onOpenChange={setIsAddressModalOpen}>
-                <DialogTrigger asChild>
+              <UIDialog open={isAddressModalOpen} onOpenChange={setIsAddressModalOpen}>
+                <UIDialogTrigger asChild>
                   <button className="text-[11px] font-bold text-primary flex items-center gap-1">
                     <Edit3 className="w-3 h-3" />
                     {address ? 'Ubah' : 'Tambah'}
                   </button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px] rounded-3xl max-h-[85vh] overflow-y-auto outline-none">
-                  <DialogHeader className="pb-2">
-                    <DialogTitle className="text-lg font-bold">Lengkapi Alamat</DialogTitle>
-                  </DialogHeader>
+                </UIDialogTrigger>
+                <UIDialogContent className="sm:max-w-[425px] rounded-3xl max-h-[85vh] overflow-y-auto outline-none">
+                  <UIDialogHeader className="pb-2">
+                    <UIDialogTitle className="text-lg font-bold">Lengkapi Alamat</UIDialogTitle>
+                  </UIDialogHeader>
                   <div className="space-y-4 py-2">
                     <div className="space-y-1.5">
                       <Label className="text-xs font-bold text-gray-700">Nama Penerima</Label>
@@ -253,11 +269,11 @@ export default function Checkout() {
                       </div>
                     )}
                   </div>
-                  <DialogFooter className="pt-4 pb-6 sm:pb-4">
+                  <UIDialogFooter className="pt-4 pb-6 sm:pb-4">
                     <Button onClick={saveAddress} className="w-full bg-primary text-white font-bold h-12 rounded-xl shadow-lg shadow-primary/20">Simpan Alamat</Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
+                  </UIDialogFooter>
+                </UIDialogContent>
+              </UIDialog>
             </div>
             {address ? (
               <div className="space-y-0.5 border-t border-gray-50 pt-3">
