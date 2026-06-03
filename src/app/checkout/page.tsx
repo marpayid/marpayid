@@ -48,6 +48,7 @@ export default function Checkout() {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
+    // Load Items
     const tempItem = localStorage.getItem('marpay_checkout_temp');
     if (tempItem) {
       try {
@@ -66,6 +67,7 @@ export default function Checkout() {
       }
     }
 
+    // Load Address
     const savedAddress = localStorage.getItem('marpay_address');
     if (savedAddress) {
       try {
@@ -102,9 +104,11 @@ export default function Checkout() {
 
   const handleWhatsAppCheckout = () => {
     if (items.length === 0) return;
+    
     if (!isDigital && !address) {
       setError("Mohon isi alamat pengiriman terlebih dahulu.");
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      const element = document.getElementById('address-section');
+      if (element) element.scrollIntoView({ behavior: 'smooth' });
       return;
     }
 
@@ -115,12 +119,12 @@ export default function Checkout() {
       'qris': 'QRIS'
     };
 
-    // Variabel dinamis dari form checkout asli
+    // Data Dinamis
     const customerName = isDigital ? (items[0].details?.customerName || user?.displayName || 'Pelanggan Digital') : (address?.name || 'N/A');
     const customerPhone = isDigital ? (items[0].details?.target || 'N/A') : (address?.phone || 'N/A');
     const customerAddress = isDigital 
       ? 'Produk Digital (Pengiriman Instan)' 
-      : `${address?.fullAddress}${address?.notes ? ` (${address?.notes})` : ''}`;
+      : `${address?.fullAddress}${address?.notes ? ` (${address?.notes})` : ''}, ${address?.district}, ${address?.city}, ${address?.province}`;
 
     const orderItemsList = items.map((item, index) => {
       return `${index + 1}. ${item.name}\n   Varian: ${item.variant || 'Default'}\n   Jumlah: ${item.quantity} pcs\n   Harga: Rp ${item.price.toLocaleString()}`;
@@ -128,7 +132,7 @@ export default function Checkout() {
 
     const paymentMethodLabel = paymentLabels[selectedPayment] || selectedPayment;
 
-    // FORMAT PESAN PROFESIONAL SESUAI PERMINTAAN
+    // FORMAT PESAN SESUAI PERMINTAAN
     let message = `🛍️ ORDER BARU MARPAY\n\n`;
     message += `━━━━━━━━━━━━━━\n\n`;
     message += `👤 DATA PEMBELI\n`;
@@ -151,14 +155,20 @@ export default function Checkout() {
     message += `Mohon diproses.\n`;
     message += `Terima kasih 🙏`;
 
-    localStorage.removeItem('marpay_checkout_temp');
     const whatsappUrl = `https://wa.me/${adminWhatsApp}?text=${encodeURIComponent(message)}`;
     
-    // Redirect langsung ke WhatsApp
+    // Langsung buka WhatsApp
     window.location.href = whatsappUrl;
+    
+    // Bersihkan temp checkout
+    localStorage.removeItem('marpay_checkout_temp');
   };
 
-  if (!isLoaded) return null;
+  if (!isLoaded) return (
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-gray-50 pb-32">
@@ -171,7 +181,7 @@ export default function Checkout() {
 
       <main className="pt-16 px-4 space-y-3.5">
         {!isDigital && (
-          <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm space-y-3">
+          <div id="address-section" className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-primary" />
@@ -197,9 +207,19 @@ export default function Checkout() {
                       <Label className="text-xs font-bold text-gray-700">Nomor WhatsApp</Label>
                       <Input placeholder="08xxxxxxxx" value={tempAddress.phone} onChange={(e) => setTempAddress({...tempAddress, phone: e.target.value})} className="rounded-xl border-gray-200" />
                     </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="space-y-1.5">
+                        <Label className="text-xs font-bold text-gray-700">Provinsi</Label>
+                        <Input placeholder="Provinsi" value={tempAddress.province} onChange={(e) => setTempAddress({...tempAddress, province: e.target.value})} className="rounded-xl border-gray-200" />
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label className="text-xs font-bold text-gray-700">Kota/Kab</Label>
+                        <Input placeholder="Kota/Kab" value={tempAddress.city} onChange={(e) => setTempAddress({...tempAddress, city: e.target.value})} className="rounded-xl border-gray-200" />
+                      </div>
+                    </div>
                     <div className="space-y-1.5">
                       <Label className="text-xs font-bold text-gray-700">Alamat Lengkap</Label>
-                      <Textarea placeholder="Nama jalan, nomor rumah, RT/RW" value={tempAddress.fullAddress} onChange={(e) => setTempAddress({...tempAddress, fullAddress: e.target.value})} className="rounded-xl border-gray-200 min-h-[100px]" />
+                      <Textarea placeholder="Nama jalan, nomor rumah, RT/RW" value={tempAddress.fullAddress} onChange={(e) => setTempAddress({...tempAddress, fullAddress: e.target.value})} className="rounded-xl border-gray-200 min-h-[80px]" />
                     </div>
                     {error && (
                       <div className="flex items-center gap-2 text-red-500 bg-red-50 p-3 rounded-xl border border-red-100">
@@ -208,7 +228,7 @@ export default function Checkout() {
                       </div>
                     )}
                   </div>
-                  <DialogFooter className="pt-4">
+                  <DialogFooter className="pt-2">
                     <Button onClick={saveAddress} className="w-full bg-primary text-white font-bold h-12 rounded-xl shadow-lg shadow-primary/20">Simpan Alamat</Button>
                   </DialogFooter>
                 </DialogContent>
@@ -217,7 +237,7 @@ export default function Checkout() {
             {address ? (
               <div className="space-y-0.5 border-t border-gray-50 pt-3">
                 <p className="text-xs font-bold text-gray-900">{address.name} <span className="text-gray-400 font-normal ml-1">({address.phone})</span></p>
-                <p className="text-[11px] text-gray-500 leading-relaxed">{address.fullAddress}</p>
+                <p className="text-[11px] text-gray-500 leading-relaxed line-clamp-2">{address.fullAddress}</p>
               </div>
             ) : (
               <div className="border-t border-gray-50 pt-4 text-center py-5 bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
@@ -230,7 +250,7 @@ export default function Checkout() {
 
         <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm space-y-3.5">
           <div className="flex items-center gap-2">
-            <span className="bg-primary text-white text-[9px] font-black w-4.5 h-4.5 flex items-center justify-center rounded uppercase">M</span>
+            <div className="bg-primary text-white text-[9px] font-black w-4.5 h-4.5 flex items-center justify-center rounded">M</div>
             <h3 className="text-xs font-bold uppercase tracking-wide">Daftar Barang</h3>
           </div>
           <div className="space-y-3.5">
@@ -241,7 +261,8 @@ export default function Checkout() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <h4 className="text-[11px] font-bold text-gray-800 truncate">{item.name}</h4>
-                  <div className="flex items-center justify-between mt-0.5">
+                  <p className="text-[10px] text-gray-400 font-medium truncate mt-0.5">Varian: {item.variant || 'Default'}</p>
+                  <div className="flex items-center justify-between mt-1">
                     <p className="text-xs font-bold text-primary">Rp {item.price.toLocaleString()}</p>
                     <p className="text-[10px] text-muted-foreground font-bold">x{item.quantity}</p>
                   </div>
