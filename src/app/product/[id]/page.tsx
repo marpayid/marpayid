@@ -23,6 +23,7 @@ export default function ProductDetail() {
   const { toast } = useToast();
   const [quantity, setQuantity] = useState(1);
   const [selectedVariant, setSelectedVariant] = useState(0);
+  const [selectedColor, setSelectedColor] = useState(0);
 
   const product = useMemo(() => Products.find(p => p.id === Number(id)), [id]);
   const isOutOfStock = product?.stock === 'Stok Habis';
@@ -63,6 +64,13 @@ export default function ProductDetail() {
       return highPriceModels.includes(variantName) ? 17999 : 14899;
     }
 
+    // Logika harga khusus untuk Everyday Pants (ID: 203)
+    if (product.id === 203) {
+      if (selectedVariant === 0) return 59252;
+      if (selectedVariant === 1) return 63102;
+      if (selectedVariant === 2) return 70000;
+    }
+
     if (product.id === 2) {
       return selectedVariant === 1 ? 309000 : 269000;
     }
@@ -72,11 +80,13 @@ export default function ProductDetail() {
   if (!product) return <div className="p-8 text-center font-bold">Produk tidak ditemukan</div>;
 
   const variants = product.variants || ['Default'];
+  const colors = product.colors || [];
   const totalPrice = currentPrice * quantity;
   const hasDiscount = !!product.originalPrice;
 
-  // REVISI LOGIKA TAMPILAN: Hanya tampilkan info jika GRATIS ONGKIR
+  // REVISI LOGIKA TAMPILAN: Tampilkan banner GRATIS ONGKIR jika ongkir 0 ATAU dipaksa oleh label
   const hasShippingFee = (product.shippingFee || 0) > 0;
+  const showFreeShippingBanner = !isOutOfStock && (!hasShippingFee || product.forceFreeShippingLabel);
 
   const handleQuantity = (type: 'inc' | 'dec') => {
     if (isOutOfStock) return;
@@ -90,12 +100,16 @@ export default function ProductDetail() {
       return;
     }
 
+    const variantString = colors.length > 0 
+      ? `${variants[selectedVariant]} - ${colors[selectedColor]}`
+      : variants[selectedVariant];
+
     const item = {
       id: product.id,
       name: product.name,
       price: currentPrice,
       image: activeImage,
-      variant: variants[selectedVariant],
+      variant: variantString,
       quantity: quantity,
       type: product.type || 'physical',
       category: product.category,
@@ -115,6 +129,15 @@ export default function ProductDetail() {
       window.dispatchEvent(new Event('cart-updated'));
       toast({ variant: "default", title: "Masuk Keranjang", description: "Siap untuk checkout", duration: 2000 });
     }
+  };
+
+  const handleWhatsAppBuy = () => {
+    const variantString = colors.length > 0 
+      ? `${variants[selectedVariant]} - ${colors[selectedColor]}`
+      : variants[selectedVariant];
+      
+    const message = `Halo Admin MarPay, saya ingin memesan:\n\nProduk: ${product.name}\nVarian: ${variantString}\nJumlah: ${quantity}\nTotal: Rp ${totalPrice.toLocaleString()}\n\nMohon dibantu proses pesanannya.`;
+    window.open(`https://wa.me/6283851278935?text=${encodeURIComponent(message)}`, '_blank');
   };
 
   return (
@@ -153,8 +176,7 @@ export default function ProductDetail() {
           )}
         </section>
 
-        {/* REVISI: Hanya tampilkan spanduk ongkir jika GRATIS ONGKIR */}
-        {product.type !== 'digital' && !isOutOfStock && !hasShippingFee && (
+        {showFreeShippingBanner && (
           <section className="mx-4 my-2 bg-white border border-[#22c55e]/15 rounded-[10px] px-3 py-2 shadow-[0_2px_6px_rgba(0,0,0,0.02)] flex items-center gap-3 h-[60px]">
             <div className="w-9 h-9 bg-green-50 rounded-lg flex items-center justify-center text-green-500 shrink-0"><Truck className="w-7 h-7" /></div>
             <div className="flex-1">
@@ -172,6 +194,7 @@ export default function ProductDetail() {
           <div className="flex items-center gap-2 mb-2">
             <Badge variant="secondary" className="bg-primary/10 text-primary text-[10px] font-bold px-2 py-0">{product.category}</Badge>
             {product.tag && <Badge variant="secondary" className="bg-orange-100 text-orange-600 text-[10px] font-bold px-2 py-0">{product.tag}</Badge>}
+            {product.isFlashSale && <Badge variant="secondary" className="bg-red-600 text-white text-[10px] font-black px-2 py-0 uppercase">🔥 Flash Sale</Badge>}
             {isOutOfStock && <Badge variant="destructive" className="bg-red-50 text-red-600 border-red-100 text-[10px] font-bold px-2 py-0">Stok Habis</Badge>}
           </div>
           <h1 className="text-md font-medium text-gray-800 mb-2 leading-tight">{product.name}</h1>
@@ -185,8 +208,7 @@ export default function ProductDetail() {
               <span className="text-2xl font-bold text-primary font-headline">Rp {currentPrice.toLocaleString()}</span>
               {hasDiscount && <span className="text-sm text-gray-400 line-through mb-1">Rp {product.originalPrice?.toLocaleString()}</span>}
             </div>
-            {/* REVISI: Info biaya pengiriman diringkas untuk menjaga psikologi pembeli */}
-            {!hasShippingFee && (
+            {showFreeShippingBanner && (
               <p className="text-[11px] font-bold text-green-500 uppercase mt-1">
                 Layanan: <span className="ml-1">Gratis Ongkir</span>
               </p>
@@ -194,15 +216,36 @@ export default function ProductDetail() {
           </div>
         </section>
 
-        <section className="mt-2 bg-white p-4 space-y-4">
+        <section className="mt-2 bg-white p-4 space-y-6">
+          {colors.length > 0 && (
+            <div>
+              <h3 className="text-xs font-bold text-gray-800 mb-3">Pilih Warna</h3>
+              <div className="flex flex-wrap gap-2">
+                {colors.map((c: string, idx: number) => (
+                  <button 
+                    key={c} 
+                    onClick={() => setSelectedColor(idx)} 
+                    className={cn(
+                      "px-4 py-2 rounded-lg text-xs font-medium border transition-all", 
+                      selectedColor === idx ? "bg-primary/5 border-primary text-primary shadow-sm" : "bg-white border-gray-100 text-gray-600"
+                    )}
+                  >
+                    {c}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+          
           <div>
-            <h3 className="text-xs font-bold text-gray-800 mb-3">Pilih Varian</h3>
+            <h3 className="text-xs font-bold text-gray-800 mb-3">Pilih Ukuran</h3>
             <div className="flex flex-wrap gap-2">
               {variants.map((v, idx) => (
                 <button key={v} onClick={() => setSelectedVariant(idx)} className={cn("px-4 py-2 rounded-lg text-xs font-medium border transition-all", selectedVariant === idx ? "bg-primary/5 border-primary text-primary shadow-sm" : "bg-white border-gray-100 text-gray-600")}>{v}</button>
               ))}
             </div>
           </div>
+          
           <div className="flex items-center justify-between">
             <div><h3 className="text-xs font-bold text-gray-800">Atur Jumlah</h3><p className="text-[10px] text-gray-400 mt-0.5">Stok: {isOutOfStock ? '0' : (product.stock || 120)}</p></div>
             <div className="flex items-center gap-4 bg-gray-50 rounded-xl p-1 border border-gray-100">
@@ -210,6 +253,17 @@ export default function ProductDetail() {
               <span className="text-sm font-bold w-4 text-center">{quantity}</span>
               <Button variant="ghost" size="icon" className="h-8 w-8 text-primary" onClick={() => handleQuantity('inc')} disabled={isOutOfStock}><Plus className="w-4 h-4" /></Button>
             </div>
+          </div>
+        </section>
+
+        <section className="mt-2 bg-white p-4">
+          <h3 className="text-sm font-bold mb-3">Informasi Pengiriman</h3>
+          <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl border border-gray-100">
+             <Truck className="w-5 h-5 text-primary" />
+             <div>
+                <p className="text-[11px] font-bold text-gray-800">Ongkos Kirim: Rp {product.shippingFee?.toLocaleString() || '0'}</p>
+                <p className="text-[10px] text-gray-500">Estimasi tiba dalam 2-4 hari kerja</p>
+             </div>
           </div>
         </section>
 
@@ -228,9 +282,17 @@ export default function ProductDetail() {
         </section>
       </main>
 
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-100 flex items-center justify-between z-[100] shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
-        <div className="flex flex-col mr-4"><p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Total Harga</p><p className="text-lg font-bold text-primary leading-none">Rp {totalPrice.toLocaleString()}</p></div>
-        <div className="flex gap-2 flex-1">
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-100 flex flex-col gap-3 z-[100] shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
+        <div className="flex items-center justify-between">
+           <div className="flex flex-col"><p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Total Harga</p><p className="text-lg font-bold text-primary leading-none">Rp {totalPrice.toLocaleString()}</p></div>
+           <Button 
+            onClick={handleWhatsAppBuy}
+            className="bg-green-500 text-white font-black h-10 px-4 rounded-xl text-[10px] flex items-center gap-2 shadow-lg shadow-green-500/20 active:scale-95 transition-all"
+           >
+             <MessageCircle className="w-4 h-4" /> Beli via WhatsApp
+           </Button>
+        </div>
+        <div className="flex gap-2 w-full">
           <Button variant="outline" disabled={isOutOfStock} className={cn("flex-1 border-primary text-primary font-bold h-11 rounded-xl active:scale-95 transition-transform text-xs", isOutOfStock && "opacity-50 grayscale cursor-not-allowed")} onClick={() => handleAction(false)}>+ Keranjang</Button>
           <Button disabled={isOutOfStock} className={cn("flex-1 bg-primary text-white font-bold h-11 rounded-xl shadow-lg shadow-primary/20 active:scale-95 transition-transform text-xs", isOutOfStock && "bg-gray-400 shadow-none cursor-not-allowed")} onClick={() => handleAction(true)}>{isOutOfStock ? 'Stok Habis' : 'Beli Sekarang'}</Button>
         </div>

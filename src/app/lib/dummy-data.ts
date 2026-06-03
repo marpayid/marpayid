@@ -81,6 +81,36 @@ Keunggulan:
 ✓ Ready Stock`
   },
   {
+    id: 203,
+    name: 'Everyday Pants - Stripe Pants - Celana Panjang Wanita Baggy Kantor Kuliah Motif Garis Kulot Pinstripe',
+    price: 59252,
+    priceRange: 'Rp 59.252 - Rp 70.000',
+    originalPrice: 85000,
+    rating: 4.8,
+    reviews: '2.7rb',
+    sold: 10000,
+    category: 'Fashion',
+    image: '/baggy1.png',
+    isFlashSale: true,
+    discount: '30%',
+    stock: 'Tersedia',
+    tag: 'Produk Pilihan',
+    forceFreeShippingLabel: true,
+    variants: ['Standar (BB 35-55Kg)', 'Jumbo (BB 56-70Kg)', 'Super Jumbo (BB 71-85Kg)'],
+    colors: ['Abu Grey', 'Hitam', 'Putih', 'Navi', 'Mahogani', 'Khaki', 'Ice Blue'],
+    shippingFee: 12000,
+    description: `Everyday Stripe Pants merupakan celana wanita model baggy kulot premium dengan motif garis pinstripe yang cocok digunakan untuk kuliah, kerja, kantor, jalan-jalan, maupun aktivitas sehari-hari. Menggunakan bahan yang nyaman, adem, tidak menerawang, dan memiliki potongan loose fit sehingga tetap stylish digunakan sepanjang hari.
+
+Pilihan Warna:
+- Abu Grey
+- Hitam
+- Putih
+- Navi
+- Mahogani
+- Khaki
+- Ice Blue`
+  },
+  {
     id: 7,
     name: 'Kemeja Wanita Fitted Luna Stripe Atasan Salur Korean Style Terbaru',
     price: 59000,

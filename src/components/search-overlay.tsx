@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useRef, useMemo } from 'react';
@@ -22,7 +21,7 @@ const POPULAR_SEARCHES = [
 ];
 
 const CATEGORY_KEYWORDS_MAP: Record<string, string[]> = {
-  'Fashion': ['kaos', 'baju', 'kemeja', 'hoodie', 'pakaian', 'fashion', 't-shirt', 'distro', 'streetwear', 'benidson', 'benstylish', 'oversized'],
+  'Fashion': ['kaos', 'baju', 'kemeja', 'hoodie', 'pakaian', 'fashion', 't-shirt', 'distro', 'streetwear', 'benidson', 'benstylish', 'oversized', 'baggy pants', 'stripe pants', 'kulot wanita', 'celana kantor wanita', 'celana kuliah wanita', 'pinstripe pants', 'celana wanita korea', 'celana panjang wanita'],
   'Kecantikan': ['skincare', 'serum', 'facial wash', 'sabun wajah', 'kecantikan', 'makeup', 'bioaqua', 'perawatan'],
   'Top Up': ['pulsa', 'isi pulsa', 'token', 'listrik', 'pln', 'token listrik', 'game', 'top up', 'mobile legends', 'ml', 'free fire', 'ff', 'pubg', 'roblox'],
   'E-Wallet': ['dana', 'ovo', 'gopay', 'shopeepay', 'ewallet', 'dompet digital'],
@@ -35,7 +34,9 @@ const SUGGESTIONS_MAP: Record<string, string[]> = {
   'se': ['sertifikat funded', 'serum wajah'],
   'ka': ['kaos', 'kemeja', 'kamera', 'kartu perdana'],
   'ke': ['kemeja', 'kecantikan', 'kesehatan'],
-  'ba': ['baju', 'batik', 'bayar tagihan'],
+  'ba': ['baggy pants', 'baju', 'batik', 'bayar tagihan'],
+  'st': ['stripe pants', 'skincare', 'spotify'],
+  'ku': ['kulot wanita', 'kuliah', 'kursi'],
   'skin': ['skincare', 'serum wajah', 'facial wash', 'perawatan wajah'],
   'pu': ['pulsa', 'pulsa telkomsel', 'pulsa indosat', 'pulsa murah'],
   'to': ['token pln', 'top up game', 'token listrik'],

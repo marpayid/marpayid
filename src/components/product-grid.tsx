@@ -182,6 +182,7 @@ export function ProductCard({ product, compact = false }: { product: any, compac
   };
 
   const hasShippingFee = (product.shippingFee || 0) > 0;
+  const isFreeShipping = !hasShippingFee || product.forceFreeShippingLabel;
 
   return (
     <div className={cn("bg-white rounded-[14px] border border-gray-100 overflow-hidden shadow-sm flex flex-col group relative", compact ? "min-w-[145px] w-[145px]" : "w-full", isOutOfStock && "opacity-75")}>
@@ -197,9 +198,10 @@ export function ProductCard({ product, compact = false }: { product: any, compac
         <Link href={`/product/${product.id}`} className="mb-1"><h3 className="text-[11px] font-medium text-gray-800 line-clamp-2 leading-tight h-[26px]">{product.name}</h3></Link>
         <div className="mt-auto">
           <div className="flex justify-between items-center mb-1">
-            <p className="text-sm font-bold text-red-600">Rp {product.price.toLocaleString()}</p>
-            {/* REVISI: Hanya tampilkan info jika GRATIS ONGKIR */}
-            {!hasShippingFee && product.type !== 'digital' && (
+            <p className="text-sm font-bold text-red-600">
+              {product.priceRange ? product.priceRange : `Rp ${product.price.toLocaleString()}`}
+            </p>
+            {isFreeShipping && product.type !== 'digital' && (
               <div className="flex items-center text-[8px] text-green-500 font-black uppercase gap-0.5">
                 <Truck className="w-2.5 h-2.5" /> Gratis
               </div>
