@@ -27,9 +27,12 @@ const CATEGORY_KEYWORDS_MAP: Record<string, string[]> = {
   'Top Up': ['pulsa', 'isi pulsa', 'token', 'listrik', 'pln', 'token listrik', 'game', 'top up', 'mobile legends', 'ml', 'free fire', 'ff', 'pubg', 'roblox'],
   'E-Wallet': ['dana', 'ovo', 'gopay', 'shopeepay', 'ewallet', 'dompet digital'],
   'Premium': ['premium', 'netflix', 'spotify', 'canva', 'chatgpt', 'youtube premium', 'akun premium'],
+  'Sertifikat Funded': ['akrilik', 'sertifikat', 'funded', 'prop firm', 'payout', 'custom', 'hadiah', 'trader', 'trading', 'display'],
 };
 
 const SUGGESTIONS_MAP: Record<string, string[]> = {
+  'ak': ['akrilik', 'akrilik custom', 'aksesoris hp'],
+  'se': ['sertifikat funded', 'serum wajah'],
   'ka': ['kaos', 'kemeja', 'kamera', 'kartu perdana'],
   'ke': ['kemeja', 'kecantikan', 'kesehatan'],
   'ba': ['baju', 'batik', 'bayar tagihan'],

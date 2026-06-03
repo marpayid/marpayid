@@ -162,11 +162,11 @@ Toleransi ukuran 1–2 cm karena proses jahit.`
     reviews: '84',
     sold: 84,
     category: 'Sertifikat Funded',
-    image: '/aklik1.png',
+    image: '/akrilik1.png',
     isFlashSale: false,
     discount: '23%',
     stock: 'Tersedia',
-    tag: 'Eksklusif',
+    tag: 'Produk Viral',
     variants: ['20x10', '20x15'],
     shippingFee: 20000,
     description: `Akrilik Sertifikat Funded premium cocok untuk pajangan meja, hadiah trader, dokumentasi payout, dan koleksi pencapaian funded account.`
