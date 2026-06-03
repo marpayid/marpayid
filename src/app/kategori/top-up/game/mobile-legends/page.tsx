@@ -9,18 +9,18 @@ import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 
 const ML_PRODUCTS = [
-  { id: 1, label: 'Weekly Diamond Pass', price: 28020 },
+  { id: 1, label: 'Weekly Diamond Pass', price: 27999 },
   { id: 2, label: '3 Diamond', price: 1499 },
-  { id: 3, label: '5 Diamond', price: 1925 },
-  { id: 4, label: '12 Diamond', price: 3825 },
-  { id: 5, label: '59 Diamond', price: 15700 },
-  { id: 6, label: '110 Diamond', price: 29098 },
-  { id: 7, label: '277 Diamond', price: 73344 },
-  { id: 8, label: '568 Diamond', price: 143100 },
-  { id: 9, label: '750 Diamond', price: 201500 },
-  { id: 10, label: '1168 Diamond', price: 285500 },
-  { id: 11, label: 'Weekly Elite Pass', price: 42334 },
-  { id: 12, label: 'Monthly Elite Pass', price: 76576 },
+  { id: 3, label: '5 Diamond', price: 1999 },
+  { id: 4, label: '12 Diamond', price: 3999 },
+  { id: 5, label: '59 Diamond', price: 15999 },
+  { id: 6, label: '110 Diamond', price: 28999 },
+  { id: 7, label: '277 Diamond', price: 73999 },
+  { id: 8, label: '568 Diamond', price: 143999 },
+  { id: 9, label: '750 Diamond', price: 201999 },
+  { id: 10, label: '1168 Diamond', price: 286999 },
+  { id: 11, label: 'Weekly Elite Pass', price: 42999 },
+  { id: 12, label: 'Monthly Elite Pass', price: 76999 },
 ];
 
 export default function MobileLegendsPage() {
