@@ -24,7 +24,6 @@ import Image from 'next/image';
 import { cn, getProductImage } from '@/lib/utils';
 import Link from 'next/link';
 import { useUser, useFirestore } from '@/firebase';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 interface AddressData {
   name: string;
@@ -50,7 +49,6 @@ export default function Checkout() {
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const tempItem = localStorage.getItem('marpay_checkout_temp');
@@ -108,7 +106,7 @@ export default function Checkout() {
     setIsAddressModalOpen(false);
   };
 
-  const handleWhatsAppCheckout = async () => {
+  const handleWhatsAppCheckout = () => {
     if (items.length === 0) return;
 
     if (!isDigital && !address) {
@@ -117,80 +115,52 @@ export default function Checkout() {
       return;
     }
 
-    setIsSubmitting(true);
+    // 1. Konstruksi Pesan WhatsApp Profesional
+    const adminWhatsApp = "6283851278935";
+    const paymentLabels: Record<string, string> = {
+      'bank_transfer': 'Bank Transfer',
+      'e_wallet': 'E-Wallet (OVO/DANA/GoPay)',
+      'qris': 'QRIS'
+    };
 
-    try {
-      // 1. Simpan data pesanan ke Firestore untuk record admin
-      const orderData = {
-        userId: user?.uid || 'guest',
-        customerName: isDigital ? (items[0].details?.customerName || 'Pelanggan Digital') : (address?.name || 'Pelanggan MarPay'),
-        customerEmail: user?.email || 'Guest',
-        customerPhone: isDigital ? (items[0].details?.target || 'N/A') : (address?.phone || 'N/A'),
-        items: items,
-        totalAmount: totalBill,
-        status: 'Menunggu Pembayaran',
-        paymentMethod: selectedPayment,
-        shippingAddress: address || null,
-        createdAt: serverTimestamp(),
-      };
-
-      await addDoc(collection(db, 'orders'), orderData);
-
-      // 2. Konstruksi Pesan WhatsApp Profesional
-      const adminWhatsApp = "6283851278935";
-      const paymentLabels: Record<string, string> = {
-        'bank_transfer': 'Bank Transfer',
-        'e_wallet': 'E-Wallet (OVO/DANA/GoPay)',
-        'qris': 'QRIS'
-      };
-
-      let message = `Halo Admin MarPay, saya ingin melakukan pembayaran pesanan.\n\n`;
-      
+    let message = `Halo Admin MarPay, saya ingin melakukan pembayaran pesanan.\n\n`;
+    
+    if (!isDigital && address) {
       message += `*DATA CUSTOMER*\n`;
-      message += `Nama: ${orderData.customerName}\n`;
-      message += `No. WhatsApp: ${orderData.customerPhone}\n`;
-      
-      if (!isDigital && address) {
-        message += `Alamat: ${address.fullAddress}, ${address.district}, ${address.city}, ${address.province} ${address.notes ? `(${address.notes})` : ''}\n`;
-      } else if (isDigital) {
-        message += `Alamat: Produk Digital (Kirim ke ID/No Tujuan)\n`;
-      }
-      message += `\n`;
-
-      message += `*DAFTAR PRODUK*\n`;
-      items.forEach((item, index) => {
-        message += `${index + 1}. ${item.name}\n`;
-        message += `   Varian: ${item.variant || 'Default'}\n`;
-        message += `   Jumlah: ${item.quantity} pcs\n`;
-        message += `   Harga: Rp ${item.price.toLocaleString()}\n`;
-      });
-      message += `\n`;
-
-      message += `*RINGKASAN PEMBAYARAN*\n`;
-      message += `Subtotal: Rp ${totalItemsPrice.toLocaleString()}\n`;
-      message += `Ongkir: Rp ${totalShipping.toLocaleString()}\n`;
-      message += `*Total Bayar: Rp ${totalBill.toLocaleString()}*\n`;
-      message += `Metode: ${paymentLabels[selectedPayment]}\n\n`;
-      
-      message += `Mohon segera dibantu proses pesanannya. Terima kasih!`;
-
-      // Hapus cache temp setelah checkout
-      localStorage.removeItem('marpay_checkout_temp');
-      
-      // Buka WhatsApp
-      const encodedMessage = encodeURIComponent(message);
-      const whatsappUrl = `https://wa.me/${adminWhatsApp}?text=${encodedMessage}`;
-      
-      window.open(whatsappUrl, '_blank');
-      
-      // Arahkan ke halaman riwayat pesanan
-      router.push('/akun/transaksi');
-
-    } catch (e) {
-      console.error("Checkout Error:", e);
-    } finally {
-      setIsSubmitting(false);
+      message += `Nama: ${address.name}\n`;
+      message += `No. WhatsApp: ${address.phone}\n`;
+      message += `Alamat: ${address.fullAddress}, ${address.district}, ${address.city}, ${address.province} ${address.notes ? `(${address.notes})` : ''}\n\n`;
+    } else if (isDigital) {
+      message += `*DATA CUSTOMER*\n`;
+      message += `Nama: ${items[0].details?.customerName || 'Pelanggan Digital'}\n`;
+      message += `Target: ${items[0].details?.target || 'N/A'}\n\n`;
     }
+
+    message += `*DAFTAR PRODUK*\n`;
+    items.forEach((item, index) => {
+      message += `${index + 1}. ${item.name}\n`;
+      message += `   Varian: ${item.variant || 'Default'}\n`;
+      message += `   Jumlah: ${item.quantity} pcs\n`;
+      message += `   Harga: Rp ${item.price.toLocaleString()}\n`;
+    });
+    message += `\n`;
+
+    message += `*RINGKASAN PEMBAYARAN*\n`;
+    message += `Subtotal: Rp ${totalItemsPrice.toLocaleString()}\n`;
+    message += `Ongkir: Rp ${totalShipping.toLocaleString()}\n`;
+    message += `*Total Bayar: Rp ${totalBill.toLocaleString()}*\n`;
+    message += `Metode: ${paymentLabels[selectedPayment]}\n\n`;
+    
+    message += `Mohon segera dibantu proses pesanannya. Terima kasih!`;
+
+    // Hapus cache temp setelah checkout
+    localStorage.removeItem('marpay_checkout_temp');
+    
+    // Buka WhatsApp
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappUrl = `https://wa.me/${adminWhatsApp}?text=${encodedMessage}`;
+    
+    window.open(whatsappUrl, '_blank');
   };
 
   const renderProductImage = (item: any) => {
@@ -420,10 +390,9 @@ export default function Checkout() {
         </div>
         <Button 
           onClick={handleWhatsAppCheckout} 
-          disabled={isSubmitting}
           className="bg-primary text-white font-bold h-11 px-6 rounded-xl flex items-center gap-2 shadow-lg shadow-primary/20 active:scale-95 transition-transform"
         >
-          {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <MessageCircle className="w-4 h-4" />}
+          <MessageCircle className="w-4 h-4" />
           Bayar Sekarang
         </Button>
       </div>
