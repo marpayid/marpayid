@@ -1,12 +1,9 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { 
-  ArrowLeft, MapPin, CreditCard, Truck, 
-  Smartphone, QrCode, Banknote, Edit3, MessageCircle, AlertCircle, Zap, Wallet,
-  Info
+  ArrowLeft, MapPin, CreditCard, Edit3, MessageCircle, AlertCircle, Smartphone
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -85,17 +82,15 @@ export default function Checkout() {
   const totalItemsPrice = items.reduce((acc, curr) => acc + (curr.price * curr.quantity), 0);
   const totalShipping = items.reduce((acc, item) => {
     if (!item.shippingFee || item.shippingFee <= 0) return acc;
-    const baseFee = item.shippingFee;
     const additionalFee = Math.max(0, item.quantity - 1) * 5000;
-    return acc + (baseFee + additionalFee);
+    return acc + (item.shippingFee + additionalFee);
   }, 0);
 
   const totalBill = totalItemsPrice + totalShipping;
   const isDigital = items.length > 0 && items.every(item => item.type === 'digital');
 
   const saveAddress = () => {
-    if (!tempAddress.name || !tempAddress.phone || !tempAddress.province || 
-        !tempAddress.city || !tempAddress.district || !tempAddress.fullAddress) {
+    if (!tempAddress.name || !tempAddress.phone || !tempAddress.fullAddress) {
       setError("Mohon lengkapi semua bidang alamat yang wajib diisi.");
       return;
     }
@@ -124,7 +119,7 @@ export default function Checkout() {
     const customerPhone = isDigital ? (items[0].details?.target || 'N/A') : (address?.phone || 'N/A');
     const customerAddress = isDigital 
       ? 'Produk Digital (Pengiriman Instan)' 
-      : `${address?.fullAddress}, ${address?.district}, ${address?.city}, ${address?.province}${address?.notes ? ` (${address?.notes})` : ''}`;
+      : `${address?.fullAddress}${address?.notes ? ` (${address?.notes})` : ''}`;
 
     const orderItemsList = items.map((item, index) => {
       return `${index + 1}. ${item.name}\n   Varian: ${item.variant || 'Default'}\n   Jumlah: ${item.quantity} pcs\n   Harga: Rp ${item.price.toLocaleString()}`;
@@ -160,12 +155,8 @@ export default function Checkout() {
   };
 
   const renderProductImage = (item: any) => {
-    if (item.category === 'Premium' || item.category?.toLowerCase() === 'premium') {
-      return <div className="relative w-full h-full"><Image src="/premium1.png" alt="Premium" fill className="object-cover" /></div>;
-    }
     const displayImage = getProductImage(item);
-    if (displayImage) return <Image src={displayImage} alt={item.name} fill className="object-cover" />;
-    return <Smartphone className="w-7 h-7 text-primary/40" />;
+    return <Image src={displayImage} alt={item.name} fill className="object-cover" />;
   };
 
   if (!isLoaded) return null;
@@ -277,9 +268,6 @@ export default function Checkout() {
                 onClick={() => setSelectedPayment(pay)}
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-gray-50 flex items-center justify-center text-primary">
-                    {pay === 'bank_transfer' ? <Banknote className="w-5 h-5" /> : pay === 'qris' ? <QrCode className="w-5 h-5" /> : <Wallet className="w-5 h-5" />}
-                  </div>
                   <p className="text-[11px] font-bold capitalize">{pay.replace('_', ' ')}</p>
                 </div>
                 <RadioGroupItem value={pay} id={pay} className="sr-only" />

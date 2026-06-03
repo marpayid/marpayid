@@ -1,11 +1,9 @@
-
 "use client"
 
 import { useParams, useRouter } from 'next/navigation';
 import { useState, useMemo, useEffect } from 'react';
 import { 
-  ArrowLeft, Share2, ShoppingBag, Heart, Star, Truck, 
-  ChevronRight, Minus, Plus
+  ArrowLeft, ShoppingBag, Star, Minus, Plus
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -14,7 +12,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { cn, formatSold, getProductImage } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
-import { ProductCard } from '@/components/product-grid';
 
 export default function ProductDetail() {
   const params = useParams();
@@ -36,6 +33,7 @@ export default function ProductDetail() {
 
   const currentPrice = useMemo(() => {
     if (!product) return 0;
+    // Special Pricing Logic
     if (product.id === 201) return (product.variants?.[selectedVariant] || '').includes('14') || (product.variants?.[selectedVariant] || '').includes('15') || (product.variants?.[selectedVariant] || '').includes('16') || (product.variants?.[selectedVariant] || '').includes('17') ? 17999 : 14899;
     if (product.id === 203) return selectedVariant === 0 ? 59252 : selectedVariant === 1 ? 63102 : 70000;
     if (product.id === 2) return selectedVariant === 1 ? 309000 : 269000;
@@ -51,7 +49,17 @@ export default function ProductDetail() {
   const handleAction = (redirect = false) => {
     if (isOutOfStock) return;
     const variantString = colors.length > 0 ? `${variants[selectedVariant]} - ${colors[selectedColor]}` : variants[selectedVariant];
-    const item = { id: product.id, name: product.name, price: currentPrice, image: activeImage, variant: variantString, quantity: quantity, type: product.type || 'physical', category: product.category, shippingFee: product.shippingFee || 0 };
+    const item = { 
+      id: product.id, 
+      name: product.name, 
+      price: currentPrice, 
+      image: activeImage, 
+      variant: variantString, 
+      quantity: quantity, 
+      type: product.type || 'physical', 
+      category: product.category, 
+      shippingFee: product.shippingFee || 0 
+    };
 
     if (redirect) {
       localStorage.setItem('marpay_checkout_temp', JSON.stringify([item]));
