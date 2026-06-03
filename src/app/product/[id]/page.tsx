@@ -33,10 +33,23 @@ export default function ProductDetail() {
 
   const currentPrice = useMemo(() => {
     if (!product) return 0;
-    // Special Pricing Logic
-    if (product.id === 201) return (product.variants?.[selectedVariant] || '').includes('14') || (product.variants?.[selectedVariant] || '').includes('15') || (product.variants?.[selectedVariant] || '').includes('16') || (product.variants?.[selectedVariant] || '').includes('17') ? 17999 : 14899;
-    if (product.id === 203) return selectedVariant === 0 ? 59252 : selectedVariant === 1 ? 63102 : 70000;
-    if (product.id === 2) return selectedVariant === 1 ? 309000 : 269000;
+    // Special Pricing Logic for Everyday Pants (ID: 203)
+    if (product.id === 203) {
+      if (selectedVariant === 1) return 63102; // Jumbo
+      if (selectedVariant === 2) return 70000; // Super Jumbo
+      return 59252; // Standar
+    }
+    // Special Pricing Logic for Case iPhone Clear (ID: 201)
+    if (product.id === 201) {
+      const variantName = product.variants?.[selectedVariant] || '';
+      if (variantName.includes('14') || variantName.includes('15') || variantName.includes('16') || variantName.includes('17')) {
+        return 17999;
+      }
+      return 14899;
+    }
+    // Special Pricing Logic for Akrilik (ID: 2)
+    if (product.id === 2 && selectedVariant === 1) return 309000;
+    
     return product.price;
   }, [product, selectedVariant]);
 
