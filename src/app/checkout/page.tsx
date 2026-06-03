@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { 
-  ArrowLeft, MapPin, CreditCard, Edit3, MessageCircle, AlertCircle, Smartphone
+  ArrowLeft, MapPin, CreditCard, Edit3, MessageCircle, AlertCircle
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -154,11 +154,6 @@ export default function Checkout() {
     window.location.href = whatsappUrl;
   };
 
-  const renderProductImage = (item: any) => {
-    const displayImage = getProductImage(item);
-    return <Image src={displayImage} alt={item.name} fill className="object-cover" />;
-  };
-
   if (!isLoaded) return null;
 
   return (
@@ -185,8 +180,8 @@ export default function Checkout() {
                     {address ? 'Ubah' : 'Tambah'}
                   </button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px] rounded-3xl max-h-[85vh] overflow-y-auto outline-none">
-                  <DialogHeader className="pb-2">
+                <DialogContent className="sm:max-w-[425px] rounded-3xl outline-none">
+                  <DialogHeader>
                     <DialogTitle className="text-lg font-bold">Lengkapi Alamat</DialogTitle>
                   </DialogHeader>
                   <div className="space-y-4 py-2">
@@ -209,7 +204,7 @@ export default function Checkout() {
                       </div>
                     )}
                   </div>
-                  <DialogFooter className="pt-4 pb-6 sm:pb-4">
+                  <DialogFooter className="pt-4">
                     <Button onClick={saveAddress} className="w-full bg-primary text-white font-bold h-12 rounded-xl shadow-lg shadow-primary/20">Simpan Alamat</Button>
                   </DialogFooter>
                 </DialogContent>
@@ -238,7 +233,7 @@ export default function Checkout() {
             {items.map((item, idx) => (
               <div key={`${item.id}-${idx}`} className="flex gap-3.5">
                 <div className="relative w-14 h-14 rounded-xl overflow-hidden flex-shrink-0 border border-gray-50 bg-gray-50 flex items-center justify-center">
-                  {renderProductImage(item)}
+                  <Image src={getProductImage(item)} alt={item.name} fill className="object-cover" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <h4 className="text-[11px] font-bold text-gray-800 truncate">{item.name}</h4>
@@ -258,20 +253,22 @@ export default function Checkout() {
             <h3 className="text-xs font-bold uppercase tracking-wide">Metode Pembayaran</h3>
           </div>
           <RadioGroup value={selectedPayment} onValueChange={setSelectedPayment} className="grid grid-cols-1 gap-2.5">
-            {['bank_transfer', 'e_wallet', 'qris'].map((pay) => (
+            {[
+              { id: 'bank_transfer', label: 'Bank Transfer' },
+              { id: 'e_wallet', label: 'E-Wallet (OVO/DANA/GoPay)' },
+              { id: 'qris', label: 'QRIS' }
+            ].map((pay) => (
               <div 
-                key={pay}
+                key={pay.id}
                 className={cn(
                   "flex items-center justify-between p-3.5 rounded-2xl border cursor-pointer transition-all", 
-                  selectedPayment === pay ? "border-primary bg-primary/5 ring-1 ring-primary/20" : "border-gray-50"
+                  selectedPayment === pay.id ? "border-primary bg-primary/5 ring-1 ring-primary/20" : "border-gray-50"
                 )} 
-                onClick={() => setSelectedPayment(pay)}
+                onClick={() => setSelectedPayment(pay.id)}
               >
-                <div className="flex items-center gap-3">
-                  <p className="text-[11px] font-bold capitalize">{pay.replace('_', ' ')}</p>
-                </div>
-                <RadioGroupItem value={pay} id={pay} className="sr-only" />
-                {selectedPayment === pay && <div className="w-2 h-2 rounded-full bg-primary" />}
+                <p className="text-[11px] font-bold">{pay.label}</p>
+                <RadioGroupItem value={pay.id} id={pay.id} className="sr-only" />
+                {selectedPayment === pay.id && <div className="w-2 h-2 rounded-full bg-primary" />}
               </div>
             ))}
           </RadioGroup>

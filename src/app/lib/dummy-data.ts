@@ -31,17 +31,7 @@ export const Products = [
     ],
     shippingFee: 0,
     forceFreeShippingLabel: true,
-    description: `Case iPhone Clear MagSafe Premium dengan desain transparan elegan dan perlindungan maksimal.
-
-Keunggulan:
-✓ Support MagSafe
-✓ Transparan Premium
-✓ Anti Shock Protection
-✓ Tidak Mudah Menguning
-✓ Presisi Kamera dan Tombol
-✓ Wireless Charging Friendly
-✓ Gratis Ongkir
-✓ Ready Stock`
+    description: `Case iPhone Clear MagSafe Premium dengan desain transparan elegan dan perlindungan maksimal.`
   },
   {
     id: 202,
@@ -67,7 +57,7 @@ Keunggulan:
     ],
     shippingFee: 0,
     forceFreeShippingLabel: true,
-    description: `Case iPhone Street Art Premium dengan desain grafiti modern dan tampilan eksklusif.`
+    description: `Case iPhone Street Art Premium dengan desain grafiti modern.`
   },
   {
     id: 203,
@@ -86,7 +76,8 @@ Keunggulan:
     variants: ['Standar (BB 35-55Kg)', 'Jumbo (BB 56-70Kg)', 'Super Jumbo (BB 71-85Kg)'],
     colors: ['Abu Grey', 'Hitam', 'Putih', 'Navi', 'Mahogani', 'Khaki', 'Ice Blue'],
     shippingFee: 12000,
-    description: `Everyday Stripe Pants merupakan celana wanita model baggy kulot premium dengan motif garis pinstripe yang cocok digunakan untuk kuliah, kerja, kantor, jalan-jalan, maupun aktivitas sehari-hari.`
+    description: `Everyday Stripe Pants merupakan celana wanita model baggy kulot premium.`,
+    keywords: 'baggy pants, stripe pants, kulot wanita, celana kantor wanita, pinstripe'
   },
   {
     id: 3,
@@ -104,7 +95,7 @@ Keunggulan:
     tag: 'Produk Viral',
     variants: ['S', 'M', 'L', 'XL', '2XL', '3XL'],
     shippingFee: 12000,
-    description: `Kemeja wanita premium dengan desain fitted body yang memberikan tampilan lebih elegan.`
+    description: `Kemeja wanita premium dengan desain fitted body.`
   },
   {
     id: 2,
@@ -122,7 +113,8 @@ Keunggulan:
     tag: 'Produk Viral',
     variants: ['20x10', '20x15'],
     shippingFee: 20000,
-    description: `Akrilik Sertifikat Funded premium cocok untuk trader.`
+    description: `Akrilik Sertifikat Funded premium cocok untuk trader.`,
+    keywords: 'akrilik, sertifikat, funded, prop firm, payout, custom, hadiah, trader'
   },
   {
     id: 6,

@@ -1,14 +1,10 @@
-
 'use client';
 
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { ArrowLeft, X, Search, Clock, TrendingUp } from 'lucide-react';
+import { ArrowLeft, Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Products, Categories } from '@/app/lib/dummy-data';
-import Link from 'next/link';
-import { cn } from '@/lib/utils';
-import * as LucideIcons from 'lucide-react';
 import { ProductCard } from '@/components/product-grid';
 
 interface SearchOverlayProps {
@@ -18,14 +14,7 @@ interface SearchOverlayProps {
 
 export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
   const [query, setQuery] = useState('');
-  const [showSuggestions, setShowSuggestions] = useState(true);
-  const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    const saved = localStorage.getItem('marpay_recent_searches');
-    if (saved) setRecentSearches(JSON.parse(saved));
-  }, [isOpen]);
 
   useEffect(() => {
     if (isOpen) {
@@ -40,7 +29,15 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
   const results = useMemo(() => {
     const q = query.toLowerCase().trim();
     if (!q) return { categories: [], products: [] };
-    const matchedProducts = Products.filter(p => p.name.toLowerCase().includes(q) || p.category?.toLowerCase().includes(q));
+    
+    // Pencarian dengan keyword tambahan dari data
+    const matchedProducts = Products.filter(p => {
+      const nameMatch = p.name.toLowerCase().includes(q);
+      const categoryMatch = p.category?.toLowerCase().includes(q);
+      const descriptionMatch = p.description?.toLowerCase().includes(q);
+      return nameMatch || categoryMatch || descriptionMatch;
+    });
+
     const matchedCategories = Categories.filter(cat => cat.name.toLowerCase().includes(q));
     return { categories: matchedCategories, products: matchedProducts };
   }, [query]);
@@ -57,16 +54,22 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
             ref={inputRef}
             placeholder="Cari kebutuhanmu di MarPay..." 
             value={query}
-            onChange={(e) => { setQuery(e.target.value); setShowSuggestions(true); }}
+            onChange={(e) => setQuery(e.target.value)}
             className="pl-9 pr-9 bg-gray-50 border-none rounded-full h-10"
           />
         </div>
       </header>
       <main className="flex-1 overflow-y-auto p-4">
         {query ? (
-          <div className="grid grid-cols-2 gap-3">
-            {results.products.map(p => <ProductCard key={p.id} product={p} />)}
-          </div>
+          <>
+            {results.products.length > 0 ? (
+              <div className="grid grid-cols-2 gap-3">
+                {results.products.map(p => <ProductCard key={p.id} product={p} />)}
+              </div>
+            ) : (
+              <div className="text-center py-20 text-gray-400 text-sm">Produk tidak ditemukan</div>
+            )}
+          </>
         ) : (
           <div className="text-center py-20 text-gray-400 text-sm">Masukkan kata kunci pencarian</div>
         )}
