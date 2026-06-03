@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -23,8 +24,7 @@ import {
 
 import Image from 'next/image';
 import { cn, getProductImage } from '@/lib/utils';
-import Link from 'next/link';
-import { useUser, useFirestore } from '@/firebase';
+import { useUser } from '@/firebase';
 
 interface AddressData {
   name: string;
@@ -38,7 +38,6 @@ interface AddressData {
 
 export default function Checkout() {
   const router = useRouter();
-  const db = useFirestore();
   const { user } = useUser();
   
   const [items, setItems] = useState<any[]>([]);
@@ -84,7 +83,6 @@ export default function Checkout() {
   }, []);
 
   const totalItemsPrice = items.reduce((acc, curr) => acc + (curr.price * curr.quantity), 0);
-  
   const totalShipping = items.reduce((acc, item) => {
     if (!item.shippingFee || item.shippingFee <= 0) return acc;
     const baseFee = item.shippingFee;
@@ -109,7 +107,6 @@ export default function Checkout() {
 
   const handleWhatsAppCheckout = () => {
     if (items.length === 0) return;
-
     if (!isDigital && !address) {
       setError("Mohon isi alamat pengiriman terlebih dahulu.");
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -123,9 +120,8 @@ export default function Checkout() {
       'qris': 'QRIS'
     };
 
-    const customerName = isDigital ? (items[0].details?.customerName || 'Pelanggan Digital') : (address?.name || 'N/A');
+    const customerName = isDigital ? (items[0].details?.customerName || user?.displayName || 'Pelanggan Digital') : (address?.name || 'N/A');
     const customerPhone = isDigital ? (items[0].details?.target || 'N/A') : (address?.phone || 'N/A');
-    
     const customerAddress = isDigital 
       ? 'Produk Digital (Pengiriman Instan)' 
       : `${address?.fullAddress}, ${address?.district}, ${address?.city}, ${address?.province}${address?.notes ? ` (${address?.notes})` : ''}`;
@@ -159,20 +155,14 @@ export default function Checkout() {
     message += `Terima kasih 🙏`;
 
     localStorage.removeItem('marpay_checkout_temp');
-    const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/${adminWhatsApp}?text=${encodedMessage}`;
-    window.open(whatsappUrl, '_blank');
+    const whatsappUrl = `https://wa.me/${adminWhatsApp}?text=${encodeURIComponent(message)}`;
+    window.location.href = whatsappUrl;
   };
 
   const renderProductImage = (item: any) => {
     if (item.category === 'Premium' || item.category?.toLowerCase() === 'premium') {
       return <div className="relative w-full h-full"><Image src="/premium1.png" alt="Premium" fill className="object-cover" /></div>;
     }
-    
-    if (item.image === '/pulsa-icon.png') return <div className="flex items-center justify-center w-full h-full bg-primary/10 rounded-lg text-primary"><Smartphone className="w-7 h-7" /></div>;
-    if (item.image === '/pln-icon.png') return <div className="flex items-center justify-center w-full h-full bg-primary/10 rounded-lg text-primary"><Zap className="w-7 h-7" /></div>;
-    if (item.image === '/e-wallet-icon.png') return <div className="flex items-center justify-center w-full h-full bg-primary/10 rounded-lg text-primary"><Wallet className="w-7 h-7" /></div>;
-    
     const displayImage = getProductImage(item);
     if (displayImage) return <Image src={displayImage} alt={item.name} fill className="object-cover" />;
     return <Smartphone className="w-7 h-7 text-primary/40" />;
@@ -211,29 +201,15 @@ export default function Checkout() {
                   <div className="space-y-4 py-2">
                     <div className="space-y-1.5">
                       <Label className="text-xs font-bold text-gray-700">Nama Penerima</Label>
-                      <Input placeholder="Masukkan nama lengkap" value={tempAddress.name} onChange={(e) => setTempAddress({...tempAddress, name: e.target.value})} className="rounded-xl border-gray-200" />
+                      <Input placeholder="Nama lengkap" value={tempAddress.name} onChange={(e) => setTempAddress({...tempAddress, name: e.target.value})} className="rounded-xl border-gray-200" />
                     </div>
                     <div className="space-y-1.5">
                       <Label className="text-xs font-bold text-gray-700">Nomor WhatsApp</Label>
-                      <Input placeholder="Contoh: 081234567890" value={tempAddress.phone} onChange={(e) => setTempAddress({...tempAddress, phone: e.target.value})} className="rounded-xl border-gray-200" />
-                    </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="space-y-1.5">
-                        <Label className="text-xs font-bold text-gray-700">Provinsi</Label>
-                        <Input placeholder="Provinsi" value={tempAddress.province} onChange={(e) => setTempAddress({...tempAddress, province: e.target.value})} className="rounded-xl border-gray-200" />
-                      </div>
-                      <div className="space-y-1.5">
-                        <Label className="text-xs font-bold text-gray-700">Kota/Kabupaten</Label>
-                        <Input placeholder="Kota/Kab" value={tempAddress.city} onChange={(e) => setTempAddress({...tempAddress, city: e.target.value})} className="rounded-xl border-gray-200" />
-                      </div>
-                    </div>
-                    <div className="space-y-1.5">
-                      <Label className="text-xs font-bold text-gray-700">Kecamatan</Label>
-                      <Input placeholder="Kecamatan" value={tempAddress.district} onChange={(e) => setTempAddress({...tempAddress, district: e.target.value})} className="rounded-xl border-gray-200" />
+                      <Input placeholder="08xxxxxxxx" value={tempAddress.phone} onChange={(e) => setTempAddress({...tempAddress, phone: e.target.value})} className="rounded-xl border-gray-200" />
                     </div>
                     <div className="space-y-1.5">
                       <Label className="text-xs font-bold text-gray-700">Alamat Lengkap</Label>
-                      <Textarea placeholder="Nama jalan, nomor rumah, RT/RW, kelurahan" value={tempAddress.fullAddress} onChange={(e) => setTempAddress({...tempAddress, fullAddress: e.target.value})} className="rounded-xl border-gray-200 min-h-[100px]" />
+                      <Textarea placeholder="Nama jalan, nomor rumah, RT/RW" value={tempAddress.fullAddress} onChange={(e) => setTempAddress({...tempAddress, fullAddress: e.target.value})} className="rounded-xl border-gray-200 min-h-[100px]" />
                     </div>
                     {error && (
                       <div className="flex items-center gap-2 text-red-500 bg-red-50 p-3 rounded-xl border border-red-100">
@@ -251,7 +227,7 @@ export default function Checkout() {
             {address ? (
               <div className="space-y-0.5 border-t border-gray-50 pt-3">
                 <p className="text-xs font-bold text-gray-900">{address.name} <span className="text-gray-400 font-normal ml-1">({address.phone})</span></p>
-                <p className="text-[11px] text-gray-500 leading-relaxed">{address.fullAddress}, {address.district}, {address.city}, {address.province}</p>
+                <p className="text-[11px] text-gray-500 leading-relaxed">{address.fullAddress}</p>
               </div>
             ) : (
               <div className="border-t border-gray-50 pt-4 text-center py-5 bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
@@ -268,42 +244,20 @@ export default function Checkout() {
             <h3 className="text-xs font-bold uppercase tracking-wide">Daftar Barang</h3>
           </div>
           <div className="space-y-3.5">
-            {items.map((item, idx) => {
-              const itemShipping = (item.shippingFee || 0) > 0 
-                ? item.shippingFee + (Math.max(0, item.quantity - 1) * 5000) 
-                : 0;
-
-              return (
-                <div key={`${item.id}-${idx}`} className="flex gap-3.5">
-                  <div className="relative w-14 h-14 rounded-xl overflow-hidden flex-shrink-0 border border-gray-50 bg-gray-50 flex items-center justify-center">
-                    {renderProductImage(item)}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h4 className="text-[11px] font-bold text-gray-800 truncate">{item.name}</h4>
-                    <div className="flex items-center justify-between mt-0.5">
-                      <p className="text-xs font-bold text-primary">Rp {item.price.toLocaleString()}</p>
-                      <p className="text-[10px] text-muted-foreground font-bold">x{item.quantity}</p>
-                    </div>
-                    <div className="flex justify-between items-center mt-1">
-                      <p className="text-[9px] text-gray-400 font-medium">Varian: {item.variant || 'Default'}</p>
-                      <p className="text-[9px] text-gray-500 italic">
-                        Ongkir: {itemShipping > 0 ? `Rp ${itemShipping.toLocaleString()}` : 'Gratis'}
-                      </p>
-                    </div>
+            {items.map((item, idx) => (
+              <div key={`${item.id}-${idx}`} className="flex gap-3.5">
+                <div className="relative w-14 h-14 rounded-xl overflow-hidden flex-shrink-0 border border-gray-50 bg-gray-50 flex items-center justify-center">
+                  {renderProductImage(item)}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h4 className="text-[11px] font-bold text-gray-800 truncate">{item.name}</h4>
+                  <div className="flex items-center justify-between mt-0.5">
+                    <p className="text-xs font-bold text-primary">Rp {item.price.toLocaleString()}</p>
+                    <p className="text-[10px] text-muted-foreground font-bold">x{item.quantity}</p>
                   </div>
                 </div>
-              );
-            })}
-          </div>
-
-          <div className="border-t border-gray-50 pt-3 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Truck className="w-3.5 h-3.5 text-primary" />
-              <span className="text-[10px] text-gray-500 font-bold uppercase">Total Pengiriman</span>
-            </div>
-            <span className={cn("text-[10px] font-bold", totalShipping === 0 ? "text-green-500" : "text-primary")}>
-              {totalShipping === 0 ? 'Gratis' : `Rp ${totalShipping.toLocaleString()}`}
-            </span>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -313,60 +267,33 @@ export default function Checkout() {
             <h3 className="text-xs font-bold uppercase tracking-wide">Metode Pembayaran</h3>
           </div>
           <RadioGroup value={selectedPayment} onValueChange={setSelectedPayment} className="grid grid-cols-1 gap-2.5">
-            <div className={cn(
-              "flex items-center justify-between p-3.5 rounded-2xl border cursor-pointer transition-all", 
-              selectedPayment === 'bank_transfer' ? "border-primary bg-primary/5 ring-1 ring-primary/20" : "border-gray-50"
-            )} onClick={() => setSelectedPayment('bank_transfer')}>
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center text-blue-500"><Banknote className="w-5 h-5" /></div>
-                <div><p className="text-[11px] font-bold">Bank Transfer</p><p className="text-[9px] text-gray-400 font-medium uppercase tracking-tighter">Konfirmasi Manual</p></div>
+            {['bank_transfer', 'e_wallet', 'qris'].map((pay) => (
+              <div 
+                key={pay}
+                className={cn(
+                  "flex items-center justify-between p-3.5 rounded-2xl border cursor-pointer transition-all", 
+                  selectedPayment === pay ? "border-primary bg-primary/5 ring-1 ring-primary/20" : "border-gray-50"
+                )} 
+                onClick={() => setSelectedPayment(pay)}
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-gray-50 flex items-center justify-center text-primary">
+                    {pay === 'bank_transfer' ? <Banknote className="w-5 h-5" /> : pay === 'qris' ? <QrCode className="w-5 h-5" /> : <Wallet className="w-5 h-5" />}
+                  </div>
+                  <p className="text-[11px] font-bold capitalize">{pay.replace('_', ' ')}</p>
+                </div>
+                <RadioGroupItem value={pay} id={pay} className="sr-only" />
+                {selectedPayment === pay && <div className="w-2 h-2 rounded-full bg-primary" />}
               </div>
-              <RadioGroupItem value="bank_transfer" id="bank_transfer" className="sr-only" />
-              {selectedPayment === 'bank_transfer' && <div className="w-2 h-2 rounded-full bg-primary" />}
-            </div>
-            
-            <div className={cn(
-              "flex items-center justify-between p-3.5 rounded-2xl border cursor-pointer transition-all", 
-              selectedPayment === 'e_wallet' ? "border-primary bg-primary/5 ring-1 ring-primary/20" : "border-gray-50"
-            )} onClick={() => setSelectedPayment('e_wallet')}>
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-purple-50 flex items-center justify-center text-purple-500"><Smartphone className="w-5 h-5" /></div>
-                <div><p className="text-[11px] font-bold">E-Wallet</p><p className="text-[9px] text-gray-400 font-medium uppercase tracking-tighter">OVO / DANA / GoPay</p></div>
-              </div>
-              <RadioGroupItem value="e_wallet" id="e_wallet" className="sr-only" />
-              {selectedPayment === 'e_wallet' && <div className="w-2 h-2 rounded-full bg-primary" />}
-            </div>
-
-            <div className={cn(
-              "flex items-center justify-between p-3.5 rounded-2xl border cursor-pointer transition-all", 
-              selectedPayment === 'qris' ? "border-primary bg-primary/5 ring-1 ring-primary/20" : "border-gray-50"
-            )} onClick={() => setSelectedPayment('qris')}>
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-orange-50 flex items-center justify-center text-orange-500"><QrCode className="w-5 h-5" /></div>
-                <div><p className="text-[11px] font-bold">QRIS</p><p className="text-[9px] text-gray-400 font-medium uppercase tracking-tighter">Scan & Bayar</p></div>
-              </div>
-              <RadioGroupItem value="qris" id="qris" className="sr-only" />
-              {selectedPayment === 'qris' && <div className="w-2 h-2 rounded-full bg-primary" />}
-            </div>
+            ))}
           </RadioGroup>
-          <div className="bg-blue-50/50 p-3 rounded-2xl flex gap-2.5 border border-blue-100">
-            <Info className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
-            <p className="text-[10px] text-blue-600 font-medium leading-relaxed">
-              Konfirmasi pesanan melalui WhatsApp admin MarPay setelah pembayaran dilakukan untuk proses pengiriman instan.
-            </p>
-          </div>
         </div>
 
         <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm space-y-3">
           <h3 className="text-xs font-bold uppercase tracking-wide">Ringkasan Belanja</h3>
           <div className="space-y-2.5">
-            <div className="flex justify-between items-center"><span className="text-[11px] text-gray-500 font-medium">Total Harga Produk</span><span className="text-[11px] font-bold text-gray-800">Rp {totalItemsPrice.toLocaleString()}</span></div>
-            <div className="flex justify-between items-center">
-              <span className="text-[11px] text-gray-500 font-medium">Total Biaya Pengiriman</span>
-              <span className={cn("text-[11px] font-bold", totalShipping === 0 ? "text-green-500" : "text-primary")}>
-                {totalShipping === 0 ? 'Gratis' : `Rp ${totalShipping.toLocaleString()}`}
-              </span>
-            </div>
+            <div className="flex justify-between items-center"><span className="text-[11px] text-gray-500 font-medium">Subtotal</span><span className="text-[11px] font-bold text-gray-800">Rp {totalItemsPrice.toLocaleString()}</span></div>
+            <div className="flex justify-between items-center"><span className="text-[11px] text-gray-500 font-medium">Ongkir</span><span className="text-[11px] font-bold text-primary">Rp {totalShipping.toLocaleString()}</span></div>
             <div className="border-t border-gray-50 pt-2.5 flex justify-between items-center"><span className="text-xs font-bold text-gray-900 uppercase">Total Tagihan</span><span className="text-base font-black text-primary">Rp {totalBill.toLocaleString()}</span></div>
           </div>
         </div>
