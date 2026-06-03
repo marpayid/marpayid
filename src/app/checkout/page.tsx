@@ -120,11 +120,11 @@ export default function Checkout() {
     setIsSubmitting(true);
 
     try {
-      // 1. Simpan pesanan ke Firestore terlebih dahulu
+      // 1. Simpan data pesanan ke Firestore untuk record admin
       const orderData = {
         userId: user?.uid || 'guest',
-        customerName: isDigital ? (items[0].details?.customerName || 'Digital Customer') : (address?.name || 'Customer'),
-        customerEmail: user?.email || 'N/A',
+        customerName: isDigital ? (items[0].details?.customerName || 'Pelanggan Digital') : (address?.name || 'Pelanggan MarPay'),
+        customerEmail: user?.email || 'Guest',
         customerPhone: isDigital ? (items[0].details?.target || 'N/A') : (address?.phone || 'N/A'),
         items: items,
         totalAmount: totalBill,
@@ -136,7 +136,7 @@ export default function Checkout() {
 
       await addDoc(collection(db, 'orders'), orderData);
 
-      // 2. Siapkan Pesan WhatsApp
+      // 2. Konstruksi Pesan WhatsApp Profesional
       const adminWhatsApp = "6283851278935";
       const paymentLabels: Record<string, string> = {
         'bank_transfer': 'Bank Transfer',
@@ -144,45 +144,46 @@ export default function Checkout() {
         'qris': 'QRIS'
       };
 
-      let message = `Halo Admin MarPay, saya ingin konfirmasi pesanan.\n\n`;
-
-      if (isDigital) {
-        const digitalDetails = items[0].details;
-        message += `*Detail Pesanan Digital:*\n`;
-        message += `Produk: ${items[0].name}\n`;
-        message += `Nomor Tujuan: ${digitalDetails?.target}\n`;
-        message += `Operator: ${digitalDetails?.operator}\n`;
-        message += `Nominal: ${digitalDetails?.nominal}\n\n`;
-      } else if (address) {
-        const productList = items.map(item => {
-          const itemShipping = (item.shippingFee || 0) > 0 
-            ? item.shippingFee + (Math.max(0, item.quantity - 1) * 5000) 
-            : 0;
-          const shippingStr = itemShipping > 0 ? `Rp ${itemShipping.toLocaleString()}` : 'Gratis';
-          return `- ${item.name} (Varian: ${item.variant || 'Default'}) x ${item.quantity} (Ongkir: ${shippingStr})`;
-        }).join('\n');
-
-        message += `*Data Penerima:*\n`;
-        message += `Nama: ${address.name}\n`;
-        message += `Nomor WhatsApp: ${address.phone}\n`;
-        message += `Alamat: ${address.fullAddress}, ${address.district}, ${address.city}, ${address.province} ${address.notes ? `(${address.notes})` : ''}\n\n`;
-        message += `*Detail Pesanan:*\n${productList}\n\n`;
+      let message = `Halo Admin MarPay, saya ingin melakukan pembayaran pesanan.\n\n`;
+      
+      message += `*DATA CUSTOMER*\n`;
+      message += `Nama: ${orderData.customerName}\n`;
+      message += `No. WhatsApp: ${orderData.customerPhone}\n`;
+      
+      if (!isDigital && address) {
+        message += `Alamat: ${address.fullAddress}, ${address.district}, ${address.city}, ${address.province} ${address.notes ? `(${address.notes})` : ''}\n`;
+      } else if (isDigital) {
+        message += `Alamat: Produk Digital (Kirim ke ID/No Tujuan)\n`;
       }
+      message += `\n`;
 
-      message += `*Ringkasan Tagihan:*\n`;
-      message += `Total Produk: Rp ${totalItemsPrice.toLocaleString()}\n`;
-      message += `Total Ongkir: Rp ${totalShipping.toLocaleString()}\n`;
-      message += `Total Bayar: Rp ${totalBill.toLocaleString()}\n\n`;
-      message += `*Pembayaran:*\n`;
+      message += `*DAFTAR PRODUK*\n`;
+      items.forEach((item, index) => {
+        message += `${index + 1}. ${item.name}\n`;
+        message += `   Varian: ${item.variant || 'Default'}\n`;
+        message += `   Jumlah: ${item.quantity} pcs\n`;
+        message += `   Harga: Rp ${item.price.toLocaleString()}\n`;
+      });
+      message += `\n`;
+
+      message += `*RINGKASAN PEMBAYARAN*\n`;
+      message += `Subtotal: Rp ${totalItemsPrice.toLocaleString()}\n`;
+      message += `Ongkir: Rp ${totalShipping.toLocaleString()}\n`;
+      message += `*Total Bayar: Rp ${totalBill.toLocaleString()}*\n`;
       message += `Metode: ${paymentLabels[selectedPayment]}\n\n`;
-      message += `Mohon dibantu proses pesanannya.`;
+      
+      message += `Mohon segera dibantu proses pesanannya. Terima kasih!`;
 
+      // Hapus cache temp setelah checkout
       localStorage.removeItem('marpay_checkout_temp');
       
+      // Buka WhatsApp
       const encodedMessage = encodeURIComponent(message);
       const whatsappUrl = `https://wa.me/${adminWhatsApp}?text=${encodedMessage}`;
+      
       window.open(whatsappUrl, '_blank');
       
+      // Arahkan ke halaman riwayat pesanan
       router.push('/akun/transaksi');
 
     } catch (e) {
