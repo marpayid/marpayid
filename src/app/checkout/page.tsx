@@ -5,29 +5,20 @@ import { useRouter } from 'next/navigation';
 import { 
   ArrowLeft, MapPin, CreditCard, Truck, 
   Smartphone, QrCode, Banknote, Edit3, MessageCircle, AlertCircle, Zap, Wallet,
-  Info, Loader2
+  Info
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle, 
-  DialogTrigger,
-  DialogFooter 
-} from '@/dialog'; // Updated import assuming Dialog is in root components/ui or provided by user. Original was '@/components/ui/dialog'
-// Correcting common shadcn paths based on the project structure
 import {
-  Dialog as UIDialog,
-  DialogContent as UIDialogContent,
-  DialogHeader as UIDialogHeader,
-  DialogTitle as UIDialogTitle,
-  DialogTrigger as UIDialogTrigger,
-  DialogFooter as UIDialogFooter
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter
 } from "@/components/ui/dialog";
 
 import Image from 'next/image';
@@ -132,7 +123,6 @@ export default function Checkout() {
       'qris': 'QRIS'
     };
 
-    // 1. Prepare Dynamic Variables
     const customerName = isDigital ? (items[0].details?.customerName || 'Pelanggan Digital') : (address?.name || 'N/A');
     const customerPhone = isDigital ? (items[0].details?.target || 'N/A') : (address?.phone || 'N/A');
     
@@ -146,7 +136,6 @@ export default function Checkout() {
 
     const paymentMethodLabel = paymentLabels[selectedPayment] || selectedPayment;
 
-    // 2. Construct the Message Template
     let message = `🛍️ ORDER BARU MARPAY\n\n`;
     message += `━━━━━━━━━━━━━━\n\n`;
     message += `👤 DATA PEMBELI\n`;
@@ -169,13 +158,9 @@ export default function Checkout() {
     message += `Mohon diproses.\n`;
     message += `Terima kasih 🙏`;
 
-    // Clear temporary checkout storage
     localStorage.removeItem('marpay_checkout_temp');
-    
-    // Open WhatsApp URL
     const encodedMessage = encodeURIComponent(message);
     const whatsappUrl = `https://wa.me/${adminWhatsApp}?text=${encodedMessage}`;
-    
     window.open(whatsappUrl, '_blank');
   };
 
@@ -195,18 +180,6 @@ export default function Checkout() {
 
   if (!isLoaded) return null;
 
-  if (items.length === 0) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-6 text-center">
-        <h1 className="text-lg font-bold mb-2">Checkout Kosong</h1>
-        <p className="text-xs text-muted-foreground mb-6">Silakan pilih produk terlebih dahulu.</p>
-        <Link href="/">
-          <Button className="bg-primary text-white px-8 h-11 rounded-xl">Kembali Belanja</Button>
-        </Link>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-gray-50 pb-32">
       <header className="fixed top-0 left-0 right-0 z-50 bg-white px-4 py-3.5 border-b border-gray-100 flex items-center gap-4">
@@ -224,17 +197,17 @@ export default function Checkout() {
                 <MapPin className="w-4 h-4 text-primary" />
                 <h3 className="text-xs font-bold uppercase tracking-wide">Alamat Pengiriman</h3>
               </div>
-              <UIDialog open={isAddressModalOpen} onOpenChange={setIsAddressModalOpen}>
-                <UIDialogTrigger asChild>
+              <Dialog open={isAddressModalOpen} onOpenChange={setIsAddressModalOpen}>
+                <DialogTrigger asChild>
                   <button className="text-[11px] font-bold text-primary flex items-center gap-1">
                     <Edit3 className="w-3 h-3" />
                     {address ? 'Ubah' : 'Tambah'}
                   </button>
-                </UIDialogTrigger>
-                <UIDialogContent className="sm:max-w-[425px] rounded-3xl max-h-[85vh] overflow-y-auto outline-none">
-                  <UIDialogHeader className="pb-2">
-                    <UIDialogTitle className="text-lg font-bold">Lengkapi Alamat</UIDialogTitle>
-                  </UIDialogHeader>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px] rounded-3xl max-h-[85vh] overflow-y-auto outline-none">
+                  <DialogHeader className="pb-2">
+                    <DialogTitle className="text-lg font-bold">Lengkapi Alamat</DialogTitle>
+                  </DialogHeader>
                   <div className="space-y-4 py-2">
                     <div className="space-y-1.5">
                       <Label className="text-xs font-bold text-gray-700">Nama Penerima</Label>
@@ -269,11 +242,11 @@ export default function Checkout() {
                       </div>
                     )}
                   </div>
-                  <UIDialogFooter className="pt-4 pb-6 sm:pb-4">
+                  <DialogFooter className="pt-4 pb-6 sm:pb-4">
                     <Button onClick={saveAddress} className="w-full bg-primary text-white font-bold h-12 rounded-xl shadow-lg shadow-primary/20">Simpan Alamat</Button>
-                  </UIDialogFooter>
-                </UIDialogContent>
-              </UIDialog>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             </div>
             {address ? (
               <div className="space-y-0.5 border-t border-gray-50 pt-3">

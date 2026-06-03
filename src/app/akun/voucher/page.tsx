@@ -1,8 +1,9 @@
 "use client"
 
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Ticket, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Ticket } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 export default function MyVouchersPage() {
   const router = useRouter();
@@ -35,5 +36,3 @@ export default function MyVouchersPage() {
     </div>
   );
 }
-
-import Link from 'next/link';
