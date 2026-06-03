@@ -285,12 +285,14 @@ export default function ProductDetail() {
       <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-100 flex flex-col gap-3 z-[100] shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
         <div className="flex items-center justify-between">
            <div className="flex flex-col"><p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Total Harga</p><p className="text-lg font-bold text-primary leading-none">Rp {totalPrice.toLocaleString()}</p></div>
-           <Button 
-            onClick={handleWhatsAppBuy}
-            className="bg-green-500 text-white font-black h-10 px-4 rounded-xl text-[10px] flex items-center gap-2 shadow-lg shadow-green-500/20 active:scale-95 transition-all"
-           >
-             <MessageCircle className="w-4 h-4" /> Beli via WhatsApp
-           </Button>
+           {product.id !== 203 && (
+             <Button 
+              onClick={handleWhatsAppBuy}
+              className="bg-green-500 text-white font-black h-10 px-4 rounded-xl text-[10px] flex items-center gap-2 shadow-lg shadow-green-500/20 active:scale-95 transition-all"
+             >
+               <MessageCircle className="w-4 h-4" /> Beli via WhatsApp
+             </Button>
+           )}
         </div>
         <div className="flex gap-2 w-full">
           <Button variant="outline" disabled={isOutOfStock} className={cn("flex-1 border-primary text-primary font-bold h-11 rounded-xl active:scale-95 transition-transform text-xs", isOutOfStock && "opacity-50 grayscale cursor-not-allowed")} onClick={() => handleAction(false)}>+ Keranjang</Button>
