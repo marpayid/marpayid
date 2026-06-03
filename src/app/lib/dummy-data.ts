@@ -46,6 +46,41 @@ Keunggulan:
 Dapatkan perlindungan terbaik untuk iPhone kesayangan Anda dengan tampilan yang tetap slim dan mewah.`
   },
   {
+    id: 202,
+    name: 'Case iPhone Street Art Premium',
+    price: 23999,
+    originalPrice: 49999,
+    rating: 4.9,
+    reviews: '1.5rb',
+    sold: 10000,
+    category: 'Aksesoris HP',
+    image: '/case2.png',
+    isFlashSale: true,
+    discount: '52%',
+    stock: 'Stok Tersedia',
+    tag: 'Produk Viral',
+    variants: [
+      'iPhone 7/8', 'iPhone 7+/8+', 'iPhone X/XS', 'iPhone XR', 'iPhone XS Max',
+      'iPhone 11', 'iPhone 11 Pro', 'iPhone 11 Pro Max',
+      'iPhone 12', 'iPhone 12 Pro', 'iPhone 12 Pro Max',
+      'iPhone 13', 'iPhone 13 Pro', 'iPhone 13 Pro Max',
+      'iPhone 14', 'iPhone 14 Plus', 'iPhone 14 Pro', 'iPhone 14 Pro Max',
+      'iPhone 15', 'iPhone 15 Plus', 'iPhone 15 Pro', 'iPhone 15 Pro Max'
+    ],
+    shippingFee: 0,
+    description: `Case iPhone Street Art Premium dengan desain grafiti modern dan tampilan eksklusif. Cocok untuk pengguna yang ingin tampil beda dengan case premium berkualitas.
+
+Keunggulan:
+✓ Desain Street Art Premium
+✓ Full Print Berkualitas Tinggi
+✓ Anti Shock Protection
+✓ Ringan dan Nyaman Digunakan
+✓ Presisi Kamera dan Tombol
+✓ Tidak Mudah Pudar
+✓ Gratis Ongkir
+✓ Ready Stock`
+  },
+  {
     id: 7,
     name: 'Kemeja Wanita Fitted Luna Stripe Atasan Salur Korean Style Terbaru',
     price: 59000,
