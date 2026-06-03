@@ -4,6 +4,7 @@ export const Categories = [
   { id: 2, name: 'Kecantikan', icon: 'Sparkles' },
   { id: 3, name: 'Fashion', icon: 'Shirt' },
   { id: 4, name: 'Elektronik', icon: 'Smartphone' },
+  { id: 9, name: 'Aksesoris HP', icon: 'Smartphone' },
   { id: 5, name: 'Game', icon: 'Gamepad2' },
   { id: 6, name: 'Voucher', icon: 'Ticket' },
   { id: 7, name: 'E-Wallet', icon: 'Wallet' },
@@ -11,6 +12,39 @@ export const Categories = [
 ];
 
 export const Products = [
+  {
+    id: 201,
+    name: 'Case iPhone Clear MagSafe Premium Anti Shock Transparan',
+    price: 14899,
+    originalPrice: 24999,
+    rating: 4.9,
+    reviews: '1.2rb',
+    sold: 10500,
+    category: 'Aksesoris HP',
+    image: '/IMG_1203.jpeg',
+    isFlashSale: true,
+    discount: '40%',
+    stock: '999',
+    tag: 'Produk Viral',
+    variants: [
+      'iPhone 7/8', 'iPhone 7+/8+', 'iPhone X/XS', 'iPhone XR', 'iPhone 11', 'iPhone 11 Pro', 'iPhone 11 Pro Max', 'iPhone 12', 'iPhone 12 Pro', 'iPhone 12 Pro Max', 'iPhone 13', 'iPhone 13 Pro', 'iPhone 13 Pro Max',
+      'iPhone 14', 'iPhone 14 Pro', 'iPhone 14 Pro Max', 'iPhone 15', 'iPhone 15 Plus', 'iPhone 15 Pro', 'iPhone 15 Pro Max', 'iPhone 16', 'iPhone 16 Plus', 'iPhone 16 Pro', 'iPhone 16 Pro Max', 'iPhone 17', 'iPhone 17 Air', 'iPhone 17 Pro', 'iPhone 17 Pro Max'
+    ],
+    shippingFee: 0,
+    description: `Case iPhone Clear MagSafe Premium dengan desain transparan elegan dan perlindungan maksimal.
+
+Keunggulan:
+✓ Support MagSafe
+✓ Transparan Premium
+✓ Anti Shock Protection
+✓ Tidak Mudah Menguning
+✓ Presisi Kamera dan Tonbol
+✓ Wireless Charging Friendly
+✓ Gratis Ongkir
+✓ Ready Stock
+
+Dapatkan perlindungan terbaik untuk iPhone kesayangan Anda dengan tampilan yang tetap slim dan mewah.`
+  },
   {
     id: 7,
     name: 'Kemeja Wanita Fitted Luna Stripe Atasan Salur Korean Style Terbaru',

@@ -50,6 +50,19 @@ export default function ProductDetail() {
 
   const currentPrice = useMemo(() => {
     if (!product) return 0;
+    
+    // Logika harga khusus untuk produk Case iPhone (ID: 201)
+    if (product.id === 201) {
+      const variantName = product.variants?.[selectedVariant] || '';
+      const highPriceModels = [
+        'iPhone 14', 'iPhone 14 Pro', 'iPhone 14 Pro Max', 
+        'iPhone 15', 'iPhone 15 Plus', 'iPhone 15 Pro', 'iPhone 15 Pro Max', 
+        'iPhone 16', 'iPhone 16 Plus', 'iPhone 16 Pro', 'iPhone 16 Pro Max', 
+        'iPhone 17', 'iPhone 17 Air', 'iPhone 17 Pro', 'iPhone 17 Pro Max'
+      ];
+      return highPriceModels.includes(variantName) ? 17999 : 14899;
+    }
+
     if (product.id === 2) {
       return selectedVariant === 1 ? 309000 : 269000;
     }

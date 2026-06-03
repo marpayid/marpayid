@@ -19,12 +19,14 @@ export default function GenericCategoryPage() {
     'elektronik': 'Elektronik',
     'voucher': 'Voucher',
     'hobi': 'Hobi',
+    'aksesoris-hp': 'Aksesoris HP'
   };
 
   const displayName = categoryNameMap[slug] || slug;
   
   const filteredProducts = Products.filter(p => 
     p.category?.toLowerCase() === slug.toLowerCase() ||
+    p.category?.toLowerCase() === displayName.toLowerCase() ||
     (slug === 'kecantikan' && (p.category === 'Skincare' || p.category === 'Kecantikan'))
   );
 
