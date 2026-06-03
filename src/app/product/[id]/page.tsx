@@ -272,13 +272,33 @@ export default function ProductDetail() {
         </section>
       </main>
 
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-100 flex flex-col gap-3 z-[100] shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
-        <div className="flex items-center justify-between">
-           <div className="flex flex-col"><p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Total Harga</p><p className="text-lg font-bold text-primary leading-none">Rp {totalPrice.toLocaleString()}</p></div>
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-100 flex items-center justify-between gap-3 z-[100] shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
+        <div className="flex flex-col shrink-0 min-w-[100px]">
+           <p className="text-[9px] text-gray-400 font-bold uppercase tracking-wider leading-none mb-1">TOTAL HARGA</p>
+           <p className="text-lg font-black text-primary leading-none">Rp {totalPrice.toLocaleString()}</p>
         </div>
-        <div className="flex gap-2 w-full">
-          <Button variant="outline" disabled={isOutOfStock} className={cn("flex-1 border-primary text-primary font-bold h-11 rounded-xl active:scale-95 transition-transform text-xs", isOutOfStock && "opacity-50 grayscale cursor-not-allowed")} onClick={() => handleAction(false)}>+ Keranjang</Button>
-          <Button disabled={isOutOfStock} className={cn("flex-1 bg-primary text-white font-bold h-11 rounded-xl shadow-lg shadow-primary/20 active:scale-95 transition-transform text-xs", isOutOfStock && "bg-gray-400 shadow-none cursor-not-allowed")} onClick={() => handleAction(true)}>{isOutOfStock ? 'Stok Habis' : 'Beli Sekarang'}</Button>
+        <div className="flex gap-2 flex-1">
+          <Button 
+            variant="outline" 
+            disabled={isOutOfStock} 
+            className={cn(
+              "flex-1 border-primary text-primary font-bold h-11 rounded-xl active:scale-95 transition-transform text-xs", 
+              isOutOfStock && "opacity-50 grayscale cursor-not-allowed"
+            )} 
+            onClick={() => handleAction(false)}
+          >
+            + Keranjang
+          </Button>
+          <Button 
+            disabled={isOutOfStock} 
+            className={cn(
+              "flex-1 bg-primary text-white font-bold h-11 rounded-xl shadow-lg shadow-primary/20 active:scale-95 transition-transform text-xs", 
+              isOutOfStock && "bg-gray-400 shadow-none cursor-not-allowed"
+            )} 
+            onClick={() => handleAction(true)}
+          >
+            {isOutOfStock ? 'Stok Habis' : 'Beli Sekarang'}
+          </Button>
         </div>
       </div>
     </div>
