@@ -3,7 +3,7 @@
 import { useParams, useRouter } from 'next/navigation';
 import { useState, useMemo, useEffect } from 'react';
 import { 
-  ArrowLeft, ShoppingBag, Star, Minus, Plus
+  ArrowLeft, ShoppingBag, Star, Minus, Plus, Info, Sparkles, Heart
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -12,6 +12,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { cn, formatSold, getProductImage } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { ProductCard } from '@/components/product-grid';
 
 export default function ProductDetail() {
   const params = useParams();
@@ -53,11 +54,28 @@ export default function ProductDetail() {
     return product.price;
   }, [product, selectedVariant]);
 
+  // Logic for Similar and Recommended Products
+  const similarProducts = useMemo(() => {
+    if (!product) return [];
+    return Products.filter(p => p.category === product.category && p.id !== product.id).slice(0, 4);
+  }, [product]);
+
+  const recommendedProducts = useMemo(() => {
+    if (!product) return [];
+    const excludedIds = [product.id, ...similarProducts.map(p => p.id)];
+    return Products.filter(p => !excludedIds.includes(p.id)).slice(0, 4);
+  }, [product, similarProducts]);
+
   if (!product) return <div className="p-8 text-center font-bold">Produk tidak ditemukan</div>;
 
   const variants = product.variants || ['Default'];
   const colors = product.colors || [];
   const totalPrice = currentPrice * quantity;
+
+  // Custom Description Override for BIOAQUA
+  const displayDescription = product.id === 1 
+    ? "BIOAQUA Skincare 1 Set Lengkap 6pcs hadir dengan pilihan Whitening Set dan Anti-Acne Set. Cocok untuk perawatan wajah harian agar kulit terlihat lebih bersih, segar, dan terawat. Produk dikemas rapi dan siap dikirim."
+    : product.description;
 
   const handleAction = (redirect = false) => {
     if (isOutOfStock) return;
@@ -148,9 +166,51 @@ export default function ProductDetail() {
             </div>
           </div>
         </section>
+
+        {/* Section: Deskripsi Produk */}
+        <section className="mt-2 bg-white p-4 space-y-3">
+          <div className="flex items-center gap-2 border-b border-gray-50 pb-2">
+            <Info className="w-4 h-4 text-gray-400" />
+            <h2 className="text-sm font-bold uppercase tracking-tight">Deskripsi Produk</h2>
+          </div>
+          <p className="text-xs text-gray-600 leading-relaxed whitespace-pre-line">
+            {displayDescription}
+          </p>
+        </section>
+
+        {/* Section: Produk Serupa */}
+        {similarProducts.length > 0 && (
+          <section className="mt-2 bg-white p-4">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-primary" />
+                <h2 className="text-sm font-bold uppercase tracking-tight">Produk Serupa</h2>
+              </div>
+              <Link href={`/kategori/${product.category.toLowerCase()}`} className="text-[10px] font-bold text-primary">Lihat Semua</Link>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              {similarProducts.map((p) => (
+                <ProductCard key={p.id} product={p} />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Section: Yang Mungkin Anda Suka */}
+        <section className="mt-2 bg-white p-4 mb-2">
+          <div className="flex items-center gap-2 mb-4">
+            <Heart className="w-4 h-4 text-red-500" />
+            <h2 className="text-sm font-bold uppercase tracking-tight">Yang Mungkin Anda Suka</h2>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            {recommendedProducts.map((p) => (
+              <ProductCard key={p.id} product={p} />
+            ))}
+          </div>
+        </section>
       </main>
 
-      {/* FIXED ACTION BAR - RESTORED LAYOUT */}
+      {/* FIXED ACTION BAR */}
       <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-100 flex items-center justify-between gap-3 z-[100] shadow-[0_-4px_15px_rgba(0,0,0,0.05)]">
         <div className="flex flex-col min-w-[100px]">
            <p className="text-[9px] text-gray-400 font-bold uppercase leading-none mb-1">TOTAL HARGA</p>

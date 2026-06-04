@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { 
-  ArrowLeft, MapPin, CreditCard, Edit3, MessageCircle, AlertCircle
+  ArrowLeft, MapPin, CreditCard, Edit3, MessageCircle, AlertCircle, Wallet, QrCode
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -32,6 +32,12 @@ interface AddressData {
   fullAddress: string;
   notes?: string;
 }
+
+const PAYMENT_METHODS = [
+  { id: 'bank_transfer', label: 'Bank Transfer', icon: CreditCard, iconColor: 'text-blue-500' },
+  { id: 'e_wallet', label: 'E-Wallet (OVO/DANA/GoPay)', icon: Wallet, iconColor: 'text-emerald-500' },
+  { id: 'qris', label: 'QRIS', icon: QrCode, iconColor: 'text-orange-500' }
+];
 
 export default function Checkout() {
   const router = useRouter();
@@ -113,11 +119,7 @@ export default function Checkout() {
     }
 
     const adminWhatsApp = "6283851278935";
-    const paymentLabels: Record<string, string> = {
-      'bank_transfer': 'Bank Transfer',
-      'e_wallet': 'E-Wallet (OVO/DANA/GoPay)',
-      'qris': 'QRIS'
-    };
+    const paymentMethodLabel = PAYMENT_METHODS.find(m => m.id === selectedPayment)?.label || selectedPayment;
 
     // Variable Dinamis sesuai permintaan
     const customerName = isDigital ? (items[0].details?.customerName || user?.displayName || 'Pelanggan Digital') : (address?.name || 'N/A');
@@ -129,8 +131,6 @@ export default function Checkout() {
     const orderItemsList = items.map((item, index) => {
       return `${index + 1}. ${item.name}\n   Varian: ${item.variant || 'Default'}\n   Jumlah: ${item.quantity} pcs\n   Harga: Rp ${item.price.toLocaleString()}`;
     }).join('\n\n');
-
-    const paymentMethodLabel = paymentLabels[selectedPayment] || selectedPayment;
 
     // FORMAT PESAN PROFESIONAL & DINAMIS
     let message = `🛍️ ORDER BARU MARPAY\n\n`;
@@ -156,11 +156,7 @@ export default function Checkout() {
     message += `Terima kasih 🙏`;
 
     const whatsappUrl = `https://wa.me/${adminWhatsApp}?text=${encodeURIComponent(message)}`;
-    
-    // Langsung buka WhatsApp tanpa loading
     window.location.href = whatsappUrl;
-    
-    // Bersihkan temp checkout
     localStorage.removeItem('marpay_checkout_temp');
   };
 
@@ -274,28 +270,30 @@ export default function Checkout() {
 
         <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm space-y-3.5">
           <div className="flex items-center gap-2">
-            <CreditCard className="w-4 h-4 text-blue-500" />
+            <CreditCard className="w-4 h-4 text-primary" />
             <h3 className="text-xs font-bold uppercase tracking-wide">Metode Pembayaran</h3>
           </div>
           <RadioGroup value={selectedPayment} onValueChange={setSelectedPayment} className="grid grid-cols-1 gap-2.5">
-            {[
-              { id: 'bank_transfer', label: 'Bank Transfer' },
-              { id: 'e_wallet', label: 'E-Wallet (OVO/DANA/GoPay)' },
-              { id: 'qris', label: 'QRIS' }
-            ].map((pay) => (
-              <div 
-                key={pay.id}
-                className={cn(
-                  "flex items-center justify-between p-3.5 rounded-2xl border cursor-pointer transition-all", 
-                  selectedPayment === pay.id ? "border-primary bg-primary/5 ring-1 ring-primary/20" : "border-gray-50"
-                )} 
-                onClick={() => setSelectedPayment(pay.id)}
-              >
-                <p className="text-[11px] font-bold">{pay.label}</p>
-                <RadioGroupItem value={pay.id} id={pay.id} className="sr-only" />
-                {selectedPayment === pay.id && <div className="w-2 h-2 rounded-full bg-primary" />}
-              </div>
-            ))}
+            {PAYMENT_METHODS.map((pay) => {
+              const Icon = pay.icon;
+              return (
+                <div 
+                  key={pay.id}
+                  className={cn(
+                    "flex items-center justify-between p-3.5 rounded-2xl border cursor-pointer transition-all", 
+                    selectedPayment === pay.id ? "border-primary bg-primary/5 ring-1 ring-primary/20" : "border-gray-50"
+                  )} 
+                  onClick={() => setSelectedPayment(pay.id)}
+                >
+                  <div className="flex items-center gap-3">
+                    <Icon className={cn("w-4 h-4", pay.iconColor)} />
+                    <p className="text-[11px] font-bold">{pay.label}</p>
+                  </div>
+                  <RadioGroupItem value={pay.id} id={pay.id} className="sr-only" />
+                  {selectedPayment === pay.id && <div className="w-2 h-2 rounded-full bg-primary" />}
+                </div>
+              );
+            })}
           </RadioGroup>
         </div>
 
