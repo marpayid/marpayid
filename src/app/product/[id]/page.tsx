@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useParams, useRouter } from 'next/navigation';
@@ -61,16 +62,24 @@ export default function ProductDetail() {
     return product.price;
   }, [product, selectedVariant]);
 
-  // Logic for Similar and Recommended Products
+  // Logic for Similar and Recommended Products (Mengecualikan kategori Premium)
   const similarProducts = useMemo(() => {
     if (!product) return [];
-    return Products.filter(p => p.category === product.category && p.id !== product.id).slice(0, 4);
+    // Jangan tampilkan rekomendasi premium di bagian serupa/suka
+    return Products.filter(p => 
+      p.category === product.category && 
+      p.id !== product.id && 
+      p.category !== 'Premium'
+    ).slice(0, 4);
   }, [product]);
 
   const recommendedProducts = useMemo(() => {
     if (!product) return [];
     const excludedIds = [product.id, ...similarProducts.map(p => p.id)];
-    return Products.filter(p => !excludedIds.includes(p.id)).slice(0, 4);
+    return Products.filter(p => 
+      !excludedIds.includes(p.id) && 
+      p.category !== 'Premium'
+    ).slice(0, 4);
   }, [product, similarProducts]);
 
   if (!product) return <div className="p-8 text-center font-bold">Produk tidak ditemukan</div>;
@@ -213,17 +222,19 @@ export default function ProductDetail() {
         )}
 
         {/* Section: Yang Mungkin Anda Suka */}
-        <section className="mt-2 bg-white p-4 mb-2">
-          <div className="flex items-center gap-2 mb-4">
-            <Heart className="w-4 h-4 text-red-500" />
-            <h2 className="text-sm font-bold uppercase tracking-tight">Yang Mungkin Anda Suka</h2>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            {recommendedProducts.map((p) => (
-              <ProductCard key={p.id} product={p} />
-            ))}
-          </div>
-        </section>
+        {recommendedProducts.length > 0 && (
+          <section className="mt-2 bg-white p-4 mb-2">
+            <div className="flex items-center gap-2 mb-4">
+              <Heart className="w-4 h-4 text-red-500" />
+              <h2 className="text-sm font-bold uppercase tracking-tight">Yang Mungkin Anda Suka</h2>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              {recommendedProducts.map((p) => (
+                <ProductCard key={p.id} product={p} />
+              ))}
+            </div>
+          </section>
+        )}
       </main>
 
       {/* FIXED ACTION BAR */}

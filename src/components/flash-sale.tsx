@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect } from 'react';
@@ -21,7 +22,8 @@ export function FlashSale() {
     return () => clearInterval(timer);
   }, []);
 
-  const flashSaleItems = Products.filter(p => p.isFlashSale);
+  // Mengecualikan kategori Premium dari Flash Sale
+  const flashSaleItems = Products.filter(p => p.isFlashSale && p.category !== 'Premium');
 
   return (
     <section className="mt-2 px-4 py-4 bg-white">

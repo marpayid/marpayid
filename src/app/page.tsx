@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect, useMemo } from 'react';
@@ -27,12 +28,12 @@ export default function Home() {
     return () => clearInterval(intervalId);
   }, [api]);
 
-  // Section 1: Produk Viral (Independen - Filter berdasarkan tag)
+  // Section 1: Produk Viral (Mengecualikan kategori Premium)
   const viralProducts = useMemo(() => 
-    Products.filter(p => p.tag === 'Produk Viral'), 
+    Products.filter(p => p.tag === 'Produk Viral' && p.category !== 'Premium'), 
   []);
   
-  // Section 2: Rekomendasi Untukmu (Independen - Daftar pilihan prioritas)
+  // Section 2: Rekomendasi Untukmu (Mengecualikan kategori Premium)
   const recommendationList = useMemo(() => {
     // Daftar ID produk yang diutamakan muncul di baris awal Rekomendasi
     const priorityIds = [208, 207, 206, 205, 3, 1, 6, 201, 204, 203];
@@ -40,10 +41,14 @@ export default function Home() {
     // Ambil item prioritas secara urut berdasarkan daftar ID di atas
     const priorityItems = priorityIds
       .map(id => Products.find(p => p.id === id))
-      .filter(Boolean) as typeof Products;
+      .filter(p => p && p.category !== 'Premium') as typeof Products;
 
-    // Ambil sisanya untuk mengisi daftar (tanpa duplikasi dan tanpa membatasi ketersediaan di section lain)
-    const others = Products.filter(p => !priorityIds.includes(p.id) && p.id !== 2);
+    // Ambil sisanya untuk mengisi daftar (Mengecualikan Premium)
+    const others = Products.filter(p => 
+      !priorityIds.includes(p.id) && 
+      p.id !== 2 && 
+      p.category !== 'Premium'
+    );
     
     return [...priorityItems, ...others];
   }, []);
@@ -181,7 +186,7 @@ export default function Home() {
             {/* Kartu Promosi Fashion/Beauty */}
             <FashionDiscoveryCard />
             
-            {/* Produk berikutnya (Tampil semua agar produk lama tidak hilang saat produk baru diupload) */}
+            {/* Produk berikutnya */}
             {recommendationList.slice(4).map((p) => <ProductCard key={p.id} product={p} />)}
           </div>
         </section>
@@ -201,7 +206,7 @@ export default function Home() {
             </TabsContent>
             <TabsContent value="semua">
               <div className="grid grid-cols-2 gap-3">
-                {Products.map((p) => <ProductCard key={p.id} product={p} />)}
+                {Products.filter(p => p.category !== 'Premium').map((p) => <ProductCard key={p.id} product={p} />)}
               </div>
             </TabsContent>
           </Tabs>
