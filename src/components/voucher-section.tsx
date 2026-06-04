@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Ticket, Truck, AlertCircle, Info, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -16,12 +16,37 @@ import * as LucideIcons from 'lucide-react';
 
 export function VoucherSection() {
   const { toast } = useToast();
-  const [claimedId, setClaimedId] = useState<number | null>(null);
+  const [claimedIds, setClaimedIds] = useState<number[]>([]);
   const [showTerms, setShowTerms] = useState(false);
   const [selectedVoucher, setSelectedVoucher] = useState<any>(null);
 
+  // Load claimed vouchers from localStorage on mount
+  useEffect(() => {
+    const savedClaims = localStorage.getItem('marpay_claimed_vouchers');
+    if (savedClaims) {
+      try {
+        setClaimedIds(JSON.parse(savedClaims));
+      } catch (e) {
+        console.error("Failed to parse claimed vouchers");
+      }
+    }
+  }, []);
+
+  const isExpired = (expiryDateStr: string) => {
+    const expiry = new Date(expiryDateStr);
+    const today = new Date();
+    // Normalize today to start of day for comparison
+    today.setHours(0, 0, 0, 0);
+    return today > expiry;
+  };
+
   const handleClaim = (id: number, title: string) => {
-    setClaimedId(id);
+    if (claimedIds.includes(id)) return;
+    
+    const newClaimedIds = [...claimedIds, id];
+    setClaimedIds(newClaimedIds);
+    localStorage.setItem('marpay_claimed_vouchers', JSON.stringify(newClaimedIds));
+    
     toast({
       title: "Voucher Diklaim!",
       description: `${title} berhasil disimpan ke akun Anda.`,
@@ -44,13 +69,16 @@ export function VoucherSection() {
       <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2 -mx-4 px-4">
         {Vouchers.map((v) => {
           const IconComponent = (LucideIcons as any)[v.icon] || Ticket;
+          const claimed = claimedIds.includes(v.id);
+          const expired = isExpired(v.expiryDate);
+          const canClaim = v.active && !claimed && !expired;
           
           return (
             <div 
               key={v.id} 
               className={cn(
                 "relative flex-shrink-0 w-[260px] h-[95px] bg-white border border-gray-100 rounded-xl overflow-hidden shadow-sm flex transition-all",
-                !v.active && "grayscale opacity-60"
+                (expired || !v.active) && "grayscale opacity-60"
               )}
             >
               {/* Left side (Icon Section) */}
@@ -74,22 +102,25 @@ export function VoucherSection() {
                 <p className="text-[13px] font-black text-gray-900 leading-tight truncate">{v.benefit}</p>
                 <div className="flex items-center gap-1 mt-1">
                    <span className="text-[9px] font-medium text-gray-500 bg-gray-50 px-1.5 py-0.5 rounded border border-gray-100">{v.minSpend}</span>
+                   {expired && <span className="text-[7px] font-bold text-red-500 uppercase tracking-tighter ml-auto">Expired</span>}
                 </div>
               </div>
 
               {/* Right side (Action) */}
               <div className="w-16 flex items-center justify-center pr-2">
                 <button 
-                  disabled={!v.active || claimedId === v.id}
+                  disabled={!canClaim}
                   onClick={() => handleClaim(v.id, v.title)}
                   className={cn(
-                    "text-[10px] font-black uppercase transition-all px-2 py-1.5 rounded-lg",
-                    claimedId === v.id 
-                      ? "text-green-600 bg-green-50" 
-                      : "text-white bg-primary shadow-sm active:scale-95"
+                    "text-[10px] font-black uppercase transition-all px-2 py-1.5 rounded-lg w-full text-center",
+                    claimed 
+                      ? "text-green-600 bg-green-50 border border-green-100" 
+                      : expired 
+                        ? "text-gray-400 bg-gray-50 border border-gray-100"
+                        : "text-white bg-primary shadow-sm active:scale-95"
                   )}
                 >
-                  {claimedId === v.id ? 'Siap' : 'Klaim'}
+                  {claimed ? 'Siap' : expired ? 'Habis' : 'Klaim'}
                 </button>
               </div>
             </div>
@@ -114,7 +145,7 @@ export function VoucherSection() {
                     selectedVoucher.type === 'shipping' ? 'Khusus untuk produk fisik MarPay.' : 'Berlaku untuk seluruh produk di MarPay.',
                     `Minimal transaksi belanja ${selectedVoucher.minSpend}.`,
                     `Potongan harga maksimal senilai ${selectedVoucher.benefit}.`,
-                    'Satu akun maksimal 1 kali klaim per hari.',
+                    'Satu device maksimal 1 kali klaim (setelah klaim tidak bisa claim lagi).',
                     'Voucher memiliki kuota harian terbatas.',
                     `Masa berlaku hingga ${selectedVoucher.expiry}.`
                   ].map((item, i) => (
