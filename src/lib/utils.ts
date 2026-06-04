@@ -34,7 +34,14 @@ export function getProductImage(product: any): string {
     return '/premium-1.png';
   }
   
-  // Gunakan path image yang ada, pastikan berawalan slash
+  // Gunakan path image yang ada
   const imgPath = product.image || '/placeholder-product.png';
-  return imgPath.startsWith('/') ? imgPath : `/${imgPath}`;
+  
+  // Jika sudah diawali dengan "/", langsung kembalikan
+  if (imgPath.startsWith('/')) {
+    return imgPath;
+  }
+  
+  // Jika tidak, tambahkan "/"
+  return `/${imgPath}`;
 }
