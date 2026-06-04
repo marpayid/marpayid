@@ -47,7 +47,7 @@ export function BottomNav() {
         paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) * 0.6)' 
       }}
     >
-      <div className="flex items-center w-full h-[48px] px-1 pt-1">
+      <div className="flex items-center w-full h-[58px] px-1 pt-1">
         {navItems.map((item) => {
           const isActive = pathname === item.path;
           return (
