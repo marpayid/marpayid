@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect } from 'react';
@@ -21,8 +20,10 @@ export default function Home() {
 
   useEffect(() => {
     if (!api) return;
-    api.on("select", () => setCurrent(api.selectedScrollSnap()));
-    const intervalId = setInterval(() => api.scrollNext(), 4000);
+    api.on("select", () => {
+      setCurrent(api.selectedScrollSnap());
+    });
+    const intervalId = setInterval(() => api.scrollNext(), 5000);
     return () => clearInterval(intervalId);
   }, [api]);
 
@@ -37,21 +38,63 @@ export default function Home() {
     <div className="min-h-screen bg-gray-50 pb-32">
       <TopSearch />
       <main className="pt-16 space-y-2">
-        <section className="px-4 pt-3 bg-white">
+        {/* Banner Section with Indicators */}
+        <section className="px-4 pt-3 bg-white relative">
           <Carousel opts={{ loop: true }} setApi={setApi}>
             <CarouselContent>
               {Banners.map((banner) => (
                 <CarouselItem key={banner.id}>
-                  <div className={`relative h-[170px] w-full rounded-[22px] bg-gradient-to-br ${banner.gradient} p-5 text-white flex flex-col justify-center overflow-hidden`}>
-                    <div className="relative z-10 max-w-[70%]">
-                      <h3 className="text-base font-bold mb-1.5 leading-tight">{banner.title}</h3>
-                      <p className="text-[9px] opacity-80">{banner.subtitle}</p>
+                  <div className={cn(
+                    "relative h-[170px] w-full rounded-[22px] bg-gradient-to-br p-5 text-white flex flex-col justify-center overflow-hidden transition-all duration-500",
+                    banner.gradient
+                  )}>
+                    {/* Background Visual Icons */}
+                    {banner.type === 'digital' ? (
+                      <>
+                        <CreditCard className="absolute -right-4 top-4 w-24 h-24 text-white/10 -rotate-12 animate-float" />
+                        <Smartphone className="absolute right-12 bottom-0 w-20 h-20 text-white/5 rotate-12 animate-float-slow" />
+                        <Gamepad2 className="absolute -right-2 -bottom-4 w-28 h-28 text-white/10 -rotate-6 animate-float-reverse" />
+                      </>
+                    ) : (
+                      <>
+                        <Package className="absolute -right-4 top-4 w-24 h-24 text-white/10 -rotate-12 animate-float" />
+                        <Tag className="absolute right-12 bottom-0 w-20 h-20 text-white/5 rotate-12 animate-float-slow" />
+                        <Truck className="absolute -right-2 -bottom-4 w-28 h-28 text-white/10 -rotate-6 animate-float-reverse" />
+                      </>
+                    )}
+
+                    {/* Content */}
+                    <div className="relative z-10 max-w-[75%] space-y-3">
+                      <div className="flex flex-wrap gap-1.5">
+                        {banner.badges?.map((badge, idx) => (
+                          <span key={idx} className="bg-white/20 backdrop-blur-md border border-white/10 text-[7px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">
+                            {badge}
+                          </span>
+                        ))}
+                      </div>
+                      <div className="space-y-1">
+                        <h3 className="text-[17px] font-black leading-[1.1] tracking-tight">{banner.title}</h3>
+                        <p className="text-[9px] opacity-80 leading-relaxed font-medium line-clamp-2">{banner.subtitle}</p>
+                      </div>
                     </div>
                   </div>
                 </CarouselItem>
               ))}
             </CarouselContent>
           </Carousel>
+          
+          {/* Slider Indicators (Dots) */}
+          <div className="flex justify-center gap-1.5 mt-3 pb-2">
+            {Banners.map((_, index) => (
+              <div 
+                key={index}
+                className={cn(
+                  "h-1.5 transition-all duration-300 rounded-full",
+                  current === index ? "w-6 bg-primary" : "w-1.5 bg-gray-200"
+                )}
+              />
+            ))}
+          </div>
         </section>
 
         <CategoryMenu />
