@@ -10,6 +10,43 @@ export const Categories = [
   { id: 8, name: 'Premium', icon: 'Crown' },
 ];
 
+export const Vouchers = [
+  {
+    id: 101,
+    title: 'GRATIS ONGKIR MARPAY',
+    description: 'Nikmati gratis ongkir untuk pembelian produk fisik di MarPay.',
+    benefit: 'Potongan Rp15rb',
+    minSpend: 'Min. blj Rp50rb',
+    expiry: '31 Des 2026',
+    code: 'ONGKIRMARPAY',
+    type: 'shipping',
+    icon: 'Truck',
+    active: true,
+    info: 'Min. blj Rp50.000',
+    badge: '🚚 Gratis Ongkir',
+    color: 'text-primary',
+    bgColor: 'bg-primary/5',
+    borderColor: 'border-primary/10'
+  },
+  {
+    id: 102,
+    title: 'NEW USER SPECIAL',
+    description: 'Diskon 10% untuk seluruh pengguna baru MarPay.',
+    benefit: 'Diskon 10%',
+    minSpend: 'Tanpa Min. Belanja',
+    expiry: '31 Des 2025',
+    code: 'MARPAYBARU',
+    type: 'discount',
+    icon: 'Ticket',
+    active: true,
+    info: 'Berlaku 1x',
+    badge: '🎟️ New User',
+    color: 'text-orange-500',
+    bgColor: 'bg-orange-50',
+    borderColor: 'border-orange-100'
+  }
+];
+
 export const Products = [
   {
     id: 206,

@@ -7,42 +7,13 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { Vouchers } from '@/app/lib/dummy-data';
+import * as LucideIcons from 'lucide-react';
 
 export default function MyVouchersPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('available');
-
-  const vouchers = [
-    {
-      id: 101,
-      title: 'GRATIS ONGKIR MARPAY',
-      description: 'Gratis Ongkir hingga Rp15.000',
-      benefit: 'Potongan Rp15rb',
-      minSpend: 'Min. blj Rp50rb',
-      expiry: 'Valid s/d 31 Des 2026',
-      code: 'ONGKIRMARPAY',
-      type: 'shipping',
-      icon: Truck,
-      color: 'text-primary',
-      bgColor: 'bg-primary/5',
-      borderColor: 'border-primary/10'
-    },
-    {
-      id: 102,
-      title: 'NEW USER SPECIAL',
-      description: 'Diskon 10% untuk pengguna baru',
-      benefit: 'Diskon 10%',
-      minSpend: 'Tanpa Min. Belanja',
-      expiry: 'Valid s/d 31 Des 2025',
-      code: 'MARPAYBARU',
-      type: 'discount',
-      icon: Ticket,
-      color: 'text-orange-500',
-      bgColor: 'bg-orange-50',
-      borderColor: 'border-orange-100'
-    }
-  ];
 
   const handleUseVoucher = (code: string) => {
     navigator.clipboard.writeText(code);
@@ -73,7 +44,7 @@ export default function MyVouchersPage() {
                activeTab === 'available' ? "bg-primary text-white shadow-md shadow-primary/20" : "text-gray-400"
              )}
            >
-             Tersedia (2)
+             Tersedia ({Vouchers.filter(v => v.active).length})
            </button>
            <button 
              onClick={() => setActiveTab('history')}
@@ -88,41 +59,45 @@ export default function MyVouchersPage() {
 
         {activeTab === 'available' ? (
           <div className="space-y-4">
-            {vouchers.map((v) => (
-              <div key={v.id} className="relative bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden flex flex-col group">
-                <div className="p-5 flex gap-4">
-                   <div className={cn("w-14 h-14 rounded-2xl flex items-center justify-center shrink-0", v.bgColor, v.color)}>
-                      <v.icon className="w-7 h-7" />
-                   </div>
-                   <div className="flex-1 min-w-0">
-                      <h3 className="text-sm font-black text-gray-900 leading-tight uppercase tracking-tight">{v.title}</h3>
-                      <p className="text-[11px] text-gray-500 font-medium mt-1">{v.description}</p>
-                      
-                      <div className="flex flex-wrap gap-2 mt-3">
-                         <span className="bg-gray-50 text-gray-500 text-[8px] font-black px-2 py-0.5 rounded border border-gray-100 uppercase">{v.minSpend}</span>
-                         <span className="bg-gray-50 text-gray-500 text-[8px] font-black px-2 py-0.5 rounded border border-gray-100 uppercase">{v.benefit}</span>
-                      </div>
-                   </div>
-                </div>
-                
-                <div className="px-5 py-3 bg-gray-50/50 border-t border-dashed border-gray-100 flex items-center justify-between">
-                   <div className="flex items-center gap-1.5 text-[9px] font-bold text-gray-400 italic">
-                      <AlertCircle className="w-3 h-3" />
-                      {v.expiry}
-                   </div>
-                   <button 
-                    onClick={() => handleUseVoucher(v.code)}
-                    className="flex items-center gap-1 text-[10px] font-black text-primary hover:underline uppercase"
-                   >
-                     Gunakan <ChevronRight className="w-3 h-3" />
-                   </button>
-                </div>
+            {Vouchers.filter(v => v.active).map((v) => {
+              const IconComponent = (LucideIcons as any)[v.icon] || Ticket;
+              
+              return (
+                <div key={v.id} className="relative bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden flex flex-col group">
+                  <div className="p-5 flex gap-4">
+                     <div className={cn("w-14 h-14 rounded-2xl flex items-center justify-center shrink-0", v.bgColor, v.color)}>
+                        <IconComponent className="w-7 h-7" />
+                     </div>
+                     <div className="flex-1 min-w-0">
+                        <h3 className="text-sm font-black text-gray-900 leading-tight uppercase tracking-tight">{v.title}</h3>
+                        <p className="text-[11px] text-gray-500 font-medium mt-1">{v.description}</p>
+                        
+                        <div className="flex flex-wrap gap-2 mt-3">
+                           <span className="bg-gray-50 text-gray-500 text-[8px] font-black px-2 py-0.5 rounded border border-gray-100 uppercase">{v.minSpend}</span>
+                           <span className="bg-gray-50 text-gray-500 text-[8px] font-black px-2 py-0.5 rounded border border-gray-100 uppercase">{v.benefit}</span>
+                        </div>
+                     </div>
+                  </div>
+                  
+                  <div className="px-5 py-3 bg-gray-50/50 border-t border-dashed border-gray-100 flex items-center justify-between">
+                     <div className="flex items-center gap-1.5 text-[9px] font-bold text-gray-400 italic">
+                        <AlertCircle className="w-3 h-3" />
+                        Valid s/d {v.expiry}
+                     </div>
+                     <button 
+                      onClick={() => handleUseVoucher(v.code)}
+                      className="flex items-center gap-1 text-[10px] font-black text-primary hover:underline uppercase"
+                     >
+                       Gunakan <ChevronRight className="w-3 h-3" />
+                     </button>
+                  </div>
 
-                {/* Ticket Cutouts */}
-                <div className="absolute top-1/2 -translate-y-1/2 left-[-10px] w-5 h-5 bg-gray-50 rounded-full border border-gray-100 z-10 shadow-inner"></div>
-                <div className="absolute top-1/2 -translate-y-1/2 right-[-10px] w-5 h-5 bg-gray-50 rounded-full border border-gray-100 z-10 shadow-inner"></div>
-              </div>
-            ))}
+                  {/* Ticket Cutouts */}
+                  <div className="absolute top-1/2 -translate-y-1/2 left-[-10px] w-5 h-5 bg-gray-50 rounded-full border border-gray-100 z-10 shadow-inner"></div>
+                  <div className="absolute top-1/2 -translate-y-1/2 right-[-10px] w-5 h-5 bg-gray-50 rounded-full border border-gray-100 z-10 shadow-inner"></div>
+                </div>
+              );
+            })}
             
             <div className="pt-6 text-center">
                <p className="text-[10px] text-gray-400 font-medium">Anda telah melihat semua voucher tersedia.</p>

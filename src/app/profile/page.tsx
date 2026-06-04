@@ -34,6 +34,7 @@ import { signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState, useEffect } from 'react';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { Vouchers } from '@/app/lib/dummy-data';
 import {
   Dialog,
   DialogContent,
@@ -56,6 +57,9 @@ export default function Profile() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editForm, setEditForm] = useState({ name: '', phone: '' });
   const [wishlistCount, setWishlistCount] = useState(0);
+
+  // Perhitungan voucher aktif dari dummy-data
+  const activeVoucherCount = useMemo(() => Vouchers.filter(v => v.active).length, []);
 
   const userProfileRef = useMemo(() => {
     if (!db || !user?.uid) return null;
@@ -147,7 +151,6 @@ export default function Profile() {
   const userName = profileData?.fullName || profileData?.name || user?.displayName || (isLoggedIn ? "Pengguna MarPay" : "Masuk MarPay");
   const userStatus = isLoggedIn ? "AKUN TERVERIFIKASI" : "Belum Masuk";
   const userSub = isLoggedIn ? (profileData?.email || user.email) : "Masuk atau daftar untuk menikmati semua fitur MarPay.";
-  // Avatar dikunci ke profil1.png sesuai instruksi
   const userPhoto = "/profil1.png";
 
   return (
@@ -157,9 +160,7 @@ export default function Profile() {
           <div className="relative">
             <Avatar className="w-20 h-20 border-4 border-white shadow-xl bg-white">
               <AvatarImage src={userPhoto} className="object-cover" />
-              {/* Fallback dihilangkan agar logo selalu prioritas utama */}
             </Avatar>
-            {/* Tombol edit (pensil) pada avatar disembunyikan sesuai instruksi */}
           </div>
           <div className="flex-1">
             <div className="flex items-center gap-2">
@@ -203,7 +204,7 @@ export default function Profile() {
                 <Ticket className="w-5 h-5 text-emerald-500" />
                 <div>
                   <p className="text-[9px] font-bold text-gray-400 uppercase">Voucher</p>
-                  <p className="text-base font-black text-gray-800">0</p>
+                  <p className="text-base font-black text-gray-800">{activeVoucherCount}</p>
                 </div>
               </div>
             </Link>
