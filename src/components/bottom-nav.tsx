@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect } from 'react';
@@ -46,7 +45,7 @@ export function BottomNav() {
         paddingBottom: 'env(safe-area-inset-bottom)' 
       }}
     >
-      <div className="flex items-center w-full h-[58px] px-1">
+      <div className="flex items-center w-full h-[52px] px-1">
         {navItems.map((item) => {
           const isActive = pathname === item.path;
           return (
