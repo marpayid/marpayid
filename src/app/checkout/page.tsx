@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { 
-  ArrowLeft, MapPin, CreditCard, Edit3, MessageCircle, AlertCircle, Wallet, QrCode, Truck
+  ArrowLeft, MapPin, CreditCard, Edit3, MessageCircle, AlertCircle, Wallet, QrCode, Truck, Info
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -250,35 +250,51 @@ export default function Checkout() {
             <h3 className="text-xs font-bold uppercase tracking-wide">Daftar Barang</h3>
           </div>
           <div className="space-y-3.5">
-            {items.map((item, idx) => (
-              <div key={`${item.id}-${idx}`} className="flex gap-3.5">
-                <div className="relative w-14 h-14 rounded-xl overflow-hidden flex-shrink-0 border border-gray-50 bg-gray-50 flex items-center justify-center">
-                  <Image src={getProductImage(item)} alt={item.name} fill className="object-cover" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h4 className="text-[11px] font-bold text-gray-800 truncate">{item.name}</h4>
-                  
-                  {/* Premium Meta Info: Varian & Ongkir */}
-                  <div className="mt-0.5 space-y-0.5">
-                    <p className="text-[10px] text-gray-400 font-medium truncate">
-                      Varian: {item.variant || 'Default'}
-                    </p>
-                    {item.type !== 'digital' && (
-                      <div className="flex items-center gap-1 text-[9px] text-gray-500 font-medium">
-                        <Truck className="w-2.5 h-2.5" />
-                        <span>Reguler • {item.shippingFee > 0 ? `Rp ${item.shippingFee.toLocaleString()}` : 'Gratis Ongkir'}</span>
-                      </div>
-                    )}
-                  </div>
+            {items.map((item, idx) => {
+              const itemShipping = (item.shippingFee || 0) > 0 
+                ? item.shippingFee + (Math.max(0, item.quantity - 1) * 5000) 
+                : 0;
 
-                  <div className="flex items-center justify-between mt-1.5">
-                    <p className="text-xs font-bold text-primary">Rp {item.price.toLocaleString()}</p>
-                    <p className="text-[10px] text-muted-foreground font-bold">x{item.quantity}</p>
+              return (
+                <div key={`${item.id}-${idx}`} className="flex gap-3.5">
+                  <div className="relative w-14 h-14 rounded-xl overflow-hidden flex-shrink-0 border border-gray-50 bg-gray-50 flex items-center justify-center">
+                    <Image src={getProductImage(item)} alt={item.name} fill className="object-cover" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-[11px] font-bold text-gray-800 truncate">{item.name}</h4>
+                    
+                    <div className="mt-1 space-y-0.5">
+                      <p className="text-[10px] text-gray-400 font-medium truncate">
+                        Varian: {item.variant || 'Default'}
+                      </p>
+                      {item.type !== 'digital' && (
+                        <p className="text-[10px] text-gray-400 font-medium">
+                          Ongkir: {itemShipping > 0 ? `Rp ${itemShipping.toLocaleString()}` : 'Gratis'}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="flex items-center justify-between mt-1.5">
+                      <p className="text-xs font-bold text-primary">Rp {item.price.toLocaleString()}</p>
+                      <p className="text-[10px] text-muted-foreground font-bold">x{item.quantity}</p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
+
+          {!isDigital && (
+            <div className="border-t border-gray-50 pt-3 flex justify-between items-center">
+              <div className="flex items-center gap-1.5">
+                <Truck className="w-3.5 h-3.5 text-primary" />
+                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tight">Total Pengiriman</span>
+              </div>
+              <span className={cn("text-[11px] font-bold", totalShipping > 0 ? "text-gray-900" : "text-green-500")}>
+                {totalShipping > 0 ? `Rp ${totalShipping.toLocaleString()}` : 'Gratis'}
+              </span>
+            </div>
+          )}
         </div>
 
         <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm space-y-3.5">
@@ -308,6 +324,14 @@ export default function Checkout() {
               );
             })}
           </RadioGroup>
+
+          {/* Info Box WhatsApp Processing */}
+          <div className="mt-4 bg-blue-50/80 p-3.5 rounded-xl border border-blue-100 flex gap-3">
+            <Info className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
+            <p className="text-[10px] text-blue-700/80 leading-relaxed font-medium">
+              Pesanan akan diproses melalui WhatsApp Admin MarPay untuk memastikan transaksi berjalan aman dan cepat.
+            </p>
+          </div>
         </div>
 
         <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm space-y-3">
