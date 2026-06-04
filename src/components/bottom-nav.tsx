@@ -46,7 +46,6 @@ export function BottomNav() {
         paddingBottom: 'calc(env(safe-area-inset-bottom) + 10px)' 
       }}
     >
-      {/* Container menu dengan tinggi 38px (turun dari 46px) untuk merapatkan garis atas ke ikon tanpa menggeser menu */}
       <div className="flex items-center w-full h-[38px] px-1">
         {navItems.map((item) => {
           const isActive = pathname === item.path;
@@ -59,7 +58,7 @@ export function BottomNav() {
                 isActive ? "text-primary" : "text-gray-400"
               )}
             >
-              <div className="flex items-center justify-center h-6 w-6 relative">
+              <div className="flex items-center justify-center h-6 w-6 relative translate-y-1">
                 <item.icon 
                   className={cn(
                     "w-6 h-6 transition-all", 
