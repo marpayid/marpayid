@@ -257,18 +257,24 @@ export default function Checkout() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <h4 className="text-[11px] font-bold text-gray-800 truncate">{item.name}</h4>
-                  <p className="text-[10px] text-gray-400 font-medium truncate mt-0.5">Varian: {item.variant || 'Default'}</p>
-                  <div className="flex items-center justify-between mt-1">
+                  
+                  {/* Premium Meta Info: Varian & Ongkir */}
+                  <div className="mt-0.5 space-y-0.5">
+                    <p className="text-[10px] text-gray-400 font-medium truncate">
+                      Varian: {item.variant || 'Default'}
+                    </p>
+                    {item.type !== 'digital' && (
+                      <div className="flex items-center gap-1 text-[9px] text-gray-500 font-medium">
+                        <Truck className="w-2.5 h-2.5" />
+                        <span>Reguler • {item.shippingFee > 0 ? `Rp ${item.shippingFee.toLocaleString()}` : 'Gratis Ongkir'}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex items-center justify-between mt-1.5">
                     <p className="text-xs font-bold text-primary">Rp {item.price.toLocaleString()}</p>
                     <p className="text-[10px] text-muted-foreground font-bold">x{item.quantity}</p>
                   </div>
-                  {/* Delivery Detail - Informational */}
-                  {item.type !== 'digital' && (
-                    <div className="flex items-center gap-1.5 mt-1.5 text-[9px] font-bold text-emerald-600/80">
-                      <Truck className="w-2.5 h-2.5" />
-                      <span>Ongkir: {item.shippingFee > 0 ? `Rp ${item.shippingFee.toLocaleString()}` : 'Gratis'}</span>
-                    </div>
-                  )}
                 </div>
               </div>
             ))}
