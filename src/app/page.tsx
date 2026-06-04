@@ -59,7 +59,7 @@ export default function Home() {
                           <div className="absolute right-4 top-1/2 -translate-y-1/2 w-32 h-32 bg-white/10 blur-[50px] rounded-full"></div>
 
                           {/* 3D Glassmorphism E-Wallet Card - Repositioned Right */}
-                          <div className="absolute top-1/2 right-4 -translate-y-1/2 w-[135px] h-[82px] bg-white/10 backdrop-blur-2xl border border-white/30 rounded-2xl shadow-[0_25px_45px_rgba(0,0,0,0.3)] rotate-[15deg] p-3.5 flex flex-col justify-between overflow-hidden z-20 animate-float">
+                          <div className="absolute top-1/2 right-4 -translate-y-1/2 w-[135px] h-[82px] bg-white/10 backdrop-blur-2xl border border-white/30 rounded-2xl shadow-[0_25px_45px_rgba(0,0,0,0.2)] rotate-[15deg] p-3.5 flex flex-col justify-between overflow-hidden z-20 animate-float">
                              <div className="flex justify-between items-start">
                                {/* Card Chip Visual */}
                                <div className="w-8 h-6 rounded-md bg-gradient-to-br from-yellow-400/40 to-yellow-600/20 border border-yellow-400/30"></div>
@@ -74,14 +74,12 @@ export default function Home() {
                           </div>
 
                           {/* 3D Floating Satellite Icons - Repositioned */}
-                          {/* 3D Game Controller - Top Right */}
                           <div className="absolute top-4 right-2 animate-float-reverse z-10">
                              <div className="bg-indigo-500/20 backdrop-blur-md border border-white/20 p-2 rounded-xl shadow-2xl">
                                <Gamepad2 className="w-6 h-6 text-white drop-shadow-md" />
                              </div>
                           </div>
                           
-                          {/* 3D Lightning/Electricity - Bottom Right */}
                           <div className="absolute bottom-8 right-0 animate-float z-30">
                              <div className="bg-yellow-500/20 backdrop-blur-md border border-white/20 p-2 rounded-xl shadow-2xl">
                                <Zap className="w-6 h-6 text-yellow-400 fill-yellow-400/40 drop-shadow-[0_0_10px_rgba(250,204,21,0.5)]" />
@@ -89,24 +87,28 @@ export default function Home() {
                           </div>
                         </div>
                       ) : (
-                        <div className="relative w-full h-full flex items-center justify-center">
-                          {/* 3D Package Look */}
-                          <div className="relative w-28 h-28 bg-white/10 backdrop-blur-md rounded-3xl border border-white/20 shadow-2xl flex items-center justify-center animate-float">
-                             <Package className="w-14 h-14 text-white/30" />
-                             {/* Glass Tag */}
-                             <div className="absolute -top-4 -right-2 w-16 h-10 bg-orange-500/80 backdrop-blur-lg rounded-xl border border-white/30 shadow-lg rotate-12 flex items-center justify-center">
-                               <Tag className="w-5 h-5 text-white" />
+                        <div className="relative w-full h-full flex items-end justify-end pb-4 pr-4">
+                          {/* 3D Package Look - Resized to 60% (from w-28 to w-16) */}
+                          <div className="relative w-16 h-16 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 shadow-[0_15px_35px_rgba(0,0,0,0.15)] flex items-center justify-center animate-float z-10">
+                             <Package className="w-8 h-8 text-white/30" />
+                             
+                             {/* Resized Glass Tag - 60% Scale */}
+                             <div className="absolute -top-3 -right-1.5 w-10 h-6 bg-orange-500/80 backdrop-blur-lg rounded-lg border border-white/30 shadow-lg rotate-12 flex items-center justify-center">
+                               <Tag className="w-3 h-3 text-white" />
                              </div>
                           </div>
                           
-                          {/* Shipping Visual */}
-                          <div className="absolute -bottom-2 right-4 w-32 h-16 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 rotate-[-5deg] flex items-center px-4 gap-3">
-                             <Truck className="w-6 h-6 text-white/40" />
-                             <div className="space-y-1.5 flex-1">
-                               <div className="w-full h-1 bg-white/20 rounded-full"></div>
-                               <div className="w-1/2 h-1 bg-white/10 rounded-full"></div>
+                          {/* Resized Shipping Visual - 60% Scale & More Glassmorphism */}
+                          <div className="absolute bottom-0 right-1.5 w-20 h-10 bg-white/10 backdrop-blur-xl rounded-xl border border-white/20 rotate-[-4deg] flex items-center px-2.5 gap-2 shadow-xl z-20">
+                             <Truck className="w-3.5 h-3.5 text-white/60" />
+                             <div className="space-y-1 flex-1">
+                               <div className="w-full h-0.5 bg-white/30 rounded-full"></div>
+                               <div className="w-1/2 h-0.5 bg-white/20 rounded-full"></div>
                              </div>
                           </div>
+
+                          {/* Depth Glow Effect */}
+                          <div className="absolute bottom-0 right-0 w-20 h-20 bg-white/5 blur-3xl rounded-full pointer-events-none"></div>
                         </div>
                       )}
                     </div>
