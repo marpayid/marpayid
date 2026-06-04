@@ -1,3 +1,4 @@
+
 'use client';
 
 import { BottomNav } from '@/components/bottom-nav';
@@ -154,7 +155,7 @@ export default function Profile() {
   const userPhoto = "/profil1.png";
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-32">
+    <div className="bg-gray-50 pb-20">
       <header className="bg-white px-6 pt-14 pb-8 border-b border-gray-100 relative overflow-hidden">
         <div className="flex items-center gap-4 relative z-10">
           <div className="relative">

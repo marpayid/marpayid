@@ -124,7 +124,7 @@ export default function ProductDetail() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-32">
+    <div className="bg-gray-50 pb-24">
       <header className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md px-4 py-3 border-b border-gray-100 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="icon" onClick={() => router.back()}><ArrowLeft className="w-5 h-5" /></Button>
@@ -145,7 +145,6 @@ export default function ProductDetail() {
           </div>
           <h1 className="text-md font-medium text-gray-800 mb-2 leading-tight">{product.name}</h1>
           
-          {/* RATING & REVIEWS AREA */}
           <div className="flex items-center gap-3 mb-4 text-xs text-gray-500">
             <div className="flex items-center gap-1">
               <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
@@ -192,7 +191,6 @@ export default function ProductDetail() {
           </div>
         </section>
 
-        {/* Section: Deskripsi Produk */}
         <section className="mt-2 bg-white p-4 space-y-3">
           <div className="flex items-center gap-2 border-b border-gray-50 pb-2">
             <Info className="w-4 h-4 text-gray-400" />
@@ -203,7 +201,6 @@ export default function ProductDetail() {
           </p>
         </section>
 
-        {/* Section: Produk Serupa */}
         {similarProducts.length > 0 && (
           <section className="mt-2 bg-white p-4">
             <div className="flex items-center justify-between mb-4">
@@ -221,7 +218,6 @@ export default function ProductDetail() {
           </section>
         )}
 
-        {/* Section: Yang Mungkin Anda Suka */}
         {recommendedProducts.length > 0 && (
           <section className="mt-2 bg-white p-4 mb-2">
             <div className="flex items-center gap-2 mb-4">
@@ -237,7 +233,6 @@ export default function ProductDetail() {
         )}
       </main>
 
-      {/* FIXED ACTION BAR */}
       <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-100 flex items-center justify-between gap-3 z-[100] shadow-[0_-4px_15px_rgba(0,0,0,0.05)]">
         <div className="flex flex-col min-w-[100px]">
            <p className="text-[9px] text-gray-400 font-bold uppercase leading-none mb-1">TOTAL HARGA</p>

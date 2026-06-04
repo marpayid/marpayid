@@ -18,7 +18,7 @@ export default function Orders() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-24">
+    <div className="bg-gray-50 pb-20">
       <header className="bg-white px-4 pt-12 pb-4 border-b border-gray-100 sticky top-0 z-50">
         <h1 className="text-xl font-headline font-bold mb-4">Pesanan Saya</h1>
         <div className="relative">

@@ -54,7 +54,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-32">
+    <div className="bg-gray-50 pb-20">
       <TopSearch />
       <main className="pt-16 space-y-2">
         {/* Banner Section with Indicators */}
@@ -193,7 +193,7 @@ export default function Home() {
 
         <PromotionalCards />
 
-        <section className="bg-white py-4 px-4 pb-24">
+        <section className="bg-white py-4 px-4">
           <Tabs defaultValue="viral">
             <TabsList className="bg-transparent border-b border-gray-100 w-full flex justify-start mb-4 gap-6">
               <TabsTrigger value="viral" className="font-bold text-base px-0">Produk Viral</TabsTrigger>
