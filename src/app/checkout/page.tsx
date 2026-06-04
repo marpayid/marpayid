@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { 
-  ArrowLeft, MapPin, CreditCard, Edit3, MessageCircle, AlertCircle, Wallet, QrCode, Truck, Info
+  ArrowLeft, MapPin, CreditCard, Edit3, MessageCircle, AlertCircle, Wallet, QrCode, Truck, Info,
+  Smartphone, Zap, Gamepad2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -160,6 +161,38 @@ export default function Checkout() {
     localStorage.removeItem('marpay_checkout_temp');
   };
 
+  const renderItemMedia = (item: any) => {
+    if (item.type === 'digital') {
+      const name = item.name?.toLowerCase() || '';
+      const category = item.category?.toLowerCase() || '';
+      
+      let Icon = CreditCard;
+      let iconColor = "text-primary";
+      let bgColor = "bg-primary/5";
+
+      if (name.includes('dana')) { Icon = Wallet; iconColor = "text-emerald-500"; bgColor = "bg-emerald-50"; }
+      else if (name.includes('ovo')) { Icon = Wallet; iconColor = "text-purple-500"; bgColor = "bg-purple-50"; }
+      else if (name.includes('gopay')) { Icon = Wallet; iconColor = "text-blue-500"; bgColor = "bg-blue-50"; }
+      else if (name.includes('shopeepay')) { Icon = Wallet; iconColor = "text-orange-500"; bgColor = "bg-orange-50"; }
+      else if (name.includes('pulsa') || category.includes('pulsa')) { Icon = Smartphone; iconColor = "text-blue-500"; bgColor = "bg-blue-50"; }
+      else if (name.includes('pln') || name.includes('token')) { Icon = Zap; iconColor = "text-yellow-600"; bgColor = "bg-yellow-50"; }
+      else if (name.includes('game') || category.includes('game') || name.includes('diamond') || name.includes('uc') || name.includes('robux')) { Icon = Gamepad2; iconColor = "text-indigo-500"; bgColor = "bg-indigo-50"; }
+
+      return (
+        <div className={cn("w-full h-full flex items-center justify-center rounded-xl", bgColor)}>
+          <Icon className={cn("w-7 h-7", iconColor)} />
+        </div>
+      );
+    }
+    
+    // Premium uses a fixed image
+    if (item.category === 'Premium' || item.category?.toLowerCase() === 'premium') {
+      return <Image src="/premium1.png" alt={item.name} fill className="object-cover" />;
+    }
+
+    return <Image src={getProductImage(item)} alt={item.name} fill className="object-cover" />;
+  };
+
   if (!isLoaded) return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
       <div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
@@ -257,8 +290,8 @@ export default function Checkout() {
 
               return (
                 <div key={`${item.id}-${idx}`} className="flex gap-3.5">
-                  <div className="relative w-14 h-14 rounded-xl overflow-hidden flex-shrink-0 border border-gray-50 bg-gray-50 flex items-center justify-center">
-                    <Image src={getProductImage(item)} alt={item.name} fill className="object-cover" />
+                  <div className="relative w-14 h-14 rounded-xl overflow-hidden flex-shrink-0 border border-gray-50 bg-gray-50">
+                    {renderItemMedia(item)}
                   </div>
                   <div className="flex-1 min-w-0">
                     <h4 className="text-[11px] font-bold text-gray-800 truncate">{item.name}</h4>
