@@ -70,20 +70,48 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
     localStorage.setItem('marpay_search_history', JSON.stringify(newHistory));
   };
 
-  // Generate suggestions based on input
+  // Generate suggestions based on input (TEXT ONLY)
   const suggestions = useMemo(() => {
     const q = inputValue.toLowerCase().trim();
     if (!q || showResults) return [];
 
     const matches = new Set<string>();
     
+    // Logic to find relevant keywords from products
     Products.forEach(p => {
-      if (p.name.toLowerCase().includes(q)) matches.add(p.name);
-      if (p.category?.toLowerCase().includes(q)) matches.add(p.category);
-      if (p.tag?.toLowerCase().includes(q)) matches.add(p.tag);
+      const name = p.name.toLowerCase();
+      const cat = p.category?.toLowerCase() || '';
+      
+      if (name.includes(q)) {
+        // Find the first 2-3 words of the product name that contain the query for cleaner suggestion
+        const words = name.split(' ');
+        const queryIdx = words.findIndex(w => w.includes(q));
+        if (queryIdx !== -1) {
+          const suggestion = words.slice(queryIdx, queryIdx + 3).join(' ');
+          matches.add(suggestion);
+        }
+      }
+      if (cat.includes(q)) matches.add(cat);
     });
 
-    return Array.from(matches).slice(0, 8);
+    // Add common variants if match query
+    const commonPrefixes = ['case', 'celana', 'skincare', 'baju', 'kaos', 'promo'];
+    commonPrefixes.forEach(prefix => {
+      if (prefix.includes(q) || q.includes(prefix)) {
+        if (prefix === 'case') {
+          ['case iphone', 'case magsafe', 'case premium', 'case anti shock', 'case street art'].forEach(s => {
+            if (s.includes(q)) matches.add(s);
+          });
+        }
+        if (prefix === 'celana') {
+          ['celana wanita', 'celana stripe', 'celana baggy', 'celana panjang'].forEach(s => {
+            if (s.includes(q)) matches.add(s);
+          });
+        }
+      }
+    });
+
+    return Array.from(matches).slice(0, 10);
   }, [inputValue, showResults]);
 
   // Filter and sort results
@@ -114,7 +142,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
 
   return (
     <div className="fixed inset-0 z-[1000] bg-white flex flex-col animate-in slide-in-from-right duration-300">
-      {/* Search Header */}
+      {/* Search Header - Marketplace Style */}
       <header className="px-4 py-3 border-b border-gray-100 flex items-center gap-3 bg-white sticky top-0 z-10">
         <Button 
           variant="ghost" 
@@ -144,7 +172,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
             <button 
               type="button"
               onClick={() => { setInputValue(''); setShowResults(false); }}
-              className="absolute right-3 top-1/2 -translate-y-1/2 p-1 bg-gray-300 rounded-full text-white"
+              className="absolute right-3 top-1/2 -translate-y-1/2 p-1 bg-gray-400 rounded-full text-white"
             >
               <X className="w-3 h-3" />
             </button>
@@ -153,7 +181,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
       </header>
 
       <main className="flex-1 overflow-y-auto">
-        {/* STATE 1: INPUT KOSONG (Riwayat & Populer) */}
+        {/* STATE 1: EMPTY INPUT (History & Popular) */}
         {!inputValue && !showResults && (
           <div className="py-2">
             {history.length > 0 && (
@@ -219,7 +247,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
           </div>
         )}
 
-        {/* STATE 2: SUGGESTION LIST (Saat Mengetik) */}
+        {/* STATE 2: TEXT SUGGESTIONS (While Typing) - Shopee Style */}
         {inputValue && !showResults && (
           <div className="bg-white">
             {suggestions.length > 0 ? (
@@ -229,11 +257,11 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                   onClick={() => handleConfirmSearch(item)}
                   className="px-4 py-4 border-b border-gray-50 flex items-center justify-between active:bg-gray-50 cursor-pointer"
                 >
-                  <div className="flex items-center gap-3">
-                    <Search className="w-4 h-4 text-gray-300" />
-                    <span className="text-sm text-gray-700">{item}</span>
+                  <div className="flex items-center gap-4">
+                    <Search className="w-4 h-4 text-gray-400" />
+                    <span className="text-sm font-medium text-gray-800 capitalize">{item}</span>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-gray-200" />
+                  <ChevronRight className="w-4 h-4 text-gray-300" />
                 </div>
               ))
             ) : (
@@ -241,7 +269,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                 onClick={() => handleConfirmSearch(inputValue)}
                 className="px-4 py-4 border-b border-gray-50 flex items-center justify-between active:bg-gray-50 cursor-pointer"
               >
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-4">
                   <Search className="w-4 h-4 text-primary" />
                   <span className="text-sm font-bold text-primary">Cari "{inputValue}"</span>
                 </div>
@@ -251,10 +279,10 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
           </div>
         )}
 
-        {/* STATE 3: HASIL PRODUK (Setelah Confirm) */}
+        {/* STATE 3: PRODUCT RESULTS (After Enter/Click) */}
         {showResults && (
           <div className="flex flex-col h-full bg-gray-50">
-            {/* Sorting Tabs */}
+            {/* Professional Sorting Tabs */}
             <div className="bg-white border-b border-gray-100 flex items-center sticky top-0 z-20">
               {(['semua', 'terlaris', 'harga_rendah', 'terbaru'] as const).map((opt) => (
                 <button
