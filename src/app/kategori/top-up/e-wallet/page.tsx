@@ -15,7 +15,11 @@ const PROVIDERS = [
       { nominal: '5.000', price: 5300 },
       { nominal: '10.000', price: 10300 },
       { nominal: '20.000', price: 20500 },
+      { nominal: '30.000', price: 31850 },
+      { nominal: '40.000', price: 41850 },
       { nominal: '50.000', price: 51730 },
+      { nominal: '75.000', price: 76320 },
+      { nominal: '85.000', price: 86320 },
       { nominal: '100.000', price: 101850 },
     ]
   },
@@ -24,6 +28,7 @@ const PROVIDERS = [
     name: 'OVO', 
     products: [
       { nominal: '20.000', price: 21100 },
+      { nominal: '30.000', price: 31777 },
       { nominal: '50.000', price: 52500 },
     ]
   },
@@ -32,7 +37,21 @@ const PROVIDERS = [
     name: 'GoPay', 
     products: [
       { nominal: '10.000', price: 11350 },
+      { nominal: '20.000', price: 21350 },
+      { nominal: '25.000', price: 26350 },
+      { nominal: '40.000', price: 42100 },
       { nominal: '50.000', price: 52085 },
+    ]
+  },
+  { 
+    id: 'SHOPEEPAY', 
+    name: 'ShopeePay', 
+    products: [
+      { nominal: '10.000', price: 10750 },
+      { nominal: '15.000', price: 15850 },
+      { nominal: '20.000', price: 21085 },
+      { nominal: '25.000', price: 25900 },
+      { nominal: '50.000', price: 51985 },
     ]
   },
 ];
@@ -98,19 +117,32 @@ export default function EWalletPage() {
           </div>
         </section>
 
-        <section className="bg-white p-4 rounded-3xl border border-gray-100 shadow-sm mb-4">
+        <section className="bg-white p-4 rounded-3xl border border-gray-100 shadow-sm mb-4 overflow-x-auto no-scrollbar">
           <h2 className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-3 ml-1">Pilih E-Wallet</h2>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="flex gap-3 min-w-max px-1">
             {PROVIDERS.map((provider) => (
-              <button key={provider.id} onClick={() => { setSelectedProvider(provider); setSelectedProduct(null); }} className={cn("flex flex-col items-center p-2 rounded-2xl border transition-all gap-1.5", selectedProvider.id === provider.id ? "border-primary bg-primary/5 text-primary" : "border-gray-50 text-gray-400")}>
-                <div className={cn("w-8 h-8 rounded-full flex items-center justify-center", selectedProvider.id === provider.id ? "bg-primary text-white" : "bg-gray-100")}><Wallet className="w-4 h-4" /></div>
-                <span className="text-[9px] font-bold uppercase">{provider.name}</span>
+              <button 
+                key={provider.id} 
+                onClick={() => { setSelectedProvider(provider); setSelectedProduct(null); }} 
+                className={cn(
+                  "flex flex-col items-center justify-center w-20 p-2 rounded-2xl border transition-all gap-1.5", 
+                  selectedProvider.id === provider.id ? "border-primary bg-primary/5 text-primary" : "border-gray-50 text-gray-400"
+                )}
+              >
+                <div className={cn("w-9 h-9 rounded-full flex items-center justify-center", selectedProvider.id === provider.id ? "bg-primary text-white" : "bg-gray-100")}>
+                  <Wallet className="w-5 h-5" />
+                </div>
+                <span className="text-[8px] font-black uppercase text-center leading-none">{provider.name}</span>
               </button>
             ))}
           </div>
         </section>
 
         <div className="space-y-4">
+          <div className="flex items-center gap-2 px-1">
+            <div className="w-1 h-4 bg-primary rounded-full"></div>
+            <h2 className="text-sm font-bold text-gray-800">Pilih Nominal</h2>
+          </div>
           <div className="grid grid-cols-1 gap-3">
             {selectedProvider.products.map((product) => (
               <button
@@ -122,7 +154,9 @@ export default function EWalletPage() {
                 )}
               >
                 <div className="flex items-center gap-3">
-                  <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center", selectedProduct?.nominal === product.nominal ? "bg-primary text-white" : "bg-primary/10 text-primary")}><CreditCard className="w-5 h-5" /></div>
+                  <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center", selectedProduct?.nominal === product.nominal ? "bg-primary text-white" : "bg-primary/10 text-primary")}>
+                    <CreditCard className="w-5 h-5" />
+                  </div>
                   <div>
                     <p className="text-sm font-black text-gray-800">SALDO {product.nominal}</p>
                     <p className="text-[10px] font-bold text-gray-400">Harga: Rp {product.price.toLocaleString()}</p>
