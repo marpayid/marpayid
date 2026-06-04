@@ -43,11 +43,11 @@ export function BottomNav() {
     <nav 
       className="fixed bottom-0 left-0 right-0 z-[1000] bg-white border-t border-gray-100 flex flex-col shadow-[0_-4px_20px_rgba(0,0,0,0.06)] w-full"
       style={{ 
-        paddingBottom: 'calc(env(safe-area-inset-bottom) + 6px)' 
+        paddingBottom: 'calc(env(safe-area-inset-bottom) + 10px)' 
       }}
     >
-      {/* Container menu dengan tinggi 46px (turun 6px dari 52px) untuk merapatkan ruang kosong di atas ikon */}
-      <div className="flex items-center w-full h-[46px] px-1">
+      {/* Container menu dengan tinggi 38px (turun dari 46px) untuk merapatkan garis atas ke ikon tanpa menggeser menu */}
+      <div className="flex items-center w-full h-[38px] px-1">
         {navItems.map((item) => {
           const isActive = pathname === item.path;
           return (
