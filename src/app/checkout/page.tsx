@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { 
-  ArrowLeft, MapPin, CreditCard, Edit3, MessageCircle, AlertCircle, Wallet, QrCode
+  ArrowLeft, MapPin, CreditCard, Edit3, MessageCircle, AlertCircle, Wallet, QrCode, Truck
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -262,6 +262,13 @@ export default function Checkout() {
                     <p className="text-xs font-bold text-primary">Rp {item.price.toLocaleString()}</p>
                     <p className="text-[10px] text-muted-foreground font-bold">x{item.quantity}</p>
                   </div>
+                  {/* Delivery Detail - Informational */}
+                  {item.type !== 'digital' && (
+                    <div className="flex items-center gap-1.5 mt-1.5 text-[9px] font-bold text-emerald-600/80">
+                      <Truck className="w-2.5 h-2.5" />
+                      <span>Ongkir: {item.shippingFee > 0 ? `Rp ${item.shippingFee.toLocaleString()}` : 'Gratis'}</span>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
