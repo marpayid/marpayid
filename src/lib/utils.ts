@@ -31,7 +31,7 @@ export function getProductImage(product: any): string {
   
   // Spesifik untuk kategori Premium
   if (product.category === 'Premium' || product.category?.toLowerCase() === 'premium') {
-    return '/premium-1.png';
+    return '/premium1.png';
   }
   
   // Gunakan path image yang ada
