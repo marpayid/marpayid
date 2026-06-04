@@ -41,9 +41,9 @@ export function BottomNav() {
 
   return (
     <nav 
-      className="fixed bottom-0 left-0 right-0 z-[999] bg-white border-t border-gray-100 flex flex-col shadow-[0_-4px_15px_rgba(0,0,0,0.04)] w-full transition-all"
+      className="fixed bottom-0 left-0 right-0 z-[1000] bg-white border-t border-gray-100 flex flex-col shadow-[0_-4px_20px_rgba(0,0,0,0.06)] w-full"
       style={{ 
-        paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) * 0.6)' 
+        paddingBottom: 'env(safe-area-inset-bottom)' 
       }}
     >
       <div className="flex items-center w-full h-[58px] px-1">
