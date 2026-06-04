@@ -1,7 +1,11 @@
 'use client';
 
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { ArrowLeft, Search, Sparkles, TrendingUp, History, X, ChevronRight, LayoutGrid, Clock } from 'lucide-react';
+import { 
+  ArrowLeft, Search, TrendingUp, History, X, 
+  ChevronRight, LayoutGrid, Clock, SlidersHorizontal,
+  PackageSearch
+} from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Products } from '@/app/lib/dummy-data';
@@ -83,7 +87,6 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
       const cat = p.category?.toLowerCase() || '';
       
       if (name.includes(q)) {
-        // Find the first 2-3 words of the product name that contain the query for cleaner suggestion
         const words = name.split(' ');
         const queryIdx = words.findIndex(w => w.includes(q));
         if (queryIdx !== -1) {
@@ -94,7 +97,6 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
       if (cat.includes(q)) matches.add(cat);
     });
 
-    // Add common variants if match query
     const commonPrefixes = ['case', 'celana', 'skincare', 'baju', 'kaos', 'promo'];
     commonPrefixes.forEach(prefix => {
       if (prefix.includes(q) || q.includes(prefix)) {
@@ -125,7 +127,6 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
       p.description?.toLowerCase().includes(q)
     );
 
-    // Sorting logic
     switch (activeSort) {
       case 'terlaris':
         return [...filtered].sort((a, b) => (b.sold || 0) - (a.sold || 0));
@@ -142,7 +143,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
 
   return (
     <div className="fixed inset-0 z-[1000] bg-white flex flex-col animate-in slide-in-from-right duration-300">
-      {/* Search Header - Marketplace Style */}
+      {/* Search Header */}
       <header className="px-4 py-3 border-b border-gray-100 flex items-center gap-3 bg-white sticky top-0 z-10">
         <Button 
           variant="ghost" 
@@ -181,7 +182,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
       </header>
 
       <main className="flex-1 overflow-y-auto">
-        {/* STATE 1: EMPTY INPUT (History & Popular) */}
+        {/* STATE 1: EMPTY INPUT */}
         {!inputValue && !showResults && (
           <div className="py-2">
             {history.length > 0 && (
@@ -247,7 +248,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
           </div>
         )}
 
-        {/* STATE 2: TEXT SUGGESTIONS (While Typing) - Shopee Style */}
+        {/* STATE 2: TEXT SUGGESTIONS */}
         {inputValue && !showResults && (
           <div className="bg-white">
             {suggestions.length > 0 ? (
@@ -279,48 +280,77 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
           </div>
         )}
 
-        {/* STATE 3: PRODUCT RESULTS (After Enter/Click) */}
+        {/* STATE 3: PRODUCT RESULTS */}
         {showResults && (
-          <div className="flex flex-col h-full bg-gray-50">
-            {/* Professional Sorting Tabs */}
-            <div className="bg-white border-b border-gray-100 flex items-center sticky top-0 z-20">
-              {(['semua', 'terlaris', 'harga_rendah', 'terbaru'] as const).map((opt) => (
+          <div className="flex flex-col h-full bg-[#F8F9FA]">
+            {/* Professional Sorting Tabs - Premium Marketplace Style */}
+            <div className="bg-white border-b border-gray-100 flex items-center sticky top-0 z-20 px-2 py-2.5 gap-1.5 overflow-x-auto no-scrollbar shadow-sm">
+              {[
+                { id: 'semua', label: 'Semua', icon: LayoutGrid },
+                { id: 'terlaris', label: 'Terlaris', icon: TrendingUp },
+                { id: 'harga_rendah', label: 'Harga', icon: SlidersHorizontal },
+                { id: 'terbaru', label: 'Terbaru', icon: Clock },
+              ].map((opt) => (
                 <button
-                  key={opt}
-                  onClick={() => setActiveSort(opt)}
+                  key={opt.id}
+                  onClick={() => setActiveSort(opt.id as SortOption)}
                   className={cn(
-                    "flex-1 py-3 text-[11px] font-bold uppercase tracking-wider transition-all border-b-2",
-                    activeSort === opt ? "text-primary border-primary" : "text-gray-400 border-transparent"
+                    "flex items-center gap-1.5 px-4 py-1.5 rounded-full text-[11px] font-bold transition-all whitespace-nowrap border",
+                    activeSort === opt.id 
+                      ? "bg-[#E6F6F0] text-[#008F4C] border-transparent shadow-sm" 
+                      : "bg-white text-gray-400 border-gray-100"
                   )}
                 >
-                  {opt === 'harga_rendah' ? 'Harga' : opt}
+                  <opt.icon className={cn("w-3.5 h-3.5", activeSort === opt.id ? "text-[#008F4C]" : "text-gray-300")} />
+                  {opt.label}
                 </button>
               ))}
             </div>
 
-            <div className="p-4 flex-1">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xs font-bold text-gray-500 uppercase tracking-tight">
-                  Hasil untuk <span className="text-primary">"{confirmedQuery}"</span>
+            {/* Result Info Card */}
+            <div className="px-4 py-3 bg-white border-b border-gray-50 flex items-center justify-between">
+              <div className="flex flex-col">
+                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Hasil Pencarian</p>
+                <h2 className="text-[13px] font-bold text-gray-800 line-clamp-1">
+                  &ldquo;<span className="text-primary">{confirmedQuery}</span>&rdquo;
                 </h2>
-                <span className="text-[10px] font-bold text-gray-400">{finalResults.length} Produk</span>
               </div>
+              <div className="bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100">
+                <span className="text-[10px] font-black text-gray-500 uppercase">{finalResults.length} Produk</span>
+              </div>
+            </div>
 
+            <div className="flex-1">
               {finalResults.length > 0 ? (
-                <div className="grid grid-cols-2 gap-3">
+                <div className={cn(
+                  "p-4",
+                  finalResults.length === 1 ? "flex justify-center" : "grid grid-cols-2 gap-3"
+                )}>
                   {finalResults.map((product) => (
-                    <ProductCard key={product.id} product={product} />
+                    <div 
+                      key={product.id} 
+                      className={cn(finalResults.length === 1 ? "w-[175px]" : "w-full")}
+                    >
+                      <ProductCard product={product} />
+                    </div>
                   ))}
                 </div>
               ) : (
-                <div className="flex flex-col items-center justify-center py-20 text-center">
-                  <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mb-6 shadow-sm">
-                    <Search className="w-10 h-10 text-gray-100" />
+                <div className="flex flex-col items-center justify-center py-24 text-center px-8">
+                  <div className="w-24 h-24 bg-white rounded-[32px] flex items-center justify-center mb-6 shadow-xl shadow-gray-200/50">
+                    <PackageSearch className="w-12 h-12 text-gray-200" />
                   </div>
-                  <h3 className="text-sm font-bold text-gray-900">Produk tidak ditemukan</h3>
-                  <p className="text-[10px] text-gray-400 mt-1 max-w-[200px] leading-relaxed">
-                    Coba gunakan kata kunci lain yang lebih umum atau cek ejaanmu ya.
+                  <h3 className="text-base font-bold text-gray-900">Produk tidak ditemukan</h3>
+                  <p className="text-[11px] text-gray-400 mt-2 max-w-[220px] leading-relaxed">
+                    Maaf, kami tidak dapat menemukan produk yang sesuai dengan &ldquo;{confirmedQuery}&rdquo;.
                   </p>
+                  <Button 
+                    onClick={() => { setInputValue(''); setShowResults(false); }}
+                    variant="outline" 
+                    className="mt-8 rounded-xl border-primary/20 text-primary font-bold h-10 px-6"
+                  >
+                    Coba Kata Kunci Lain
+                  </Button>
                 </div>
               )}
             </div>
