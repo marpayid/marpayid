@@ -41,45 +41,47 @@ export function BottomNav() {
 
   return (
     <nav 
-      className="fixed bottom-0 left-0 right-0 z-[999] bg-white border-t border-gray-100 px-2 pt-2.5 flex items-center shadow-[0_-4px_20px_rgba(0,0,0,0.06)] w-full transition-all"
+      className="fixed bottom-0 left-0 right-0 z-[999] bg-white border-t border-gray-100 flex items-center shadow-[0_-4px_15px_rgba(0,0,0,0.05)] w-full transition-all"
       style={{ 
-        minHeight: '72px',
-        paddingBottom: 'max(8px, env(safe-area-inset-bottom, 0px))' 
+        height: 'calc(58px + env(safe-area-inset-bottom, 0px))',
+        paddingBottom: 'env(safe-area-inset-bottom, 0px)' 
       }}
     >
-      {navItems.map((item) => {
-        const isActive = pathname === item.path;
-        return (
-          <Link
-            key={item.label}
-            href={item.path}
-            className={cn(
-              "flex-1 flex flex-col items-center justify-center gap-1.5 transition-all duration-300",
-              isActive ? "text-primary scale-105" : "text-gray-400 hover:text-gray-50"
-            )}
-          >
-            <div className="flex items-center justify-center h-6 w-6 relative">
-              <item.icon 
-                className={cn(
-                  "w-6 h-6 transition-all", 
-                  isActive ? "stroke-[2.5px] fill-primary/10 text-primary" : "stroke-[1.5px]"
-                )} 
-              />
-              {item.hasBadge && cartCount > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 bg-primary text-white text-[8px] font-bold h-4 w-4 rounded-full flex items-center justify-center border-2 border-white animate-in zoom-in">
-                  {cartCount}
-                </span>
+      <div className="flex items-center w-full h-[58px] px-2">
+        {navItems.map((item) => {
+          const isActive = pathname === item.path;
+          return (
+            <Link
+              key={item.label}
+              href={item.path}
+              className={cn(
+                "flex-1 flex flex-col items-center justify-center gap-1 transition-all duration-300",
+                isActive ? "text-primary scale-105" : "text-gray-400"
               )}
-            </div>
-            <span className={cn(
-              "text-[10px] tracking-tight transition-colors",
-              isActive ? "font-bold text-primary" : "font-medium"
-            )}>
-              {item.label}
-            </span>
-          </Link>
-        );
-      })}
+            >
+              <div className="flex items-center justify-center h-6 w-6 relative">
+                <item.icon 
+                  className={cn(
+                    "w-[22px] h-[22px] transition-all", 
+                    isActive ? "stroke-[2.5px] fill-primary/10 text-primary" : "stroke-[1.8px]"
+                  )} 
+                />
+                {item.hasBadge && cartCount > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 bg-primary text-white text-[8px] font-bold h-4 w-4 rounded-full flex items-center justify-center border-2 border-white animate-in zoom-in">
+                    {cartCount}
+                  </span>
+                )}
+              </div>
+              <span className={cn(
+                "text-[9px] tracking-tight transition-colors",
+                isActive ? "font-bold text-primary" : "font-medium"
+              )}>
+                {item.label}
+              </span>
+            </Link>
+          );
+        })}
+      </div>
     </nav>
   );
 }
