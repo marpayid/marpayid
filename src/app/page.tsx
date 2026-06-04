@@ -43,7 +43,7 @@ export default function Home() {
         <section className="px-4 pt-3 bg-white relative">
           <Carousel opts={{ loop: true }} setApi={setApi}>
             <CarouselContent>
-              {Banners.map((banner) => (
+              {Banners.slice(0, 2).map((banner) => (
                 <CarouselItem key={banner.id}>
                   <div className={cn(
                     "relative h-[170px] w-full rounded-[22px] bg-gradient-to-br p-5 text-white flex flex-col justify-center overflow-hidden transition-all duration-500",
@@ -54,24 +54,12 @@ export default function Home() {
                     <div className="absolute right-0 top-0 bottom-0 w-[42%] flex items-center justify-center pointer-events-none select-none z-0">
                       {banner.type === 'digital' ? (
                         <div className="relative w-full h-full flex items-center justify-center">
-                          {/* 3D Smartphone - Realistic Deep Dark */}
-                          <div className="relative w-22 h-44 bg-[#0A0A0A] rounded-[32px] border-[4px] border-[#1A1A1A] shadow-[20px_20px_50px_rgba(0,0,0,0.6)] rotate-[-12deg] flex items-center justify-center overflow-hidden animate-float z-0">
-                             {/* Screen Reflection */}
-                             <div className="absolute inset-0 bg-gradient-to-tr from-white/10 via-transparent to-white/5"></div>
-                             {/* Screen App Grid Layout */}
-                             <div className="grid grid-cols-2 gap-2 p-4 w-full h-full items-start pt-10">
-                               {[1,2,3,4,5,6].map(i => (
-                                 <div key={i} className="aspect-square rounded-lg bg-white/5 border border-white/10 shadow-inner"></div>
-                               ))}
-                             </div>
-                             {/* Dynamic Notch */}
-                             <div className="absolute top-2 w-10 h-3 bg-[#1A1A1A] rounded-full flex items-center justify-center px-1">
-                                <div className="w-1 h-1 rounded-full bg-[#333]"></div>
-                             </div>
-                          </div>
+                          
+                          {/* Subtle Background Glow */}
+                          <div className="absolute right-4 top-1/2 -translate-y-1/2 w-32 h-32 bg-white/10 blur-[50px] rounded-full"></div>
 
-                          {/* 3D Glassmorphism E-Wallet Card - Front Layer */}
-                          <div className="absolute top-1/2 left-[-10px] -translate-y-1/2 w-[140px] h-[85px] bg-white/10 backdrop-blur-2xl border border-white/30 rounded-2xl shadow-[0_25px_45px_rgba(0,0,0,0.3)] rotate-[15deg] p-3.5 flex flex-col justify-between overflow-hidden z-20 animate-float-slow">
+                          {/* 3D Glassmorphism E-Wallet Card - Repositioned Right */}
+                          <div className="absolute top-1/2 right-4 -translate-y-1/2 w-[135px] h-[82px] bg-white/10 backdrop-blur-2xl border border-white/30 rounded-2xl shadow-[0_25px_45px_rgba(0,0,0,0.3)] rotate-[15deg] p-3.5 flex flex-col justify-between overflow-hidden z-20 animate-float">
                              <div className="flex justify-between items-start">
                                {/* Card Chip Visual */}
                                <div className="w-8 h-6 rounded-md bg-gradient-to-br from-yellow-400/40 to-yellow-600/20 border border-yellow-400/30"></div>
@@ -82,28 +70,21 @@ export default function Home() {
                                <div className="w-2/3 h-1.5 bg-white/10 rounded-full"></div>
                              </div>
                              {/* Highlight/Glow */}
-                             <div className="absolute -right-10 -bottom-10 w-24 h-24 bg-cyan-400/40 blur-3xl"></div>
+                             <div className="absolute -right-10 -bottom-10 w-24 h-24 bg-cyan-400/30 blur-3xl"></div>
                           </div>
 
-                          {/* 3D Floating Satellite Icons */}
-                          {/* 3D Game Controller */}
-                          <div className="absolute top-2 right-4 animate-float-reverse z-10">
+                          {/* 3D Floating Satellite Icons - Repositioned */}
+                          {/* 3D Game Controller - Top Right */}
+                          <div className="absolute top-4 right-2 animate-float-reverse z-10">
                              <div className="bg-indigo-500/20 backdrop-blur-md border border-white/20 p-2 rounded-xl shadow-2xl">
                                <Gamepad2 className="w-6 h-6 text-white drop-shadow-md" />
                              </div>
                           </div>
                           
-                          {/* 3D Lightning/Electricity */}
-                          <div className="absolute bottom-6 right-0 animate-float z-30">
+                          {/* 3D Lightning/Electricity - Bottom Right */}
+                          <div className="absolute bottom-8 right-0 animate-float z-30">
                              <div className="bg-yellow-500/20 backdrop-blur-md border border-white/20 p-2 rounded-xl shadow-2xl">
                                <Zap className="w-6 h-6 text-yellow-400 fill-yellow-400/40 drop-shadow-[0_0_10px_rgba(250,204,21,0.5)]" />
-                             </div>
-                          </div>
-
-                          {/* 3D QRIS Icon */}
-                          <div className="absolute bottom-1/2 right-12 translate-y-12 animate-float-slow z-10 opacity-60">
-                             <div className="bg-white/10 backdrop-blur-md border border-white/10 p-1.5 rounded-lg">
-                               <QrCode className="w-4 h-4 text-white" />
                              </div>
                           </div>
                         </div>
@@ -156,7 +137,7 @@ export default function Home() {
           
           {/* Slider Indicators (Dots) */}
           <div className="flex justify-center gap-1.5 mt-3 pb-2">
-            {Banners.map((_, index) => (
+            {Banners.slice(0, 2).map((_, index) => (
               <div 
                 key={index}
                 className={cn(
