@@ -90,7 +90,7 @@ export default function ProductDetail() {
 
   // Custom Description Override for BIOAQUA
   const displayDescription = product.id === 1 
-    ? "BIOAQUA Skincare 1 Set Lengkap 6pcs hadir dengan pilihan Whitening Set and Anti-Acne Set. Cocok untuk perawatan wajah harian agar kulit terlihat lebih bersih, segar, dan terawat. Produk dikemas rapi dan siap dikirim."
+    ? "BIOAQUA Skincare 1 Set Lengkap 6pcs hadir with pilihan Whitening Set and Anti-Acne Set. Cocok untuk perawatan wajah harian agar kulit terlihat lebih bersih, segar, dan terawat. Produk dikemas rapi dan siap dikirim."
     : product.description;
 
   const handleAction = (redirect = false) => {
@@ -124,7 +124,7 @@ export default function ProductDetail() {
   };
 
   return (
-    <div className="bg-gray-50 pb-24">
+    <div className="bg-gray-50 pb-14">
       <header className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md px-4 py-3 border-b border-gray-100 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="icon" onClick={() => router.back()}><ArrowLeft className="w-5 h-5" /></Button>

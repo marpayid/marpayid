@@ -155,7 +155,7 @@ export default function Profile() {
   const userPhoto = "/profil1.png";
 
   return (
-    <div className="bg-gray-50 pb-20">
+    <div className="bg-gray-50 pb-14">
       <header className="bg-white px-6 pt-14 pb-8 border-b border-gray-100 relative overflow-hidden">
         <div className="flex items-center gap-4 relative z-10">
           <div className="relative">

@@ -43,7 +43,7 @@ export function BottomNav() {
     <nav 
       className="fixed bottom-0 left-0 right-0 z-[1000] bg-white border-t border-gray-100 flex flex-col shadow-[0_-4px_20px_rgba(0,0,0,0.06)] w-full"
       style={{ 
-        paddingBottom: 'calc(env(safe-area-inset-bottom) * 0.4)' 
+        paddingBottom: 'env(safe-area-inset-bottom)' 
       }}
     >
       {/* Container menu dengan pt-3 untuk menggeser isi menu ke bawah agar lebih seimbang */}
