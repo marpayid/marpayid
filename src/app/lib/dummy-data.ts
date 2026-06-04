@@ -15,16 +15,18 @@ export const Products = [
     id: 206,
     name: 'BETTERHALF Celana Pendek Pria Polos Short Pants Boardshort - Black',
     price: 47320,
+    originalPrice: 86000,
     rating: 4.9,
     reviews: '6.2rb+',
     sold: 10000,
     category: 'Fashion',
     image: '/celana1.png',
     isFlashSale: true,
+    discount: '45%',
     stock: 'Tersedia',
     tag: 'Produk Viral',
     variants: ['M', 'L', 'XL'],
-    shippingFee: 5000,
+    shippingFee: 12000,
     description: `BETTERHALF Celana Pendek Cowo Polos Short Pants Boardshort - Black
 
 Material :
