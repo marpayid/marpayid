@@ -144,7 +144,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
   return (
     <div className="fixed inset-0 z-[1000] bg-white flex flex-col animate-in slide-in-from-right duration-300">
       {/* Search Header */}
-      <header className="px-4 py-3 border-b border-gray-100 flex items-center gap-3 bg-white sticky top-0 z-10">
+      <header className="px-4 py-3 border-b border-gray-100 flex items-center gap-3 bg-white sticky top-0 z-50">
         <Button 
           variant="ghost" 
           size="icon" 
@@ -282,9 +282,9 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
 
         {/* STATE 3: PRODUCT RESULTS */}
         {showResults && (
-          <div className="flex flex-col h-full bg-[#F8F9FA]">
-            {/* Professional Sorting Tabs - Premium Marketplace Style */}
-            <div className="bg-white border-b border-gray-100 flex items-center sticky top-0 z-20 px-2 py-2.5 gap-1.5 overflow-x-auto no-scrollbar shadow-sm">
+          <div className="flex flex-col bg-[#F8F9FA]">
+            {/* Professional Sorting Tabs - Sticky at the top of the scroll container */}
+            <div className="bg-white border-b border-gray-100 flex items-center sticky top-0 z-30 px-2 py-2.5 gap-1.5 overflow-x-auto no-scrollbar shadow-sm">
               {[
                 { id: 'semua', label: 'Semua', icon: LayoutGrid },
                 { id: 'terlaris', label: 'Terlaris', icon: TrendingUp },
