@@ -41,12 +41,12 @@ export function BottomNav() {
 
   return (
     <nav 
-      className="fixed bottom-0 left-0 right-0 z-[999] bg-white border-t border-gray-100 flex flex-col shadow-[0_-2px_10px_rgba(0,0,0,0.05)] w-full transition-all"
+      className="fixed bottom-0 left-0 right-0 z-[999] bg-white border-t border-gray-100 flex flex-col shadow-[0_-4px_15px_rgba(0,0,0,0.04)] w-full transition-all"
       style={{ 
         paddingBottom: 'env(safe-area-inset-bottom, 0px)' 
       }}
     >
-      <div className="flex items-center w-full h-[52px] px-1">
+      <div className="flex items-center w-full h-[56px] px-1">
         {navItems.map((item) => {
           const isActive = pathname === item.path;
           return (
@@ -58,15 +58,15 @@ export function BottomNav() {
                 isActive ? "text-primary" : "text-gray-400"
               )}
             >
-              <div className="flex items-center justify-center h-5 w-5 relative">
+              <div className="flex items-center justify-center h-6 w-6 relative">
                 <item.icon 
                   className={cn(
-                    "w-[20px] h-[20px] transition-all", 
+                    "w-6 h-6 transition-all", 
                     isActive ? "stroke-[2.5px] fill-primary/10 text-primary" : "stroke-[1.8px]"
                   )} 
                 />
                 {item.hasBadge && cartCount > 0 && (
-                  <span className="absolute -top-1.5 -right-1.5 bg-primary text-white text-[7px] font-bold h-3.5 w-3.5 rounded-full flex items-center justify-center border border-white animate-in zoom-in">
+                  <span className="absolute -top-1.5 -right-1.5 bg-primary text-white text-[7px] font-bold h-4 w-4 rounded-full flex items-center justify-center border-2 border-white animate-in zoom-in">
                     {cartCount}
                   </span>
                 )}
