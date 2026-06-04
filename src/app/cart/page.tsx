@@ -49,9 +49,6 @@ export default function Cart() {
 
   const total = items.reduce((acc, curr) => acc + (curr.price * curr.quantity), 0);
   
-  // LOGIKA ONGKIR REVISI: 
-  // - Item ke-1: Ongkir penuh
-  // - Item ke-2 dst: Tambah Rp 5.000 per item
   const shippingFee = items.reduce((acc, item) => {
     if (!item.shippingFee || item.shippingFee <= 0) return acc;
     const baseFee = item.shippingFee;
@@ -63,7 +60,7 @@ export default function Cart() {
 
   const renderProductImage = (item: any) => {
     if (item.category === 'Premium' || item.category?.toLowerCase() === 'premium') {
-      return <div className="relative w-full h-full"><Image src="/products/premium-1.png" alt="Premium" fill className="object-cover" /></div>;
+      return <div className="relative w-full h-full"><Image src="/premium-1.png" alt="Premium" fill className="object-cover" /></div>;
     }
     
     if (item.image?.includes('pulsa-icon')) return <div className="flex items-center justify-center w-full h-full bg-primary/10 rounded-lg text-primary"><Smartphone className="w-10 h-10" /></div>;
@@ -90,7 +87,6 @@ export default function Cart() {
         {items.length > 0 ? (
           <>
             {items.map((item, idx) => {
-              // Hitung ongkir per baris produk dengan logika baru
               const itemShipping = (item.shippingFee || 0) > 0 
                 ? item.shippingFee + (Math.max(0, item.quantity - 1) * 5000) 
                 : 0;

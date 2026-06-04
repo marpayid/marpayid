@@ -27,12 +27,16 @@ export function formatSold(count: number | string): string {
 
 /**
  * Mendapatkan gambar produk dengan logika kategori.
- * Produk Premium menggunakan /products/premium-1.png secara otomatis.
+ * Mendukung path root (/) jika file tidak ditemukan di /products/
  */
 export function getProductImage(product: any): string {
-  if (!product) return '/products/placeholder-product.png';
+  if (!product) return '/placeholder-product.png';
+  
+  // Spesifik untuk kategori Premium
   if (product.category === 'Premium' || product.category?.toLowerCase() === 'premium') {
-    return '/products/premium-1.png';
+    return '/premium-1.png';
   }
-  return product.image || '/products/placeholder-product.png';
+  
+  // Gunakan path image yang ada, atau placeholder root
+  return product.image || '/placeholder-product.png';
 }
