@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { ArrowLeft, Search, Sparkles, TrendingUp, History, X, ChevronRight, LayoutGrid } from 'lucide-react';
+import { ArrowLeft, Search, Sparkles, TrendingUp, History, X, ChevronRight, LayoutGrid, Clock } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Products } from '@/app/lib/dummy-data';
@@ -13,10 +13,14 @@ interface SearchOverlayProps {
   onClose: () => void;
 }
 
+type SortOption = 'semua' | 'terlaris' | 'harga_rendah' | 'terbaru';
+
 export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
   const [inputValue, setInputValue] = useState('');
-  const [debouncedQuery, setDebouncedQuery] = useState('');
+  const [showResults, setShowResults] = useState(false);
+  const [confirmedQuery, setConfirmedQuery] = useState('');
   const [history, setHistory] = useState<string[]>([]);
+  const [activeSort, setActiveSort] = useState<SortOption>('semua');
   const inputRef = useRef<HTMLInputElement>(null);
 
   const popularKeywords = [
@@ -32,40 +36,31 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
 
   // Load history from localStorage
   useEffect(() => {
-    const savedHistory = localStorage.getItem('marpay_search_history');
-    if (savedHistory) {
-      setHistory(JSON.parse(savedHistory));
-    }
-  }, [isOpen]);
-
-  // Debounce logic
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedQuery(inputValue);
-      // Add to history if query is significant
-      if (inputValue.trim().length > 2 && !history.includes(inputValue.trim())) {
-        const newHistory = [inputValue.trim(), ...history.slice(0, 4)];
-        setHistory(newHistory);
-        localStorage.setItem('marpay_search_history', JSON.stringify(newHistory));
-      }
-    }, 400);
-    return () => clearTimeout(timer);
-  }, [inputValue]);
-
-  // Focus and Scroll Lock
-  useEffect(() => {
     if (isOpen) {
+      const savedHistory = localStorage.getItem('marpay_search_history');
+      if (savedHistory) setHistory(JSON.parse(savedHistory));
+      setInputValue('');
+      setShowResults(false);
+      setConfirmedQuery('');
       setTimeout(() => inputRef.current?.focus(), 100);
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
     }
-    return () => { document.body.style.overflow = 'unset'; };
   }, [isOpen]);
 
-  const clearHistory = () => {
-    setHistory([]);
-    localStorage.removeItem('marpay_search_history');
+  const addToHistory = (query: string) => {
+    const q = query.trim();
+    if (!q) return;
+    const newHistory = [q, ...history.filter(h => h !== q)].slice(0, 5);
+    setHistory(newHistory);
+    localStorage.setItem('marpay_search_history', JSON.stringify(newHistory));
+  };
+
+  const handleConfirmSearch = (query: string) => {
+    const q = query.trim();
+    if (!q) return;
+    setInputValue(q);
+    setConfirmedQuery(q);
+    setShowResults(true);
+    addToHistory(q);
   };
 
   const removeHistoryItem = (e: React.MouseEvent, item: string) => {
@@ -75,22 +70,45 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
     localStorage.setItem('marpay_search_history', JSON.stringify(newHistory));
   };
 
-  const searchResults = useMemo(() => {
-    const q = debouncedQuery.toLowerCase().trim();
-    if (!q) return [];
-    
-    return Products.filter(p => {
-      const nameMatch = p.name.toLowerCase().includes(q);
-      const categoryMatch = p.category?.toLowerCase().includes(q);
-      const descMatch = p.description?.toLowerCase().includes(q);
-      const variantMatch = p.variants?.some(v => v.toLowerCase().includes(q));
-      return nameMatch || categoryMatch || descMatch || variantMatch;
-    });
-  }, [debouncedQuery]);
+  // Generate suggestions based on input
+  const suggestions = useMemo(() => {
+    const q = inputValue.toLowerCase().trim();
+    if (!q || showResults) return [];
 
-  const recommendations = useMemo(() => {
-    return Products.filter(p => p.tag === 'Produk Viral').slice(0, 4);
-  }, []);
+    const matches = new Set<string>();
+    
+    Products.forEach(p => {
+      if (p.name.toLowerCase().includes(q)) matches.add(p.name);
+      if (p.category?.toLowerCase().includes(q)) matches.add(p.category);
+      if (p.tag?.toLowerCase().includes(q)) matches.add(p.tag);
+    });
+
+    return Array.from(matches).slice(0, 8);
+  }, [inputValue, showResults]);
+
+  // Filter and sort results
+  const finalResults = useMemo(() => {
+    if (!confirmedQuery) return [];
+    const q = confirmedQuery.toLowerCase();
+    
+    let filtered = Products.filter(p => 
+      p.name.toLowerCase().includes(q) || 
+      p.category?.toLowerCase().includes(q) ||
+      p.description?.toLowerCase().includes(q)
+    );
+
+    // Sorting logic
+    switch (activeSort) {
+      case 'terlaris':
+        return [...filtered].sort((a, b) => (b.sold || 0) - (a.sold || 0));
+      case 'harga_rendah':
+        return [...filtered].sort((a, b) => a.price - b.price);
+      case 'terbaru':
+        return [...filtered].sort((a, b) => b.id - a.id);
+      default:
+        return filtered;
+    }
+  }, [confirmedQuery, activeSort]);
 
   if (!isOpen) return null;
 
@@ -107,46 +125,53 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
           <ArrowLeft className="w-5 h-5" />
         </Button>
         
-        <div className="relative flex-1">
+        <form 
+          className="relative flex-1" 
+          onSubmit={(e) => { e.preventDefault(); handleConfirmSearch(inputValue); }}
+        >
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <Input 
             ref={inputRef}
             placeholder="Cari produk di MarPay..." 
             value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
+            onChange={(e) => {
+              setInputValue(e.target.value);
+              setShowResults(false);
+            }}
             className="pl-10 pr-10 bg-gray-100 border-none rounded-xl h-10 focus-visible:ring-primary/20 text-sm"
           />
           {inputValue && (
             <button 
-              onClick={() => setInputValue('')}
+              type="button"
+              onClick={() => { setInputValue(''); setShowResults(false); }}
               className="absolute right-3 top-1/2 -translate-y-1/2 p-1 bg-gray-300 rounded-full text-white"
             >
               <X className="w-3 h-3" />
             </button>
           )}
-        </div>
+        </form>
       </header>
 
       <main className="flex-1 overflow-y-auto">
-        {!inputValue ? (
+        {/* STATE 1: INPUT KOSONG (Riwayat & Populer) */}
+        {!inputValue && !showResults && (
           <div className="py-2">
-            {/* Riwayat Pencarian */}
             {history.length > 0 && (
               <section className="mb-6 px-4">
                 <div className="flex items-center justify-between py-3">
                   <h2 className="text-[13px] font-bold text-gray-900">Riwayat Pencarian</h2>
-                  <button onClick={clearHistory} className="text-[11px] font-bold text-red-500">Hapus Semua</button>
+                  <button onClick={() => { setHistory([]); localStorage.removeItem('marpay_search_history'); }} className="text-[11px] font-bold text-red-500">Hapus Semua</button>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {history.map((h) => (
                     <div
                       key={h}
-                      onClick={() => setInputValue(h)}
-                      className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 border border-gray-100 rounded-lg text-xs font-medium text-gray-600 active:bg-gray-100"
+                      onClick={() => handleConfirmSearch(h)}
+                      className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 border border-gray-100 rounded-lg text-xs font-medium text-gray-600 active:bg-gray-100 cursor-pointer"
                     >
-                      <History className="w-3 h-3 text-gray-400" />
+                      <Clock className="w-3 h-3 text-gray-400" />
                       {h}
-                      <button onClick={(e) => removeHistoryItem(e, h)} className="p-0.5 hover:text-red-500">
+                      <button onClick={(e) => removeHistoryItem(e, h)} className="p-0.5 hover:text-red-500 ml-1">
                         <X className="w-2.5 h-2.5" />
                       </button>
                     </div>
@@ -155,7 +180,6 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
               </section>
             )}
 
-            {/* Pencarian Populer */}
             <section className="mb-6 px-4">
               <div className="flex items-center gap-2 py-3">
                 <TrendingUp className="w-4 h-4 text-orange-500" />
@@ -165,7 +189,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                 {popularKeywords.map((kw) => (
                   <button
                     key={kw}
-                    onClick={() => setInputValue(kw)}
+                    onClick={() => handleConfirmSearch(kw)}
                     className="px-4 py-2 bg-white border border-gray-100 rounded-full text-xs font-medium text-gray-700 shadow-sm active:border-primary active:text-primary transition-all"
                   >
                     {kw}
@@ -174,7 +198,6 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
               </div>
             </section>
 
-            {/* Kategori Terpopuler */}
             <section className="mb-6 px-4">
               <div className="flex items-center gap-2 py-3">
                 <LayoutGrid className="w-4 h-4 text-primary" />
@@ -184,7 +207,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                 {popularCategories.map((cat) => (
                   <button
                     key={cat.name}
-                    onClick={() => setInputValue(cat.name)}
+                    onClick={() => handleConfirmSearch(cat.name)}
                     className="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-transparent active:border-primary/20 transition-all"
                   >
                     <span className="text-xs font-bold text-gray-800">{cat.name}</span>
@@ -193,58 +216,86 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                 ))}
               </div>
             </section>
-
-            {/* Rekomendasi Horizontal */}
-            <section className="mt-8 border-t border-gray-50 pt-4">
-              <div className="flex items-center justify-between px-4 mb-3">
-                <div className="flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-yellow-500" />
-                  <h2 className="text-[13px] font-bold text-gray-900">Rekomendasi Untukmu</h2>
-                </div>
-              </div>
-              <div className="flex gap-3 overflow-x-auto no-scrollbar px-4 pb-4">
-                {recommendations.map((product) => (
-                  <div key={product.id} className="min-w-[140px] max-w-[140px]">
-                    <ProductCard product={product} compact={true} />
-                  </div>
-                ))}
-              </div>
-            </section>
           </div>
-        ) : (
-          <div className="p-4">
-            {searchResults.length > 0 ? (
-              <div className="space-y-4">
-                <div className="flex items-center justify-between pb-2 border-b border-gray-50">
-                  <h2 className="text-sm font-bold text-gray-500">
-                    Hasil untuk <span className="text-primary font-black">"{inputValue}"</span>
-                  </h2>
-                  <span className="text-[10px] font-bold text-gray-400">{searchResults.length} Produk</span>
+        )}
+
+        {/* STATE 2: SUGGESTION LIST (Saat Mengetik) */}
+        {inputValue && !showResults && (
+          <div className="bg-white">
+            {suggestions.length > 0 ? (
+              suggestions.map((item, idx) => (
+                <div 
+                  key={idx}
+                  onClick={() => handleConfirmSearch(item)}
+                  className="px-4 py-4 border-b border-gray-50 flex items-center justify-between active:bg-gray-50 cursor-pointer"
+                >
+                  <div className="flex items-center gap-3">
+                    <Search className="w-4 h-4 text-gray-300" />
+                    <span className="text-sm text-gray-700">{item}</span>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-gray-200" />
                 </div>
+              ))
+            ) : (
+              <div 
+                onClick={() => handleConfirmSearch(inputValue)}
+                className="px-4 py-4 border-b border-gray-50 flex items-center justify-between active:bg-gray-50 cursor-pointer"
+              >
+                <div className="flex items-center gap-3">
+                  <Search className="w-4 h-4 text-primary" />
+                  <span className="text-sm font-bold text-primary">Cari "{inputValue}"</span>
+                </div>
+                <ChevronRight className="w-4 h-4 text-primary" />
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* STATE 3: HASIL PRODUK (Setelah Confirm) */}
+        {showResults && (
+          <div className="flex flex-col h-full bg-gray-50">
+            {/* Sorting Tabs */}
+            <div className="bg-white border-b border-gray-100 flex items-center sticky top-0 z-20">
+              {(['semua', 'terlaris', 'harga_rendah', 'terbaru'] as const).map((opt) => (
+                <button
+                  key={opt}
+                  onClick={() => setActiveSort(opt)}
+                  className={cn(
+                    "flex-1 py-3 text-[11px] font-bold uppercase tracking-wider transition-all border-b-2",
+                    activeSort === opt ? "text-primary border-primary" : "text-gray-400 border-transparent"
+                  )}
+                >
+                  {opt === 'harga_rendah' ? 'Harga' : opt}
+                </button>
+              ))}
+            </div>
+
+            <div className="p-4 flex-1">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xs font-bold text-gray-500 uppercase tracking-tight">
+                  Hasil untuk <span className="text-primary">"{confirmedQuery}"</span>
+                </h2>
+                <span className="text-[10px] font-bold text-gray-400">{finalResults.length} Produk</span>
+              </div>
+
+              {finalResults.length > 0 ? (
                 <div className="grid grid-cols-2 gap-3">
-                  {searchResults.map((product) => (
+                  {finalResults.map((product) => (
                     <ProductCard key={product.id} product={product} />
                   ))}
                 </div>
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center py-32 text-center">
-                <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mb-6">
-                  <Search className="w-10 h-10 text-gray-200" />
+              ) : (
+                <div className="flex flex-col items-center justify-center py-20 text-center">
+                  <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mb-6 shadow-sm">
+                    <Search className="w-10 h-10 text-gray-100" />
+                  </div>
+                  <h3 className="text-sm font-bold text-gray-900">Produk tidak ditemukan</h3>
+                  <p className="text-[10px] text-gray-400 mt-1 max-w-[200px] leading-relaxed">
+                    Coba gunakan kata kunci lain yang lebih umum atau cek ejaanmu ya.
+                  </p>
                 </div>
-                <h3 className="text-base font-bold text-gray-900">Wah, produk tidak ditemukan</h3>
-                <p className="text-[11px] text-gray-400 mt-1.5 max-w-[200px] mx-auto leading-relaxed">
-                  Coba gunakan kata kunci lain yang lebih umum atau cek ejaanmu ya.
-                </p>
-                <Button 
-                  variant="outline" 
-                  onClick={() => setInputValue('')}
-                  className="mt-8 rounded-xl px-8 h-11 border-primary/20 text-primary text-xs font-bold"
-                >
-                  Hapus Pencarian
-                </Button>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         )}
       </main>
