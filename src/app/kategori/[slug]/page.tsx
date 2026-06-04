@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
@@ -11,7 +10,7 @@ import { BottomNav } from '@/components/bottom-nav';
 export default function GenericCategoryPage() {
   const params = useParams();
   const router = useRouter();
-  const slug = params?.slug as string;
+  const slug = params?.slug ? decodeURIComponent(params.slug as string) : '';
 
   const categoryNameMap: Record<string, string> = {
     'kecantikan': 'Kecantikan',
@@ -19,20 +18,21 @@ export default function GenericCategoryPage() {
     'elektronik': 'Elektronik',
     'voucher': 'Voucher',
     'hobi': 'Hobi',
-    'aksesoris-hp': 'Aksesoris HP'
+    'aksesoris-hp': 'Aksesoris hp',
+    'aksesoris hp': 'Aksesoris hp'
   };
 
-  const displayName = categoryNameMap[slug] || slug;
+  const displayName = categoryNameMap[slug.toLowerCase()] || slug;
   
   const filteredProducts = Products.filter(p => 
     p.category?.toLowerCase() === slug.toLowerCase() ||
     p.category?.toLowerCase() === displayName.toLowerCase() ||
-    (slug === 'kecantikan' && (p.category === 'Skincare' || p.category === 'Kecantikan'))
+    (slug.toLowerCase() === 'kecantikan' && (p.category === 'Skincare' || p.category === 'Kecantikan'))
   );
 
   const getEmptyMessage = () => {
-    if (slug === 'elektronik') return "Belum ada produk elektronik.";
-    if (slug === 'voucher') return "Voucher belum tersedia.";
+    if (slug.toLowerCase() === 'elektronik') return "Belum ada produk elektronik.";
+    if (slug.toLowerCase() === 'voucher') return "Voucher belum tersedia.";
     return `Belum ada produk di kategori ${displayName}.`;
   };
 
