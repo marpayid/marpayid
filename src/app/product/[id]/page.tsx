@@ -74,7 +74,7 @@ export default function ProductDetail() {
 
   // Custom Description Override for BIOAQUA
   const displayDescription = product.id === 1 
-    ? "BIOAQUA Skincare 1 Set Lengkap 6pcs hadir dengan pilihan Whitening Set dan Anti-Acne Set. Cocok untuk perawatan wajah harian agar kulit terlihat lebih bersih, segar, dan terawat. Produk dikemas rapi dan siap dikirim."
+    ? "BIOAQUA Skincare 1 Set Lengkap 6pcs hadir dengan pilihan Whitening Set and Anti-Acne Set. Cocok untuk perawatan wajah harian agar kulit terlihat lebih bersih, segar, dan terawat. Produk dikemas rapi dan siap dikirim."
     : product.description;
 
   const handleAction = (redirect = false) => {
@@ -128,10 +128,19 @@ export default function ProductDetail() {
             {product.isFlashSale && <Badge className="bg-red-600 text-white text-[10px] uppercase">🔥 Flash Sale</Badge>}
           </div>
           <h1 className="text-md font-medium text-gray-800 mb-2 leading-tight">{product.name}</h1>
+          
+          {/* RATING & REVIEWS AREA */}
           <div className="flex items-center gap-3 mb-4 text-xs text-gray-500">
-            <div className="flex items-center gap-1"><Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />{product.rating}</div>
-            <div className="h-3 w-px bg-gray-200" />{formatSold(product.sold || 0)}
+            <div className="flex items-center gap-1">
+              <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
+              <span className="font-bold text-gray-700">{product.rating}</span>
+            </div>
+            <div className="h-3 w-px bg-gray-200" />
+            <span>{product.reviews || '0'} Ulasan</span>
+            <div className="h-3 w-px bg-gray-200" />
+            <span>{formatSold(product.sold || 0)}</span>
           </div>
+
           <div className="flex items-end gap-2">
             <span className="text-2xl font-bold text-primary">Rp {currentPrice.toLocaleString()}</span>
             {product.originalPrice && <span className="text-sm text-gray-400 line-through mb-1">Rp {product.originalPrice.toLocaleString()}</span>}
