@@ -319,7 +319,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
 
             <div className="flex-1">
               {finalResults.length > 0 ? (
-                <div className="p-4 grid grid-cols-2 gap-4 items-start justify-items-stretch">
+                <div className="p-3 grid grid-cols-2 gap-3 items-start justify-items-stretch">
                   {finalResults.map((product) => (
                     <div key={product.id} className="w-full">
                       <ProductCard product={product} />
