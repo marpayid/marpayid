@@ -175,6 +175,7 @@ export default function Home() {
 
         <CategoryMenu />
         <FlashSale />
+        <VoucherSection />
 
         <section className="bg-white py-4 px-4">
           <h2 className="text-base font-bold text-gray-900 mb-3">Rekomendasi Untukmu</h2>
@@ -210,8 +211,6 @@ export default function Home() {
             </TabsContent>
           </Tabs>
         </section>
-
-        <VoucherSection />
       </main>
       <BottomNav />
     </div>
