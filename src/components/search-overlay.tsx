@@ -308,29 +308,20 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
             </div>
 
             {/* Result Info Card */}
-            <div className="px-4 py-3 bg-white border-b border-gray-50 flex items-center justify-between">
+            <div className="px-4 py-3 bg-white border-b border-gray-50">
               <div className="flex flex-col">
-                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Hasil Pencarian</p>
+                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Hasil pencarian</p>
                 <h2 className="text-[13px] font-bold text-gray-800 line-clamp-1">
                   &ldquo;<span className="text-primary">{confirmedQuery}</span>&rdquo;
                 </h2>
-              </div>
-              <div className="bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100">
-                <span className="text-[10px] font-black text-gray-500 uppercase">{finalResults.length} Produk</span>
               </div>
             </div>
 
             <div className="flex-1">
               {finalResults.length > 0 ? (
-                <div className={cn(
-                  "p-4",
-                  finalResults.length === 1 ? "flex justify-center" : "grid grid-cols-2 gap-3"
-                )}>
+                <div className="p-4 grid grid-cols-2 gap-4 items-start justify-items-stretch">
                   {finalResults.map((product) => (
-                    <div 
-                      key={product.id} 
-                      className={cn(finalResults.length === 1 ? "w-[175px]" : "w-full")}
-                    >
+                    <div key={product.id} className="w-full">
                       <ProductCard product={product} />
                     </div>
                   ))}
