@@ -304,6 +304,35 @@ Toleransi ukuran 1-2 cm karena proses jahit`,
     description: 'Sunscreen gel (chemical sunscreen) yang ringan dan dingin di kulit, diformulasikan khusus untuk kulit berminyak, berjerawat, dan sensitif. Mengandung Anti-Acne Active untuk menenangkan kulit dan mengontrol sebum berlebih.',
   },
   {
+    id: 208,
+    name: 'Wardah UV Shield Acne Calming Sunscreen Serum SPF 50 PA++++',
+    price: 28000,
+    originalPrice: 49900,
+    rating: 4.9,
+    reviews: '10rb+',
+    sold: 50000,
+    category: 'Kecantikan',
+    image: '/wardah1.png',
+    isFlashSale: true,
+    discount: '44%',
+    stock: 'Tersedia',
+    tag: 'Produk Viral',
+    variants: ['Acne Calming SPF50 25ml', 'Acne Calming SPF35 35ml', 'Acne Calming SPF50 40ml'],
+    shippingFee: 8000,
+    priceRange: 'Rp 28.000 - Rp 45.000',
+    description: `Wardah UV Shield Acne Calming Sunscreen Serum SPF 50 PA++++ merupakan sunscreen serum dengan perlindungan tinggi yang diformulasikan khusus untuk kulit berminyak dan rentan berjerawat. Membantu melindungi kulit dari sinar UVA, UVB, blue light, dan polusi sekaligus memberikan efek menenangkan pada kulit.
+
+Keunggulan:
+• SPF 50 PA++++
+• Ringan dan cepat meresap
+• No White Cast
+• Non Comedogenic
+• Non Acnegenic
+• Cocok untuk kulit berminyak dan berjerawat
+• Membantu menjaga skin barrier
+• Nyaman digunakan sehari-hari`,
+  },
+  {
     id: 101,
     name: 'Canva Pro - Akun Premium Aktif 1 Bulan Full Garansi',
     price: 12000,

@@ -34,6 +34,13 @@ export default function ProductDetail() {
 
   const currentPrice = useMemo(() => {
     if (!product) return 0;
+    
+    // Special Pricing Logic for Wardah (ID: 208)
+    if (product.id === 208) {
+      if (selectedVariant === 2) return 45000; // Acne Calming SPF50 40ml
+      return 28000; // default for SPF50 25ml and SPF35 35ml
+    }
+    
     // Special Pricing Logic for Everyday Pants (ID: 203)
     if (product.id === 203) {
       if (selectedVariant === 1) return 63102; // Jumbo

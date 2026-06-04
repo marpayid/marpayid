@@ -35,7 +35,7 @@ export default function Home() {
   // Section 2: Rekomendasi Untukmu (Independen - Daftar pilihan prioritas)
   const recommendationList = useMemo(() => {
     // Daftar ID produk yang diutamakan muncul di baris awal Rekomendasi
-    const priorityIds = [207, 206, 205, 3, 1, 6, 201, 204, 203];
+    const priorityIds = [208, 207, 206, 205, 3, 1, 6, 201, 204, 203];
     
     // Ambil item prioritas secara urut berdasarkan daftar ID di atas
     const priorityItems = priorityIds
