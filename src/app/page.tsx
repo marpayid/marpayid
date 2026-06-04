@@ -181,8 +181,8 @@ export default function Home() {
             {/* Kartu Promosi Fashion/Beauty */}
             <FashionDiscoveryCard />
             
-            {/* Baris 3-4: 4 produk berikutnya (Kapasitas ditambah menjadi total 8) */}
-            {recommendationList.slice(4, 8).map((p) => <ProductCard key={p.id} product={p} />)}
+            {/* Produk berikutnya (Tampil semua agar produk lama tidak hilang saat produk baru diupload) */}
+            {recommendationList.slice(4).map((p) => <ProductCard key={p.id} product={p} />)}
           </div>
         </section>
 
