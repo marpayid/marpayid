@@ -30,9 +30,9 @@ export default function Home() {
 
   const viralProducts = Products.filter(p => p.tag === 'Produk Viral');
   
-  // Rekomendasi: Wispie (ID: 3) harus pertama, Akrilik (ID: 2) dihapus dari Recs
+  // Rekomendasi: Wispie (ID: 3) harus pertama, Akrilik (ID: 2) tetap dihapus dari Recs
   const wispie = Products.find(p => p.id === 3);
-  const otherRecs = Products.filter(p => p.id !== 3 && p.id !== 2 && p.id !== 6);
+  const otherRecs = Products.filter(p => p.id !== 3 && p.id !== 2);
   const recommendationList = wispie ? [wispie, ...otherRecs] : otherRecs;
 
   return (
