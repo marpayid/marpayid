@@ -10,7 +10,7 @@ import { ProductCard, FashionDiscoveryCard } from '@/components/product-grid';
 import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from '@/components/ui/carousel';
 import { Banners, Products } from '@/app/lib/dummy-data';
 import { cn } from '@/lib/utils';
-import { Smartphone, Gamepad2, CreditCard, Package, Truck, Tag, Zap, Wallet, QrCode } from 'lucide-react';
+import { Smartphone, Gamepad2, CreditCard, Package, Truck, Tag, Zap, Wallet, QrCode, ShoppingBag as ShoppingBagIcon } from 'lucide-react';
 import { PromotionalCards } from '@/components/promotional-cards';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { VoucherSection } from '@/components/voucher-section';
@@ -87,28 +87,32 @@ export default function Home() {
                           </div>
                         </div>
                       ) : (
-                        <div className="relative w-full h-full flex items-end justify-end pb-4 pr-4">
-                          {/* 3D Package Look - Resized to 60% (from w-28 to w-16) */}
-                          <div className="relative w-16 h-16 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 shadow-[0_15px_35px_rgba(0,0,0,0.15)] flex items-center justify-center animate-float z-10">
-                             <Package className="w-8 h-8 text-white/30" />
-                             
-                             {/* Resized Glass Tag - 60% Scale */}
-                             <div className="absolute -top-3 -right-1.5 w-10 h-6 bg-orange-500/80 backdrop-blur-lg rounded-lg border border-white/30 shadow-lg rotate-12 flex items-center justify-center">
-                               <Tag className="w-3 h-3 text-white" />
-                             </div>
-                          </div>
-                          
-                          {/* Resized Shipping Visual - 60% Scale & More Glassmorphism */}
-                          <div className="absolute bottom-0 right-1.5 w-20 h-10 bg-white/10 backdrop-blur-xl rounded-xl border border-white/20 rotate-[-4deg] flex items-center px-2.5 gap-2 shadow-xl z-20">
-                             <Truck className="w-3.5 h-3.5 text-white/60" />
-                             <div className="space-y-1 flex-1">
-                               <div className="w-full h-0.5 bg-white/30 rounded-full"></div>
-                               <div className="w-1/2 h-0.5 bg-white/20 rounded-full"></div>
-                             </div>
+                        <div className="relative w-full h-full flex items-center justify-center">
+                          {/* Subtle Glow */}
+                          <div className="absolute right-4 top-1/2 -translate-y-1/2 w-32 h-32 bg-white/10 blur-[40px] rounded-full"></div>
+
+                          {/* 3D Shopping Bag - Premium Large & Clear */}
+                          <div className="absolute top-1/2 right-6 -translate-y-1/2 w-[95px] h-[115px] bg-white/15 backdrop-blur-2xl border border-white/30 rounded-[24px] shadow-[0_20px_45px_rgba(0,0,0,0.2)] rotate-[-8deg] flex flex-col items-center justify-center z-20 animate-float">
+                             {/* Handle visual */}
+                             <div className="absolute -top-4 w-10 h-8 border-[3px] border-white/25 rounded-t-full"></div>
+                             <ShoppingBagIcon className="w-10 h-10 text-white drop-shadow-[0_4px_10px_rgba(0,0,0,0.3)]" />
+                             <div className="mt-3 w-8 h-1 bg-white/20 rounded-full"></div>
                           </div>
 
-                          {/* Depth Glow Effect */}
-                          <div className="absolute bottom-0 right-0 w-20 h-20 bg-white/5 blur-3xl rounded-full pointer-events-none"></div>
+                          {/* 3D Package Box - Overlapping front right */}
+                          <div className="absolute bottom-4 right-0 w-16 h-16 bg-white/20 backdrop-blur-xl rounded-2xl border border-white/40 shadow-2xl rotate-[12deg] flex items-center justify-center z-30 animate-float-reverse">
+                             <Package className="w-8 h-8 text-white/80 drop-shadow-md" />
+                          </div>
+
+                          {/* 3D Discount Tag - Top Right */}
+                          <div className="absolute top-6 right-2 w-9 h-9 bg-gradient-to-br from-orange-400 to-red-500 rounded-xl border border-white/30 shadow-lg rotate-[15deg] flex items-center justify-center z-30 animate-float">
+                             <Tag className="w-4.5 h-4.5 text-white" />
+                          </div>
+
+                          {/* Small Floating Truck Icon */}
+                          <div className="absolute top-1/2 right-0 -translate-y-12 w-8 h-8 bg-emerald-500/60 backdrop-blur-md rounded-lg border border-white/20 shadow-lg rotate-[-12deg] flex items-center justify-center z-10 animate-float">
+                             <Truck className="w-4 h-4 text-white" />
+                          </div>
                         </div>
                       )}
                     </div>
