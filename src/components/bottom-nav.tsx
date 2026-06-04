@@ -40,7 +40,10 @@ export function BottomNav() {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-[100] bg-white border-t border-gray-100 px-2 pt-2.5 pb-5 flex items-center shadow-[0_-4px_12px_rgba(0,0,0,0.05)] w-full transition-transform">
+    <nav 
+      className="fixed bottom-0 left-0 right-0 z-[999] bg-white border-t border-gray-100 px-2 pt-3 flex items-center shadow-[0_-4px_20px_rgba(0,0,0,0.06)] w-full transition-all"
+      style={{ paddingBottom: 'calc(1.25rem + env(safe-area-inset-bottom, 0px))' }}
+    >
       {navItems.map((item) => {
         const isActive = pathname === item.path;
         return (
@@ -48,7 +51,7 @@ export function BottomNav() {
             key={item.label}
             href={item.path}
             className={cn(
-              "flex-1 flex flex-col items-center justify-center gap-1 transition-all duration-300",
+              "flex-1 flex flex-col items-center justify-center gap-1.5 transition-all duration-300",
               isActive ? "text-primary scale-105" : "text-gray-400 hover:text-gray-500"
             )}
           >
