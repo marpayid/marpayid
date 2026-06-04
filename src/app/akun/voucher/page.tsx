@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Ticket, Truck, AlertCircle, ChevronRight, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { Vouchers } from '@/app/lib/dummy-data';
@@ -58,55 +57,55 @@ export default function MyVouchersPage() {
         </div>
 
         {activeTab === 'available' ? (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {Vouchers.filter(v => v.active).map((v) => {
               const IconComponent = (LucideIcons as any)[v.icon] || Ticket;
               
               return (
-                <div key={v.id} className="relative bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden flex flex-col group">
-                  <div className="p-5 flex gap-4">
-                     <div className={cn("w-14 h-14 rounded-2xl flex items-center justify-center shrink-0", v.bgColor, v.color)}>
-                        <IconComponent className="w-7 h-7" />
-                     </div>
-                     <div className="flex-1 min-w-0">
-                        <h3 className="text-sm font-black text-gray-900 leading-tight uppercase tracking-tight">{v.title}</h3>
-                        <p className="text-[11px] text-gray-500 font-medium mt-1">{v.description}</p>
-                        
-                        <div className="flex flex-wrap gap-2 mt-3">
-                           <span className="bg-gray-50 text-gray-500 text-[8px] font-black px-2 py-0.5 rounded border border-gray-100 uppercase">{v.minSpend}</span>
-                           <span className="bg-gray-50 text-gray-500 text-[8px] font-black px-2 py-0.5 rounded border border-gray-100 uppercase">{v.benefit}</span>
-                        </div>
-                     </div>
+                <div key={v.id} className="relative bg-white h-[100px] rounded-xl border border-gray-100 shadow-sm overflow-hidden flex transition-all">
+                  {/* Left part (Ticket Stub) */}
+                  <div className={cn("w-20 flex flex-col items-center justify-center gap-1 border-r border-dashed border-gray-100 relative", v.color, v.bgColor)}>
+                    <IconComponent className="w-7 h-7" />
+                    <span className="text-[7px] font-black uppercase text-center leading-none px-1">{v.badge.replace('🚚 ', '').replace('🎟️ ', '')}</span>
+                    
+                    {/* Cutouts for dashed line effect */}
+                    <div className="absolute top-[-6px] right-[-6.5px] w-3.5 h-3.5 bg-gray-50 rounded-full border border-gray-100 z-10"></div>
+                    <div className="absolute bottom-[-6px] right-[-6.5px] w-3.5 h-3.5 bg-gray-50 rounded-full border border-gray-100 z-10"></div>
                   </div>
                   
-                  <div className="px-5 py-3 bg-gray-50/50 border-t border-dashed border-gray-100 flex items-center justify-between">
-                     <div className="flex items-center gap-1.5 text-[9px] font-bold text-gray-400 italic">
-                        <AlertCircle className="w-3 h-3" />
-                        Valid s/d {v.expiry}
-                     </div>
-                     <button 
-                      onClick={() => handleUseVoucher(v.code)}
-                      className="flex items-center gap-1 text-[10px] font-black text-primary hover:underline uppercase"
-                     >
-                       Gunakan <ChevronRight className="w-3 h-3" />
-                     </button>
+                  {/* Main part (Info) */}
+                  <div className="flex-1 p-3 flex flex-col justify-center min-w-0">
+                    <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter truncate">{v.title}</h3>
+                    <p className="text-sm font-black text-gray-900 leading-tight mt-0.5">{v.benefit}</p>
+                    
+                    <div className="flex items-center gap-1.5 mt-2">
+                      <span className="text-[8px] font-bold text-gray-500 bg-gray-50 px-1.5 py-0.5 rounded border border-gray-100">{v.minSpend}</span>
+                      <span className="text-[8px] font-bold text-primary italic">Valid s/d {v.expiry}</span>
+                    </div>
                   </div>
-
-                  {/* Ticket Cutouts */}
-                  <div className="absolute top-1/2 -translate-y-1/2 left-[-10px] w-5 h-5 bg-gray-50 rounded-full border border-gray-100 z-10 shadow-inner"></div>
-                  <div className="absolute top-1/2 -translate-y-1/2 right-[-10px] w-5 h-5 bg-gray-50 rounded-full border border-gray-100 z-10 shadow-inner"></div>
+                  
+                  {/* Action part (Button) */}
+                  <div className="w-20 flex items-center justify-center p-2">
+                    <button 
+                      onClick={() => handleUseVoucher(v.code)}
+                      className="w-full h-14 bg-primary/5 text-primary text-[10px] font-black uppercase rounded-lg border border-primary/10 flex items-center justify-center hover:bg-primary hover:text-white transition-all shadow-sm"
+                    >
+                      Pakai
+                    </button>
+                  </div>
                 </div>
               );
             })}
             
-            <div className="pt-6 text-center">
-               <p className="text-[10px] text-gray-400 font-medium">Anda telah melihat semua voucher tersedia.</p>
+            <div className="pt-8 text-center">
+               <div className="w-10 h-1 h-px bg-gray-200 mx-auto mb-4"></div>
+               <p className="text-[10px] text-gray-400 font-medium">Anda telah melihat semua voucher harian.</p>
             </div>
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center py-32 text-center opacity-40">
-            <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center text-gray-400 mb-6">
-              <Ticket className="w-12 h-12" />
+            <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center text-gray-400 mb-6">
+              <Ticket className="w-10 h-10" />
             </div>
             <h3 className="text-sm font-bold text-gray-900">Belum ada riwayat voucher</h3>
             <p className="text-[10px] text-gray-500 mt-1 max-w-[200px]">
