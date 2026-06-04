@@ -35,8 +35,8 @@ export default function Home() {
   // Section 2: Rekomendasi Untukmu (Independen - Daftar pilihan prioritas)
   const recommendationList = useMemo(() => {
     // Daftar ID produk yang diutamakan muncul di baris awal Rekomendasi
-    // 205: Alba Top (New), 3: Wispie, 1: BIOAQUA, 6: Hoodie, 201: Case Clear, 204: Kemeja Fitted
-    const priorityIds = [205, 3, 1, 6, 201, 204, 203];
+    // 206: BETTERHALF Celana, 205: Alba Top, 3: Wispie, 1: BIOAQUA, 6: Hoodie, 201: Case Clear, 204: Kemeja Fitted
+    const priorityIds = [206, 205, 3, 1, 6, 201, 204, 203];
     
     // Ambil item prioritas secara urut berdasarkan daftar ID di atas
     const priorityItems = priorityIds

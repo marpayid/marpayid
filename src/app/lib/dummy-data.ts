@@ -12,6 +12,44 @@ export const Categories = [
 
 export const Products = [
   {
+    id: 206,
+    name: 'BETTERHALF Celana Pendek Pria Polos Short Pants Boardshort - Black',
+    price: 47320,
+    rating: 4.9,
+    reviews: '6.2rb+',
+    sold: 10000,
+    category: 'Fashion',
+    image: '/celana1.png',
+    isFlashSale: true,
+    stock: 'Tersedia',
+    tag: 'Produk Viral',
+    variants: ['M', 'L', 'XL'],
+    shippingFee: 5000,
+    description: `BETTERHALF Celana Pendek Cowo Polos Short Pants Boardshort - Black
+
+Material :
+* ﻿﻿Parasut
+* ﻿﻿Tali Serut
+* ﻿﻿Karet Pinggang
+
+Info Pengiriman :
+* ﻿﻿Pengiriman setiap hari pukul 13.00 WIB. (Hari minggu
+* libur / tidak ada pengiriman)
+* ﻿﻿Mohon selesaikan pembayaran sebelum jam 13.00 akan diproses hari yang sama.
+
+Kebijakan Pembeli :
+* ﻿﻿Memastikan ukuran sebelum melakukan pembayaran.
+* ﻿﻿Untuk detail ukuran produk silahkan cek di table ukuran yang tersedia.
+* ﻿﻿Pesanan yang sudah masuk tidak dapat dibatalkan.
+* ﻿﻿Pastikan alamat sudah sesuai, karena pesanan yang sudah masuk tidak bisa diubah kembali.
+
+Kebijakan Pengembalian :
+* ﻿﻿Tidak menerima penukaran size, dimohon untuk memastikan ukuran produk sebelum transaksi.
+* ﻿﻿Hanya menerima penukaran produk yang terdapat kerusakan, cacat dan salah pengiriman dengan menyertakan video unboxing.
+
+Terima kasih.`,
+  },
+  {
     id: 205,
     name: 'Kemeja Wanita Salur Alba Top – Stripe Fitted Shirt Slim Fit Lengan Pendek Casual Kantor Korean Style',
     price: 59999,
