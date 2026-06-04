@@ -54,7 +54,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="bg-gray-50 pb-14">
+    <div className="bg-gray-50 pb-12">
       <TopSearch />
       <main className="pt-16 space-y-2">
         {/* Banner Section with Indicators */}
@@ -175,7 +175,6 @@ export default function Home() {
 
         <CategoryMenu />
         <FlashSale />
-        <VoucherSection />
 
         <section className="bg-white py-4 px-4">
           <h2 className="text-base font-bold text-gray-900 mb-3">Rekomendasi Untukmu</h2>
@@ -211,6 +210,8 @@ export default function Home() {
             </TabsContent>
           </Tabs>
         </section>
+
+        <VoucherSection />
       </main>
       <BottomNav />
     </div>
