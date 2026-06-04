@@ -12,6 +12,25 @@ export const Categories = [
 
 export const Products = [
   {
+    id: 205,
+    name: 'Kemeja Wanita Salur Alba Top – Stripe Fitted Shirt Slim Fit Lengan Pendek Casual Kantor Korean Style',
+    price: 59999,
+    originalPrice: 89000,
+    rating: 4.9,
+    reviews: '630',
+    sold: 8000,
+    category: 'Fashion',
+    image: '/fitted2.png',
+    isFlashSale: true,
+    discount: '33%',
+    stock: 'Tersedia',
+    tag: 'Produk Viral',
+    variants: ['S-M', 'L-XL'],
+    colors: ['Hitam🔥', 'Grey', 'Putih', 'Maroon', 'Mahogany', 'Navy'],
+    shippingFee: 0,
+    description: `Alba Top Kemeja Wanita Salur dengan desain Stripe Fitted Shirt Slim Fit. Model casual cocok untuk kantor maupun gaya Korean Style. Bahan premium yang nyaman dan tidak menerawang, memberikan kesan ramping (press body) yang tetap elegan.`,
+  },
+  {
     id: 201,
     name: 'Case iPhone Clear MagSafe Premium Anti Shock Transparan',
     price: 14899,
