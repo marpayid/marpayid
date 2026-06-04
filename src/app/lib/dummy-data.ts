@@ -79,6 +79,44 @@ export const Products = [
     description: `Everyday Stripe Pants merupakan celana wanita model baggy kulot premium dengan motif garis pinstripe yang cocok digunakan untuk kuliah, kerja, kantor, jalan-jalan, maupun aktivitas sehari-hari. Menggunakan bahan yang nyaman, adem, tidak menerawang, dan memiliki potongan loose fit sehingga tetap stylish digunakan sepanjang hari.`,
   },
   {
+    id: 204,
+    name: 'Kemeja Wanita Fitted Luna Stripe Atasan Salur Korean Style Terbaru',
+    price: 59000,
+    originalPrice: 89000,
+    rating: 4.9,
+    reviews: '154',
+    sold: 1200,
+    category: 'Fashion',
+    image: '/fitted1.png',
+    isFlashSale: true,
+    discount: '34%',
+    stock: 'Tersedia',
+    tag: 'Produk Viral',
+    variants: ['M', 'L', 'XL'],
+    colors: ['Choco Stripe'],
+    shippingFee: 0,
+    description: `Luna Stipe Kemeja Fitted
+bahan SemiWoll Stripe
+Bagian belakang terdapat tali sabuk bisa di adjust untuk
+menyesuaikan bentuk tubuh / slimfit ( press body)
+Model fitted slimfit yang menyesuaikan bentuk tubuh Lengan panjang yang cocok untuk acara formal maupun
+santai
+
+Detail Ukuran
+(M-L)
+Lingkar Dada 100cm
+Panjang Baju 60cm
+Panjang Lengan -+ 55cm
+(XL)
+Lingkar Dada 110 cm
+Panjang Baju 65cm
+Panjang Lengan -+ 55cm
+
+Note : Warna yg agak sedikit berbeda karena efek
+cahaya
+Toleransi ukuran 1-2 cm karena proses jahit`,
+  },
+  {
     id: 3,
     name: 'Wispie Money Magnet Fitted Shirt | Kemeja Kerja Wanita Press Body Pinstripe Salur Pink',
     price: 132000,
