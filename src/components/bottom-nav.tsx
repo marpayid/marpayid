@@ -2,7 +2,7 @@
 "use client"
 
 import { useState, useEffect } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { Home, LayoutGrid, ShoppingBag, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -46,8 +46,8 @@ export function BottomNav() {
         paddingBottom: 'env(safe-area-inset-bottom)' 
       }}
     >
-      {/* Container menu dengan pt-3 untuk menggeser isi menu ke bawah agar lebih seimbang */}
-      <div className="flex items-center w-full h-[52px] px-1 pt-3">
+      {/* Container menu dengan pt-1.5 untuk merapatkan ruang kosong di atas ikon sesuai instruksi */}
+      <div className="flex items-center w-full h-[52px] px-1 pt-1.5">
         {navItems.map((item) => {
           const isActive = pathname === item.path;
           return (
