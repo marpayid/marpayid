@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect } from 'react';
@@ -9,7 +10,7 @@ import { ProductCard, FashionDiscoveryCard } from '@/components/product-grid';
 import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from '@/components/ui/carousel';
 import { Banners, Products } from '@/app/lib/dummy-data';
 import { cn } from '@/lib/utils';
-import { Smartphone, Gamepad2, CreditCard, Package, Truck, Tag, Zap, Wallet } from 'lucide-react';
+import { Smartphone, Gamepad2, CreditCard, Package, Truck, Tag, Zap, Wallet, QrCode } from 'lucide-react';
 import { PromotionalCards } from '@/components/promotional-cards';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { VoucherSection } from '@/components/voucher-section';
@@ -50,41 +51,60 @@ export default function Home() {
                   )}>
                     
                     {/* PREMIUM 3D VISUAL ILLUSTRATIONS */}
-                    <div className="absolute right-0 top-0 bottom-0 w-[40%] flex items-center justify-center pointer-events-none select-none z-0">
+                    <div className="absolute right-0 top-0 bottom-0 w-[42%] flex items-center justify-center pointer-events-none select-none z-0">
                       {banner.type === 'digital' ? (
                         <div className="relative w-full h-full flex items-center justify-center">
-                          {/* 3D Smartphone Dark Premium */}
-                          <div className="relative w-20 h-40 bg-neutral-950 rounded-[28px] border-[3px] border-neutral-800 shadow-[10px_10px_30px_rgba(0,0,0,0.5)] rotate-[-12deg] flex items-center justify-center overflow-hidden animate-float">
-                             <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/10 via-transparent to-purple-500/10"></div>
-                             {/* Phone Details */}
-                             <div className="w-1 h-1 rounded-full bg-neutral-800 absolute top-2"></div>
-                             <div className="grid grid-cols-2 gap-1.5 p-3 w-full">
-                               {[1,2,3,4].map(i => (
-                                 <div key={i} className="aspect-square rounded-md bg-white/5 border border-white/5"></div>
+                          {/* 3D Smartphone - Realistic Deep Dark */}
+                          <div className="relative w-22 h-44 bg-[#0A0A0A] rounded-[32px] border-[4px] border-[#1A1A1A] shadow-[20px_20px_50px_rgba(0,0,0,0.6)] rotate-[-12deg] flex items-center justify-center overflow-hidden animate-float z-0">
+                             {/* Screen Reflection */}
+                             <div className="absolute inset-0 bg-gradient-to-tr from-white/10 via-transparent to-white/5"></div>
+                             {/* Screen App Grid Layout */}
+                             <div className="grid grid-cols-2 gap-2 p-4 w-full h-full items-start pt-10">
+                               {[1,2,3,4,5,6].map(i => (
+                                 <div key={i} className="aspect-square rounded-lg bg-white/5 border border-white/10 shadow-inner"></div>
                                ))}
                              </div>
+                             {/* Dynamic Notch */}
+                             <div className="absolute top-2 w-10 h-3 bg-[#1A1A1A] rounded-full flex items-center justify-center px-1">
+                                <div className="w-1 h-1 rounded-full bg-[#333]"></div>
+                             </div>
                           </div>
 
-                          {/* Glassmorphism E-Wallet Card */}
-                          <div className="absolute top-1/2 left-[-15px] -translate-y-1/2 w-32 h-20 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-[0_15px_35px_rgba(0,0,0,0.2)] rotate-[15deg] p-3 flex flex-col justify-between overflow-hidden z-10 animate-float-slow">
+                          {/* 3D Glassmorphism E-Wallet Card - Front Layer */}
+                          <div className="absolute top-1/2 left-[-10px] -translate-y-1/2 w-[140px] h-[85px] bg-white/10 backdrop-blur-2xl border border-white/30 rounded-2xl shadow-[0_25px_45px_rgba(0,0,0,0.3)] rotate-[15deg] p-3.5 flex flex-col justify-between overflow-hidden z-20 animate-float-slow">
                              <div className="flex justify-between items-start">
-                               <div className="w-7 h-7 rounded-full bg-gradient-to-br from-white/30 to-transparent backdrop-blur-md"></div>
-                               <Wallet className="w-4 h-4 text-white/60" />
+                               {/* Card Chip Visual */}
+                               <div className="w-8 h-6 rounded-md bg-gradient-to-br from-yellow-400/40 to-yellow-600/20 border border-yellow-400/30"></div>
+                               <Wallet className="w-5 h-5 text-white/80 drop-shadow-md" />
                              </div>
-                             <div className="space-y-1.5">
-                               <div className="w-full h-1 bg-white/20 rounded-full"></div>
-                               <div className="w-2/3 h-1 bg-white/10 rounded-full"></div>
+                             <div className="space-y-2">
+                               <div className="w-full h-1.5 bg-white/20 rounded-full"></div>
+                               <div className="w-2/3 h-1.5 bg-white/10 rounded-full"></div>
                              </div>
-                             {/* Glow effect */}
-                             <div className="absolute -right-8 -bottom-8 w-16 h-16 bg-cyan-400/30 blur-2xl"></div>
+                             {/* Highlight/Glow */}
+                             <div className="absolute -right-10 -bottom-10 w-24 h-24 bg-cyan-400/40 blur-3xl"></div>
                           </div>
 
-                          {/* Small Floating Icons */}
-                          <div className="absolute top-4 right-8 animate-float-reverse opacity-40">
-                             <Gamepad2 className="w-7 h-7 text-white" />
+                          {/* 3D Floating Satellite Icons */}
+                          {/* 3D Game Controller */}
+                          <div className="absolute top-2 right-4 animate-float-reverse z-10">
+                             <div className="bg-indigo-500/20 backdrop-blur-md border border-white/20 p-2 rounded-xl shadow-2xl">
+                               <Gamepad2 className="w-6 h-6 text-white drop-shadow-md" />
+                             </div>
                           </div>
-                          <div className="absolute bottom-8 right-2 animate-float opacity-40">
-                             <Zap className="w-6 h-6 text-yellow-400 fill-yellow-400/20" />
+                          
+                          {/* 3D Lightning/Electricity */}
+                          <div className="absolute bottom-6 right-0 animate-float z-30">
+                             <div className="bg-yellow-500/20 backdrop-blur-md border border-white/20 p-2 rounded-xl shadow-2xl">
+                               <Zap className="w-6 h-6 text-yellow-400 fill-yellow-400/40 drop-shadow-[0_0_10px_rgba(250,204,21,0.5)]" />
+                             </div>
+                          </div>
+
+                          {/* 3D QRIS Icon */}
+                          <div className="absolute bottom-1/2 right-12 translate-y-12 animate-float-slow z-10 opacity-60">
+                             <div className="bg-white/10 backdrop-blur-md border border-white/10 p-1.5 rounded-lg">
+                               <QrCode className="w-4 h-4 text-white" />
+                             </div>
                           </div>
                         </div>
                       ) : (
@@ -122,7 +142,6 @@ export default function Home() {
                       <div className="space-y-1">
                         <h3 className="text-[17px] font-black leading-[1.1] tracking-tight whitespace-pre-line">
                           {banner.title.split(' ').reduce((acc, word, i) => {
-                            // Sederhanakan judul agar tidak menutupi visual 3D
                             return i % 3 === 2 ? acc + word + '\n' : acc + word + ' ';
                           }, '')}
                         </h3>
