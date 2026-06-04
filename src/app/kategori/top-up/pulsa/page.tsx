@@ -91,7 +91,7 @@ export default function PulsaPage() {
       id: `PULSA-${detectedOperator.name}-${selectedProduct.nominal}`,
       name: `Pulsa ${detectedOperator.name} ${selectedProduct.nominal}`,
       price: selectedProduct.price,
-      image: '/products/pulsa-icon.png',
+      image: '/pulsa-icon.png',
       variant: phoneNumber,
       quantity: 1,
       type: 'digital',
@@ -103,7 +103,6 @@ export default function PulsaPage() {
       }
     };
 
-    // LOGIC: Save to temp storage for Direct Buy, do NOT add to cart
     localStorage.setItem('marpay_checkout_temp', JSON.stringify([digitalItem]));
     router.push('/checkout');
   };
@@ -140,18 +139,6 @@ export default function PulsaPage() {
               </div>
             </div>
           </div>
-          {detectedOperator === 'not_found' && (
-            <div className="mt-3 flex items-center gap-2 text-red-500 bg-red-50 p-2.5 rounded-xl border border-red-100">
-              <AlertCircle className="w-4 h-4 shrink-0" />
-              <span className="text-[10px] font-bold">Operator tidak dikenali</span>
-            </div>
-          )}
-          {detectedOperator && detectedOperator !== 'not_found' && (
-            <div className="mt-3 flex items-center gap-2 text-primary bg-primary/5 p-2.5 rounded-xl border border-primary/10">
-              <CheckCircle2 className="w-4 h-4 shrink-0" />
-              <span className="text-[10px] font-bold">Operator Terdeteksi: <span className="uppercase">{detectedOperator.name}</span></span>
-            </div>
-          )}
         </section>
 
         {detectedOperator && detectedOperator !== 'not_found' ? (

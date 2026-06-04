@@ -49,7 +49,7 @@ export default function GameDetailPage() {
       id: `GAME-${slug}-${nominal.id}`,
       name: `${gameInfo.name} - ${nominal.label}`,
       price: nominal.price,
-      image: '/products/game-icon.png',
+      image: '/game-icon.png',
       variant: `ID: ${userId}${zoneId ? ` (${zoneId})` : ''}`,
       quantity: 1,
       type: 'digital',
@@ -76,7 +76,6 @@ export default function GameDetailPage() {
       </header>
 
       <main className="pt-20 px-4 space-y-6">
-        {/* Info Game */}
         <section className="bg-white/5 rounded-3xl border border-white/5 p-6 flex items-center gap-5">
            <div className={cn("w-20 h-20 rounded-2xl flex items-center justify-center shrink-0 border border-white/10 shadow-2xl", gameInfo.color)}>
               <gameInfo.icon className="w-10 h-10 text-white" />
@@ -87,7 +86,6 @@ export default function GameDetailPage() {
            </div>
         </section>
 
-        {/* Step 1: Input ID */}
         <section className="space-y-4">
            <div className="flex items-center gap-3">
               <div className="w-7 h-7 rounded-full bg-cyan-500 flex items-center justify-center text-[10px] font-black">1</div>
@@ -116,16 +114,9 @@ export default function GameDetailPage() {
                    </div>
                  )}
               </div>
-              <div className="flex gap-2 p-3 bg-cyan-500/10 rounded-xl border border-cyan-500/20">
-                 <div className="w-4 h-4 bg-cyan-500 rounded-full flex items-center justify-center text-[8px] text-white">i</div>
-                 <p className="text-[9px] text-cyan-200 leading-normal">
-                   Pastikan User ID dan Zone ID sudah benar. Kesalahan input bukan tanggung jawab kami.
-                 </p>
-              </div>
            </div>
         </section>
 
-        {/* Step 2: Pilih Nominal */}
         <section className="space-y-4">
            <div className="flex items-center gap-3">
               <div className="w-7 h-7 rounded-full bg-cyan-500 flex items-center justify-center text-[10px] font-black">2</div>
@@ -155,18 +146,14 @@ export default function GameDetailPage() {
                         <p className="text-[10px] font-bold text-gray-500 mt-0.5">Rp {nom.price.toLocaleString()}</p>
                      </div>
                   </div>
-                  {selectedId === nom.id && (
-                    <div className="absolute -right-2 -bottom-2 w-12 h-12 bg-cyan-500/20 blur-xl rounded-full"></div>
-                  )}
                 </button>
               ))}
            </div>
         </section>
       </main>
 
-      {/* Floating Checkout Button */}
       {selectedId && userId && (
-        <div className="fixed bottom-0 left-0 right-0 p-4 bg-[#0F172A]/90 backdrop-blur-xl border-t border-white/5 flex items-center justify-between z-50 animate-in slide-in-from-bottom-full duration-300">
+        <div className="fixed bottom-0 left-0 right-0 p-4 bg-[#0F172A]/90 backdrop-blur-xl border-t border-white/5 flex items-center justify-between z-50">
            <div className="flex flex-col">
               <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Total Bayar</p>
               <p className="text-xl font-black text-cyan-400">Rp {NOMINALS.find(n => n.id === selectedId)?.price.toLocaleString()}</p>

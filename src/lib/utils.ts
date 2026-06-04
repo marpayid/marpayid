@@ -7,9 +7,6 @@ export function cn(...inputs: ClassValue[]) {
 
 /**
  * Formats the sold count based on marketplace standards.
- * - Below 1,000: Exact number (e.g., "84 terjual")
- * - 1,000 to 999,999: Thousands with "+" (e.g., "1rb+ terjual")
- * - 1,000,000 and above: Millions with "+" (e.g., "1jt+ terjual")
  */
 export function formatSold(count: number | string): string {
   const num = typeof count === 'string' ? parseInt(count.replace(/[^0-9]/g, '')) || 0 : count;
@@ -27,7 +24,7 @@ export function formatSold(count: number | string): string {
 
 /**
  * Mendapatkan gambar produk dengan logika kategori.
- * Mendukung path root (/) jika file tidak ditemukan di /products/
+ * Semua gambar diambil dari root / folder public.
  */
 export function getProductImage(product: any): string {
   if (!product) return '/placeholder-product.png';
@@ -37,6 +34,7 @@ export function getProductImage(product: any): string {
     return '/premium-1.png';
   }
   
-  // Gunakan path image yang ada, atau placeholder root
-  return product.image || '/placeholder-product.png';
+  // Gunakan path image yang ada, pastikan berawalan slash
+  const imgPath = product.image || '/placeholder-product.png';
+  return imgPath.startsWith('/') ? imgPath : `/${imgPath}`;
 }

@@ -60,7 +60,7 @@ export default function EWalletPage() {
       id: `EWALLET-${selectedProvider.id}-${selectedProduct.nominal}`,
       name: `Saldo ${selectedProvider.name} ${selectedProduct.nominal}`,
       price: selectedProduct.price,
-      image: '/products/e-wallet-icon.png',
+      image: '/e-wallet-icon.png',
       variant: walletNumber,
       quantity: 1,
       type: 'digital',
@@ -73,7 +73,6 @@ export default function EWalletPage() {
       }
     };
 
-    // LOGIC: Save to temp storage for Direct Buy, do NOT add to cart
     localStorage.setItem('marpay_checkout_temp', JSON.stringify([digitalItem]));
     router.push('/checkout');
   };

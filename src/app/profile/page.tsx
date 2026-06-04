@@ -62,7 +62,7 @@ export default function Profile() {
     return doc(db, 'users', user.uid);
   }, [db, user?.uid]);
   
-  const { data: profileData, loading: profileLoading, error: profileError } = useDoc(userProfileRef);
+  const { data: profileData, loading: profileLoading } = useDoc(userProfileRef);
 
   useEffect(() => {
     const updateCounts = () => {
@@ -86,13 +86,8 @@ export default function Profile() {
         name: profileData.fullName || profileData.name || '',
         phone: profileData.phone || ''
       });
-    } else if (user && !profileData && !profileLoading && !isEditModalOpen) {
-      setEditForm({
-        name: user.displayName || '',
-        phone: ''
-      });
     }
-  }, [profileData, user, profileLoading, isEditModalOpen]);
+  }, [profileData, isEditModalOpen]);
 
   const handleLogout = async () => {
     try {
@@ -106,11 +101,7 @@ export default function Profile() {
   };
 
   const handleUpdateProfile = async () => {
-    if (!user?.uid || !userProfileRef) {
-      toast({ variant: "destructive", title: "Error", description: "Sesi Anda telah berakhir. Silakan login kembali." });
-      return;
-    }
-
+    if (!user?.uid || !userProfileRef) return;
     if (!editForm.name.trim() || !editForm.phone.trim()) {
       toast({ variant: "destructive", title: "Gagal", description: "Nama dan Nomor WhatsApp wajib diisi." });
       return;
@@ -122,102 +113,25 @@ export default function Profile() {
         fullName: editForm.name.trim(),
         name: editForm.name.trim(),
         phone: editForm.phone.trim(),
-        email: user.email,
         updatedAt: serverTimestamp()
       }, { merge: true });
       
       toast({ variant: "success", title: "Berhasil", description: "Profil telah diperbarui." });
       setIsEditModalOpen(false);
     } catch (e: any) {
-      console.error("Firestore Update Error:", e);
-      toast({ 
-        variant: "destructive", 
-        title: "Error", 
-        description: e.message || "Gagal memperbarui profil." 
-      });
+      toast({ variant: "destructive", title: "Error", description: "Gagal memperbarui profil." });
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const menuItems = [
-    { 
-      label: 'Cek Resi Pengiriman', 
-      description: 'Lacak status paket pesanan fisik Anda.',
-      icon: Search, 
-      color: 'text-orange-500',
-      bgColor: 'bg-orange-50',
-      path: '/cek-resi',
-      protected: false
-    },
-    { 
-      label: 'Wishlist Saya', 
-      description: 'Produk favorit yang telah disimpan.',
-      icon: Heart, 
-      color: 'text-red-500',
-      bgColor: 'bg-red-50',
-      path: '/favorit',
-      protected: false
-    },
-    { 
-      label: 'Alamat Pengiriman', 
-      description: 'Kelola alamat pengiriman Anda.',
-      icon: MapPin, 
-      color: 'text-emerald-500',
-      bgColor: 'bg-emerald-50',
-      path: '/akun/alamat',
-      protected: true
-    },
-    { 
-      label: 'Pusat Bantuan', 
-      description: 'Bantuan dan pertanyaan seputar MarPay.',
-      icon: HelpCircle, 
-      color: 'text-purple-500',
-      bgColor: 'bg-purple-50',
-      path: '/akun/bantuan',
-      protected: false
-    },
-    { 
-      label: 'Keamanan Akun', 
-      description: 'Kelola keamanan akun dan privasi.',
-      icon: ShieldCheck, 
-      color: 'text-cyan-500',
-      bgColor: 'bg-cyan-50',
-      path: '/akun/keamanan',
-      protected: true
-    },
-    { 
-      label: 'Pengaturan App', 
-      description: 'Aturan penggunaan layanan di MarPay.',
-      icon: FileText, 
-      color: 'text-blue-500',
-      bgColor: 'bg-blue-50',
-      path: '/akun/pengaturan',
-      protected: false
-    },
-  ];
-
-  const benefits = [
-    { 
-      label: 'Belanja Aman', 
-      icon: ShieldCheck, 
-      desc: 'Transaksi aman dan terpercaya.' 
-    },
-    { 
-      label: 'Cek Resi', 
-      icon: Search, 
-      desc: 'Lacak paket kapan saja.' 
-    },
-    { 
-      label: 'CS Respons Cepat', 
-      icon: MessageCircle, 
-      desc: 'Siap membantu setiap hari.' 
-    },
-    { 
-      label: 'Voucher Tersedia', 
-      icon: Ticket, 
-      desc: 'Promo dan voucher menarik.' 
-    },
+    { label: 'Cek Resi Pengiriman', description: 'Lacak status paket pesanan fisik Anda.', icon: Search, color: 'text-orange-500', bgColor: 'bg-orange-50', path: '/cek-resi', protected: false },
+    { label: 'Wishlist Saya', description: 'Produk favorit yang telah disimpan.', icon: Heart, color: 'text-red-500', bgColor: 'bg-red-50', path: '/favorit', protected: false },
+    { label: 'Alamat Pengiriman', description: 'Kelola alamat pengiriman Anda.', icon: MapPin, color: 'text-emerald-500', bgColor: 'bg-emerald-50', path: '/akun/alamat', protected: true },
+    { label: 'Pusat Bantuan', description: 'Bantuan dan pertanyaan seputar MarPay.', icon: HelpCircle, color: 'text-purple-500', bgColor: 'bg-purple-50', path: '/akun/bantuan', protected: false },
+    { label: 'Keamanan Akun', description: 'Kelola keamanan akun dan privasi.', icon: ShieldCheck, color: 'text-cyan-500', bgColor: 'bg-cyan-50', path: '/akun/keamanan', protected: true },
+    { label: 'Pengaturan App', description: 'Aturan penggunaan layanan di MarPay.', icon: FileText, color: 'text-blue-500', bgColor: 'bg-blue-50', path: '/akun/pengaturan', protected: false },
   ];
 
   const isLoggedIn = !!user;
@@ -233,7 +147,7 @@ export default function Profile() {
   const userName = profileData?.fullName || profileData?.name || user?.displayName || (isLoggedIn ? "Pengguna MarPay" : "Masuk MarPay");
   const userStatus = isLoggedIn ? "AKUN TERVERIFIKASI" : "Belum Masuk";
   const userSub = isLoggedIn ? (profileData?.email || user.email) : "Masuk atau daftar untuk menikmati semua fitur MarPay.";
-  const userPhoto = profileData?.photoURL || user?.photoURL || "/products/profil-1.png";
+  const userPhoto = profileData?.photoURL || user?.photoURL || "/profil-1.png";
 
   return (
     <div className="min-h-screen bg-gray-50 pb-32">
@@ -248,14 +162,8 @@ export default function Profile() {
             </Avatar>
             {isLoggedIn && (
               <button 
-                onClick={() => {
-                  setEditForm({
-                    name: profileData?.fullName || profileData?.name || user?.displayName || '',
-                    phone: profileData?.phone || ''
-                  });
-                  setIsEditModalOpen(true);
-                }}
-                className="absolute bottom-0 right-0 w-6 h-6 bg-primary border-2 border-white rounded-full flex items-center justify-center text-white hover:bg-primary/90 transition-colors"
+                onClick={() => setIsEditModalOpen(true)}
+                className="absolute bottom-0 right-0 w-6 h-6 bg-primary border-2 border-white rounded-full flex items-center justify-center text-white"
               >
                 <Edit className="w-3 h-3" />
               </button>
@@ -271,41 +179,29 @@ export default function Profile() {
         {!isLoggedIn ? (
           <div className="grid grid-cols-2 gap-3 mt-8">
             <Link href="/login" className="w-full">
-              <Button className="w-full bg-primary text-white font-bold h-12 rounded-2xl shadow-lg shadow-primary/20 flex items-center gap-2">
-                <LogIn className="w-4 h-4" /> Masuk
-              </Button>
+              <Button className="w-full bg-primary text-white font-bold h-12 rounded-2xl">Masuk</Button>
             </Link>
             <Link href="/register" className="w-full">
-              <Button variant="outline" className="w-full border-primary text-primary font-bold h-12 rounded-2xl flex items-center gap-2">
-                <UserPlus className="w-4 h-4" /> Daftar
-              </Button>
+              <Button variant="outline" className="w-full border-primary text-primary font-bold h-12 rounded-2xl">Daftar</Button>
             </Link>
           </div>
         ) : (
           <div className="mt-8 grid grid-cols-2 gap-3">
             <Link href="/favorit" className="block w-full">
-              <div className="bg-red-50/50 border border-red-100 p-4 rounded-2xl flex items-center justify-between transition-colors active:bg-red-50 h-full">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center text-red-500 shrink-0">
-                    <Heart className="w-5 h-5 fill-red-500" />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-[9px] font-bold text-gray-400 uppercase tracking-tighter truncate">Produk Favorit</p>
-                    <p className="text-base font-black text-gray-800">{wishlistCount}</p>
-                  </div>
+              <div className="bg-red-50/50 border border-red-100 p-4 rounded-2xl flex items-center gap-3">
+                <Heart className="w-5 h-5 text-red-500 fill-red-500" />
+                <div>
+                  <p className="text-[9px] font-bold text-gray-400 uppercase">Favorit</p>
+                  <p className="text-base font-black text-gray-800">{wishlistCount}</p>
                 </div>
               </div>
             </Link>
             <Link href="/akun/voucher" className="block w-full">
-              <div className="bg-emerald-50/50 border border-emerald-100 p-4 rounded-2xl flex items-center justify-between transition-colors active:bg-emerald-50 h-full">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-500 shrink-0">
-                    <Ticket className="w-5 h-5 fill-emerald-500" />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-[9px] font-bold text-gray-400 uppercase tracking-tighter truncate">Voucher Tersedia</p>
-                    <p className="text-base font-black text-gray-800">0</p>
-                  </div>
+              <div className="bg-emerald-50/50 border border-emerald-100 p-4 rounded-2xl flex items-center gap-3">
+                <Ticket className="w-5 h-5 text-emerald-500" />
+                <div>
+                  <p className="text-[9px] font-bold text-gray-400 uppercase">Voucher</p>
+                  <p className="text-base font-black text-gray-800">0</p>
                 </div>
               </div>
             </Link>
@@ -314,99 +210,45 @@ export default function Profile() {
       </header>
 
       <main className="px-4 py-6 space-y-6">
-        <section className="bg-white p-5 rounded-[22px] border border-gray-100 shadow-sm">
-          <div className="mb-5">
-            <h3 className="text-sm font-black text-gray-800 uppercase tracking-tight">Keuntungan Belanja di MarPay</h3>
-            <p className="text-[10px] text-gray-400 font-medium mt-1 uppercase tracking-wider">Belanja Nyaman, Aman, dan Terpercaya.</p>
-          </div>
-          <div className="grid grid-cols-4 gap-2">
-            {benefits.map((benefit) => (
-              <div key={benefit.label} className="flex flex-col items-center gap-2 text-center group">
-                <div className="w-11 h-11 bg-primary/10 rounded-2xl flex items-center justify-center text-primary border border-primary/5 transition-all group-active:scale-95 shadow-sm">
-                  <benefit.icon className="w-5 h-5 stroke-[2px]" />
-                </div>
-                <div className="space-y-0.5">
-                  <span className="text-[8px] font-black text-gray-800 uppercase tracking-tighter leading-tight block">{benefit.label}</span>
-                  <p className="text-[7px] text-gray-400 leading-tight font-medium">{benefit.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
         <section className="bg-white rounded-[22px] border border-gray-100 shadow-sm overflow-hidden">
           {menuItems.map((item, idx) => {
             const isItemActive = isLoggedIn || !item.protected;
-            
             const content = (
-              <div 
-                className={cn(
-                  "flex items-center justify-between p-4 active:bg-gray-50 cursor-pointer transition-colors",
-                  idx !== menuItems.length - 1 ? 'border-b border-gray-50' : '',
-                  !isItemActive && "opacity-60"
-                )}
-              >
+              <div className={cn("flex items-center justify-between p-4 active:bg-gray-50 cursor-pointer", idx !== menuItems.length - 1 ? 'border-b border-gray-50' : '', !isItemActive && "opacity-60")}>
                 <div className="flex items-center gap-4">
                   <div className={cn("w-11 h-11 rounded-2xl flex items-center justify-center", item.bgColor, item.color)}>
                     <item.icon className="w-5 h-5 stroke-[2px]" />
                   </div>
                   <div>
                     <h4 className="text-sm font-bold text-gray-800">{item.label}</h4>
-                    <p className="text-[10px] text-gray-400 font-medium leading-tight">{item.description}</p>
+                    <p className="text-[10px] text-gray-400 font-medium">{item.description}</p>
                   </div>
                 </div>
                 <ChevronRight className="w-4 h-4 text-gray-300" />
               </div>
             );
-
-            return isItemActive ? (
-              <Link key={item.label} href={item.path}>{content}</Link>
-            ) : (
-              <div key={item.label} onClick={() => router.push('/login')}>{content}</div>
-            );
+            return isItemActive ? <Link key={item.label} href={item.path}>{content}</Link> : <div key={item.label} onClick={() => router.push('/login')}>{content}</div>;
           })}
         </section>
 
         {isLoggedIn && (
-          <Button 
-            onClick={handleLogout}
-            variant="ghost" 
-            className="w-full text-red-500 font-black gap-3 h-14 rounded-2xl border-2 border-transparent hover:bg-red-50 transition-all uppercase text-xs tracking-widest mt-4"
-          >
-            <LogOut className="w-5 h-5" />
-            Keluar dari Akun
+          <Button onClick={handleLogout} variant="ghost" className="w-full text-red-500 font-black h-14 rounded-2xl border-2 border-transparent hover:bg-red-50">
+            <LogOut className="w-5 h-5 mr-2" /> Keluar Akun
           </Button>
         )}
-
-        <p className="text-center text-[10px] text-gray-300 font-bold uppercase tracking-[0.2em] pb-10">
-          MarPay Marketplace v1.0.4
-        </p>
       </main>
 
-      {/* Edit Profile Modal */}
       <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
         <DialogContent className="sm:max-w-[425px] rounded-3xl">
-          <DialogHeader>
-            <DialogTitle className="text-lg font-bold">Edit Profil</DialogTitle>
-          </DialogHeader>
+          <DialogHeader><DialogTitle className="text-lg font-bold">Edit Profil</DialogTitle></DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-1.5">
               <Label className="text-xs font-bold text-gray-700">Nama Lengkap</Label>
-              <Input 
-                placeholder="Masukkan nama lengkap" 
-                value={editForm.name}
-                onChange={(e) => setEditForm({...editForm, name: e.target.value})}
-                className="rounded-xl border-gray-200"
-              />
+              <Input value={editForm.name} onChange={(e) => setEditForm({...editForm, name: e.target.value})} className="rounded-xl" />
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs font-bold text-gray-700">Nomor WhatsApp</Label>
-              <Input 
-                placeholder="Contoh: 081234567890" 
-                value={editForm.phone}
-                onChange={(e) => setEditForm({...editForm, phone: e.target.value})}
-                className="rounded-xl border-gray-200"
-              />
+              <Input value={editForm.phone} onChange={(e) => setEditForm({...editForm, phone: e.target.value})} className="rounded-xl" />
             </div>
           </div>
           <DialogFooter>
