@@ -43,11 +43,10 @@ export function BottomNav() {
     <nav 
       className="fixed bottom-0 left-0 right-0 z-[999] bg-white border-t border-gray-100 flex flex-col shadow-[0_-4px_15px_rgba(0,0,0,0.04)] w-full transition-all"
       style={{ 
-        // Mengurangi area putih bawah secara signifikan (40% lebih rendah dari safe-area standar)
         paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) * 0.6)' 
       }}
     >
-      <div className="flex items-center w-full h-[58px] px-1 pt-1">
+      <div className="flex items-center w-full h-[58px] px-1">
         {navItems.map((item) => {
           const isActive = pathname === item.path;
           return (
