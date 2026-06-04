@@ -233,7 +233,7 @@ export default function Profile() {
   const userName = profileData?.fullName || profileData?.name || user?.displayName || (isLoggedIn ? "Pengguna MarPay" : "Masuk MarPay");
   const userStatus = isLoggedIn ? "AKUN TERVERIFIKASI" : "Belum Masuk";
   const userSub = isLoggedIn ? (profileData?.email || user.email) : "Masuk atau daftar untuk menikmati semua fitur MarPay.";
-  const userPhoto = profileData?.photoURL || user?.photoURL || "/profil1.png";
+  const userPhoto = profileData?.photoURL || user?.photoURL || "/products/profil-1.png";
 
   return (
     <div className="min-h-screen bg-gray-50 pb-32">

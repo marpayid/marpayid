@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -92,7 +91,7 @@ export default function PulsaPage() {
       id: `PULSA-${detectedOperator.name}-${selectedProduct.nominal}`,
       name: `Pulsa ${detectedOperator.name} ${selectedProduct.nominal}`,
       price: selectedProduct.price,
-      image: '/pulsa-icon.png',
+      image: '/products/pulsa-icon.png',
       variant: phoneNumber,
       quantity: 1,
       type: 'digital',

@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect } from 'react';
@@ -64,12 +63,12 @@ export default function Cart() {
 
   const renderProductImage = (item: any) => {
     if (item.category === 'Premium' || item.category?.toLowerCase() === 'premium') {
-      return <div className="relative w-full h-full"><Image src="/premium1.png" alt="Premium" fill className="object-cover" /></div>;
+      return <div className="relative w-full h-full"><Image src="/products/premium-1.png" alt="Premium" fill className="object-cover" /></div>;
     }
     
-    if (item.image === '/pulsa-icon.png') return <div className="flex items-center justify-center w-full h-full bg-primary/10 rounded-lg text-primary"><Smartphone className="w-10 h-10" /></div>;
-    if (item.image === '/pln-icon.png') return <div className="flex items-center justify-center w-full h-full bg-primary/10 rounded-lg text-primary"><Zap className="w-10 h-10" /></div>;
-    if (item.image === '/e-wallet-icon.png') return <div className="flex items-center justify-center w-full h-full bg-primary/10 rounded-lg text-primary"><Wallet className="w-10 h-10" /></div>;
+    if (item.image?.includes('pulsa-icon')) return <div className="flex items-center justify-center w-full h-full bg-primary/10 rounded-lg text-primary"><Smartphone className="w-10 h-10" /></div>;
+    if (item.image?.includes('pln-icon')) return <div className="flex items-center justify-center w-full h-full bg-primary/10 rounded-lg text-primary"><Zap className="w-10 h-10" /></div>;
+    if (item.image?.includes('e-wallet-icon')) return <div className="flex items-center justify-center w-full h-full bg-primary/10 rounded-lg text-primary"><Wallet className="w-10 h-10" /></div>;
     
     const displayImage = getProductImage(item);
     if (displayImage) return <Image src={displayImage} alt={item.name} fill className="object-cover" />;

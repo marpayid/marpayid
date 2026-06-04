@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -61,7 +60,7 @@ export default function EWalletPage() {
       id: `EWALLET-${selectedProvider.id}-${selectedProduct.nominal}`,
       name: `Saldo ${selectedProvider.name} ${selectedProduct.nominal}`,
       price: selectedProduct.price,
-      image: '/e-wallet-icon.png',
+      image: '/products/e-wallet-icon.png',
       variant: walletNumber,
       quantity: 1,
       type: 'digital',

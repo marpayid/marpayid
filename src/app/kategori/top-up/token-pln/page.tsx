@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -36,7 +35,7 @@ export default function TokenPLNPage() {
       id: `TOKEN-PLN-${selectedProduct.nominal}`,
       name: `Token PLN ${selectedProduct.nominal}`,
       price: selectedProduct.price,
-      image: '/pln-icon.png',
+      image: '/products/pln-icon.png',
       variant: meterId,
       quantity: 1,
       type: 'digital',

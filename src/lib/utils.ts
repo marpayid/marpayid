@@ -1,4 +1,3 @@
-
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
@@ -28,12 +27,12 @@ export function formatSold(count: number | string): string {
 
 /**
  * Mendapatkan gambar produk dengan logika kategori.
- * Produk Premium menggunakan /premium1.png secara otomatis.
+ * Produk Premium menggunakan /products/premium-1.png secara otomatis.
  */
 export function getProductImage(product: any): string {
-  if (!product) return '/placeholder-product.png';
+  if (!product) return '/products/placeholder-product.png';
   if (product.category === 'Premium' || product.category?.toLowerCase() === 'premium') {
-    return '/premium1.png';
+    return '/products/premium-1.png';
   }
-  return product.image || '/placeholder-product.png';
+  return product.image || '/products/placeholder-product.png';
 }

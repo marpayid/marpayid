@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -50,7 +49,7 @@ export default function GameDetailPage() {
       id: `GAME-${slug}-${nominal.id}`,
       name: `${gameInfo.name} - ${nominal.label}`,
       price: nominal.price,
-      image: '/game-icon.png',
+      image: '/products/game-icon.png',
       variant: `ID: ${userId}${zoneId ? ` (${zoneId})` : ''}`,
       quantity: 1,
       type: 'digital',
@@ -118,7 +117,7 @@ export default function GameDetailPage() {
                  )}
               </div>
               <div className="flex gap-2 p-3 bg-cyan-500/10 rounded-xl border border-cyan-500/20">
-                 <Info className="w-4 h-4 text-cyan-400 shrink-0" />
+                 <div className="w-4 h-4 bg-cyan-500 rounded-full flex items-center justify-center text-[8px] text-white">i</div>
                  <p className="text-[9px] text-cyan-200 leading-normal">
                    Pastikan User ID dan Zone ID sudah benar. Kesalahan input bukan tanggung jawab kami.
                  </p>
