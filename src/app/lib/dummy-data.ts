@@ -20,7 +20,7 @@ export const Products = [
     reviews: '1.2rb',
     sold: 10500,
     category: 'Aksesoris HP',
-    image: '/case-1.png',
+    image: '/case1.png',
     isFlashSale: true,
     discount: '40%',
     stock: 'Tersedia',
