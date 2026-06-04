@@ -3,7 +3,7 @@
 import { useParams, useRouter } from 'next/navigation';
 import { useState, useMemo, useEffect } from 'react';
 import { 
-  ArrowLeft, ShoppingBag, Star, Minus, Plus, Info, Sparkles, Heart
+  ArrowLeft, ShoppingBag, Star, Minus, Plus, Info, Heart, LayoutGrid
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -183,7 +183,7 @@ export default function ProductDetail() {
           <section className="mt-2 bg-white p-4">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-primary" />
+                <LayoutGrid className="w-4 h-4 text-primary" />
                 <h2 className="text-sm font-bold uppercase tracking-tight">Produk Serupa</h2>
               </div>
               <Link href={`/kategori/${product.category.toLowerCase()}`} className="text-[10px] font-bold text-primary">Lihat Semua</Link>
