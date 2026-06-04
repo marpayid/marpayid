@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { TopSearch } from '@/components/top-search';
 import { BottomNav } from '@/components/bottom-nav';
 import { CategoryMenu } from '@/components/category-menu';
@@ -28,12 +28,27 @@ export default function Home() {
     return () => clearInterval(intervalId);
   }, [api]);
 
-  const viralProducts = Products.filter(p => p.tag === 'Produk Viral');
+  // Section 1: Produk Viral (Independen - Filter berdasarkan tag)
+  const viralProducts = useMemo(() => 
+    Products.filter(p => p.tag === 'Produk Viral'), 
+  []);
   
-  // Rekomendasi: Wispie (ID: 3) harus pertama, Akrilik (ID: 2) tetap dihapus dari Recs
-  const wispie = Products.find(p => p.id === 3);
-  const otherRecs = Products.filter(p => p.id !== 3 && p.id !== 2);
-  const recommendationList = wispie ? [wispie, ...otherRecs] : otherRecs;
+  // Section 2: Rekomendasi Untukmu (Independen - Daftar pilihan prioritas)
+  const recommendationList = useMemo(() => {
+    // Daftar ID produk yang diutamakan muncul di baris awal Rekomendasi
+    // 3: Wispie, 1: BIOAQUA, 6: Hoodie, 201: Case Clear, 204: Kemeja Fitted, 203: Pants
+    const priorityIds = [3, 1, 6, 201, 204, 203];
+    
+    // Ambil item prioritas secara urut berdasarkan daftar ID di atas
+    const priorityItems = priorityIds
+      .map(id => Products.find(p => p.id === id))
+      .filter(Boolean) as typeof Products;
+
+    // Ambil sisanya untuk mengisi daftar (tanpa duplikasi dan tanpa membatasi ketersediaan di section lain)
+    const others = Products.filter(p => !priorityIds.includes(p.id) && p.id !== 2);
+    
+    return [...priorityItems, ...others];
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50 pb-32">
@@ -162,9 +177,14 @@ export default function Home() {
         <section className="bg-white py-4 px-4">
           <h2 className="text-base font-bold text-gray-900 mb-3">Rekomendasi Untukmu</h2>
           <div className="grid grid-cols-2 gap-3">
+            {/* Baris 1-2: 4 produk pertama */}
             {recommendationList.slice(0, 4).map((p) => <ProductCard key={p.id} product={p} />)}
+            
+            {/* Kartu Promosi Fashion/Beauty */}
             <FashionDiscoveryCard />
-            {recommendationList.slice(4, 6).map((p) => <ProductCard key={p.id} product={p} />)}
+            
+            {/* Baris 3-4: 4 produk berikutnya (Kapasitas ditambah menjadi total 8) */}
+            {recommendationList.slice(4, 8).map((p) => <ProductCard key={p.id} product={p} />)}
           </div>
         </section>
 
