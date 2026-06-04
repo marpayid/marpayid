@@ -147,30 +147,32 @@ export default function Profile() {
   const userName = profileData?.fullName || profileData?.name || user?.displayName || (isLoggedIn ? "Pengguna MarPay" : "Masuk MarPay");
   const userStatus = isLoggedIn ? "AKUN TERVERIFIKASI" : "Belum Masuk";
   const userSub = isLoggedIn ? (profileData?.email || user.email) : "Masuk atau daftar untuk menikmati semua fitur MarPay.";
-  const userPhoto = profileData?.photoURL || user?.photoURL || "/profil-1.png";
+  // Avatar dikunci ke profil1.png sesuai instruksi
+  const userPhoto = "/profil1.png";
 
   return (
     <div className="min-h-screen bg-gray-50 pb-32">
       <header className="bg-white px-6 pt-14 pb-8 border-b border-gray-100 relative overflow-hidden">
         <div className="flex items-center gap-4 relative z-10">
           <div className="relative">
-            <Avatar className="w-20 h-20 border-4 border-white shadow-xl bg-gray-50">
-              <AvatarImage src={userPhoto} />
-              <AvatarFallback className="bg-primary text-white font-bold text-xl uppercase">
-                {userName.charAt(0)}
-              </AvatarFallback>
+            <Avatar className="w-20 h-20 border-4 border-white shadow-xl bg-white">
+              <AvatarImage src={userPhoto} className="object-cover" />
+              {/* Fallback dihilangkan agar logo selalu prioritas utama */}
             </Avatar>
-            {isLoggedIn && (
-              <button 
-                onClick={() => setIsEditModalOpen(true)}
-                className="absolute bottom-0 right-0 w-6 h-6 bg-primary border-2 border-white rounded-full flex items-center justify-center text-white"
-              >
-                <Edit className="w-3 h-3" />
-              </button>
-            )}
+            {/* Tombol edit (pensil) pada avatar disembunyikan sesuai instruksi */}
           </div>
           <div className="flex-1">
-            <h2 className="text-xl font-black text-gray-900 leading-tight">{userName}</h2>
+            <div className="flex items-center gap-2">
+              <h2 className="text-xl font-black text-gray-900 leading-tight">{userName}</h2>
+              {isLoggedIn && (
+                <button 
+                  onClick={() => setIsEditModalOpen(true)}
+                  className="p-1.5 text-gray-400 hover:text-primary transition-colors"
+                >
+                  <Edit className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
             <p className="text-[10px] font-bold text-primary mt-0.5 uppercase tracking-wider">{userStatus}</p>
             <p className="text-[10px] text-gray-400 font-medium mt-1 leading-relaxed max-w-[200px]">{userSub}</p>
           </div>
@@ -214,7 +216,7 @@ export default function Profile() {
           {menuItems.map((item, idx) => {
             const isItemActive = isLoggedIn || !item.protected;
             const content = (
-              <div className={cn("flex items-center justify-between p-4 active:bg-gray-50 cursor-pointer", idx !== menuItems.length - 1 ? 'border-b border-gray-50' : '', !isItemActive && "opacity-60")}>
+              <div key={item.label} className={cn("flex items-center justify-between p-4 active:bg-gray-50 cursor-pointer", idx !== menuItems.length - 1 ? 'border-b border-gray-50' : '', !isItemActive && "opacity-60")}>
                 <div className="flex items-center gap-4">
                   <div className={cn("w-11 h-11 rounded-2xl flex items-center justify-center", item.bgColor, item.color)}>
                     <item.icon className="w-5 h-5 stroke-[2px]" />
