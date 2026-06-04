@@ -199,7 +199,7 @@ export function ProductCard({ product, compact = false }: { product: any, compac
         <div className="mt-auto">
           <div className="flex justify-between items-center mb-1">
             <p className="text-sm font-bold text-red-600">
-              {product.hasPriceRange ? `Mulai Rp ${product.price.toLocaleString()}` : `Rp ${product.price.toLocaleString()}`}
+              Rp {product.price.toLocaleString()}
             </p>
             {isFreeShipping && product.type !== 'digital' && (
               <div className="flex items-center text-[8px] text-green-500 font-black uppercase gap-0.5">
