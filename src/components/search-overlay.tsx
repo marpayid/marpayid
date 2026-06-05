@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useRef, useMemo } from 'react';
@@ -32,7 +31,7 @@ const SEARCH_EXPANSIONS: Record<string, string[]> = {
   'akrilik': ['sertifikat', 'funded', 'acrylic', 'plaque'],
 };
 
-// Gender context keywords
+// Gender keywords defined by requirement
 const FEMALE_KEYWORDS = ["wanita", "cewe", "cewek", "perempuan", "ladies", "girl", "female"];
 const MALE_KEYWORDS = ["pria", "cowo", "cowok", "laki", "laki-laki", "men", "male"];
 const UNISEX_KEYWORDS = ["unisex"];
@@ -95,14 +94,18 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
   // Helper to detect gender from string
   const getGenderContext = (text: string) => {
     const low = text.toLowerCase();
+    
+    // Check Unisex first
     if (UNISEX_KEYWORDS.some(k => low.includes(k))) return 'unisex';
     
     const hasFemale = FEMALE_KEYWORDS.some(k => low.includes(k));
     const hasMale = MALE_KEYWORDS.some(k => low.includes(k));
     
+    // If it mentions both without "unisex", it's complex, but for filtering we treat it as unisex
     if (hasFemale && hasMale) return 'unisex';
     if (hasFemale) return 'female';
     if (hasMale) return 'male';
+    
     return 'neutral';
   };
 
@@ -175,43 +178,50 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
       const desc = p.description?.toLowerCase() || '';
       const content = `${name} ${cat} ${desc}`;
       
-      // Relevance Check:
-      // Filter out gender keywords from query to find the "subject" (e.g., 'celana')
-      const nonGenderQueryWords = baseWords.filter(w => 
-        !FEMALE_KEYWORDS.includes(w) && 
-        !MALE_KEYWORDS.includes(w) && 
-        !UNISEX_KEYWORDS.includes(w)
-      );
-
-      const hasSubject = nonGenderQueryWords.length > 0;
-      let isRelevant = false;
-
-      if (hasSubject) {
-        // If there's a subject, the product content must match subject or its expansions
-        const subjectRelatedTerms = searchTerms.filter(t => 
-           !FEMALE_KEYWORDS.includes(t) && 
-           !MALE_KEYWORDS.includes(t) && 
-           !UNISEX_KEYWORDS.includes(t)
-        );
-        isRelevant = subjectRelatedTerms.some(term => content.includes(term));
-      } else {
-        // If query is just gender (e.g. "pria"), we skip basic relevance and rely on gender filtering
-        isRelevant = true;
-      }
-
-      if (!isRelevant) return false;
-
-      // Gender Compatibility Check:
+      // Strict Gender Filtering Rules:
       const productGender = getGenderContext(content);
-      
+
       if (queryGender === 'female') {
-        // User wants female products -> exclude strictly male products
+        // User wants female products -> only show female or unisex. EXCLUDE strict male products.
         if (productGender === 'male') return false;
-      } else if (queryGender === 'male') {
-        // User wants male products -> exclude strictly female products
+        
+        // Also check if the subject matches (e.g. if searching "celana wanita", product must be related to celana)
+        const nonGenderQueryWords = baseWords.filter(w => 
+          !FEMALE_KEYWORDS.includes(w) && 
+          !MALE_KEYWORDS.includes(w) && 
+          !UNISEX_KEYWORDS.includes(w)
+        );
+        if (nonGenderQueryWords.length > 0) {
+          const isSubjectMatch = searchTerms.some(term => {
+            // Ignore gender words for subject matching
+            if (FEMALE_KEYWORDS.includes(term) || MALE_KEYWORDS.includes(term)) return false;
+            return content.includes(term);
+          });
+          if (!isSubjectMatch) return false;
+        }
+      } 
+      else if (queryGender === 'male') {
+        // User wants male products -> only show male or unisex. EXCLUDE strict female products.
         if (productGender === 'female') return false;
+
+        const nonGenderQueryWords = baseWords.filter(w => 
+          !FEMALE_KEYWORDS.includes(w) && 
+          !MALE_KEYWORDS.includes(w) && 
+          !UNISEX_KEYWORDS.includes(w)
+        );
+        if (nonGenderQueryWords.length > 0) {
+          const isSubjectMatch = searchTerms.some(term => {
+            if (FEMALE_KEYWORDS.includes(term) || MALE_KEYWORDS.includes(term)) return false;
+            return content.includes(term);
+          });
+          if (!isSubjectMatch) return false;
+        }
+      } 
+      else {
+        // Broad search: must match at least one term
+        const isMatch = searchTerms.some(term => content.includes(term));
+        if (!isMatch) return false;
       }
-      // Note: Unisex and Neutral products always pass through unless the opposing gender is strictly required.
 
       return true;
     });
@@ -219,7 +229,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
     // 4. Sort and Prioritize
     const sorted = [...filtered].sort((a, b) => {
       // Prioritize gender matches if a specific gender was in query
-      if (queryGender !== 'neutral' && queryGender !== 'unisex') {
+      if (queryGender === 'female' || queryGender === 'male') {
         const aContent = `${a.name} ${a.description}`.toLowerCase();
         const bContent = `${b.name} ${b.description}`.toLowerCase();
         
@@ -395,7 +405,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
         {/* STATE 3: PRODUCT RESULTS */}
         {showResults && (
           <div className="flex flex-col bg-[#F8F9FA] pb-32">
-            {/* Professional Sorting Tabs - Sticky at the top of the scroll container */}
+            {/* Professional Sorting Tabs */}
             <div className="bg-white border-b border-gray-100 flex items-center sticky top-0 z-30 px-2 py-2.5 gap-1.5 overflow-x-auto no-scrollbar shadow-sm">
               {[
                 { id: 'semua', label: 'Semua', icon: LayoutGrid },
