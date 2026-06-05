@@ -11,40 +11,16 @@ export function PromoPopup() {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    const checkFrequency = () => {
-      const storageKey = 'marpay_promo_popup_views';
-      const now = Date.now();
-      const oneDayInMs = 24 * 60 * 60 * 1000;
+    /**
+     * MODE TESTING:
+     * Popup akan muncul setiap kali halaman dibuka/direfresh.
+     * Tidak menyimpan status ke localStorage agar memudahkan pengecekan desain.
+     */
+    const timer = setTimeout(() => {
+      setIsOpen(true);
+    }, 1500); // Muncul setelah 1.5 detik agar transisi halus
 
-      // Ambil riwayat kemunculan dari localStorage
-      const storedViews = localStorage.getItem(storageKey);
-      let viewTimestamps: number[] = [];
-      
-      if (storedViews) {
-        try {
-          viewTimestamps = JSON.parse(storedViews);
-        } catch (e) {
-          viewTimestamps = [];
-        }
-      }
-
-      // Filter hanya kemunculan dalam 24 jam terakhir
-      const recentViews = viewTimestamps.filter(timestamp => (now - timestamp) < oneDayInMs);
-
-      // Jika muncul kurang dari 2 kali dalam 24 jam terakhir
-      if (recentViews.length < 2) {
-        const timer = setTimeout(() => {
-          setIsOpen(true);
-          
-          // Catat kemunculan baru
-          const updatedViews = [...recentViews, now];
-          localStorage.setItem(storageKey, JSON.stringify(updatedViews));
-        }, 1500); // Muncul setelah 1.5 detik agar halus
-        return () => clearTimeout(timer);
-      }
-    };
-
-    checkFrequency();
+    return () => clearTimeout(timer);
   }, []);
 
   const handleClose = () => {
