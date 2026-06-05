@@ -27,38 +27,44 @@ export function MarPayAIChat() {
     }
   }, [messages, isOpen]);
 
-  const handleSendMessage = async () => {
+  const handleSendMessage = () => {
     if (!input.trim() || isLoading) return;
 
-    const userMessageContent = input.trim();
-    const userMessage: Message = { role: 'user', content: userMessageContent };
+    const originalInput = input.trim();
+    const userMessageContent = originalInput.toLowerCase();
+    const userMessage: Message = { role: 'user', content: originalInput };
     
     setMessages((prev) => [...prev, userMessage]);
     setInput('');
     setIsLoading(true);
 
-    try {
-      const response = await fetch('/api/ai', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: userMessageContent }),
-      });
+    // Simulated "AI" response logic based on local FAQ keywords
+    setTimeout(() => {
+      let reply = "Maaf, CS AI MarPay belum memahami pertanyaan itu. Silakan hubungi admin WhatsApp untuk bantuan langsung.";
 
-      const data = await response.json();
-      
-      if (data.reply) {
-        setMessages((prev) => [...prev, { role: 'assistant', content: data.reply }]);
-      } else if (data.error) {
-        throw new Error(data.error);
-      } else {
-        throw new Error('Invalid response');
+      if (userMessageContent.includes("cara order")) {
+        reply = "Untuk order di MarPay, pilih produk yang diinginkan, lanjutkan checkout, lalu kirim pesanan ke WhatsApp admin untuk konfirmasi.";
+      } else if (userMessageContent.includes("cara bayar") || userMessageContent.includes("pembayaran") || userMessageContent.includes("bayar")) {
+        reply = "Pembayaran bisa mengikuti arahan admin MarPay melalui WhatsApp. Admin akan memberikan metode pembayaran yang tersedia seperti transfer/e-wallet/QRIS jika tersedia.";
+      } else if (userMessageContent.includes("pulsa")) {
+        reply = "MarPay menyediakan pulsa Telkomsel, Axis, Indosat, Tri, dan Smartfren. Untuk harga terbaru dan proses order, silakan hubungi admin WhatsApp.";
+      } else if (userMessageContent.includes("dana")) {
+        reply = "Top up DANA tersedia di MarPay. Silakan hubungi admin WhatsApp untuk nominal dan harga terbaru.";
+      } else if (userMessageContent.includes("ovo")) {
+        reply = "Top up OVO tersedia di MarPay. Silakan hubungi admin WhatsApp untuk nominal dan harga terbaru.";
+      } else if (userMessageContent.includes("gopay")) {
+        reply = "Top up GoPay tersedia di MarPay. Silakan hubungi admin WhatsApp untuk nominal dan harga terbaru.";
+      } else if (userMessageContent.includes("shopeepay")) {
+        reply = "Top up ShopeePay tersedia di MarPay. Silakan hubungi admin WhatsApp untuk nominal dan harga terbaru.";
+      } else if (userMessageContent.includes("pln") || userMessageContent.includes("token")) {
+        reply = "Token PLN tersedia di MarPay. Silakan hubungi admin WhatsApp untuk cek nominal dan harga terbaru.";
+      } else if (userMessageContent.includes("produk")) {
+        reply = "MarPay menyediakan produk digital, PPOB, dan produk fisik pilihan. Silakan cek katalog atau hubungi admin WhatsApp.";
       }
-    } catch (e) {
-      console.error("Chat Error:", e);
-      setMessages((prev) => [...prev, { role: 'assistant', content: 'Maaf, terjadi gangguan koneksi. Silakan hubungi admin WhatsApp kami untuk bantuan langsung.' }]);
-    } finally {
+
+      setMessages((prev) => [...prev, { role: 'assistant', content: reply }]);
       setIsLoading(false);
-    }
+    }, 800);
   };
 
   const handleWhatsApp = () => {
@@ -81,13 +87,13 @@ export function MarPayAIChat() {
             <h4 className="text-sm font-bold text-gray-800">Asisten MarPay</h4>
             <div className="flex items-center gap-1">
               <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div>
-              <p className="text-[10px] text-emerald-600 font-bold uppercase tracking-wider">AI Online</p>
+              <p className="text-[10px] text-emerald-600 font-bold uppercase tracking-wider">Online</p>
             </div>
           </div>
         </div>
 
         <p className="text-[11px] text-gray-500 leading-relaxed relative z-10">
-          Tanya seputar pesanan, produk, PPOB, dan cara order secara instan dengan bantuan AI.
+          Tanya seputar pesanan, produk, PPOB, dan cara order secara instan dengan bantuan asisten otomatis.
         </p>
 
         <Button 
@@ -113,7 +119,7 @@ export function MarPayAIChat() {
                 </div>
                 <div>
                   <h3 className="text-sm font-black text-gray-900">CS AI MarPay</h3>
-                  <p className="text-[10px] text-gray-400 font-medium">Asisten Virtual Pintar</p>
+                  <p className="text-[10px] text-gray-400 font-medium">Asisten Virtual</p>
                 </div>
               </div>
               <button 
@@ -142,7 +148,7 @@ export function MarPayAIChat() {
                 <div className="flex justify-start">
                   <div className="bg-white p-3 rounded-2xl rounded-tl-none border border-gray-100 flex items-center gap-2 text-gray-400 shadow-sm">
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    <span className="text-[10px] font-bold uppercase tracking-widest">AI Mengetik...</span>
+                    <span className="text-[10px] font-bold uppercase tracking-widest">Asisten Mengetik...</span>
                   </div>
                 </div>
               )}
@@ -161,10 +167,10 @@ export function MarPayAIChat() {
               <div className="flex gap-2">
                 <input
                   type="text"
-                  placeholder="Ketik pertanyaan Anda di sini..."
+                  placeholder="Ketik pertanyaan (order, bayar, pulsa...)"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                   className="flex-1 bg-gray-100 border-none rounded-2xl px-5 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 placeholder:text-gray-400"
                 />
                 <Button 
