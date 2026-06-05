@@ -27,9 +27,9 @@ export async function POST(req: Request) {
       );
     }
 
-    const completion = await client.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
+    const response = await client.responses.create({
+      model: "gpt-4.1-mini",
+      input: [
         {
           role: "system",
           content:
@@ -43,17 +43,16 @@ export async function POST(req: Request) {
       temperature: 0.4
     });
 
-    const reply =
-      completion.choices?.[0]?.message?.content ||
-      "Maaf, saya belum bisa menjawab pertanyaan itu.";
-
-    return NextResponse.json({ reply });
+    return NextResponse.json({
+      reply: response.output_text || "Maaf, saya belum bisa menjawab pertanyaan itu."
+    });
   } catch (error: any) {
     console.error("MarPay AI error detail:", {
       message: error?.message,
       status: error?.status,
       code: error?.code,
-      type: error?.type
+      type: error?.type,
+      response: error?.response?.data
     });
 
     return NextResponse.json(
