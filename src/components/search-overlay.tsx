@@ -19,6 +19,18 @@ interface SearchOverlayProps {
 
 type SortOption = 'semua' | 'terlaris' | 'harga_rendah' | 'terbaru';
 
+// Mapping for search expansion (synonyms/related terms)
+const SEARCH_EXPANSIONS: Record<string, string[]> = {
+  'skincare': ['sunscreen', 'sun screen', 'serum', 'toner', 'facial wash', 'moisturizer', 'pelembab', 'cream', 'krim', 'acne', 'jerawat', 'beauty', 'kecantikan', 'perawatan wajah', 'bioaqua', 'azarine', 'wardah'],
+  'beauty': ['skincare', 'kecantikan', 'sunscreen', 'serum', 'toner', 'facial wash', 'moisturizer', 'makeup', 'bodycare'],
+  'pulsa': ['telkomsel', 'axis', 'xl', 'indosat', 'im3', 'tri', 'smartfren'],
+  'ewallet': ['dana', 'ovo', 'gopay', 'shopeepay', 'top up saldo', 'dompet digital'],
+  'e-wallet': ['dana', 'ovo', 'gopay', 'shopeepay', 'top up saldo', 'dompet digital'],
+  'pln': ['token listrik', 'listrik', 'token pln'],
+  'fashion': ['baju', 'kaos', 'hoodie', 'kemeja', 'celana', 'pakaian'],
+  'akrilik': ['sertifikat', 'funded', 'acrylic', 'plaque'],
+};
+
 export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
   const [inputValue, setInputValue] = useState('');
   const [showResults, setShowResults] = useState(false);
@@ -116,16 +128,33 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
     return Array.from(matches).slice(0, 10);
   }, [inputValue, showResults]);
 
-  // Filter and sort results
+  // Filter and sort results with expanded keyword logic
   const finalResults = useMemo(() => {
     if (!confirmedQuery) return [];
-    const q = confirmedQuery.toLowerCase();
+    const q = confirmedQuery.toLowerCase().trim();
     
-    let filtered = Products.filter(p => 
-      p.name.toLowerCase().includes(q) || 
-      p.category?.toLowerCase().includes(q) ||
-      p.description?.toLowerCase().includes(q)
-    );
+    // Find all related expansion terms for the query
+    const relatedTerms = new Set<string>([q]);
+    Object.keys(SEARCH_EXPANSIONS).forEach(key => {
+      if (q.includes(key) || key.includes(q)) {
+        SEARCH_EXPANSIONS[key].forEach(term => relatedTerms.add(term));
+      }
+    });
+
+    const searchTerms = Array.from(relatedTerms);
+    
+    let filtered = Products.filter(p => {
+      const name = p.name.toLowerCase();
+      const cat = p.category?.toLowerCase() || '';
+      const desc = p.description?.toLowerCase() || '';
+      
+      // Check if any of the search terms (query or synonyms) are found in name, category, or description
+      return searchTerms.some(term => 
+        name.includes(term) || 
+        cat.includes(term) || 
+        desc.includes(term)
+      );
+    });
 
     switch (activeSort) {
       case 'terlaris':
