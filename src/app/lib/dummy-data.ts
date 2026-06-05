@@ -51,42 +51,6 @@ export const Vouchers = [
 
 export const Products = [
   {
-    id: 401,
-    name: 'Wispie Girl Boss Fitted Shirt - Kemeja Kerja Wanita Premium',
-    price: 155000,
-    originalPrice: 199000,
-    rating: 4.9,
-    reviews: '2.1rb',
-    sold: 5000,
-    category: 'Fashion',
-    image: 'https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg',
-    isFlashSale: false,
-    discount: '22%',
-    stock: 'Tersedia',
-    tag: 'Produk Viral',
-    brand: 'Wispie',
-    gender: 'female',
-    variants: ['S', 'M', 'L', 'XL', 'XXL'],
-    colors: ['Putih', 'Hitam', 'Soft Pink', 'Biru Muda'],
-    shippingFee: 8000,
-    description: `Wispie Girl Boss Fitted Shirt
-
-Kemeja kerja wanita dengan potongan Slim Fit (Press Body) yang didesain khusus untuk memberikan kesan profesional dan elegan bagi para "Girl Boss".
-
-Detail Produk:
-- Bahan: Cotton Premium (Adem, tidak menerawang, serat rapat)
-- Potongan: Fitted / Slim Fit
-- Kancing depan tertutup (Clean Look)
-- Kerah formal yang tegak dan rapi
-
-Sangat cocok untuk:
-- Pakaian Kantor / Kerja
-- Acara Formal / Meeting
-- Interview Kerja
-
-Tersedia dalam berbagai pilihan warna basic yang timeless.`,
-  },
-  {
     id: 206,
     name: 'BETTERHALF Celana Pendek Pria Polos Short Pants Boardshort - Black',
     price: 47320,
@@ -370,25 +334,6 @@ Keunggulan:
 • Cocok untuk kulit berminyak and berjerawat
 • Membantu menjaga skin barrier
 • Nyaman digunakan sehari-hari`,
-  },
-  {
-    id: 301,
-    name: 'Celana Cargo Pria Premium',
-    price: 89000,
-    originalPrice: 118667,
-    rating: 4.9,
-    reviews: '124',
-    sold: 1200,
-    category: 'Fashion',
-    image: 'https://images.pexels.com/photos/1598505/pexels-photo-1598505.jpeg',
-    isFlashSale: false,
-    discount: '25%',
-    stock: 'Tersedia',
-    tag: 'Fashion Pria',
-    brand: 'MarFashion',
-    variants: ['28', '30', '32', '34'],
-    shippingFee: 0,
-    description: 'Celana cargo pria premium dengan bahan nyaman, cocok untuk aktivitas harian dan gaya casual.',
   },
   {
     id: 101,
