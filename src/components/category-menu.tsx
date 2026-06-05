@@ -23,19 +23,21 @@ export function CategoryMenu() {
   };
 
   return (
-    <div className="flex overflow-x-auto no-scrollbar gap-6 px-4 py-6 bg-white border-b border-gray-50">
+    <div className="flex overflow-x-auto no-scrollbar gap-5 px-4 py-6 bg-white border-b border-gray-50 items-start">
       {Categories.map((cat) => {
         const LucideIcon = (Icons as any)[cat.icon];
         return (
           <div 
             key={cat.id} 
-            className="flex flex-col items-center gap-1.5 flex-shrink-0 w-16 group cursor-pointer"
+            className="flex flex-col items-center gap-2 flex-shrink-0 w-[4.5rem] group cursor-pointer"
             onClick={() => handleCategoryClick(cat.name)}
           >
             <div className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center text-primary group-active:scale-95 transition-transform border border-gray-100 shadow-sm">
-              {LucideIcon && <LucideIcon className="w-6 h-6 stroke-[1.5px]" />}
+              {LucideIcon && <LucideIcon className="w-6 h-6 stroke-[1.8px]" />}
             </div>
-            <span className="text-[10px] font-bold text-gray-600 text-center line-clamp-1">{cat.name}</span>
+            <span className="text-[10px] font-bold text-gray-600 text-center leading-tight line-clamp-2 px-1">
+              {cat.name}
+            </span>
           </div>
         );
       })}

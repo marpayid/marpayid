@@ -41,12 +41,12 @@ export function BottomNav() {
 
   return (
     <nav 
-      className="fixed bottom-0 left-0 right-0 z-[1000] bg-white border-t border-gray-100 flex flex-col shadow-[0_-4px_20px_rgba(0,0,0,0.06)] w-full"
+      className="fixed bottom-0 left-0 right-0 z-[1000] bg-white border-t border-gray-100 flex flex-col shadow-[0_-8px_30px_rgba(0,0,0,0.06)] w-full"
       style={{ 
-        paddingBottom: 'env(safe-area-inset-bottom)' 
+        paddingBottom: 'calc(4px + env(safe-area-inset-bottom))' 
       }}
     >
-      <div className="flex items-center w-full h-[48px] px-1 pt-[10px]">
+      <div className="flex items-center w-full h-[56px] px-1">
         {navItems.map((item) => {
           const isActive = pathname === item.path;
           return (
@@ -54,11 +54,11 @@ export function BottomNav() {
               key={item.label}
               href={item.path}
               className={cn(
-                "flex-1 flex flex-col items-center justify-center gap-0 transition-all duration-200",
+                "flex-1 flex flex-col items-center justify-center gap-1 transition-all duration-200 h-full",
                 isActive ? "text-primary" : "text-gray-400"
               )}
             >
-              <div className="flex items-center justify-center h-6 w-6 relative translate-y-1">
+              <div className="flex items-center justify-center h-6 w-6 relative">
                 <item.icon 
                   className={cn(
                     "w-6 h-6 transition-all", 
@@ -66,14 +66,14 @@ export function BottomNav() {
                   )} 
                 />
                 {item.hasBadge && cartCount > 0 && (
-                  <span className="absolute -top-1.5 -right-1.5 bg-primary text-white text-[7px] font-bold h-4 w-4 rounded-full flex items-center justify-center border-2 border-white animate-in zoom-in">
+                  <span className="absolute -top-1.5 -right-2 bg-primary text-white text-[7px] font-black h-4 w-4 rounded-full flex items-center justify-center border-2 border-white animate-in zoom-in">
                     {cartCount}
                   </span>
                 )}
               </div>
               <span className={cn(
-                "text-[9px] tracking-tight leading-none mt-1.5",
-                isActive ? "font-bold text-primary" : "font-medium"
+                "text-[9.5px] tracking-tight leading-none font-bold uppercase",
+                isActive ? "text-primary" : "text-gray-400"
               )}>
                 {item.label}
               </span>

@@ -33,7 +33,7 @@ export function ProductGrid() {
         </TabsList>
         
         <TabsContent value="viral">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-3.5">
             {viralProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
@@ -41,7 +41,7 @@ export function ProductGrid() {
         </TabsContent>
         
         <TabsContent value="semua">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-3.5">
             {Products.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
@@ -77,7 +77,7 @@ export function FashionDiscoveryCard() {
       badge: 'BEAUTY TREND',
       title: 'KOLEKSI BEAUTY PILIHAN',
       subtitle: 'Skincare • Bodycare • Makeup',
-      path: '/kategori/kecantikan',
+      path: '/kategori/beauty',
       icon: Sparkles,
       gradient: 'from-[#6D28D9] via-[#DB2777] to-[#F43F5E]',
       glow: 'bg-rose-400/20'
@@ -85,12 +85,12 @@ export function FashionDiscoveryCard() {
   ];
 
   return (
-    <div className="rounded-[14px] overflow-hidden shadow-xl h-full min-h-[285px] relative">
+    <div className="rounded-[18px] overflow-hidden shadow-xl h-full min-h-[295px] relative">
       <Carousel setApi={setApi} opts={{ loop: true }} className="w-full h-full">
         <CarouselContent className="h-full ml-0">
           {slides.map((slide) => (
             <CarouselItem key={slide.id} className="pl-0 h-full">
-              <Link href={slide.path} className={cn("bg-gradient-to-br flex flex-col group relative active:scale-[0.98] transition-all h-full min-h-[285px] border-none text-white", slide.gradient)}>
+              <Link href={slide.path} className={cn("bg-gradient-to-br flex flex-col group relative active:scale-[0.98] transition-all h-full min-h-[295px] border-none text-white", slide.gradient)}>
                 <div className="absolute -right-8 -bottom-8 opacity-20 transition-transform duration-700 group-hover:scale-110 group-hover:-rotate-6 pointer-events-none">
                   <slide.icon className="w-44 h-44 rotate-12" />
                 </div>
@@ -185,36 +185,38 @@ export function ProductCard({ product, compact = false }: { product: any, compac
   const isFreeShipping = !hasShippingFee || product.forceFreeShippingLabel;
 
   return (
-    <div className={cn("bg-white rounded-[14px] border border-gray-100 overflow-hidden shadow-sm flex flex-col group relative", compact ? "min-w-[145px] w-[145px]" : "w-full", isOutOfStock && "opacity-75")}>
+    <div className={cn("bg-white rounded-[18px] border border-gray-100 overflow-hidden shadow-sm flex flex-col group relative transition-all active:scale-[0.98]", compact ? "min-w-[155px] w-[155px]" : "w-full", isOutOfStock && "opacity-75")}>
       <Link href={`/product/${product.id}`} className="relative aspect-square block">
-        <Image src={displayImage} alt={product.name} fill className={cn("object-cover", isOutOfStock && "grayscale")} />
-        {product.discount && !isOutOfStock && <div className="absolute top-0 left-0 bg-orange-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-br-lg shadow-sm">{product.discount} OFF</div>}
+        <Image src={displayImage} alt={product.name} fill className={cn("object-cover", isOutOfStock && "grayscale")} sizes="(max-width: 768px) 50vw, 33vw" />
+        {product.discount && !isOutOfStock && <div className="absolute top-0 left-0 bg-orange-500 text-white text-[9px] font-black px-2 py-0.5 rounded-br-xl shadow-sm uppercase">{product.discount} OFF</div>}
         {isOutOfStock && <div className="absolute inset-0 bg-black/40 flex items-center justify-center"><span className="bg-red-600 text-white text-[10px] font-black px-2 py-1 rounded-md uppercase tracking-wider">Stok Habis</span></div>}
-        <button onClick={handleToggleFavorite} className={cn("absolute top-1.5 right-1.5 p-1.5 bg-white/80 rounded-full shadow-sm backdrop-blur-sm transition-all active:scale-150 duration-200", isFavorited ? "text-red-500" : "text-gray-400")}>
-          <Heart className={cn("w-3.5 h-3.5", isFavorited && "fill-red-500")} />
+        <button onClick={handleToggleFavorite} className={cn("absolute top-2 right-2 p-2 bg-white/90 rounded-full shadow-sm backdrop-blur-sm transition-all active:scale-125 duration-200", isFavorited ? "text-red-500" : "text-gray-400")}>
+          <Heart className={cn("w-4 h-4", isFavorited && "fill-red-500")} />
         </button>
       </Link>
-      <div className="p-2.5 flex-1 flex flex-col">
-        <Link href={`/product/${product.id}`} className="mb-1"><h3 className="text-[11px] font-medium text-gray-800 line-clamp-2 leading-tight h-[26px]">{product.name}</h3></Link>
+      <div className="p-3 flex-1 flex flex-col">
+        <Link href={`/product/${product.id}`} className="mb-1.5"><h3 className="text-[11.5px] font-bold text-gray-800 line-clamp-2 leading-tight h-[28px] overflow-hidden">{product.name}</h3></Link>
         <div className="mt-auto">
-          <div className="flex justify-between items-center mb-1">
-            <p className="text-sm font-bold text-red-600">
+          <div className="flex justify-between items-center mb-1.5">
+            <p className="text-[13px] font-black text-red-600">
               Rp {product.price.toLocaleString()}
             </p>
             {isFreeShipping && product.type !== 'digital' && (
-              <div className="flex items-center text-[8px] text-green-500 font-black uppercase gap-0.5">
-                <Truck className="w-2.5 h-2.5" /> Gratis
+              <div className="flex items-center text-[8.5px] text-green-600 font-black uppercase gap-0.5 bg-green-50 px-1.5 py-0.5 rounded-md">
+                <Truck className="w-2.5 h-2.5" /> Free
               </div>
             )}
           </div>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1 overflow-hidden">
               <Star className="w-2.5 h-2.5 fill-yellow-400 text-yellow-400 flex-shrink-0" />
-              <span className="text-[10px] font-bold text-gray-700">{product.rating || '0.0'}</span>
-              <span className="text-[10px] text-gray-400 mx-0.5 flex-shrink-0">|</span>
-              <span className="text-[10px] text-gray-500 truncate">{formatSold(product.sold || 0)}</span>
+              <span className="text-[10px] font-black text-gray-700">{product.rating || '0.0'}</span>
+              <span className="text-[10px] text-gray-300 mx-0.5 flex-shrink-0">|</span>
+              <span className="text-[10px] text-gray-400 font-medium truncate">{formatSold(product.sold || 0)}</span>
             </div>
-            <button onClick={handleAddToCart} disabled={isOutOfStock} className={cn("w-6 h-6 rounded-full border flex items-center justify-center transition-colors flex-shrink-0 ml-1", isOutOfStock ? "bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed" : "border-primary/20 bg-primary/5 text-primary hover:bg-primary hover:text-white")}><ShoppingBag className="w-3 h-3" /></button>
+            <button onClick={handleAddToCart} disabled={isOutOfStock} className={cn("w-7 h-7 rounded-xl border flex items-center justify-center transition-all flex-shrink-0 ml-1 active:scale-90", isOutOfStock ? "bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed" : "border-primary/20 bg-primary/5 text-primary hover:bg-primary hover:text-white shadow-sm")}>
+              <ShoppingBag className="w-3.5 h-3.5" />
+            </button>
           </div>
         </div>
       </div>
