@@ -13,7 +13,7 @@ import { cn } from '@/lib/utils';
 import { 
   Smartphone, Gamepad2, CreditCard, Package, Truck, 
   Tag, Zap, Wallet, QrCode, ShoppingBag as ShoppingBagIcon,
-  Flame, Sparkles, ChevronRight, CheckCircle2, Ticket
+  Flame, Sparkles, ChevronRight, CheckCircle2, Ticket, Gift, Coins
 } from 'lucide-react';
 import { PromotionalCards } from '@/components/promotional-cards';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -149,47 +149,71 @@ export default function Home() {
 
         <CategoryMenu />
 
-        {/* Campaign Card 6.6 Mega Sale */}
+        {/* Campaign Event Card MarPay */}
         <section className="px-4 py-3 bg-white">
           <div 
             onClick={() => document.getElementById('flash-sale-section')?.scrollIntoView({ behavior: 'smooth' })}
-            className="relative h-[180px] w-full rounded-[28px] bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 p-6 text-white overflow-hidden shadow-xl shadow-indigo-500/20 active:scale-[0.98] transition-all cursor-pointer group"
+            className="relative h-[170px] w-full rounded-[24px] bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 p-5 text-white overflow-hidden shadow-xl shadow-indigo-500/20 active:scale-[0.98] transition-all cursor-pointer group"
           >
-            {/* Background Decorations */}
+            {/* Soft Glow Effects */}
             <div className="absolute top-[-20px] left-[-20px] w-32 h-32 bg-white/10 rounded-full blur-3xl"></div>
             <div className="absolute bottom-[-40px] right-[-40px] w-40 h-40 bg-cyan-400/20 rounded-full blur-3xl"></div>
             
-            {/* Visual Icon Decoration */}
-            <div className="absolute right-4 top-4 opacity-15 transition-transform duration-700 group-hover:scale-110 group-hover:-rotate-6 pointer-events-none">
-               <Flame className="w-24 h-24 rotate-12 text-white" />
+            {/* Decoration Elements Transparan */}
+            <div className="absolute right-12 top-6 opacity-10 animate-float">
+               <Ticket className="w-10 h-10 rotate-12" />
+            </div>
+            <div className="absolute left-1/4 bottom-8 opacity-10 animate-float-reverse">
+               <Zap className="w-8 h-8 -rotate-12" />
+            </div>
+            <div className="absolute right-1/3 top-10 opacity-10 animate-float-slow">
+               <Gamepad2 className="w-12 h-12" />
+            </div>
+            <div className="absolute left-10 top-1/2 opacity-10 animate-float">
+               <Coins className="w-6 h-6" />
             </div>
 
-            <div className="relative z-10 flex flex-col h-full justify-between">
-              <div className="space-y-4">
-                {/* Badge Event */}
-                <div className="bg-white/20 backdrop-blur-md border border-white/10 text-[8px] font-black px-3 py-1 rounded-full uppercase tracking-[0.15em] w-fit shadow-sm">
-                  EVENT SPESIAL
+            <div className="relative z-10 flex flex-col h-full">
+              {/* Top Row: Left, Center, Right */}
+              <div className="flex justify-between items-start flex-1">
+                {/* Kiri: Badge */}
+                <div className="w-1/4">
+                  <div className="bg-white/20 backdrop-blur-md border border-white/10 text-[7px] font-black px-2 py-1 rounded-full uppercase tracking-wider w-fit shadow-sm flex items-center gap-1">
+                    🔥 EVENT TERBATAS
+                  </div>
                 </div>
 
-                <div className="space-y-1">
-                  <h2 className="text-2xl font-black leading-none tracking-tight italic uppercase">
-                    6.6 MEGA SALE
-                  </h2>
-                  <p className="text-[13px] text-white/80 font-medium">
-                    Diskon hingga <span className="text-yellow-400 font-black">66%</span>
-                  </p>
+                {/* Tengah: Judul & Subjudul */}
+                <div className="flex-1 text-center space-y-1.5 pt-1">
+                  <div className="space-y-0.5">
+                    <p className="text-[10px] font-bold text-cyan-300 uppercase tracking-[0.2em] leading-none">PROMO PUNCAK</p>
+                    <h2 className="text-4xl font-black leading-none tracking-tighter italic italic">6.6</h2>
+                  </div>
+                  <div className="space-y-0.5">
+                    <p className="text-[10px] font-black text-white leading-tight uppercase">Diskon Hingga 66%</p>
+                    <p className="text-[8px] text-white/70 font-medium leading-none">Voucher Belanja & Gratis Ongkir</p>
+                  </div>
+                </div>
+
+                {/* Kanan: Ilustrasi */}
+                <div className="w-1/4 flex justify-end pt-1">
+                   <div className="relative">
+                      <div className="absolute inset-0 bg-cyan-400/30 blur-2xl rounded-full"></div>
+                      <Gift className="w-16 h-16 text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] relative z-10" />
+                   </div>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between">
-                <div className="bg-white text-indigo-600 px-6 py-2.5 rounded-xl text-[10px] font-black uppercase shadow-lg shadow-black/10 group-hover:bg-indigo-50 transition-colors">
+              {/* Bottom Row: Button & Countdown */}
+              <div className="flex items-center justify-between pt-2 border-t border-white/10">
+                <div className="bg-white text-indigo-700 px-5 py-2 rounded-xl text-[9px] font-black uppercase shadow-lg shadow-black/10 group-hover:bg-indigo-50 transition-colors">
                   Belanja Sekarang
                 </div>
                 
-                <div className="flex flex-col items-end">
-                   <div className="flex items-center gap-1.5 mb-0.5">
+                <div className="flex items-center gap-2">
+                   <div className="flex items-center gap-1.5">
                       <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></div>
-                      <span className="text-[9px] font-black uppercase tracking-tight text-cyan-300">
+                      <span className="text-[9px] font-black uppercase tracking-widest text-cyan-300">
                         Berakhir dalam 02:44:50
                       </span>
                    </div>
