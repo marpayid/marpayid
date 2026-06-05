@@ -51,6 +51,37 @@ export const Vouchers = [
 
 export const Products = [
   {
+    id: 209,
+    name: 'Wispie Girl Boss Fitted Shirt',
+    price: 140900,
+    hargaSupplier: 130410,
+    originalPrice: 210000,
+    rating: 4.9,
+    reviews: '1.2rb',
+    sold: 10000,
+    category: 'Fashion',
+    imageUrl: 'https://images.pexels.com/photos/5709665/pexels-photo-5709665.jpeg',
+    isFlashSale: true,
+    discount: '33%',
+    stock: 'Tersedia',
+    tag: 'Produk Viral',
+    gender: 'female',
+    brand: 'Wispie',
+    variants: ['S', 'M', 'L', 'XL'],
+    shippingFee: 0,
+    forceFreeShippingLabel: true,
+    description: `Wispie Girl Boss Fitted Shirt
+    
+Kemeja kerja wanita model fitted stripe dengan bahan lembut dan nyaman dipakai sehari-hari. Cocok untuk outfit kantor, kuliah, maupun casual look.
+
+Detail Produk:
+- Bahan: Premium Cotton Stripe
+- Model: Slim Fit / Fitted
+- Karakter: Adem, tidak menerawang, menyerap keringat.
+
+Tersedia dalam berbagai ukuran untuk menunjang penampilan profesional Anda sehari-hari.`,
+  },
+  {
     id: 206,
     name: 'BETTERHALF Celana Pendek Pria Polos Short Pants Boardshort - Black',
     price: 47320,
