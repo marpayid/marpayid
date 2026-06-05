@@ -7,20 +7,50 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 
+/**
+ * Flag variabel di luar komponen (module scope).
+ * Variabel ini akan tetap 'true' selama navigasi client-side di Next.js (SPA),
+ * namun akan ter-reset otomatis menjadi 'false' saat halaman direfresh atau web dibuka pertama kali.
+ * Ini memenuhi syarat: "muncul saat refresh/buka web" tapi "tidak muncul saat navigasi antar halaman".
+ */
+let sessionPopupChecked = false;
+
 export function PromoPopup() {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    /**
-     * MODE TESTING:
-     * Popup akan muncul setiap kali halaman dibuka/direfresh.
-     * Tidak menyimpan status ke localStorage agar memudahkan pengecekan desain.
-     */
-    const timer = setTimeout(() => {
-      setIsOpen(true);
-    }, 1500); // Muncul setelah 1.5 detik agar transisi halus
+    // 1. Cek apakah sudah pernah diproses di sesi navigasi saat ini
+    if (sessionPopupChecked) return;
+    sessionPopupChecked = true;
 
-    return () => clearTimeout(timer);
+    const checkPopupEligibility = () => {
+      const now = new Date();
+      const today = now.toISOString().split('T')[0]; // Format YYYY-MM-DD
+      
+      // 2. Ambil data harian dari localStorage
+      const savedDate = localStorage.getItem('marpay_popup_date');
+      let count = Number(localStorage.getItem('marpay_popup_count') || 0);
+
+      // 3. Reset jika ganti hari
+      if (savedDate !== today) {
+        count = 0;
+        localStorage.setItem('marpay_popup_date', today);
+        localStorage.setItem('marpay_popup_count', '0');
+      }
+
+      // 4. Tampilkan jika kuota harian (max 2x) belum habis
+      if (count < 2) {
+        const timer = setTimeout(() => {
+          setIsOpen(true);
+          // Update hitungan kemunculan
+          localStorage.setItem('marpay_popup_count', (count + 1).toString());
+        }, 1500); // Delay halus agar transisi terasa premium
+
+        return () => clearTimeout(timer);
+      }
+    };
+
+    checkPopupEligibility();
   }, []);
 
   const handleClose = () => {
@@ -28,7 +58,7 @@ export function PromoPopup() {
   };
 
   const handleClaim = () => {
-    // Simulasi klaim
+    // Simulasi klaim voucher
     handleClose();
     window.location.href = '/akun/voucher';
   };
