@@ -4,7 +4,7 @@
 import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft, ShoppingBag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useProducts } from '@/hooks/use-products';
+import { Products } from '@/app/lib/dummy-data';
 import { ProductCard } from '@/components/product-grid';
 import { BottomNav } from '@/components/bottom-nav';
 
@@ -12,7 +12,6 @@ export default function GenericCategoryPage() {
   const params = useParams();
   const router = useRouter();
   const slug = params?.slug ? decodeURIComponent(params.slug as string) : '';
-  const { products } = useProducts();
 
   const categoryNameMap: Record<string, string> = {
     'kecantikan': 'Beauty',
@@ -28,7 +27,7 @@ export default function GenericCategoryPage() {
   const displayName = categoryNameMap[slug.toLowerCase()] || slug;
   
   // Filter logic enhanced to support both new display name and legacy data naming
-  const filteredProducts = products.filter(p => {
+  const filteredProducts = Products.filter(p => {
     const productCat = p.category?.toLowerCase() || '';
     const currentSlug = slug.toLowerCase();
     

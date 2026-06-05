@@ -4,7 +4,7 @@
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Shirt, ShoppingBag, SlidersHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useProducts } from '@/hooks/use-products';
+import { Products } from '@/app/lib/dummy-data';
 import { ProductCard } from '@/components/product-grid';
 import { BottomNav } from '@/components/bottom-nav';
 import { cn } from '@/lib/utils';
@@ -13,10 +13,9 @@ import { useState } from 'react';
 export default function FashionCategoryPage() {
   const router = useRouter();
   const [activeFilter, setActiveFilter] = useState('Semua');
-  const { products } = useProducts();
   
   // Ambil hanya produk dengan kategori Fashion
-  const fashionProducts = products.filter(p => p.category === 'Fashion');
+  const fashionProducts = Products.filter(p => p.category === 'Fashion');
 
   const filters = ['Semua', 'Kaos', 'Kemeja', 'Promo'];
 

@@ -2,14 +2,13 @@
 "use client"
 
 import { useState, useEffect } from 'react';
-import { useProducts } from '@/hooks/use-products';
+import { Products } from '@/app/lib/dummy-data';
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
 import { ProductCard } from './product-grid';
 
 export function FlashSale() {
   const [timeLeft, setTimeLeft] = useState({ h: 2, m: 44, s: 50 });
-  const { products } = useProducts();
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -24,7 +23,7 @@ export function FlashSale() {
   }, []);
 
   // Mengecualikan kategori Premium dari Flash Sale
-  const flashSaleItems = products.filter(p => p.isFlashSale && p.category !== 'Premium');
+  const flashSaleItems = Products.filter(p => p.isFlashSale && p.category !== 'Premium');
 
   return (
     <section id="flash-sale-section" className="mt-2 px-4 py-4 bg-white">

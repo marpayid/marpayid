@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { useProducts, useProductDetail } from '@/hooks/use-products';
+import { Products } from '@/app/lib/dummy-data';
 import Image from 'next/image';
 import Link from 'next/link';
 import { cn, formatSold, getProductImage } from '@/lib/utils';
@@ -21,8 +21,9 @@ export default function ProductDetail() {
   const router = useRouter();
   const { toast } = useToast();
   
-  const { product, loading } = useProductDetail(id);
-  const { products: allProducts } = useProducts();
+  const product = useMemo(() => {
+    return Products.find(p => String(p.id) === id);
+  }, [id]);
   
   const [quantity, setQuantity] = useState(1);
   const [selectedVariant, setSelectedVariant] = useState(0);
@@ -66,31 +67,22 @@ export default function ProductDetail() {
 
   // Logic for Similar and Recommended Products
   const similarProducts = useMemo(() => {
-    if (!product || !allProducts) return [];
-    return allProducts.filter(p => 
+    if (!product) return [];
+    return Products.filter(p => 
       p.category === product.category && 
       String(p.id) !== String(product.id) && 
       p.category !== 'Premium'
     ).slice(0, 4);
-  }, [product, allProducts]);
+  }, [product]);
 
   const recommendedProducts = useMemo(() => {
-    if (!product || !allProducts) return [];
+    if (!product) return [];
     const excludedIds = [String(product.id), ...similarProducts.map(p => String(p.id))];
-    return allProducts.filter(p => 
+    return Products.filter(p => 
       !excludedIds.includes(String(p.id)) && 
       p.category !== 'Premium'
     ).slice(0, 4);
-  }, [product, similarProducts, allProducts]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-white flex flex-col items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-        <p className="text-xs font-bold text-gray-400 mt-4 uppercase tracking-widest">Memuat Produk...</p>
-      </div>
-    );
-  }
+  }, [product, similarProducts]);
 
   if (!product) return <div className="p-8 text-center font-bold">Produk tidak ditemukan</div>;
 

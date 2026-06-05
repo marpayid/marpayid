@@ -4,23 +4,22 @@
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Crown, ShieldCheck, Zap, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useProducts } from '@/hooks/use-products';
+import { Products } from '@/app/lib/dummy-data';
 import { ProductCard } from '@/components/product-grid';
 import { BottomNav } from '@/components/bottom-nav';
 
 export default function PremiumCategoryPage() {
   const router = useRouter();
-  const { products } = useProducts();
   
   // Ambil hanya produk dengan kategori Premium
-  const premiumProducts = products.filter(p => p.category === 'Premium');
+  const premiumProducts = Products.filter(p => p.category === 'Premium');
 
   return (
     <div className="min-h-screen bg-gray-50 pb-32">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white px-4 py-4 border-b border-gray-100 flex items-center gap-4">
         <Button variant="ghost" size="icon" onClick={() => router.back()}>
-          <ArrowLeft className="w-5 h-5 text-gray-800" />
+          <ArrowLeft className="w-5 h-5" />
         </Button>
         <h1 className="text-lg font-bold text-gray-900">Premium Apps</h1>
       </header>

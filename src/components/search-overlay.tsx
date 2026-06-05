@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { useProducts } from '@/hooks/use-products';
+import { Products } from '@/app/lib/dummy-data';
 import { ProductCard } from '@/components/product-grid';
 import { cn } from '@/lib/utils';
 
@@ -44,8 +44,6 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
   const [history, setHistory] = useState<string[]>([]);
   const [activeSort, setActiveSort] = useState<SortOption>('semua');
   const inputRef = useRef<HTMLInputElement>(null);
-  
-  const { products } = useProducts();
 
   const popularKeywords = [
     'Case iPhone', 'Skincare', 'Celana', 'Kemeja', 'Akrilik', 'Top Up', 'Pulsa'
@@ -115,12 +113,12 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
   // Generate suggestions based on input (TEXT ONLY)
   const suggestions = useMemo(() => {
     const q = inputValue.toLowerCase().trim();
-    if (!q || showResults || !products) return [];
+    if (!q || showResults) return [];
 
     const matches = new Set<string>();
     
     // Logic to find relevant keywords from products
-    products.forEach(p => {
+    Products.forEach(p => {
       const name = p.name.toLowerCase();
       const cat = p.category?.toLowerCase() || '';
       
@@ -152,11 +150,11 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
     });
 
     return Array.from(matches).slice(0, 10);
-  }, [inputValue, showResults, products]);
+  }, [inputValue, showResults]);
 
   // Filter and sort results with expanded keyword logic and gender awareness
   const finalResults = useMemo(() => {
-    if (!confirmedQuery || !products) return [];
+    if (!confirmedQuery) return [];
     const q = confirmedQuery.toLowerCase().trim();
     
     // 1. Identify Gender Preference in Query
@@ -175,7 +173,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
     const searchTerms = Array.from(expandedTerms);
     
     // 3. Filter Products
-    let filtered = products.filter(p => {
+    let filtered = Products.filter(p => {
       const name = p.name.toLowerCase();
       const cat = p.category?.toLowerCase() || '';
       const desc = p.description?.toLowerCase() || '';
@@ -262,7 +260,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
     });
 
     return sorted;
-  }, [confirmedQuery, activeSort, products]);
+  }, [confirmedQuery, activeSort]);
 
   if (!isOpen) return null;
 

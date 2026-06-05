@@ -5,15 +5,14 @@ import { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Star, ShoppingBag, Heart, ArrowRight, Shirt, Sparkles, Truck } from 'lucide-react';
-import { useProducts } from '@/hooks/use-products';
+import { Products } from '@/app/lib/dummy-data';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn, formatSold, getProductImage } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from '@/components/ui/carousel';
 
 export function ProductGrid() {
-  const { products } = useProducts();
-  const viralProducts = products.filter(p => p.tag === 'Produk Viral');
+  const viralProducts = Products.filter(p => p.tag === 'Produk Viral');
   
   return (
     <section className="mt-6 px-4 pb-24">
@@ -43,7 +42,7 @@ export function ProductGrid() {
         
         <TabsContent value="semua">
           <div className="grid grid-cols-2 gap-3.5">
-            {products.map((product) => (
+            {Products.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
