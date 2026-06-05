@@ -34,9 +34,9 @@ export function PromoPopup() {
 
   return (
     <div className="fixed inset-0 z-[3000] flex items-center justify-center p-6 bg-black/30 animate-in fade-in duration-500">
-      <div className="relative w-full max-w-[340px] animate-in zoom-in-95 duration-500">
+      <div className="relative w-full max-w-[310px] animate-in zoom-in-95 duration-500">
         
-        {/* Tombol Tutup (X) - Reduced size by 20% */}
+        {/* Tombol Tutup (X) */}
         <button 
           onClick={handleClose}
           className="absolute -top-10 right-0 p-1.5 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors border border-white/20"
@@ -44,14 +44,14 @@ export function PromoPopup() {
           <X className="w-5 h-5" />
         </button>
 
-        {/* Main Card - Reduced height by approx 12% */}
-        <div className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-white/20 text-white flex flex-col items-center text-center px-8 py-5">
+        {/* Main Card - Reduced size and padding */}
+        <div className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-white/20 text-white flex flex-col items-center text-center px-6 py-4">
           
           {/* Background Decorative Elements */}
           <div className="absolute top-[-20px] left-[-20px] w-32 h-32 bg-white/10 rounded-full blur-3xl"></div>
           <div className="absolute bottom-[-40px] right-[-40px] w-40 h-40 bg-cyan-400/20 rounded-full blur-3xl"></div>
           
-          {/* Header Visual - Tightened Spacing */}
+          {/* Header Visual */}
           <div className="relative z-10 mb-3 flex flex-col items-center">
              <div className="bg-white/20 backdrop-blur-md px-3 py-0.5 rounded-full border border-white/20 mb-2.5 animate-bounce">
                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-300">
@@ -59,7 +59,7 @@ export function PromoPopup() {
                 </p>
              </div>
              
-             {/* Logo MarPay - Updated to profil1.png */}
+             {/* Logo MarPay - profil1.png */}
              <div className="flex items-center gap-2 mb-1">
                 <div className="w-8 h-8 rounded-xl overflow-hidden shadow-lg bg-white relative">
                    <Image 
@@ -74,7 +74,7 @@ export function PromoPopup() {
              </div>
           </div>
 
-          {/* Body Text - Optimized Spacing */}
+          {/* Body Text */}
           <div className="relative z-10 space-y-1.5 mb-4">
              <h2 className="text-2xl font-black leading-none tracking-tight">
                VOUCHER<br/>PENGGUNA BARU
@@ -85,7 +85,7 @@ export function PromoPopup() {
              </p>
           </div>
 
-          {/* Illustration Section - Reduced Illustration by 15% */}
+          {/* Illustration Section */}
           <div className="relative z-10 mb-4 w-full flex justify-center">
              <div className="relative animate-float">
                 <div className="bg-white/10 backdrop-blur-xl p-4 rounded-[22px] border border-white/20 shadow-2xl relative overflow-hidden">
@@ -94,7 +94,7 @@ export function PromoPopup() {
                       <Zap className="w-4 h-4 text-cyan-400 fill-cyan-400 animate-pulse" />
                    </div>
                 </div>
-                {/* Floating Tickets - Slightly Scaled Down */}
+                {/* Floating Tickets */}
                 <div className="absolute -top-3 -right-3 rotate-12 animate-float-slow">
                    <div className="bg-white p-1 rounded-lg shadow-xl">
                       <Ticket className="w-4 h-4 text-purple-600" />
