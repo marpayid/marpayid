@@ -16,11 +16,21 @@ export function NotificationPrompt() {
   const app = useFirebaseApp();
 
   useEffect(() => {
+    // Pastikan berjalan di client
+    if (typeof window === "undefined") return;
+
+    // Cek dukungan browser
+    if (!("Notification" in window) || !("serviceWorker" in navigator)) {
+      localStorage.setItem('marpay_notif_status', 'unsupported');
+      return;
+    }
+
     // Cek preferensi di localStorage
     const status = localStorage.getItem('marpay_notif_status');
     
+    // Jangan tampilkan jika sudah direspon sebelumnya (granted/denied/dismissed/unsupported/error)
     if (!status) {
-      // Tunggu 10 detik sebelum menampilkan popup sesuai instruksi
+      // Tunggu 10 detik sebelum menampilkan popup
       const timer = setTimeout(() => {
         setIsOpen(true);
       }, 10000);
@@ -35,27 +45,35 @@ export function NotificationPrompt() {
   };
 
   const handleEnable = async () => {
+    if (typeof window === "undefined") return;
+
     try {
+      // Pengecekan ulang dukungan saat tombol diklik
+      if (!("Notification" in window)) {
+        localStorage.setItem('marpay_notif_status', 'unsupported');
+        setIsOpen(false);
+        return;
+      }
+
       const messaging = getMessaging(app);
       
-      // Minta izin browser
-      const permission = await Notification.requestPermission();
+      // Minta izin browser dengan cara yang aman
+      const permission = await window.Notification.requestPermission();
       
       if (permission === 'granted') {
         // Ambil token FCM
-        // Catatan: Anda harus mengganti placeholder VAPID KEY di bawah ini
+        // Catatan: Ganti placeholder VAPID KEY dengan key asli dari Firebase Console
         const token = await getToken(messaging, {
-          vapidKey: 'GANTI_DENGAN_VAPID_KEY_ANDA' // Dapatkan dari Firebase Console > Cloud Messaging > Web Push
+          vapidKey: 'GANTI_DENGAN_VAPID_KEY_ANDA'
         });
 
         if (token) {
-          // Cek apakah token sudah ada di DB
+          // Simpan ke Firestore
           const tokensRef = collection(db, 'notification_tokens');
           const q = query(tokensRef, where('token', '==', token));
           const querySnapshot = await getDocs(q);
 
           if (querySnapshot.empty) {
-            // Simpan token baru ke Firestore
             await addDoc(tokensRef, {
               token: token,
               userId: user?.uid || 'anonymous',
@@ -71,6 +89,8 @@ export function NotificationPrompt() {
       }
     } catch (error) {
       console.error('Gagal mengaktifkan notifikasi:', error);
+      // Simpan status error agar tidak mengulang popup jika sistem bermasalah
+      localStorage.setItem('marpay_notif_status', 'error');
     } finally {
       setIsOpen(false);
     }
