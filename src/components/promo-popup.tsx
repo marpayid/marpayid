@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { X, Gift, Zap, Ticket } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import Image from 'next/image';
 
 export function PromoPopup() {
   const [isOpen, setIsOpen] = useState(false);
@@ -32,7 +33,7 @@ export function PromoPopup() {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[3000] flex items-center justify-center p-6 bg-black/50 backdrop-blur-[2px] animate-in fade-in duration-500">
+    <div className="fixed inset-0 z-[3000] flex items-center justify-center p-6 bg-black/30 animate-in fade-in duration-500">
       <div className="relative w-full max-w-[340px] animate-in zoom-in-95 duration-500">
         
         {/* Tombol Tutup (X) - Reduced size by 20% */}
@@ -58,10 +59,16 @@ export function PromoPopup() {
                 </p>
              </div>
              
-             {/* Logo MarPay - Tightened Spacing */}
+             {/* Logo MarPay - Updated to profil1.png */}
              <div className="flex items-center gap-2 mb-1">
-                <div className="w-8 h-8 bg-white rounded-xl flex items-center justify-center text-primary shadow-lg">
-                   <span className="font-black text-lg">M</span>
+                <div className="w-8 h-8 rounded-xl overflow-hidden shadow-lg bg-white relative">
+                   <Image 
+                     src="/profil1.png" 
+                     alt="MarPay Logo" 
+                     fill
+                     className="object-cover"
+                     priority
+                   />
                 </div>
                 <span className="text-xl font-black tracking-tighter">MarPay</span>
              </div>
