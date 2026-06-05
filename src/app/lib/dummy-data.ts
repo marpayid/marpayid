@@ -51,6 +51,39 @@ export const Vouchers = [
 
 export const Products = [
   {
+    id: 302,
+    name: 'Hanasui Power Serum Series - Perawatan Wajah Intensif',
+    price: 28500,
+    originalPrice: 35000,
+    rating: 4.9,
+    reviews: '10rb+',
+    sold: 25000,
+    category: 'Beauty',
+    image: 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&w=400&h=400',
+    isFlashSale: true,
+    discount: '18%',
+    stock: 'Tersedia',
+    tag: 'Produk Viral',
+    gender: 'female',
+    brand: 'Hanasui',
+    tags: ['skincare', 'serum', 'hanasui', 'beauty', 'perawatan wajah', 'acne', 'whitening'],
+    variants: ['Post Acne', 'Bright', 'Barrier', 'Acne', 'Peeling', 'Bakuchiol', 'MiniPore'],
+    shippingFee: 8000,
+    description: `Hanasui Power Serum hadir dengan berbagai varian yang dirancang khusus untuk menangani masalah kulit secara spesifik.
+
+Pilihan Varian:
+1. Bright Expert: Mencerahkan kulit kusam.
+2. Acne: Mengatasi masalah jerawat.
+3. Post Acne: Membantu memudarkan bekas jerawat.
+4. Barrier: Menjaga pertahanan kulit (Skin Barrier).
+5. Peeling: Mengangkat sel kulit mati secara lembut.
+6. Bakuchiol: Anti-aging alternatif retinol.
+7. MiniPore: Mengecilkan pori-pori.
+
+Cara Pakai:
+Teteskan 2-3 tetes serum pada wajah yang bersih, ratakan hingga meresap. Gunakan pagi dan malam hari untuk hasil maksimal.`,
+  },
+  {
     id: 206,
     name: 'BETTERHALF Celana Pendek Pria Polos Short Pants Boardshort - Black',
     price: 47320,
