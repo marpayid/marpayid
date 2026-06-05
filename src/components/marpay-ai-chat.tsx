@@ -30,7 +30,9 @@ export function MarPayAIChat() {
   const handleSendMessage = async () => {
     if (!input.trim() || isLoading) return;
 
-    const userMessage: Message = { role: 'user', content: input };
+    const userMessageContent = input.trim();
+    const userMessage: Message = { role: 'user', content: userMessageContent };
+    
     setMessages((prev) => [...prev, userMessage]);
     setInput('');
     setIsLoading(true);
@@ -39,16 +41,20 @@ export function MarPayAIChat() {
       const response = await fetch('/api/ai', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: [...messages, userMessage] }),
+        body: JSON.stringify({ message: userMessageContent }),
       });
 
       const data = await response.json();
-      if (data.content) {
-        setMessages((prev) => [...prev, { role: 'assistant', content: data.content }]);
+      
+      if (data.reply) {
+        setMessages((prev) => [...prev, { role: 'assistant', content: data.reply }]);
+      } else if (data.error) {
+        throw new Error(data.error);
       } else {
-        throw new Error();
+        throw new Error('Invalid response');
       }
     } catch (e) {
+      console.error("Chat Error:", e);
       setMessages((prev) => [...prev, { role: 'assistant', content: 'Maaf, terjadi gangguan koneksi. Silakan hubungi admin WhatsApp kami untuk bantuan langsung.' }]);
     } finally {
       setIsLoading(false);
