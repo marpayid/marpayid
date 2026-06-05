@@ -9,21 +9,16 @@ export function PromoPopup() {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    // Logika tampil 1 kali per hari
-    const lastShown = localStorage.getItem('marpay_promo_last_shown');
-    const today = new Date().toISOString().split('T')[0]; // Format YYYY-MM-DD
-
-    if (lastShown !== today) {
-      const timer = setTimeout(() => {
-        setIsOpen(true);
-      }, 1500); // Muncul setelah 1.5 detik agar halus
-      return () => clearTimeout(timer);
-    }
+    // MODE TESTING: Muncul setiap kali refresh
+    // Logika localStorage sementara dinonaktifkan agar mudah dicek
+    const timer = setTimeout(() => {
+      setIsOpen(true);
+    }, 1500); // Muncul setelah 1.5 detik agar halus
+    return () => clearTimeout(timer);
   }, []);
 
   const handleClose = () => {
-    const today = new Date().toISOString().split('T')[0];
-    localStorage.setItem('marpay_promo_last_shown', today);
+    // MODE TESTING: Cukup tutup state tanpa simpan ke localStorage
     setIsOpen(false);
   };
 
