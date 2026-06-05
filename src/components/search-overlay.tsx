@@ -32,6 +32,11 @@ const SEARCH_EXPANSIONS: Record<string, string[]> = {
   'akrilik': ['sertifikat', 'funded', 'acrylic', 'plaque'],
 };
 
+// Gender context keywords
+const FEMALE_KEYWORDS = ["wanita", "cewe", "cewek", "perempuan", "ladies", "girl", "female"];
+const MALE_KEYWORDS = ["pria", "cowo", "cowok", "laki", "laki-laki", "men", "male"];
+const UNISEX_KEYWORDS = ["unisex"];
+
 export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
   const [inputValue, setInputValue] = useState('');
   const [showResults, setShowResults] = useState(false);
@@ -87,6 +92,20 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
     localStorage.setItem('marpay_search_history', JSON.stringify(newHistory));
   };
 
+  // Helper to detect gender from string
+  const getGenderContext = (text: string) => {
+    const low = text.toLowerCase();
+    if (UNISEX_KEYWORDS.some(k => low.includes(k))) return 'unisex';
+    
+    const hasFemale = FEMALE_KEYWORDS.some(k => low.includes(k));
+    const hasMale = MALE_KEYWORDS.some(k => low.includes(k));
+    
+    if (hasFemale && hasMale) return 'unisex';
+    if (hasFemale) return 'female';
+    if (hasMale) return 'male';
+    return 'neutral';
+  };
+
   // Generate suggestions based on input (TEXT ONLY)
   const suggestions = useMemo(() => {
     const q = inputValue.toLowerCase().trim();
@@ -129,44 +148,107 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
     return Array.from(matches).slice(0, 10);
   }, [inputValue, showResults]);
 
-  // Filter and sort results with expanded keyword logic
+  // Filter and sort results with expanded keyword logic and gender awareness
   const finalResults = useMemo(() => {
     if (!confirmedQuery) return [];
     const q = confirmedQuery.toLowerCase().trim();
     
-    // Find all related expansion terms for the query
-    const relatedTerms = new Set<string>([q]);
+    // 1. Identify Gender Preference in Query
+    const queryGender = getGenderContext(q);
+
+    // 2. Build Expansion Terms
+    const baseWords = q.split(/\s+/).filter(w => w.length > 1);
+    const expandedTerms = new Set<string>([q, ...baseWords]);
+    
     Object.keys(SEARCH_EXPANSIONS).forEach(key => {
-      if (q.includes(key) || key.includes(q)) {
-        SEARCH_EXPANSIONS[key].forEach(term => relatedTerms.add(term));
+      if (q.includes(key)) {
+        SEARCH_EXPANSIONS[key].forEach(term => expandedTerms.add(term));
       }
     });
 
-    const searchTerms = Array.from(relatedTerms);
+    const searchTerms = Array.from(expandedTerms);
     
+    // 3. Filter Products
     let filtered = Products.filter(p => {
       const name = p.name.toLowerCase();
       const cat = p.category?.toLowerCase() || '';
       const desc = p.description?.toLowerCase() || '';
+      const content = `${name} ${cat} ${desc}`;
       
-      // Check if any of the search terms (query or synonyms) are found in name, category, or description
-      return searchTerms.some(term => 
-        name.includes(term) || 
-        cat.includes(term) || 
-        desc.includes(term)
+      // Relevance Check:
+      // Filter out gender keywords from query to find the "subject" (e.g., 'celana')
+      const nonGenderQueryWords = baseWords.filter(w => 
+        !FEMALE_KEYWORDS.includes(w) && 
+        !MALE_KEYWORDS.includes(w) && 
+        !UNISEX_KEYWORDS.includes(w)
       );
+
+      const hasSubject = nonGenderQueryWords.length > 0;
+      let isRelevant = false;
+
+      if (hasSubject) {
+        // If there's a subject, the product content must match subject or its expansions
+        const subjectRelatedTerms = searchTerms.filter(t => 
+           !FEMALE_KEYWORDS.includes(t) && 
+           !MALE_KEYWORDS.includes(t) && 
+           !UNISEX_KEYWORDS.includes(t)
+        );
+        isRelevant = subjectRelatedTerms.some(term => content.includes(term));
+      } else {
+        // If query is just gender (e.g. "pria"), we skip basic relevance and rely on gender filtering
+        isRelevant = true;
+      }
+
+      if (!isRelevant) return false;
+
+      // Gender Compatibility Check:
+      const productGender = getGenderContext(content);
+      
+      if (queryGender === 'female') {
+        // User wants female products -> exclude strictly male products
+        if (productGender === 'male') return false;
+      } else if (queryGender === 'male') {
+        // User wants male products -> exclude strictly female products
+        if (productGender === 'female') return false;
+      }
+      // Note: Unisex and Neutral products always pass through unless the opposing gender is strictly required.
+
+      return true;
     });
 
-    switch (activeSort) {
-      case 'terlaris':
-        return [...filtered].sort((a, b) => (b.sold || 0) - (a.sold || 0));
-      case 'harga_rendah':
-        return [...filtered].sort((a, b) => a.price - b.price);
-      case 'terbaru':
-        return [...filtered].sort((a, b) => b.id - a.id);
-      default:
-        return filtered;
-    }
+    // 4. Sort and Prioritize
+    const sorted = [...filtered].sort((a, b) => {
+      // Prioritize gender matches if a specific gender was in query
+      if (queryGender !== 'neutral' && queryGender !== 'unisex') {
+        const aContent = `${a.name} ${a.description}`.toLowerCase();
+        const bContent = `${b.name} ${b.description}`.toLowerCase();
+        
+        const aExplicitMatch = queryGender === 'female' 
+          ? FEMALE_KEYWORDS.some(k => aContent.includes(k))
+          : MALE_KEYWORDS.some(k => aContent.includes(k));
+          
+        const bExplicitMatch = queryGender === 'female' 
+          ? FEMALE_KEYWORDS.some(k => bContent.includes(k))
+          : MALE_KEYWORDS.some(k => bContent.includes(k));
+
+        if (aExplicitMatch && !bExplicitMatch) return -1;
+        if (!aExplicitMatch && bExplicitMatch) return 1;
+      }
+
+      // Default sorting modes
+      switch (activeSort) {
+        case 'terlaris':
+          return (b.sold || 0) - (a.sold || 0);
+        case 'harga_rendah':
+          return a.price - b.price;
+        case 'terbaru':
+          return b.id - a.id;
+        default:
+          return 0;
+      }
+    });
+
+    return sorted;
   }, [confirmedQuery, activeSort]);
 
   if (!isOpen) return null;
