@@ -60,7 +60,7 @@ export const Products = [
     reviews: '1.2rb',
     sold: 10000,
     category: 'Fashion',
-    imageUrl: 'https://images.pexels.com/photos/5709665/pexels-photo-5709665.jpeg',
+    imageUrl: 'https://i.ibb.co.com/jvpV8nS/8-FMVVnp.jpg',
     isFlashSale: true,
     discount: '33%',
     stock: 'Tersedia',
