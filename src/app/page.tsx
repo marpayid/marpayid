@@ -149,59 +149,6 @@ export default function Home() {
 
         <CategoryMenu />
 
-        {/* Campaign Event Card MarPay - Modern Stadium Capsule Style */}
-        <section className="px-4 py-6 bg-white">
-          <div 
-            onClick={() => document.getElementById('flash-sale-section')?.scrollIntoView({ behavior: 'smooth' })}
-            className="relative h-[160px] w-full bg-gradient-to-br from-[#1E40AF] via-[#4338CA] to-[#6D28D9] rounded-[48px] text-white overflow-hidden shadow-[0_25px_50px_-12px_rgba(67,56,202,0.3)] active:scale-[0.98] transition-all cursor-pointer group"
-          >
-            {/* Minimalist Glows */}
-            <div className="absolute -top-20 -left-20 w-64 h-64 bg-white/10 rounded-full blur-[80px]"></div>
-            <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-cyan-400/20 rounded-full blur-[80px]"></div>
-            
-            {/* Subtle Decorations */}
-            <div className="absolute right-[25%] top-4 opacity-[0.05] rotate-12 group-hover:scale-110 group-hover:rotate-0 transition-all duration-1000">
-               <Zap className="w-20 h-20" />
-            </div>
-            <div className="absolute left-[30%] bottom-4 opacity-[0.03] -rotate-12 group-hover:scale-110 group-hover:rotate-0 transition-all duration-1000">
-               <Coins className="w-14 h-14" />
-            </div>
-
-            <div className="relative z-10 h-full flex items-center px-10">
-              {/* Left Content */}
-              <div className="flex-1 space-y-2.5">
-                <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-1 rounded-full shadow-sm">
-                  <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-pulse shadow-[0_0_8px_rgba(34,211,238,0.8)]"></div>
-                  <span className="text-[9px] font-black uppercase tracking-[0.15em] text-cyan-300">Mega Event 6.6</span>
-                </div>
-                <div>
-                  <h2 className="text-[26px] font-black leading-none tracking-tight uppercase italic italic-none">PROMO PUNCAK</h2>
-                  <p className="text-[11px] text-white/70 font-medium mt-1 leading-tight max-w-[200px]">
-                    Diskon 66% + Gratis Ongkir Seluruh Indonesia
-                  </p>
-                </div>
-                <div className="pt-2.5 flex items-center gap-4">
-                  <div className="bg-white text-[#4338CA] px-5 py-2 rounded-full text-[10px] font-black uppercase shadow-xl shadow-black/10 hover:bg-white/95 transition-all">
-                    CEK PROMO
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-[8px] font-bold text-white/40 uppercase tracking-widest leading-none mb-0.5">Sisa Waktu</span>
-                    <span className="text-[10px] font-black text-cyan-300 leading-none">02:44:50</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Content (Exclusive Visual) */}
-              <div className="relative h-full flex items-center justify-end w-[120px] shrink-0">
-                 <div className="relative">
-                    <div className="absolute inset-0 bg-white/20 blur-3xl rounded-full scale-150 animate-pulse"></div>
-                    <Gift className="w-20 h-20 text-white drop-shadow-[0_15px_30px_rgba(255,255,255,0.25)] relative z-10 animate-float" />
-                 </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
         <FlashSale />
         <VoucherSection />
 
