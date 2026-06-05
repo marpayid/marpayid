@@ -54,7 +54,7 @@ export function BottomNav() {
               key={item.label}
               href={item.path}
               className={cn(
-                "flex-1 flex flex-col items-center justify-center gap-0.5 transition-all duration-200 h-full",
+                "flex-1 flex flex-col items-center justify-center gap-1 transition-all duration-200 h-full",
                 isActive ? "text-primary" : "text-gray-400"
               )}
             >
@@ -62,7 +62,7 @@ export function BottomNav() {
                 <item.icon 
                   className={cn(
                     "w-[22px] h-[22px] transition-all", 
-                    isActive ? "stroke-[2.5px] fill-primary/10 text-primary" : "stroke-[1.8px]"
+                    isActive ? "stroke-[2.2px] fill-primary/10 text-primary" : "stroke-[1.8px]"
                   )} 
                 />
                 {item.hasBadge && cartCount > 0 && (
@@ -72,7 +72,7 @@ export function BottomNav() {
                 )}
               </div>
               <span className={cn(
-                "text-[9px] tracking-tight leading-none font-bold uppercase",
+                "text-[9px] tracking-tight leading-none font-medium",
                 isActive ? "text-primary" : "text-gray-400"
               )}>
                 {item.label}
