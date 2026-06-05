@@ -149,78 +149,54 @@ export default function Home() {
 
         <CategoryMenu />
 
-        {/* Campaign Event Card MarPay - Modern Island Shape */}
-        <section className="px-4 py-4 bg-white flex justify-center">
+        {/* Campaign Event Card MarPay - Modern Stadium Capsule Style */}
+        <section className="px-4 py-6 bg-white">
           <div 
             onClick={() => document.getElementById('flash-sale-section')?.scrollIntoView({ behavior: 'smooth' })}
-            style={{ 
-              clipPath: "polygon(0% 0%, 100% 0%, 100% 35%, 96% 50%, 100% 65%, 100% 100%, 0% 100%, 0% 65%, 4% 50%, 0% 35%)" 
-            }}
-            className="relative h-[185px] w-[92%] bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 p-6 text-white overflow-hidden shadow-2xl shadow-indigo-500/30 active:scale-[0.98] transition-all cursor-pointer group flex flex-col justify-center"
+            className="relative h-[160px] w-full bg-gradient-to-br from-[#1E40AF] via-[#4338CA] to-[#6D28D9] rounded-[48px] text-white overflow-hidden shadow-[0_25px_50px_-12px_rgba(67,56,202,0.3)] active:scale-[0.98] transition-all cursor-pointer group"
           >
-            {/* Soft Glow Effects */}
-            <div className="absolute top-[-20px] left-[-20px] w-32 h-32 bg-white/10 rounded-full blur-3xl"></div>
-            <div className="absolute bottom-[-40px] right-[-40px] w-40 h-40 bg-cyan-400/20 rounded-full blur-3xl"></div>
+            {/* Minimalist Glows */}
+            <div className="absolute -top-20 -left-20 w-64 h-64 bg-white/10 rounded-full blur-[80px]"></div>
+            <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-cyan-400/20 rounded-full blur-[80px]"></div>
             
-            {/* Decoration Elements Transparan */}
-            <div className="absolute right-12 top-6 opacity-10 animate-float">
-               <Ticket className="w-10 h-10 rotate-12" />
+            {/* Subtle Decorations */}
+            <div className="absolute right-[25%] top-4 opacity-[0.05] rotate-12 group-hover:scale-110 group-hover:rotate-0 transition-all duration-1000">
+               <Zap className="w-20 h-20" />
             </div>
-            <div className="absolute left-1/4 bottom-8 opacity-10 animate-float-reverse">
-               <Zap className="w-8 h-8 -rotate-12" />
-            </div>
-            <div className="absolute right-1/3 top-10 opacity-10 animate-float-slow">
-               <Gamepad2 className="w-12 h-12" />
-            </div>
-            <div className="absolute left-10 top-1/2 opacity-10 animate-float">
-               <Coins className="w-6 h-6" />
+            <div className="absolute left-[30%] bottom-4 opacity-[0.03] -rotate-12 group-hover:scale-110 group-hover:rotate-0 transition-all duration-1000">
+               <Coins className="w-14 h-14" />
             </div>
 
-            <div className="relative z-10 flex flex-col h-full justify-between">
-              {/* Top Row: Left, Center, Right */}
-              <div className="flex justify-between items-start flex-1 px-2">
-                {/* Kiri: Badge */}
-                <div className="w-1/4">
-                  <div className="bg-white/20 backdrop-blur-md border border-white/10 text-[7px] font-black px-2 py-1 rounded-full uppercase tracking-wider w-fit shadow-sm flex items-center gap-1">
-                    🔥 EVENT TERBATAS
-                  </div>
+            <div className="relative z-10 h-full flex items-center px-10">
+              {/* Left Content */}
+              <div className="flex-1 space-y-2.5">
+                <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-1 rounded-full shadow-sm">
+                  <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-pulse shadow-[0_0_8px_rgba(34,211,238,0.8)]"></div>
+                  <span className="text-[9px] font-black uppercase tracking-[0.15em] text-cyan-300">Mega Event 6.6</span>
                 </div>
-
-                {/* Tengah: Judul & Subjudul */}
-                <div className="flex-1 text-center space-y-1.5 pt-1">
-                  <div className="space-y-0.5">
-                    <p className="text-[10px] font-bold text-cyan-300 uppercase tracking-[0.2em] leading-none">PROMO PUNCAK</p>
-                    <h2 className="text-4xl font-black leading-none tracking-tighter italic">6.6</h2>
-                  </div>
-                  <div className="space-y-0.5">
-                    <p className="text-[10px] font-black text-white leading-tight uppercase">Diskon Hingga 66%</p>
-                    <p className="text-[8px] text-white/70 font-medium leading-none">Voucher Belanja & Gratis Ongkir</p>
-                  </div>
+                <div>
+                  <h2 className="text-[26px] font-black leading-none tracking-tight uppercase italic italic-none">PROMO PUNCAK</h2>
+                  <p className="text-[11px] text-white/70 font-medium mt-1 leading-tight max-w-[200px]">
+                    Diskon 66% + Gratis Ongkir Seluruh Indonesia
+                  </p>
                 </div>
-
-                {/* Kanan: Ilustrasi */}
-                <div className="w-1/4 flex justify-end pt-1">
-                   <div className="relative">
-                      <div className="absolute inset-0 bg-cyan-400/30 blur-2xl rounded-full"></div>
-                      <Gift className="w-16 h-16 text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] relative z-10" />
-                   </div>
+                <div className="pt-2.5 flex items-center gap-4">
+                  <div className="bg-white text-[#4338CA] px-5 py-2 rounded-full text-[10px] font-black uppercase shadow-xl shadow-black/10 hover:bg-white/95 transition-all">
+                    CEK PROMO
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[8px] font-bold text-white/40 uppercase tracking-widest leading-none mb-0.5">Sisa Waktu</span>
+                    <span className="text-[10px] font-black text-cyan-300 leading-none">02:44:50</span>
+                  </div>
                 </div>
               </div>
 
-              {/* Bottom Row: Button & Countdown */}
-              <div className="flex items-center justify-between pt-3 border-t border-white/10 px-2">
-                <div className="bg-white text-indigo-700 px-5 py-2 rounded-xl text-[9px] font-black uppercase shadow-lg shadow-black/10 group-hover:bg-indigo-50 transition-colors">
-                  Belanja Sekarang
-                </div>
-                
-                <div className="flex items-center gap-2">
-                   <div className="flex items-center gap-1.5">
-                      <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></div>
-                      <span className="text-[9px] font-black uppercase tracking-widest text-cyan-300">
-                        Berakhir dalam 02:44:50
-                      </span>
-                   </div>
-                </div>
+              {/* Right Content (Exclusive Visual) */}
+              <div className="relative h-full flex items-center justify-end w-[120px] shrink-0">
+                 <div className="relative">
+                    <div className="absolute inset-0 bg-white/20 blur-3xl rounded-full scale-150 animate-pulse"></div>
+                    <Gift className="w-20 h-20 text-white drop-shadow-[0_15px_30px_rgba(255,255,255,0.25)] relative z-10 animate-float" />
+                 </div>
               </div>
             </div>
           </div>
