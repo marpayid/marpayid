@@ -37,7 +37,7 @@ export function PromoPopup() {
 
   return (
     <div className="fixed inset-0 z-[3000] flex items-center justify-center p-6 bg-black/30 animate-in fade-in duration-500">
-      <div className="relative w-full max-w-[295px] animate-in zoom-in-95 duration-500">
+      <div className="relative w-full max-w-[270px] animate-in zoom-in-95 duration-500">
         
         {/* Tombol Tutup (X) */}
         <button 
@@ -48,7 +48,7 @@ export function PromoPopup() {
         </button>
 
         {/* Main Card */}
-        <div className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-white/20 text-white flex flex-col items-center text-center px-6 py-4">
+        <div className="relative overflow-hidden rounded-[28px] bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-white/20 text-white flex flex-col items-center text-center px-6 py-4">
           
           {/* Background Decorative Elements */}
           <div className="absolute top-[-20px] left-[-20px] w-32 h-32 bg-white/10 rounded-full blur-3xl"></div>
