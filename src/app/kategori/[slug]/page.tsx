@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
@@ -14,7 +13,8 @@ export default function GenericCategoryPage() {
   const slug = params?.slug ? decodeURIComponent(params.slug as string) : '';
 
   const categoryNameMap: Record<string, string> = {
-    'kecantikan': 'Kecantikan',
+    'kecantikan': 'Beauty',
+    'beauty': 'Beauty',
     'fashion': 'Fashion',
     'elektronik': 'Elektronik',
     'voucher': 'Voucher',
@@ -25,11 +25,24 @@ export default function GenericCategoryPage() {
 
   const displayName = categoryNameMap[slug.toLowerCase()] || slug;
   
-  const filteredProducts = Products.filter(p => 
-    p.category?.toLowerCase() === slug.toLowerCase() ||
-    p.category?.toLowerCase() === displayName.toLowerCase() ||
-    (slug.toLowerCase() === 'kecantikan' && (p.category === 'Skincare' || p.category === 'Kecantikan'))
-  );
+  // Filter logic enhanced to support both new display name and legacy data naming
+  const filteredProducts = Products.filter(p => {
+    const productCat = p.category?.toLowerCase() || '';
+    const currentSlug = slug.toLowerCase();
+    
+    // Direct slug match
+    if (productCat === currentSlug) return true;
+    
+    // Display name match
+    if (productCat === displayName.toLowerCase()) return true;
+
+    // Special mapping for Beauty (handles products still tagged as 'Kecantikan')
+    if (currentSlug === 'beauty' || currentSlug === 'kecantikan') {
+      return productCat === 'beauty' || productCat === 'kecantikan' || productCat === 'skincare';
+    }
+
+    return false;
+  });
 
   const getEmptyMessage = () => {
     if (slug.toLowerCase() === 'elektronik') return "Belum ada produk elektronik.";

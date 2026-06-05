@@ -1,6 +1,6 @@
 export const Categories = [
   { id: 1, name: 'Top Up', icon: 'Zap' },
-  { id: 2, name: 'Kecantikan', icon: 'Droplet' },
+  { id: 2, name: 'Beauty', icon: 'Droplet' },
   { id: 3, name: 'Fashion', icon: 'Shirt' },
   { id: 4, name: 'Elektronik', icon: 'Smartphone' },
   { id: 9, name: 'Aksesoris hp', icon: 'Smartphone' },
@@ -130,7 +130,7 @@ Terima kasih.`,
     ],
     shippingFee: 0,
     forceFreeShippingLabel: true,
-    description: `Case iPhone Clear MagSafe Premium dengan desain transparan elegan dan perlindungan maksimal.`
+    description: `Case iPhone Clear MagSafe Premium dengan desain transparan elegan and perlindungan maksimal.`
   },
   {
     id: 202,
@@ -156,7 +156,7 @@ Terima kasih.`,
     ],
     shippingFee: 0,
     forceFreeShippingLabel: true,
-    description: `Case iPhone Street Art Premium dengan desain grafiti modern.`
+    description: `Case iPhone Street Art Premium with desain grafiti modern.`
   },
   {
     id: 203,
@@ -176,7 +176,7 @@ Terima kasih.`,
     variants: ['Standar (BB 35-55Kg)', 'Jumbo (BB 56-70Kg)', 'Super Jumbo (BB 71-85Kg)'],
     colors: ['Abu Grey', 'Hitam', 'Putih', 'Navi', 'Mahogani', 'Khaki', 'Ice Blue'],
     shippingFee: 0,
-    description: `Everyday Stripe Pants merupakan celana wanita model baggy kulot premium dengan motif garis pinstripe yang cocok digunakan untuk kuliah, kerja, kantor, jalan-jalan, maupun aktivitas sehari-hari. Menggunakan bahan yang nyaman, adem, tidak menerawang, dan memiliki potongan loose fit sehingga tetap stylish digunakan sepanjang hari.`,
+    description: `Everyday Stripe Pants merupakan celana wanita model baggy kulot premium dengan motif garis pinstripe yang cocok digunakan untuk kuliah, kerja, kantor, jalan-jalan, maupun aktivitas sehari-hari. Menggunakan bahan yang nyaman, adem, tidak menerawang, and memiliki potongan loose fit sehingga tetap stylish digunakan sepanjang hari.`,
   },
   {
     id: 204,
@@ -232,7 +232,7 @@ Toleransi ukuran 1-2 cm karena proses jahit`,
     tag: 'Produk Viral',
     variants: ['S', 'M', 'L', 'XL', '2XL', '3XL'],
     shippingFee: 12000,
-    description: `Kemeja wanita premium dengan desain fitted body.`
+    description: `Kemeja wanita premium with desain fitted body.`
   },
   {
     id: 2,
@@ -304,7 +304,7 @@ Toleransi ukuran 1-2 cm karena proses jahit`,
     stock: 'Tersedia',
     tag: 'Produk Viral',
     shippingFee: 0,
-    description: 'Sunscreen gel (chemical sunscreen) yang ringan dan dingin di kulit, diformulasikan khusus untuk kulit berminyak, berjerawat, dan sensitif. Mengandung Anti-Acne Active untuk menenangkan kulit dan mengontrol sebum berlebih.',
+    description: 'Sunscreen gel (chemical sunscreen) yang ringan and dingin di kulit, diformulasikan khusus untuk kulit berminyak, berjerawat, and sensitif. Mengandung Anti-Acne Active untuk menenangkan kulit and mengontrol sebum berlebih.',
   },
   {
     id: 208,
@@ -323,15 +323,15 @@ Toleransi ukuran 1-2 cm karena proses jahit`,
     hasPriceRange: true,
     variants: ['Acne Calming SPF50 25ml', 'Acne Calming SPF35 35ml', 'Acne Calming SPF50 40ml'],
     shippingFee: 8000,
-    description: `Wardah UV Shield Acne Calming Sunscreen Serum SPF 50 PA++++ merupakan sunscreen serum dengan perlindungan tinggi yang diformulasikan khusus untuk kulit berminyak dan rentan berjerawat. Membantu melindungi kulit dari sinar UVA, UVB, blue light, dan polusi sekaligus memberikan efek menenangkan pada kulit.
+    description: `Wardah UV Shield Acne Calming Sunscreen Serum SPF 50 PA++++ merupakan sunscreen serum with perlindungan tinggi yang diformulasikan khusus untuk kulit berminyak and rentan berjerawat. Membantu melindungi kulit dari sinar UVA, UVB, blue light, and polusi sekaligus memberikan efek menenangkan pada kulit.
 
 Keunggulan:
 • SPF 50 PA++++
-• Ringan dan cepat meresap
+• Ringan and cepat meresap
 • No White Cast
 • Non Comedogenic
 • Non Acnegenic
-• Cocok untuk kulit berminyak dan berjerawat
+• Cocok untuk kulit berminyak and berjerawat
 • Membantu menjaga skin barrier
 • Nyaman digunakan sehari-hari`,
   },
@@ -361,7 +361,7 @@ Keunggulan:
     image: '/premium1.png',
     stock: 'Tersedia',
     tag: 'Best Seller',
-    description: 'Musik tanpa iklan, download lagu, dan kualitas suara terbaik dengan Spotify Premium.',
+    description: 'Musik tanpa iklan, download lagu, and kualitas suara terbaik with Spotify Premium.',
     type: 'digital',
     shippingFee: 0
   },
@@ -376,7 +376,7 @@ Keunggulan:
     image: '/premium1.png',
     stock: 'Tersedia',
     tag: 'Best Seller',
-    description: 'Nonton video tanpa gangguan iklan, putar di latar belakang, dan YouTube Music Premium.',
+    description: 'Nonton video tanpa gangguan iklan, putar di latar belakang, and YouTube Music Premium.',
     type: 'digital',
     shippingFee: 0
   },
@@ -391,7 +391,7 @@ Keunggulan:
     image: '/premium1.png',
     stock: 'Tersedia',
     tag: 'Recommended',
-    description: 'Streaming film dan series kualitas 4K Ultra HD dengan akun Netflix Premium.',
+    description: 'Streaming film and series kualitas 4K Ultra HD with akun Netflix Premium.',
     type: 'digital',
     shippingFee: 0
   },
@@ -406,7 +406,7 @@ Keunggulan:
     image: '/premium1.png',
     stock: 'Tersedia',
     tag: 'Best Seller',
-    description: 'Akses semua fitur editing pro, transisi, dan efek eksklusif di CapCut.',
+    description: 'Akses semua fitur editing pro, transisi, and efek eksklusif di CapCut.',
     type: 'digital',
     shippingFee: 0
   },
@@ -421,7 +421,7 @@ Keunggulan:
     image: '/premium1.png',
     stock: 'Tersedia',
     tag: 'Hot Item',
-    description: 'Gunakan kecerdasan AI terbaru GPT-4 dengan ChatGPT Plus premium.',
+    description: 'Gunakan kecerdasan AI terbaru GPT-4 with ChatGPT Plus premium.',
     type: 'digital',
     shippingFee: 0
   },
@@ -436,7 +436,7 @@ Keunggulan:
     image: '/premium1.png',
     stock: 'Tersedia',
     tag: 'Recommended',
-    description: 'Nonton bola, drama korea, dan konten eksklusif lainnya di Vidio.',
+    description: 'Nonton bola, drama korea, and konten eksklusif lainnya di Vidio.',
     type: 'digital',
     shippingFee: 0
   },
@@ -451,7 +451,7 @@ Keunggulan:
     image: '/premium1.png',
     stock: 'Tersedia',
     tag: 'Best Seller',
-    description: 'Edit motion graphic tanpa watermark dengan Alight Motion Premium.',
+    description: 'Edit motion graphic tanpa watermark with Alight Motion Premium.',
     type: 'digital',
     shippingFee: 0
   }
@@ -461,7 +461,7 @@ export const Banners = [
   {
     id: 1,
     title: 'Semua Kebutuhan Digital Dalam Satu Tempat',
-    subtitle: 'Pulsa, Paket Data, Token PLN, E-Wallet, Top Up Game, BPJS dan Tagihan Internet',
+    subtitle: 'Pulsa, Paket Data, Token PLN, E-Wallet, Top Up Game, BPJS and Tagihan Internet',
     badges: ['PROSES INSTAN', 'AMAN & TERPERCAYA', '24 JAM NONSTOP'],
     type: 'digital',
     gradient: 'from-blue-600 via-indigo-600 to-purple-700'
@@ -469,7 +469,7 @@ export const Banners = [
   {
     id: 2,
     title: 'Belanja Lebih Hemat Setiap Hari',
-    subtitle: 'Gratis ongkir, promo spesial, produk pilihan dan pengiriman cepat',
+    subtitle: 'Gratis ongkir, promo spesial, produk pilihan and pengiriman cepat',
     badges: ['GRATIS ONGKIR', 'PROMO SPESIAL', 'PRODUK PILIHAN'],
     type: 'physical',
     gradient: 'from-emerald-500 via-teal-600 to-blue-600'
