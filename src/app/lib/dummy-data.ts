@@ -1,6 +1,6 @@
 export const Categories = [
   { id: 1, name: 'Top Up', icon: 'Zap' },
-  { id: 2, name: 'Kecantikan', icon: 'Flower2' },
+  { id: 2, name: 'Kecantikan', icon: 'Droplet' },
   { id: 3, name: 'Fashion', icon: 'Shirt' },
   { id: 4, name: 'Elektronik', icon: 'Smartphone' },
   { id: 9, name: 'Aksesoris hp', icon: 'Smartphone' },
