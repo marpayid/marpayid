@@ -149,67 +149,49 @@ export default function Home() {
 
         <CategoryMenu />
 
-        {/* Campaign Card Banner */}
+        {/* Campaign Card 6.6 Mega Sale */}
         <section className="px-4 py-3 bg-white">
           <div 
             onClick={() => document.getElementById('flash-sale-section')?.scrollIntoView({ behavior: 'smooth' })}
-            className="relative h-[200px] w-full rounded-[28px] bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 p-6 text-white overflow-hidden shadow-xl shadow-indigo-500/20 active:scale-[0.98] transition-all cursor-pointer group"
+            className="relative h-[180px] w-full rounded-[28px] bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 p-6 text-white overflow-hidden shadow-xl shadow-indigo-500/20 active:scale-[0.98] transition-all cursor-pointer group"
           >
-            {/* Background 3D-like Visual Decorations */}
-            <div className="absolute top-[-20px] left-[-20px] w-40 h-40 bg-white/10 rounded-full blur-3xl group-hover:bg-white/15 transition-colors duration-700"></div>
-            <div className="absolute bottom-[-40px] right-[-40px] w-48 h-48 bg-cyan-400/20 rounded-full blur-3xl group-hover:bg-cyan-400/30 transition-colors duration-700"></div>
+            {/* Background Decorations */}
+            <div className="absolute top-[-20px] left-[-20px] w-32 h-32 bg-white/10 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-[-40px] right-[-40px] w-40 h-40 bg-cyan-400/20 rounded-full blur-3xl"></div>
             
-            {/* Floating Decorative Icons */}
-            <div className="absolute right-6 top-8 opacity-15 group-hover:scale-110 group-hover:-rotate-6 transition-all duration-700">
-               <Gamepad2 className="w-20 h-20 rotate-12" />
-            </div>
-            <div className="absolute right-24 bottom-4 opacity-10 group-hover:translate-x-2 transition-all duration-1000">
-               <Wallet className="w-12 h-12 -rotate-12" />
-            </div>
-            <div className="absolute left-1/3 top-10 opacity-5">
-               <Ticket className="w-16 h-16 rotate-45" />
-            </div>
-            <div className="absolute left-4 bottom-10 opacity-10 animate-float">
-               <Zap className="w-8 h-8 text-yellow-300 fill-yellow-300" />
+            {/* Visual Icon Decoration */}
+            <div className="absolute right-4 top-4 opacity-15 transition-transform duration-700 group-hover:scale-110 group-hover:-rotate-6 pointer-events-none">
+               <Flame className="w-24 h-24 rotate-12 text-white" />
             </div>
 
             <div className="relative z-10 flex flex-col h-full justify-between">
               <div className="space-y-4">
-                {/* Badges */}
-                <div className="flex flex-wrap gap-1.5">
-                  {['PROSES INSTAN', 'AMAN & TERPERCAYA', '24 JAM NONSTOP'].map((badge, idx) => (
-                    <span key={idx} className="bg-white/20 backdrop-blur-md border border-white/10 text-[7px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider">
-                      {badge}
-                    </span>
-                  ))}
+                {/* Badge Event */}
+                <div className="bg-white/20 backdrop-blur-md border border-white/10 text-[8px] font-black px-3 py-1 rounded-full uppercase tracking-[0.15em] w-fit shadow-sm">
+                  EVENT SPESIAL
                 </div>
 
-                <div className="space-y-1.5">
-                  <h2 className="text-xl font-black leading-[1.1] tracking-tight whitespace-pre-line">
-                    Semua Kebutuhan Digital{"\n"}Dalam Satu Tempat
+                <div className="space-y-1">
+                  <h2 className="text-2xl font-black leading-none tracking-tight italic uppercase">
+                    6.6 MEGA SALE
                   </h2>
-                  <p className="text-[10px] text-white/80 font-medium leading-relaxed max-w-[200px]">
-                    Pulsa, E-Wallet, Voucher Game, dan Produk Pilihan
+                  <p className="text-[13px] text-white/80 font-medium">
+                    Diskon hingga <span className="text-yellow-400 font-black">66%</span>
                   </p>
                 </div>
               </div>
 
               <div className="flex items-center justify-between">
-                <div className="bg-white text-indigo-600 px-5 py-2.5 rounded-xl text-[10px] font-black uppercase shadow-lg shadow-black/10 group-hover:bg-indigo-50 transition-colors">
+                <div className="bg-white text-indigo-600 px-6 py-2.5 rounded-xl text-[10px] font-black uppercase shadow-lg shadow-black/10 group-hover:bg-indigo-50 transition-colors">
                   Belanja Sekarang
                 </div>
                 
                 <div className="flex flex-col items-end">
-                   <div className="flex items-center gap-1.5 mb-1">
+                   <div className="flex items-center gap-1.5 mb-0.5">
                       <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></div>
-                      <span className="text-[9px] font-black uppercase tracking-[0.1em] text-cyan-300">
-                        Promo Terbatas
+                      <span className="text-[9px] font-black uppercase tracking-tight text-cyan-300">
+                        Berakhir dalam 02:44:50
                       </span>
-                   </div>
-                   <div className="flex gap-1">
-                      <div className="w-6 h-0.5 bg-white/30 rounded-full overflow-hidden">
-                         <div className="w-2/3 h-full bg-cyan-400"></div>
-                      </div>
                    </div>
                 </div>
               </div>
