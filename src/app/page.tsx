@@ -13,7 +13,7 @@ import { cn } from '@/lib/utils';
 import { 
   Smartphone, Gamepad2, CreditCard, Package, Truck, 
   Tag, Zap, Wallet, QrCode, ShoppingBag as ShoppingBagIcon,
-  Flame, Sparkles, ChevronRight, CheckCircle2
+  Flame, Sparkles, ChevronRight, CheckCircle2, Ticket
 } from 'lucide-react';
 import { PromotionalCards } from '@/components/promotional-cards';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -149,53 +149,69 @@ export default function Home() {
 
         <CategoryMenu />
 
-        {/* 6.6 Mega Sale Banner */}
+        {/* Campaign Card Banner */}
         <section className="px-4 py-3 bg-white">
           <div 
             onClick={() => document.getElementById('flash-sale-section')?.scrollIntoView({ behavior: 'smooth' })}
-            className="relative h-36 w-full rounded-[22px] bg-gradient-to-r from-[#D0011B] via-[#FF4D00] to-[#FF9000] p-6 text-white overflow-hidden shadow-lg shadow-orange-500/20 active:scale-[0.98] transition-all cursor-pointer group"
+            className="relative h-[200px] w-full rounded-[28px] bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 p-6 text-white overflow-hidden shadow-xl shadow-indigo-500/20 active:scale-[0.98] transition-all cursor-pointer group"
           >
-            {/* Visual Decorations */}
-            <div className="absolute right-[-20px] top-[-20px] opacity-10 group-hover:scale-110 transition-transform duration-700">
-               <Flame className="w-48 h-48 rotate-12 fill-white" />
-            </div>
-            <div className="absolute right-10 bottom-2 opacity-20">
-               <Sparkles className="w-16 h-16 animate-pulse" />
-            </div>
+            {/* Background 3D-like Visual Decorations */}
+            <div className="absolute top-[-20px] left-[-20px] w-40 h-40 bg-white/10 rounded-full blur-3xl group-hover:bg-white/15 transition-colors duration-700"></div>
+            <div className="absolute bottom-[-40px] right-[-40px] w-48 h-48 bg-cyan-400/20 rounded-full blur-3xl group-hover:bg-cyan-400/30 transition-colors duration-700"></div>
             
-            <div className="relative z-10 flex h-full items-center justify-between">
-              <div className="space-y-2">
-                <div className="inline-flex items-center gap-1.5 bg-white/20 backdrop-blur-md border border-white/30 px-3 py-1 rounded-full">
-                  <Flame className="w-3 h-3 text-yellow-300 fill-yellow-300" />
-                  <span className="text-[10px] font-black uppercase tracking-widest">Mega Campaign</span>
+            {/* Floating Decorative Icons */}
+            <div className="absolute right-6 top-8 opacity-15 group-hover:scale-110 group-hover:-rotate-6 transition-all duration-700">
+               <Gamepad2 className="w-20 h-20 rotate-12" />
+            </div>
+            <div className="absolute right-24 bottom-4 opacity-10 group-hover:translate-x-2 transition-all duration-1000">
+               <Wallet className="w-12 h-12 -rotate-12" />
+            </div>
+            <div className="absolute left-1/3 top-10 opacity-5">
+               <Ticket className="w-16 h-16 rotate-45" />
+            </div>
+            <div className="absolute left-4 bottom-10 opacity-10 animate-float">
+               <Zap className="w-8 h-8 text-yellow-300 fill-yellow-300" />
+            </div>
+
+            <div className="relative z-10 flex flex-col h-full justify-between">
+              <div className="space-y-4">
+                {/* Badges */}
+                <div className="flex flex-wrap gap-1.5">
+                  {['PROSES INSTAN', 'AMAN & TERPERCAYA', '24 JAM NONSTOP'].map((badge, idx) => (
+                    <span key={idx} className="bg-white/20 backdrop-blur-md border border-white/10 text-[7px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider">
+                      {badge}
+                    </span>
+                  ))}
                 </div>
-                <div className="space-y-0.5">
-                  <h2 className="text-2xl font-black italic tracking-tighter leading-none">🔥 6.6 MEGA SALE</h2>
-                  <p className="text-sm font-bold text-yellow-300">Diskon Hingga 66%</p>
-                </div>
-                <div className="flex flex-wrap gap-x-3 gap-y-1 pt-1">
-                  <div className="flex items-center gap-1">
-                    <CheckCircle2 className="w-2.5 h-2.5 text-white/80" />
-                    <span className="text-[8px] font-bold uppercase tracking-tighter text-white/90">Gratis Ongkir</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <CheckCircle2 className="w-2.5 h-2.5 text-white/80" />
-                    <span className="text-[8px] font-bold uppercase tracking-tighter text-white/90">Voucher Belanja</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <CheckCircle2 className="w-2.5 h-2.5 text-white/80" />
-                    <span className="text-[8px] font-bold uppercase tracking-tighter text-white/90">Promo Terbatas</span>
-                  </div>
+
+                <div className="space-y-1.5">
+                  <h2 className="text-xl font-black leading-[1.1] tracking-tight whitespace-pre-line">
+                    Semua Kebutuhan Digital{"\n"}Dalam Satu Tempat
+                  </h2>
+                  <p className="text-[10px] text-white/80 font-medium leading-relaxed max-w-[200px]">
+                    Pulsa, E-Wallet, Voucher Game, dan Produk Pilihan
+                  </p>
                 </div>
               </div>
 
-              <div className="flex flex-col items-center gap-3">
-                 <div className="bg-white text-[#D0011B] px-4 py-2.5 rounded-xl text-[10px] font-black uppercase shadow-xl group-hover:bg-yellow-50 transition-colors">
-                    Belanja Sekarang
-                 </div>
-                 <div className="flex items-center gap-1 text-white/40 animate-bounce">
-                    <ChevronRight className="w-4 h-4 rotate-90" />
-                 </div>
+              <div className="flex items-center justify-between">
+                <div className="bg-white text-indigo-600 px-5 py-2.5 rounded-xl text-[10px] font-black uppercase shadow-lg shadow-black/10 group-hover:bg-indigo-50 transition-colors">
+                  Belanja Sekarang
+                </div>
+                
+                <div className="flex flex-col items-end">
+                   <div className="flex items-center gap-1.5 mb-1">
+                      <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></div>
+                      <span className="text-[9px] font-black uppercase tracking-[0.1em] text-cyan-300">
+                        Promo Terbatas
+                      </span>
+                   </div>
+                   <div className="flex gap-1">
+                      <div className="w-6 h-0.5 bg-white/30 rounded-full overflow-hidden">
+                         <div className="w-2/3 h-full bg-cyan-400"></div>
+                      </div>
+                   </div>
+                </div>
               </div>
             </div>
           </div>
