@@ -24,7 +24,7 @@ export function formatSold(count: number | string): string {
 
 /**
  * Mendapatkan gambar produk dengan logika kategori.
- * Semua gambar diambil dari root / folder public.
+ * Mendukung path lokal (/image.png) dan URL eksternal (https://...).
  */
 export function getProductImage(product: any): string {
   if (!product) return '/placeholder-product.png';
@@ -34,14 +34,18 @@ export function getProductImage(product: any): string {
     return '/premium1.png';
   }
   
-  // Gunakan path image yang ada
   const imgPath = product.image || '/placeholder-product.png';
   
-  // Jika sudah diawali dengan "/", langsung kembalikan
+  // Jika image adalah URL eksternal, langsung kembalikan
+  if (imgPath.startsWith('http://') || imgPath.startsWith('https://')) {
+    return imgPath;
+  }
+  
+  // Jika sudah diawali dengan "/", diasumsikan path lokal absolut dari root /public
   if (imgPath.startsWith('/')) {
     return imgPath;
   }
   
-  // Jika tidak, tambahkan "/"
+  // Jika path relatif, tambahkan "/" di depan untuk mengarah ke folder public
   return `/${imgPath}`;
 }
