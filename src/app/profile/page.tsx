@@ -1,4 +1,3 @@
-
 'use client';
 
 import { BottomNav } from '@/components/bottom-nav';
@@ -46,6 +45,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
+import { MarPayAIChat } from '@/components/marpay-ai-chat';
 
 export default function Profile() {
   const router = useRouter();
@@ -155,7 +155,7 @@ export default function Profile() {
   const userPhoto = "/profil1.png";
 
   return (
-    <div className="bg-gray-50 pb-14">
+    <div className="bg-gray-50 pb-12">
       <header className="bg-white px-6 pt-14 pb-8 border-b border-gray-100 relative overflow-hidden">
         <div className="flex items-center gap-4 relative z-10">
           <div className="relative">
@@ -214,11 +214,12 @@ export default function Profile() {
       </header>
 
       <main className="px-4 py-6 space-y-6">
+        {/* Menu Grid Section */}
         <section className="bg-white rounded-[22px] border border-gray-100 shadow-sm overflow-hidden">
           {menuItems.map((item, idx) => {
             const isItemActive = isLoggedIn || !item.protected;
             const content = (
-              <div key={item.label} className={cn("flex items-center justify-between p-4 active:bg-gray-50 cursor-pointer", idx !== menuItems.length - 1 ? 'border-b border-gray-50' : '', !isItemActive && "opacity-60")}>
+              <div key={item.label} className={cn("flex items-center justify-between p-4 active:bg-gray-50 transition-colors cursor-pointer", idx !== menuItems.length - 1 ? 'border-b border-gray-50' : '', !isItemActive && "opacity-60")}>
                 <div className="flex items-center gap-4">
                   <div className={cn("w-11 h-11 rounded-2xl flex items-center justify-center", item.bgColor, item.color)}>
                     <item.icon className="w-5 h-5 stroke-[2px]" />
@@ -234,6 +235,9 @@ export default function Profile() {
             return isItemActive ? <Link key={item.label} href={item.path}>{content}</Link> : <div key={item.label} onClick={() => router.push('/login')}>{content}</div>;
           })}
         </section>
+
+        {/* AI Assistant Card - Placed below help menu */}
+        <MarPayAIChat />
 
         {isLoggedIn && (
           <Button onClick={handleLogout} variant="ghost" className="w-full text-red-500 font-black h-14 rounded-2xl border-2 border-transparent hover:bg-red-50">
