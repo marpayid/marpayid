@@ -202,8 +202,8 @@ export function ProductCard({ product, compact = false }: { product: any, compac
               Rp {product.price.toLocaleString()}
             </p>
             {isFreeShipping && product.type !== 'digital' && (
-              <div className="flex items-center text-[8.5px] text-green-600 font-black uppercase gap-0.5 bg-green-50 px-1.5 py-0.5 rounded-md">
-                <Truck className="w-2.5 h-2.5" /> Free
+              <div className="flex items-center text-[8px] text-green-600 font-bold uppercase gap-0.5 bg-green-50 px-1.5 py-0.5 rounded-md">
+                <Truck className="w-2.5 h-2.5" /> GRATIS
               </div>
             )}
           </div>
