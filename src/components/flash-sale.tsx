@@ -26,7 +26,7 @@ export function FlashSale() {
   const flashSaleItems = Products.filter(p => p.isFlashSale && p.category !== 'Premium');
 
   return (
-    <section className="mt-2 px-4 py-4 bg-white">
+    <section id="flash-sale-section" className="mt-2 px-4 py-4 bg-white">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <h2 className="text-lg font-black italic tracking-tighter text-orange-600 uppercase leading-none">Flash Sale</h2>

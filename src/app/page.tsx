@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect, useMemo } from 'react';
@@ -9,7 +10,11 @@ import { ProductCard, FashionDiscoveryCard } from '@/components/product-grid';
 import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from '@/components/ui/carousel';
 import { Banners, Products } from '@/app/lib/dummy-data';
 import { cn } from '@/lib/utils';
-import { Smartphone, Gamepad2, CreditCard, Package, Truck, Tag, Zap, Wallet, QrCode, ShoppingBag as ShoppingBagIcon } from 'lucide-react';
+import { 
+  Smartphone, Gamepad2, CreditCard, Package, Truck, 
+  Tag, Zap, Wallet, QrCode, ShoppingBag as ShoppingBagIcon,
+  Flame, Sparkles, ChevronRight, CheckCircle2
+} from 'lucide-react';
 import { PromotionalCards } from '@/components/promotional-cards';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { VoucherSection } from '@/components/voucher-section';
@@ -143,6 +148,59 @@ export default function Home() {
         </section>
 
         <CategoryMenu />
+
+        {/* 6.6 Mega Sale Banner */}
+        <section className="px-4 py-3 bg-white">
+          <div 
+            onClick={() => document.getElementById('flash-sale-section')?.scrollIntoView({ behavior: 'smooth' })}
+            className="relative h-36 w-full rounded-[22px] bg-gradient-to-r from-[#D0011B] via-[#FF4D00] to-[#FF9000] p-6 text-white overflow-hidden shadow-lg shadow-orange-500/20 active:scale-[0.98] transition-all cursor-pointer group"
+          >
+            {/* Visual Decorations */}
+            <div className="absolute right-[-20px] top-[-20px] opacity-10 group-hover:scale-110 transition-transform duration-700">
+               <Flame className="w-48 h-48 rotate-12 fill-white" />
+            </div>
+            <div className="absolute right-10 bottom-2 opacity-20">
+               <Sparkles className="w-16 h-16 animate-pulse" />
+            </div>
+            
+            <div className="relative z-10 flex h-full items-center justify-between">
+              <div className="space-y-2">
+                <div className="inline-flex items-center gap-1.5 bg-white/20 backdrop-blur-md border border-white/30 px-3 py-1 rounded-full">
+                  <Flame className="w-3 h-3 text-yellow-300 fill-yellow-300" />
+                  <span className="text-[10px] font-black uppercase tracking-widest">Mega Campaign</span>
+                </div>
+                <div className="space-y-0.5">
+                  <h2 className="text-2xl font-black italic tracking-tighter leading-none">🔥 6.6 MEGA SALE</h2>
+                  <p className="text-sm font-bold text-yellow-300">Diskon Hingga 66%</p>
+                </div>
+                <div className="flex flex-wrap gap-x-3 gap-y-1 pt-1">
+                  <div className="flex items-center gap-1">
+                    <CheckCircle2 className="w-2.5 h-2.5 text-white/80" />
+                    <span className="text-[8px] font-bold uppercase tracking-tighter text-white/90">Gratis Ongkir</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <CheckCircle2 className="w-2.5 h-2.5 text-white/80" />
+                    <span className="text-[8px] font-bold uppercase tracking-tighter text-white/90">Voucher Belanja</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <CheckCircle2 className="w-2.5 h-2.5 text-white/80" />
+                    <span className="text-[8px] font-bold uppercase tracking-tighter text-white/90">Promo Terbatas</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-col items-center gap-3">
+                 <div className="bg-white text-[#D0011B] px-4 py-2.5 rounded-xl text-[10px] font-black uppercase shadow-xl group-hover:bg-yellow-50 transition-colors">
+                    Belanja Sekarang
+                 </div>
+                 <div className="flex items-center gap-1 text-white/40 animate-bounce">
+                    <ChevronRight className="w-4 h-4 rotate-90" />
+                 </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <FlashSale />
         <VoucherSection />
 
