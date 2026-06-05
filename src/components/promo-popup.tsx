@@ -11,16 +11,43 @@ export function PromoPopup() {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    // MODE TESTING: Muncul setiap kali refresh
-    // Logika localStorage sementara dinonaktifkan agar mudah dicek
-    const timer = setTimeout(() => {
-      setIsOpen(true);
-    }, 1500); // Muncul setelah 1.5 detik agar halus
-    return () => clearTimeout(timer);
+    const checkFrequency = () => {
+      const storageKey = 'marpay_promo_popup_views';
+      const now = Date.now();
+      const oneDayInMs = 24 * 60 * 60 * 1000;
+
+      // Ambil riwayat kemunculan dari localStorage
+      const storedViews = localStorage.getItem(storageKey);
+      let viewTimestamps: number[] = [];
+      
+      if (storedViews) {
+        try {
+          viewTimestamps = JSON.parse(storedViews);
+        } catch (e) {
+          viewTimestamps = [];
+        }
+      }
+
+      // Filter hanya kemunculan dalam 24 jam terakhir
+      const recentViews = viewTimestamps.filter(timestamp => (now - timestamp) < oneDayInMs);
+
+      // Jika muncul kurang dari 2 kali dalam 24 jam terakhir
+      if (recentViews.length < 2) {
+        const timer = setTimeout(() => {
+          setIsOpen(true);
+          
+          // Catat kemunculan baru
+          const updatedViews = [...recentViews, now];
+          localStorage.setItem(storageKey, JSON.stringify(updatedViews));
+        }, 1500); // Muncul setelah 1.5 detik agar halus
+        return () => clearTimeout(timer);
+      }
+    };
+
+    checkFrequency();
   }, []);
 
   const handleClose = () => {
-    // MODE TESTING: Cukup tutup state tanpa simpan ke localStorage
     setIsOpen(false);
   };
 
@@ -44,7 +71,7 @@ export function PromoPopup() {
           <X className="w-5 h-5" />
         </button>
 
-        {/* Main Card - Reduced size and padding */}
+        {/* Main Card */}
         <div className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-white/20 text-white flex flex-col items-center text-center px-6 py-4">
           
           {/* Background Decorative Elements */}
