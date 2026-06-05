@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useRef, useMemo } from 'react';
@@ -311,7 +312,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
 
         {/* STATE 3: PRODUCT RESULTS */}
         {showResults && (
-          <div className="flex flex-col bg-[#F8F9FA]">
+          <div className="flex flex-col bg-[#F8F9FA] pb-32">
             {/* Professional Sorting Tabs - Sticky at the top of the scroll container */}
             <div className="bg-white border-b border-gray-100 flex items-center sticky top-0 z-30 px-2 py-2.5 gap-1.5 overflow-x-auto no-scrollbar shadow-sm">
               {[

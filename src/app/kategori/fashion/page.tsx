@@ -20,7 +20,7 @@ export default function FashionCategoryPage() {
   const filters = ['Semua', 'Kaos', 'Kemeja', 'Promo'];
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-12">
+    <div className="min-h-screen bg-gray-50 pb-32">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white px-4 py-4 border-b border-gray-100 flex items-center justify-between">
         <div className="flex items-center gap-4">

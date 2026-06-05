@@ -54,7 +54,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="bg-gray-50 pb-12">
+    <div className="bg-gray-50 pb-32">
       <TopSearch />
       <main className="pt-16 space-y-2">
         {/* Banner Section with Indicators */}
