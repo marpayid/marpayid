@@ -72,7 +72,7 @@ export function BottomNav() {
                 )}
               </div>
               <span className={cn(
-                "text-[9px] tracking-tight leading-none mt-0.5",
+                "text-[9px] tracking-tight leading-none mt-1.5",
                 isActive ? "font-bold text-primary" : "font-medium"
               )}>
                 {item.label}
