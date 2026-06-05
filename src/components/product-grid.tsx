@@ -5,14 +5,15 @@ import { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Star, ShoppingBag, Heart, ArrowRight, Shirt, Sparkles, Truck } from 'lucide-react';
-import { Products } from '@/app/lib/dummy-data';
+import { useProducts } from '@/hooks/use-products';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn, formatSold, getProductImage } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from '@/components/ui/carousel';
 
 export function ProductGrid() {
-  const viralProducts = Products.filter(p => p.tag === 'Produk Viral');
+  const { products } = useProducts();
+  const viralProducts = products.filter(p => p.tag === 'Produk Viral');
   
   return (
     <section className="mt-6 px-4 pb-24">
@@ -42,7 +43,7 @@ export function ProductGrid() {
         
         <TabsContent value="semua">
           <div className="grid grid-cols-2 gap-3.5">
-            {Products.map((product) => (
+            {products.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
@@ -126,7 +127,7 @@ export function ProductCard({ product, compact = false }: { product: any, compac
       const saved = localStorage.getItem('marpay_wishlist');
       if (saved) {
         const wishlist = JSON.parse(saved);
-        setIsFavorited(wishlist.some((item: any) => item.id === product.id));
+        setIsFavorited(wishlist.some((item: any) => String(item.id) === String(product.id)));
       }
     };
     checkFavorite();
@@ -143,7 +144,7 @@ export function ProductCard({ product, compact = false }: { product: any, compac
       wishlist.push({ ...product });
       toast({ variant: "default", title: "Favorit Tersimpan", description: "Produk berhasil disimpan", duration: 2000 });
     } else {
-      wishlist = wishlist.filter((item: any) => item.id !== product.id);
+      wishlist = wishlist.filter((item: any) => String(item.id) !== String(product.id));
       toast({ variant: "default", title: "Favorit Dihapus", description: "Produk dihapus dari wishlist.", duration: 2000 });
     }
     localStorage.setItem('marpay_wishlist', JSON.stringify(wishlist));
@@ -172,7 +173,7 @@ export function ProductCard({ product, compact = false }: { product: any, compac
 
     const savedCart = localStorage.getItem('marpay_cart');
     let cart = savedCart ? JSON.parse(savedCart) : [];
-    const existingIndex = cart.findIndex((item: any) => item.id === cartItem.id && item.variant === cartItem.variant);
+    const existingIndex = cart.findIndex((item: any) => String(item.id) === String(cartItem.id) && item.variant === cartItem.variant);
     if (existingIndex > -1) cart[existingIndex].quantity += 1;
     else cart.push(cartItem);
 

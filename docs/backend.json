@@ -62,6 +62,34 @@
         "createdAt": { "type": "string", "format": "date-time" }
       },
       "required": ["token"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "Data produk yang dijual di MarPay.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "price": { "type": "number" },
+        "hargaSupplier": { "type": "number" },
+        "category": { "type": "string" },
+        "description": { "type": "string" },
+        "image": { "type": "string" },
+        "stock": { "type": "string" },
+        "rating": { "type": "number" },
+        "sold": { "type": "number" },
+        "discount": { "type": "string" },
+        "isFlashSale": { "type": "boolean" },
+        "tag": { "type": "string" },
+        "type": { "type": "string", "enum": ["physical", "digital"] },
+        "shippingFee": { "type": "number" },
+        "variants": { "type": "array", "items": { "type": "string" } },
+        "colors": { "type": "array", "items": { "type": "string" } },
+        "gender": { "type": "string", "enum": ["male", "female", "unisex"] },
+        "brand": { "type": "string" },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "price", "category"]
     }
   },
   "auth": {
@@ -83,6 +111,10 @@
     "/notification_tokens/{tokenId}": {
       "schema": { "$ref": "#/entities/NotificationToken" },
       "description": "Koleksi token notifikasi perangkat pengguna untuk pengiriman push notification."
+    },
+    "/products/{productId}": {
+      "schema": { "$ref": "#/entities/Product" },
+      "description": "Koleksi data produk marketplace."
     }
   }
 }

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useRef, useMemo } from 'react';
@@ -8,7 +9,7 @@ import {
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Products } from '@/app/lib/dummy-data';
+import { useProducts } from '@/hooks/use-products';
 import { ProductCard } from '@/components/product-grid';
 import { cn } from '@/lib/utils';
 
@@ -43,6 +44,8 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
   const [history, setHistory] = useState<string[]>([]);
   const [activeSort, setActiveSort] = useState<SortOption>('semua');
   const inputRef = useRef<HTMLInputElement>(null);
+  
+  const { products } = useProducts();
 
   const popularKeywords = [
     'Case iPhone', 'Skincare', 'Celana', 'Kemeja', 'Akrilik', 'Top Up', 'Pulsa'
@@ -112,12 +115,12 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
   // Generate suggestions based on input (TEXT ONLY)
   const suggestions = useMemo(() => {
     const q = inputValue.toLowerCase().trim();
-    if (!q || showResults) return [];
+    if (!q || showResults || !products) return [];
 
     const matches = new Set<string>();
     
     // Logic to find relevant keywords from products
-    Products.forEach(p => {
+    products.forEach(p => {
       const name = p.name.toLowerCase();
       const cat = p.category?.toLowerCase() || '';
       
@@ -149,11 +152,11 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
     });
 
     return Array.from(matches).slice(0, 10);
-  }, [inputValue, showResults]);
+  }, [inputValue, showResults, products]);
 
   // Filter and sort results with expanded keyword logic and gender awareness
   const finalResults = useMemo(() => {
-    if (!confirmedQuery) return [];
+    if (!confirmedQuery || !products) return [];
     const q = confirmedQuery.toLowerCase().trim();
     
     // 1. Identify Gender Preference in Query
@@ -172,7 +175,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
     const searchTerms = Array.from(expandedTerms);
     
     // 3. Filter Products
-    let filtered = Products.filter(p => {
+    let filtered = products.filter(p => {
       const name = p.name.toLowerCase();
       const cat = p.category?.toLowerCase() || '';
       const desc = p.description?.toLowerCase() || '';
@@ -252,14 +255,14 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
         case 'harga_rendah':
           return a.price - b.price;
         case 'terbaru':
-          return b.id - a.id;
+          return Number(b.id) - Number(a.id);
         default:
           return 0;
       }
     });
 
     return sorted;
-  }, [confirmedQuery, activeSort]);
+  }, [confirmedQuery, activeSort, products]);
 
   if (!isOpen) return null;
 

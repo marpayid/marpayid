@@ -8,12 +8,13 @@ import { CategoryMenu } from '@/components/category-menu';
 import { FlashSale } from '@/components/flash-sale';
 import { ProductCard, FashionDiscoveryCard } from '@/components/product-grid';
 import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from '@/components/ui/carousel';
-import { Banners, Products } from '@/app/lib/dummy-data';
+import { Banners } from '@/app/lib/dummy-data';
+import { useProducts } from '@/hooks/use-products';
 import { cn } from '@/lib/utils';
 import { 
-  Smartphone, Gamepad2, CreditCard, Package, Truck, 
-  Tag, Zap, Wallet, QrCode, ShoppingBag as ShoppingBagIcon,
-  Flame, Sparkles, ChevronRight, CheckCircle2, Ticket, Gift, Coins
+  Smartphone, Gamepad2, Package, Truck, 
+  Tag, Zap, Wallet, ShoppingBag as ShoppingBagIcon,
+  Sparkles
 } from 'lucide-react';
 import { PromotionalCards } from '@/components/promotional-cards';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -23,6 +24,7 @@ import { PromoPopup } from '@/components/promo-popup';
 export default function Home() {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
+  const { products } = useProducts();
 
   useEffect(() => {
     if (!api) return;
@@ -34,23 +36,24 @@ export default function Home() {
   }, [api]);
 
   const viralProducts = useMemo(() => 
-    Products.filter(p => p.tag === 'Produk Viral' && p.category !== 'Premium'), 
-  []);
+    products.filter(p => p.tag === 'Produk Viral' && p.category !== 'Premium'), 
+  [products]);
   
   const recommendationList = useMemo(() => {
     const priorityIds = [208, 207, 206, 205, 3, 1, 6, 201, 204, 203];
     const priorityItems = priorityIds
-      .map(id => Products.find(p => p.id === id))
-      .filter(p => p && p.category !== 'Premium') as typeof Products;
+      .map(id => products.find(p => String(p.id) === String(id)))
+      .filter(p => p && p.category !== 'Premium');
 
-    const others = Products.filter(p => 
-      !priorityIds.includes(p.id) && 
-      p.id !== 2 && 
+    const others = products.filter(p => 
+      !priorityIds.includes(Number(p.id)) && 
+      !priorityIds.includes(p.id) &&
+      String(p.id) !== '2' && 
       p.category !== 'Premium'
     );
     
     return [...priorityItems, ...others];
-  }, []);
+  }, [products]);
 
   return (
     <div className="bg-gray-50 pb-32">
@@ -176,7 +179,7 @@ export default function Home() {
             </TabsContent>
             <TabsContent value="semua">
               <div className="grid grid-cols-2 gap-3.5">
-                {Products.filter(p => p.category !== 'Premium').map((p) => <ProductCard key={p.id} product={p} />)}
+                {products.filter(p => p.category !== 'Premium').map((p) => <ProductCard key={p.id} product={p} />)}
               </div>
             </TabsContent>
           </Tabs>

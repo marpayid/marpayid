@@ -4,7 +4,7 @@
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Shirt, ShoppingBag, SlidersHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Products } from '@/app/lib/dummy-data';
+import { useProducts } from '@/hooks/use-products';
 import { ProductCard } from '@/components/product-grid';
 import { BottomNav } from '@/components/bottom-nav';
 import { cn } from '@/lib/utils';
@@ -13,9 +13,10 @@ import { useState } from 'react';
 export default function FashionCategoryPage() {
   const router = useRouter();
   const [activeFilter, setActiveFilter] = useState('Semua');
+  const { products } = useProducts();
   
   // Ambil hanya produk dengan kategori Fashion
-  const fashionProducts = Products.filter(p => p.category === 'Fashion');
+  const fashionProducts = products.filter(p => p.category === 'Fashion');
 
   const filters = ['Semua', 'Kaos', 'Kemeja', 'Promo'];
 
@@ -25,7 +26,7 @@ export default function FashionCategoryPage() {
       <header className="fixed top-0 left-0 right-0 z-50 bg-white px-4 py-4 border-b border-gray-100 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" onClick={() => router.back()}>
-            <ArrowLeft className="w-5 h-5 text-gray-800" />
+            <ArrowLeft className="w-5 h-5" />
           </Button>
           <h1 className="text-lg font-bold text-gray-900">Fashion</h1>
         </div>

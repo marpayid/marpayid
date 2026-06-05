@@ -4,15 +4,16 @@
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Crown, ShieldCheck, Zap, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Products } from '@/app/lib/dummy-data';
+import { useProducts } from '@/hooks/use-products';
 import { ProductCard } from '@/components/product-grid';
 import { BottomNav } from '@/components/bottom-nav';
 
 export default function PremiumCategoryPage() {
   const router = useRouter();
+  const { products } = useProducts();
   
   // Ambil hanya produk dengan kategori Premium
-  const premiumProducts = Products.filter(p => p.category === 'Premium');
+  const premiumProducts = products.filter(p => p.category === 'Premium');
 
   return (
     <div className="min-h-screen bg-gray-50 pb-32">

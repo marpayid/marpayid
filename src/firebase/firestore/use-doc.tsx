@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -17,7 +18,14 @@ export function useDoc<T = DocumentData>(docRef: DocumentReference<T> | null) {
     const unsubscribe = onSnapshot(
       docRef,
       (snapshot) => {
-        setData(snapshot.exists() ? snapshot.data() : null);
+        if (snapshot.exists()) {
+          setData({
+            id: snapshot.id,
+            ...snapshot.data()
+          } as unknown as T);
+        } else {
+          setData(null);
+        }
         setLoading(false);
       },
       (err) => {

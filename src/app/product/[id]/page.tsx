@@ -4,11 +4,11 @@
 import { useParams, useRouter } from 'next/navigation';
 import { useState, useMemo, useEffect } from 'react';
 import { 
-  ArrowLeft, ShoppingBag, Star, Minus, Plus, Info, Heart, LayoutGrid
+  ArrowLeft, ShoppingBag, Star, Minus, Plus, Info, Heart, LayoutGrid, Loader2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Products } from '@/app/lib/dummy-data';
+import { useProducts, useProductDetail } from '@/hooks/use-products';
 import Image from 'next/image';
 import Link from 'next/link';
 import { cn, formatSold, getProductImage } from '@/lib/utils';
@@ -17,39 +17,41 @@ import { ProductCard } from '@/components/product-grid';
 
 export default function ProductDetail() {
   const params = useParams();
-  const id = params?.id;
+  const id = params?.id as string;
   const router = useRouter();
   const { toast } = useToast();
+  
+  const { product, loading } = useProductDetail(id);
+  const { products: allProducts } = useProducts();
+  
   const [quantity, setQuantity] = useState(1);
   const [selectedVariant, setSelectedVariant] = useState(0);
   const [selectedColor, setSelectedColor] = useState(0);
-
-  const product = useMemo(() => Products.find(p => p.id === Number(id)), [id]);
-  const isOutOfStock = product?.stock === 'Stok Habis';
-  
   const [activeImage, setActiveImage] = useState('');
 
   useEffect(() => {
     if (product) setActiveImage(getProductImage(product));
   }, [product]);
 
+  const isOutOfStock = product?.stock === 'Stok Habis';
+
   const currentPrice = useMemo(() => {
     if (!product) return 0;
     
     // Special Pricing Logic for Wardah (ID: 208)
-    if (product.id === 208) {
+    if (String(product.id) === '208') {
       if (selectedVariant === 2) return 45000; // Acne Calming SPF50 40ml
       return 28000; // default for SPF50 25ml and SPF35 35ml
     }
     
     // Special Pricing Logic for Everyday Pants (ID: 203)
-    if (product.id === 203) {
+    if (String(product.id) === '203') {
       if (selectedVariant === 1) return 63102; // Jumbo
       if (selectedVariant === 2) return 70000; // Super Jumbo
       return 59252; // Standar
     }
     // Special Pricing Logic for Case iPhone Clear (ID: 201)
-    if (product.id === 201) {
+    if (String(product.id) === '201') {
       const variantName = product.variants?.[selectedVariant] || '';
       if (variantName.includes('14') || variantName.includes('15') || variantName.includes('16') || variantName.includes('17')) {
         return 17999;
@@ -57,30 +59,38 @@ export default function ProductDetail() {
       return 14899;
     }
     // Special Pricing Logic for Akrilik (ID: 2)
-    if (product.id === 2 && selectedVariant === 1) return 309000;
+    if (String(product.id) === '2' && selectedVariant === 1) return 309000;
     
     return product.price;
   }, [product, selectedVariant]);
 
-  // Logic for Similar and Recommended Products (Mengecualikan kategori Premium)
+  // Logic for Similar and Recommended Products
   const similarProducts = useMemo(() => {
-    if (!product) return [];
-    // Jangan tampilkan rekomendasi premium di bagian serupa/suka
-    return Products.filter(p => 
+    if (!product || !allProducts) return [];
+    return allProducts.filter(p => 
       p.category === product.category && 
-      p.id !== product.id && 
+      String(p.id) !== String(product.id) && 
       p.category !== 'Premium'
     ).slice(0, 4);
-  }, [product]);
+  }, [product, allProducts]);
 
   const recommendedProducts = useMemo(() => {
-    if (!product) return [];
-    const excludedIds = [product.id, ...similarProducts.map(p => p.id)];
-    return Products.filter(p => 
-      !excludedIds.includes(p.id) && 
+    if (!product || !allProducts) return [];
+    const excludedIds = [String(product.id), ...similarProducts.map(p => String(p.id))];
+    return allProducts.filter(p => 
+      !excludedIds.includes(String(p.id)) && 
       p.category !== 'Premium'
     ).slice(0, 4);
-  }, [product, similarProducts]);
+  }, [product, similarProducts, allProducts]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white flex flex-col items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        <p className="text-xs font-bold text-gray-400 mt-4 uppercase tracking-widest">Memuat Produk...</p>
+      </div>
+    );
+  }
 
   if (!product) return <div className="p-8 text-center font-bold">Produk tidak ditemukan</div>;
 
@@ -89,7 +99,7 @@ export default function ProductDetail() {
   const totalPrice = currentPrice * quantity;
 
   // Custom Description Override for BIOAQUA
-  const displayDescription = product.id === 1 
+  const displayDescription = String(product.id) === '1' 
     ? "BIOAQUA Skincare 1 Set Lengkap 6pcs hadir with pilihan Whitening Set and Anti-Acne Set. Cocok untuk perawatan wajah harian agar kulit terlihat lebih bersih, segar, dan terawat. Produk dikemas rapi dan siap dikirim."
     : product.description;
 
@@ -114,7 +124,7 @@ export default function ProductDetail() {
     } else {
       const savedCart = localStorage.getItem('marpay_cart');
       let cart = savedCart ? JSON.parse(savedCart) : [];
-      const existingIndex = cart.findIndex((i: any) => i.id === item.id && i.variant === item.variant);
+      const existingIndex = cart.findIndex((i: any) => String(i.id) === String(item.id) && i.variant === item.variant);
       if (existingIndex > -1) cart[existingIndex].quantity += quantity;
       else cart.push(item);
       localStorage.setItem('marpay_cart', JSON.stringify(cart));
@@ -176,7 +186,7 @@ export default function ProductDetail() {
           <div>
             <p className="text-[11px] font-bold text-gray-400 uppercase mb-2">Varian</p>
             <div className="flex flex-wrap gap-2">
-              {variants.map((v, i) => (
+              {variants.map((v: string, i: number) => (
                 <button key={v} onClick={() => setSelectedVariant(i)} className={cn("px-4 py-2 rounded-lg text-xs border", selectedVariant === i ? "border-primary bg-primary/5 text-primary" : "border-gray-100")}>{v}</button>
               ))}
             </div>
