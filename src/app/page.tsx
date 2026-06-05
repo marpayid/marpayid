@@ -149,11 +149,14 @@ export default function Home() {
 
         <CategoryMenu />
 
-        {/* Campaign Event Card MarPay */}
-        <section className="px-4 py-3 bg-white">
+        {/* Campaign Event Card MarPay - Modern Island Shape */}
+        <section className="px-4 py-4 bg-white flex justify-center">
           <div 
             onClick={() => document.getElementById('flash-sale-section')?.scrollIntoView({ behavior: 'smooth' })}
-            className="relative h-[170px] w-full rounded-[24px] bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 p-5 text-white overflow-hidden shadow-xl shadow-indigo-500/20 active:scale-[0.98] transition-all cursor-pointer group"
+            style={{ 
+              clipPath: "polygon(0% 0%, 100% 0%, 100% 35%, 96% 50%, 100% 65%, 100% 100%, 0% 100%, 0% 65%, 4% 50%, 0% 35%)" 
+            }}
+            className="relative h-[185px] w-[92%] bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 p-6 text-white overflow-hidden shadow-2xl shadow-indigo-500/30 active:scale-[0.98] transition-all cursor-pointer group flex flex-col justify-center"
           >
             {/* Soft Glow Effects */}
             <div className="absolute top-[-20px] left-[-20px] w-32 h-32 bg-white/10 rounded-full blur-3xl"></div>
@@ -173,9 +176,9 @@ export default function Home() {
                <Coins className="w-6 h-6" />
             </div>
 
-            <div className="relative z-10 flex flex-col h-full">
+            <div className="relative z-10 flex flex-col h-full justify-between">
               {/* Top Row: Left, Center, Right */}
-              <div className="flex justify-between items-start flex-1">
+              <div className="flex justify-between items-start flex-1 px-2">
                 {/* Kiri: Badge */}
                 <div className="w-1/4">
                   <div className="bg-white/20 backdrop-blur-md border border-white/10 text-[7px] font-black px-2 py-1 rounded-full uppercase tracking-wider w-fit shadow-sm flex items-center gap-1">
@@ -187,7 +190,7 @@ export default function Home() {
                 <div className="flex-1 text-center space-y-1.5 pt-1">
                   <div className="space-y-0.5">
                     <p className="text-[10px] font-bold text-cyan-300 uppercase tracking-[0.2em] leading-none">PROMO PUNCAK</p>
-                    <h2 className="text-4xl font-black leading-none tracking-tighter italic italic">6.6</h2>
+                    <h2 className="text-4xl font-black leading-none tracking-tighter italic">6.6</h2>
                   </div>
                   <div className="space-y-0.5">
                     <p className="text-[10px] font-black text-white leading-tight uppercase">Diskon Hingga 66%</p>
@@ -205,7 +208,7 @@ export default function Home() {
               </div>
 
               {/* Bottom Row: Button & Countdown */}
-              <div className="flex items-center justify-between pt-2 border-t border-white/10">
+              <div className="flex items-center justify-between pt-3 border-t border-white/10 px-2">
                 <div className="bg-white text-indigo-700 px-5 py-2 rounded-xl text-[9px] font-black uppercase shadow-lg shadow-black/10 group-hover:bg-indigo-50 transition-colors">
                   Belanja Sekarang
                 </div>
