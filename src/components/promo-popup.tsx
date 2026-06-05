@@ -31,7 +31,7 @@ export function PromoPopup() {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[3000] flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm animate-in fade-in duration-500">
+    <div className="fixed inset-0 z-[3000] flex items-center justify-center p-6 bg-black/50 backdrop-blur-[2px] animate-in fade-in duration-500">
       <div className="relative w-full max-w-[340px] animate-in zoom-in-95 duration-500">
         
         {/* Tombol Tutup (X) */}
