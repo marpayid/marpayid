@@ -14,6 +14,8 @@ import { Smartphone, Gamepad2, CreditCard, Package, Truck, Tag, Zap, Wallet, QrC
 import { PromotionalCards } from '@/components/promotional-cards';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { VoucherSection } from '@/components/voucher-section';
+import { DigitalShortcuts } from '@/components/digital-shortcuts';
+import { TrustBadges } from '@/components/trust-badges';
 
 export default function Home() {
   const [api, setApi] = useState<CarouselApi>();
@@ -174,6 +176,7 @@ export default function Home() {
         </section>
 
         <CategoryMenu />
+        <DigitalShortcuts />
         <FlashSale />
         <VoucherSection />
 
@@ -211,6 +214,8 @@ export default function Home() {
             </TabsContent>
           </Tabs>
         </section>
+
+        <TrustBadges />
       </main>
       <BottomNav />
     </div>
