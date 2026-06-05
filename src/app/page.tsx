@@ -10,6 +10,8 @@ import { ProductCard, FashionDiscoveryCard } from '@/components/product-grid';
 import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from '@/components/ui/carousel';
 import { Banners } from '@/app/lib/dummy-data';
 import { useProducts } from '@/hooks/use-products';
+import { useFirestore } from '@/firebase';
+import { collection, query, where, getDocs, addDoc, serverTimestamp, limit } from 'firebase/firestore';
 import { cn } from '@/lib/utils';
 import { 
   Smartphone, Gamepad2, Package, Truck, 
@@ -24,7 +26,53 @@ import { PromoPopup } from '@/components/promo-popup';
 export default function Home() {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
-  const { products } = useProducts();
+  const { products, loading: productsLoading } = useProducts();
+  const db = useFirestore();
+
+  // Tahap 2: Script Seed Otomatis
+  useEffect(() => {
+    const seedTestProduct = async () => {
+      if (!db) return;
+
+      const productName = "Wispie Girl Boss Fitted Shirt";
+      const productsRef = collection(db, 'products');
+      const q = query(productsRef, where('name', '==', productName), limit(1));
+
+      try {
+        const querySnapshot = await getDocs(q);
+        
+        if (querySnapshot.empty) {
+          console.log("Seeding test product to Firestore...");
+          await addDoc(productsRef, {
+            name: productName,
+            price: 140900,
+            hargaSupplier: 130410,
+            category: "Fashion",
+            description: "Kemeja kerja wanita model fitted stripe dengan bahan lembut dan nyaman dipakai sehari-hari. Cocok untuk outfit kantor, kuliah, maupun casual look.",
+            image: "https://images.pexels.com/photos/5709665/pexels-photo-5709665.jpeg",
+            stock: "100",
+            gender: "female",
+            brand: "Wispie",
+            rating: 4.9,
+            sold: 10000,
+            discount: "33%",
+            isFlashSale: false,
+            type: "physical",
+            shippingFee: 0,
+            forceFreeShippingLabel: true,
+            tags: ["kemeja wanita", "girl boss", "stripe shirt", "fashion wanita", "office look", "kemeja kerja"],
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp()
+          });
+          console.log("Success: Test product seeded.");
+        }
+      } catch (e) {
+        console.error("Seed error:", e);
+      }
+    };
+
+    seedTestProduct();
+  }, [db]);
 
   useEffect(() => {
     if (!api) return;
@@ -52,6 +100,7 @@ export default function Home() {
       p.category !== 'Premium'
     );
     
+    // Sort logic to make sure the seeded product from Firestore appears if it exists
     return [...priorityItems, ...others];
   }, [products]);
 
