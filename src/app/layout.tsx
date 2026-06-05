@@ -1,7 +1,9 @@
+
 import type {Metadata, Viewport} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { FirebaseClientProvider } from '@/firebase';
+import { NotificationPrompt } from '@/components/notification-prompt';
 
 export const metadata: Metadata = {
   title: 'MarPay Marketplace',
@@ -35,6 +37,7 @@ export default function RootLayout({
       <body className="font-body antialiased bg-background text-foreground overflow-x-hidden min-h-screen">
         <FirebaseClientProvider>
           {children}
+          <NotificationPrompt />
           <Toaster />
         </FirebaseClientProvider>
       </body>

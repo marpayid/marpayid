@@ -50,6 +50,18 @@
         "shippingAddress": { "type": "object" },
         "createdAt": { "type": "string", "format": "date-time" }
       }
+    },
+    "NotificationToken": {
+      "title": "NotificationToken",
+      "description": "Token FCM untuk pengiriman notifikasi push.",
+      "type": "object",
+      "properties": {
+        "token": { "type": "string" },
+        "userId": { "type": "string" },
+        "platform": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["token"]
     }
   },
   "auth": {
@@ -67,6 +79,10 @@
     "/orders/{orderId}": {
       "schema": { "$ref": "#/entities/Order" },
       "description": "Koleksi transaksi pesanan seluruh pelanggan (Admin View)."
+    },
+    "/notification_tokens/{tokenId}": {
+      "schema": { "$ref": "#/entities/NotificationToken" },
+      "description": "Koleksi token notifikasi perangkat pengguna untuk pengiriman push notification."
     }
   }
 }
