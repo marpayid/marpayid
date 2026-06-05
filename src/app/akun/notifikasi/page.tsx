@@ -1,34 +1,68 @@
-
 "use client"
 
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Bell, Tag, ShoppingBag } from 'lucide-react';
+import { ArrowLeft, Bell, Tag, ShoppingBag, Truck, Zap, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { cn } from '@/lib/utils';
+
+const INTERNAL_NOTIFICATIONS = [
+  {
+    id: 'notif-1',
+    type: 'promo',
+    title: '🎁 Voucher Pengguna Baru Tersedia!',
+    desc: 'Klaim voucher diskon Rp10.000 khusus untukmu. Gunakan sekarang sebelum masa berlaku habis.',
+    time: 'Baru saja',
+    icon: Tag,
+    color: 'bg-orange-50 text-orange-500'
+  },
+  {
+    id: 'notif-2',
+    type: 'promo',
+    title: '🔥 Promo Flash Sale Hari Ini',
+    desc: 'Diskon hingga 50% untuk produk skincare dan fashion viral. Cek katalog Flash Sale sekarang!',
+    time: '2 jam yang lalu',
+    icon: Zap,
+    color: 'bg-red-50 text-red-500'
+  },
+  {
+    id: 'notif-3',
+    type: 'order',
+    title: '🚚 Gratis Ongkir Produk Pilihan',
+    desc: 'Belanja produk fashion pilihan dan dapatkan subsidi ongkir hingga Rp15.000 ke seluruh Indonesia.',
+    time: '5 jam yang lalu',
+    icon: Truck,
+    color: 'bg-primary/10 text-primary'
+  },
+  {
+    id: 'notif-4',
+    type: 'order',
+    title: '📱 Top Up & PPOB Tersedia',
+    desc: 'Isi pulsa, token PLN, dan e-wallet makin mudah di MarPay. Proses instan 24 jam nonstop.',
+    time: '1 hari yang lalu',
+    icon: ShoppingBag,
+    color: 'bg-blue-50 text-blue-500'
+  }
+];
 
 export default function NotificationPage() {
   const router = useRouter();
+  const [readIds, setReadIds] = useState<string[]>([]);
 
-  const mockNotifications = [
-    {
-      id: 1,
-      type: 'promo',
-      title: 'Promo Flash Sale Hari Ini!',
-      desc: 'Dapatkan diskon hingga 50% untuk produk skincare pilihan. Cek sekarang!',
-      time: '2 jam yang lalu',
-      icon: Tag,
-      color: 'bg-orange-50 text-orange-500'
-    },
-    {
-      id: 2,
-      type: 'order',
-      title: 'Selamat Bergabung di MarPay',
-      desc: 'Terima kasih telah menggunakan MarPay untuk kebutuhan digitalmu.',
-      time: '1 hari yang lalu',
-      icon: ShoppingBag,
-      color: 'bg-primary/10 text-primary'
-    }
-  ];
+  useEffect(() => {
+    // Load read status
+    const saved = JSON.parse(localStorage.getItem('marpay_read_notifs') || '[]');
+    setReadIds(saved);
+
+    // Mark all as read when entering the page
+    const allIds = INTERNAL_NOTIFICATIONS.map(n => n.id);
+    localStorage.setItem('marpay_read_notifs', JSON.stringify(allIds));
+    setReadIds(allIds);
+    
+    // Dispatch event to update header badge
+    window.dispatchEvent(new Event('notif-updated'));
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
@@ -48,30 +82,68 @@ export default function NotificationPage() {
           </TabsList>
 
           <TabsContent value="all" className="mt-0 space-y-3">
-            {mockNotifications.map((notif) => (
-              <div key={notif.id} className="bg-white p-4 rounded-3xl border border-gray-100 shadow-sm flex gap-4 active:bg-gray-50 transition-colors">
+            {INTERNAL_NOTIFICATIONS.map((notif) => {
+              const isRead = readIds.includes(notif.id);
+              return (
+                <div 
+                  key={notif.id} 
+                  className={cn(
+                    "bg-white p-4 rounded-3xl border border-gray-100 shadow-sm flex gap-4 transition-all relative overflow-hidden",
+                    !isRead && "ring-1 ring-primary/10"
+                  )}
+                >
+                  {!isRead && <div className="absolute top-0 left-0 w-1 h-full bg-primary"></div>}
+                  
+                  <div className={`w-12 h-12 rounded-2xl shrink-0 flex items-center justify-center ${notif.color}`}>
+                    <notif.icon className="w-6 h-6" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex justify-between items-start mb-1">
+                      <h4 className="text-xs font-bold text-gray-900 leading-tight pr-4">{notif.title}</h4>
+                      <span className="text-[9px] text-gray-400 font-medium whitespace-nowrap">{notif.time}</span>
+                    </div>
+                    <p className="text-[11px] text-gray-500 leading-relaxed line-clamp-2">{notif.desc}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </TabsContent>
+
+          <TabsContent value="order" className="mt-0 space-y-3">
+            {INTERNAL_NOTIFICATIONS.filter(n => n.type === 'order').map((notif) => (
+              <div key={notif.id} className="bg-white p-4 rounded-3xl border border-gray-100 shadow-sm flex gap-4">
                 <div className={`w-12 h-12 rounded-2xl shrink-0 flex items-center justify-center ${notif.color}`}>
                   <notif.icon className="w-6 h-6" />
                 </div>
                 <div className="flex-1">
-                  <div className="flex justify-between items-start mb-1">
-                    <h4 className="text-xs font-bold text-gray-900">{notif.title}</h4>
-                    <span className="text-[9px] text-gray-400 font-medium">{notif.time}</span>
-                  </div>
+                  <h4 className="text-xs font-bold text-gray-900 mb-1">{notif.title}</h4>
                   <p className="text-[11px] text-gray-500 leading-relaxed">{notif.desc}</p>
                 </div>
               </div>
             ))}
           </TabsContent>
 
-          <TabsContent value="order" className="mt-0 text-center py-20 opacity-40">
-            <h3 className="text-sm font-bold text-gray-900">Belum ada notifikasi transaksi</h3>
-          </TabsContent>
-
-          <TabsContent value="promo" className="mt-0 text-center py-20 opacity-40">
-            <h3 className="text-sm font-bold text-gray-900">Belum ada notifikasi promo</h3>
+          <TabsContent value="promo" className="mt-0 space-y-3">
+             {INTERNAL_NOTIFICATIONS.filter(n => n.type === 'promo').map((notif) => (
+              <div key={notif.id} className="bg-white p-4 rounded-3xl border border-gray-100 shadow-sm flex gap-4">
+                <div className={`w-12 h-12 rounded-2xl shrink-0 flex items-center justify-center ${notif.color}`}>
+                  <notif.icon className="w-6 h-6" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="text-xs font-bold text-gray-900 mb-1">{notif.title}</h4>
+                  <p className="text-[11px] text-gray-500 leading-relaxed">{notif.desc}</p>
+                </div>
+              </div>
+            ))}
           </TabsContent>
         </Tabs>
+
+        <div className="mt-12 text-center pb-10">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-full text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+            <CheckCircle2 className="w-3.5 h-3.5" />
+            Semua sudah dibaca
+          </div>
+        </div>
       </main>
     </div>
   );
