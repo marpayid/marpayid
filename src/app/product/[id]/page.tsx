@@ -29,20 +29,23 @@ export default function ProductDetail() {
   const [selectedColor, setSelectedColor] = useState(0);
   const [activeImage, setActiveImage] = useState('');
 
+  // Initial image setup and Key-Based Color Matching
   useEffect(() => {
-    if (product) setActiveImage(getProductImage(product));
-  }, [product]);
-
-  // Update active image based on color selection (Marketplace Gallery Feature)
-  useEffect(() => {
-    if (product && product.colors && (product as any).colorImages) {
-      const colorName = product.colors[selectedColor];
-      const variantImage = (product as any).colorImages[colorName];
-      if (variantImage) {
-        setActiveImage(variantImage);
+    if (product) {
+      const baseImg = getProductImage(product);
+      
+      // Look up specific color image if colorImages mapping exists
+      if (product.colors && product.colors.length > 0 && (product as any).colorImages) {
+        const colorName = product.colors[selectedColor];
+        const variantImage = (product as any).colorImages[colorName];
+        
+        // Exact name match or fallback to main image
+        setActiveImage(variantImage || baseImg);
+      } else {
+        setActiveImage(baseImg);
       }
     }
-  }, [selectedColor, product]);
+  }, [product, selectedColor]);
 
   const isOutOfStock = product?.stock === 'Stok Habis';
 
@@ -75,7 +78,6 @@ export default function ProductDetail() {
     return product.price;
   }, [product, selectedVariant]);
 
-  // Logic for Similar and Recommended Products
   const similarProducts = useMemo(() => {
     if (!product) return [];
     return Products.filter(p => 
@@ -100,7 +102,6 @@ export default function ProductDetail() {
   const colors = product.colors || [];
   const totalPrice = currentPrice * quantity;
 
-  // Custom Description Override for BIOAQUA
   const displayDescription = String(product.id) === '1' 
     ? "BIOAQUA Skincare 1 Set Lengkap 6pcs hadir with pilihan Whitening Set and Anti-Acne Set. Cocok untuk perawatan wajah harian agar kulit terlihat lebih bersih, segar, dan terawat. Produk dikemas rapi dan siap dikirim."
     : product.description;
