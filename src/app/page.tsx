@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect, useMemo } from 'react';
@@ -19,6 +18,7 @@ import { PromotionalCards } from '@/components/promotional-cards';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { VoucherSection } from '@/components/voucher-section';
 import { PromoPopup } from '@/components/promo-popup';
+import { QuickMenu } from '@/components/quick-menu';
 
 export default function Home() {
   const [api, setApi] = useState<CarouselApi>();
@@ -127,6 +127,7 @@ export default function Home() {
       <TopSearch />
       <PromoPopup />
       <main className="pt-16 space-y-1">
+        <QuickMenu />
         <section className="px-4 pt-3 bg-white relative">
           <Carousel opts={{ loop: true }} setApi={setApi}>
             <CarouselContent>
