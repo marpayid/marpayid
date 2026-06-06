@@ -29,18 +29,15 @@ export default function ProductDetail() {
   const [selectedColor, setSelectedColor] = useState(0);
   const [activeImage, setActiveImage] = useState('');
 
-  // Initial image setup and Key-Based Color Matching
+  // Perbaikan Sistem Galeri: Mapping berdasarkan Nama Warna (Key Matching)
   useEffect(() => {
     if (product) {
       const baseImg = getProductImage(product);
+      const currentColorVarian = product.colors?.[selectedColor];
       
-      // Look up specific color image if colorImages mapping exists
-      if (product.colors && product.colors.length > 0 && (product as any).colorImages) {
-        const colorName = product.colors[selectedColor];
-        const variantImage = (product as any).colorImages[colorName];
-        
-        // Exact name match or fallback to main image
-        setActiveImage(variantImage || baseImg);
+      // Jika varian warna bertipe objek { name, imageUrl }
+      if (currentColorVarian && typeof currentColorVarian === 'object') {
+        setActiveImage(currentColorVarian.imageUrl || baseImg);
       } else {
         setActiveImage(baseImg);
       }
@@ -54,16 +51,17 @@ export default function ProductDetail() {
     
     // Special Pricing Logic for Wardah (ID: 208)
     if (String(product.id) === '208') {
-      if (selectedVariant === 2) return 45000; // Acne Calming SPF50 40ml
-      return 28000; // default for SPF50 25ml and SPF35 35ml
+      if (selectedVariant === 2) return 45000;
+      return 28000;
     }
     
     // Special Pricing Logic for Everyday Pants (ID: 203)
     if (String(product.id) === '203') {
-      if (selectedVariant === 1) return 63102; // Jumbo
-      if (selectedVariant === 2) return 70000; // Super Jumbo
-      return 59252; // Standar
+      if (selectedVariant === 1) return 63102;
+      if (selectedVariant === 2) return 70000;
+      return 59252;
     }
+    
     // Special Pricing Logic for Case iPhone Clear (ID: 201)
     if (String(product.id) === '201') {
       const variantName = product.variants?.[selectedVariant] || '';
@@ -72,6 +70,7 @@ export default function ProductDetail() {
       }
       return 14899;
     }
+    
     // Special Pricing Logic for Akrilik (ID: 2)
     if (String(product.id) === '2' && selectedVariant === 1) return 309000;
     
@@ -102,13 +101,17 @@ export default function ProductDetail() {
   const colors = product.colors || [];
   const totalPrice = currentPrice * quantity;
 
-  const displayDescription = String(product.id) === '1' 
-    ? "BIOAQUA Skincare 1 Set Lengkap 6pcs hadir with pilihan Whitening Set and Anti-Acne Set. Cocok untuk perawatan wajah harian agar kulit terlihat lebih bersih, segar, dan terawat. Produk dikemas rapi dan siap dikirim."
-    : product.description;
-
   const handleAction = (redirect = false) => {
     if (isOutOfStock) return;
-    const variantString = colors.length > 0 ? `${variants[selectedVariant]} - ${colors[selectedColor]}` : variants[selectedVariant];
+    
+    // Mendapatkan nama warna secara dinamis (string atau object name)
+    const currentColor = colors[selectedColor];
+    const colorName = typeof currentColor === 'object' ? currentColor.name : currentColor;
+    
+    const variantString = colors.length > 0 
+      ? `${variants[selectedVariant]} - ${colorName}` 
+      : variants[selectedVariant];
+
     const item = { 
       id: product.id, 
       name: product.name, 
@@ -180,9 +183,21 @@ export default function ProductDetail() {
             <div>
               <p className="text-[11px] font-bold text-gray-400 uppercase mb-2">Warna</p>
               <div className="flex flex-wrap gap-2">
-                {colors.map((c: string, i: number) => (
-                  <button key={c} onClick={() => setSelectedColor(i)} className={cn("px-4 py-2 rounded-lg text-xs border", selectedColor === i ? "border-primary bg-primary/5 text-primary" : "border-gray-100")}>{c}</button>
-                ))}
+                {colors.map((c: any, i: number) => {
+                  const colorName = typeof c === 'object' ? c.name : c;
+                  return (
+                    <button 
+                      key={colorName} 
+                      onClick={() => setSelectedColor(i)} 
+                      className={cn(
+                        "px-4 py-2 rounded-lg text-xs border transition-all", 
+                        selectedColor === i ? "border-primary bg-primary/5 text-primary shadow-sm" : "border-gray-100"
+                      )}
+                    >
+                      {colorName}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           )}
@@ -210,7 +225,7 @@ export default function ProductDetail() {
             <h2 className="text-sm font-bold uppercase tracking-tight">Deskripsi Produk</h2>
           </div>
           <p className="text-xs text-gray-600 leading-relaxed whitespace-pre-line">
-            {displayDescription}
+            {product.description}
           </p>
         </section>
 
@@ -225,20 +240,6 @@ export default function ProductDetail() {
             </div>
             <div className="grid grid-cols-2 gap-3">
               {similarProducts.map((p) => (
-                <ProductCard key={p.id} product={p} />
-              ))}
-            </div>
-          </section>
-        )}
-
-        {recommendedProducts.length > 0 && (
-          <section className="mt-2 bg-white p-4 mb-2">
-            <div className="flex items-center gap-2 mb-4">
-              <Heart className="w-4 h-4 text-red-500" />
-              <h2 className="text-sm font-bold uppercase tracking-tight">Yang Mungkin Anda Suka</h2>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              {recommendedProducts.map((p) => (
                 <ProductCard key={p.id} product={p} />
               ))}
             </div>

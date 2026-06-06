@@ -66,23 +66,20 @@ export const Products = [
     gender: 'female',
     brand: 'Alpha',
     variants: ['S', 'M', 'L', 'XL'],
-    colors: ['Burgundy', 'Abu Abu', 'Rose', 'Cream', 'Hitam', 'Mahogany', 'Broken White', 'Navy'],
-    colorImages: {
-      'Burgundy': 'https://i.ibb.co/6JfnkWcW/IMG-1437.jpg',
-      'Abu Abu': 'https://i.ibb.co/jvnMf5Hv/IMG-1438.jpg',
-      'Rose': 'https://i.ibb.co/M5xpGhKf/IMG-1439.jpg',
-      'Cream': 'https://i.ibb.co/R4ZySWg1/IMG-1440.jpg',
-      'Hitam': 'https://i.ibb.co/xtwV88mz/IMG-1441.jpg',
-      'Mahogany': 'https://i.ibb.co/Y49xVXm5/IMG-1442.jpg',
-      'Broken White': 'https://i.ibb.co/PZytJjLw/IMG-1443.jpg',
-      'Navy': 'https://i.ibb.co/jk49jXGB/IMG-1444.jpg'
-    },
+    colors: [
+      { name: 'Burgundy', imageUrl: 'https://i.ibb.co/6JfnkWcW/IMG-1437.jpg' },
+      { name: 'Abu Abu', imageUrl: 'https://i.ibb.co/jvnMf5Hv/IMG-1438.jpg' },
+      { name: 'Rose', imageUrl: 'https://i.ibb.co/M5xpGhKf/IMG-1439.jpg' },
+      { name: 'Cream', imageUrl: 'https://i.ibb.co/R4ZySWg1/IMG-1440.jpg' },
+      { name: 'Hitam', imageUrl: 'https://i.ibb.co/xtwV88mz/IMG-1441.jpg' },
+      { name: 'Mahogany', imageUrl: 'https://i.ibb.co/Y49xVXm5/IMG-1442.jpg' },
+      { name: 'Broken White', imageUrl: 'https://i.ibb.co/PZytJjLw/IMG-1443.jpg' },
+      { name: 'Navy', imageUrl: 'https://i.ibb.co/jk49jXGB/IMG-1444.jpg' }
+    ],
     isFreeShipping: false,
     shippingFee: 8000,
     tags: ['fashion', 'kemeja', 'wanita', 'fitted shirt', 'kantor', 'formal', 'stripe', 'alpha shirt'],
-    description: `Alpha Shirt adalah kemeja fitted wanita premium dengan motif garis (stripe) yang memberikan kesan ramping dan elegan. 
-
-Terbuat dari bahan berkualitas yang adem dan nyaman digunakan sepanjang hari, cocok untuk aktivitas kantor maupun acara formal. Detail karet di bagian pinggang memastikan siluet tubuh terlihat proporsional dan rapi. Tersedia dalam berbagai pilihan warna yang cantik untuk melengkapi koleksi outfit harian Anda.`,
+    description: `Alpha Shirt adalah kemeja fitted wanita premium dengan motif garis (stripe) yang memberikan kesan ramping dan elegan. Terbuat dari bahan berkualitas yang adem dan nyaman digunakan sepanjang hari, cocok untuk aktivitas kantor maupun acara formal.`,
   },
   {
     id: 211,
@@ -100,16 +97,18 @@ Terbuat dari bahan berkualitas yang adem dan nyaman digunakan sepanjang hari, co
     gender: 'female',
     brand: 'ESSI',
     variants: ['S', 'M', 'L', 'XL'],
-    colors: ['Black', 'Grey', 'Coffe', 'White', 'Vanilla', 'Navy'],
-    colorImages: {
-      'Black': 'https://i.ibb.co/wZ22cHFX/IMG-1435.jpg'
-    },
+    colors: [
+      { name: 'Black', imageUrl: 'https://i.ibb.co/wZ22cHFX/IMG-1435.jpg' },
+      { name: 'Grey', imageUrl: 'https://i.ibb.co/wZ22cHFX/IMG-1435.jpg' },
+      { name: 'Coffe', imageUrl: 'https://i.ibb.co/wZ22cHFX/IMG-1435.jpg' },
+      { name: 'White', imageUrl: 'https://i.ibb.co/wZ22cHFX/IMG-1435.jpg' },
+      { name: 'Vanilla', imageUrl: 'https://i.ibb.co/wZ22cHFX/IMG-1435.jpg' },
+      { name: 'Navy', imageUrl: 'https://i.ibb.co/wZ22cHFX/IMG-1435.jpg' }
+    ],
     isFreeShipping: false,
     shippingFee: 8000,
     tags: ['fashion', 'kemeja', 'wanita', 'fitted shirt', 'kantor', 'formal', 'hijab style', 'essi'],
-    description: `ESSI Elton Fitted Shirt adalah kemeja fitted premium dengan potongan ketat yang memberikan kesan elegan dan profesional. 
-
-Sangat cocok untuk outfit kantor, atasan hijab, maupun acara formal lainnya. Terbuat dari bahan pilihan yang tidak menerawang dan tetap nyaman meski dipakai seharian. Siluetnya dirancang untuk menonjolkan kerapihan dan kenyamanan maksimal.`,
+    description: `ESSI Elton Fitted Shirt adalah kemeja fitted premium dengan potongan ketat yang memberikan kesan elegan dan profesional.`,
   },
   {
     id: 210,
@@ -127,17 +126,17 @@ Sangat cocok untuk outfit kantor, atasan hijab, maupun acara formal lainnya. Ter
     gender: 'female',
     brand: 'Oro',
     variants: ['M', 'L', 'XL', 'XXL'],
-    colors: ['Beige', 'Hitam', 'Abu Muda', 'Abu Tua', 'Mocca'],
-    colorImages: {
-      'Beige': 'https://i.ibb.co/8g5kRP5j/IMG-1434.jpg',
-      'Hitam': 'https://i.ibb.co/8g5kRP5j/IMG-1434.jpg'
-    },
+    colors: [
+      { name: 'Beige', imageUrl: 'https://i.ibb.co/8g5kRP5j/IMG-1434.jpg' },
+      { name: 'Hitam', imageUrl: 'https://i.ibb.co/8g5kRP5j/IMG-1434.jpg' },
+      { name: 'Abu Muda', imageUrl: 'https://i.ibb.co/8g5kRP5j/IMG-1434.jpg' },
+      { name: 'Abu Tua', imageUrl: 'https://i.ibb.co/8g5kRP5j/IMG-1434.jpg' },
+      { name: 'Mocca', imageUrl: 'https://i.ibb.co/8g5kRP5j/IMG-1434.jpg' }
+    ],
     isFreeShipping: false,
     shippingFee: 8000,
     tags: ['fashion', 'celana', 'wanita', 'high waist', 'korean style', 'kantor', 'kerja', 'anti kusut'],
-    description: `Oro Pants adalah celana high waist bergaya Korean Style yang dirancang khusus untuk kebutuhan kerja dan kantor. 
-
-Terbuat dari bahan premium anti kusut, celana ini memberikan siluet kaki yang lebih jenjang dan rapi sepanjang hari. Tekstur bahannya lembut dan jatuh, menjadikannya pilihan favorit untuk gaya kekinian yang tetap formal.`,
+    description: `Oro Pants adalah celana high waist bergaya Korean Style yang dirancang khusus untuk kebutuhan kerja dan kantor.`,
   },
   {
     id: 209,
@@ -155,13 +154,15 @@ Terbuat dari bahan premium anti kusut, celana ini memberikan siluet kaki yang le
     gender: 'female',
     brand: 'Wispie',
     variants: ['XS', 'M', 'XL'],
-    colors: ['Pink', 'Biru', 'Hijau'],
+    colors: [
+      { name: 'Pink', imageUrl: 'https://i.ibb.co/pC2pp68/IMG-1164.jpg' },
+      { name: 'Biru', imageUrl: 'https://i.ibb.co/pC2pp68/IMG-1164.jpg' },
+      { name: 'Hijau', imageUrl: 'https://i.ibb.co/pC2pp68/IMG-1164.jpg' }
+    ],
     isFreeShipping: false,
     shippingFee: 8000,
     tags: ['fashion', 'kemeja', 'wanita', 'wispie', 'kerja', 'kantor', 'girl boss'],
-    description: `Wispie Girl Boss Shirt merupakan kemeja premium dengan desain modern yang memberikan kesan profesional dan elegan. 
-
-Terbuat dari bahan pilihan yang sangat nyaman, adem, dan menyerap keringat, menjadikannya pilihan sempurna untuk outfit kantor, pertemuan bisnis, maupun gaya kasual harian. Potongan fitted-nya dirancang khusus untuk menonjolkan siluet yang rapi tanpa membatasi ruang gerak Anda.`,
+    description: `Wispie Girl Boss Shirt merupakan kemeja premium dengan desain modern yang memberikan kesan profesional dan elegan.`,
   },
   {
     id: 206,
@@ -180,12 +181,7 @@ Terbuat dari bahan pilihan yang sangat nyaman, adem, dan menyerap keringat, menj
     variants: ['M', 'L', 'XL'],
     shippingFee: 12000,
     isFreeShipping: false,
-    description: `BETTERHALF Celana Pendek Cowo Polos Short Pants Boardshort - Black
-
-Material :
-* ﻿﻿Parasut
-* ﻿﻿Tali Serut
-* ﻿﻿Karet Pinggang`,
+    description: `BETTERHALF Celana Pendek Cowo Polos Short Pants Boardshort - Black`,
   },
   {
     id: 205,
@@ -202,10 +198,17 @@ Material :
     stock: 'Tersedia',
     tag: 'Produk Viral',
     variants: ['S-M', 'L-XL'],
-    colors: ['Hitam🔥', 'Grey', 'Putih', 'Maroon', 'Mahogany', 'Navy'],
+    colors: [
+      { name: 'Hitam🔥', imageUrl: '/fitted2.png' },
+      { name: 'Grey', imageUrl: '/fitted2.png' },
+      { name: 'Putih', imageUrl: '/fitted2.png' },
+      { name: 'Maroon', imageUrl: '/fitted2.png' },
+      { name: 'Mahogany', imageUrl: '/fitted2.png' },
+      { name: 'Navy', imageUrl: '/fitted2.png' }
+    ],
     shippingFee: 0,
     isFreeShipping: true,
-    description: `Alba Top Kemeja Wanita Salur dengan desain Stripe Fitted Shirt Slim Fit. Model casual cocok untuk kantor maupun gaya Korean Style. Bahan premium yang nyaman dan tidak menerawang, memberikan kesan ramping (press body) yang tetap elegan.`,
+    description: `Alba Top Kemeja Wanita Salur dengan desain Stripe Fitted Shirt Slim Fit.`,
   },
   {
     id: 201,
@@ -227,7 +230,7 @@ Material :
     ],
     shippingFee: 0,
     isFreeShipping: true,
-    description: `Case iPhone Clear MagSafe Premium dengan desain transparan elegan and perlindungan maksimal.`
+    description: `Case iPhone Clear MagSafe Premium dengan desain transparan elegan.`
   },
   {
     id: 202,
@@ -270,10 +273,18 @@ Material :
     stock: 'Tersedia',
     tag: 'Produk Viral',
     variants: ['Standar (BB 35-55Kg)', 'Jumbo (BB 56-70Kg)', 'Super Jumbo (BB 71-85Kg)'],
-    colors: ['Abu Grey', 'Hitam', 'Putih', 'Navi', 'Mahogani', 'Khaki', 'Ice Blue'],
+    colors: [
+      { name: 'Abu Grey', imageUrl: '/baggy1.png' },
+      { name: 'Hitam', imageUrl: '/baggy1.png' },
+      { name: 'Putih', imageUrl: '/baggy1.png' },
+      { name: 'Navi', imageUrl: '/baggy1.png' },
+      { name: 'Mahogani', imageUrl: '/baggy1.png' },
+      { name: 'Khaki', imageUrl: '/baggy1.png' },
+      { name: 'Ice Blue', imageUrl: '/baggy1.png' }
+    ],
     shippingFee: 0,
     isFreeShipping: true,
-    description: `Everyday Stripe Pants merupakan celana wanita model baggy kulot premium dengan motif garis pinstripe yang cocok digunakan untuk kuliah, kerja, kantor, jalan-jalan, maupun aktivitas sehari-hari.`,
+    description: `Everyday Stripe Pants merupakan celana wanita model baggy kulot premium.`,
   },
   {
     id: 204,
@@ -290,10 +301,12 @@ Material :
     stock: 'Tersedia',
     tag: 'Produk Viral',
     variants: ['M', 'L', 'XL'],
-    colors: ['Choco Stripe'],
+    colors: [
+      { name: 'Choco Stripe', imageUrl: '/fitted1.png' }
+    ],
     shippingFee: 0,
     isFreeShipping: true,
-    description: `Luna Stipe Kemeja Fitted bahan SemiWoll Stripe. Bagian belakang terdapat tali sabuk bisa di adjust untuk menyesuaikan bentuk tubuh / slimfit ( press body).`,
+    description: `Luna Stipe Kemeja Fitted bahan SemiWoll Stripe.`,
   },
   {
     id: 3,
@@ -387,7 +400,7 @@ Material :
     tag: 'Produk Viral',
     shippingFee: 0,
     isFreeShipping: true,
-    description: 'Sunscreen gel (chemical sunscreen) yang ringan and dingin di kulit, diformulasikan khusus untuk kulit berminyak, berjerawat, and sensitif.',
+    description: 'Sunscreen gel (chemical sunscreen) yang ringan and dingin di kulit.',
   },
   {
     id: 208,
@@ -406,7 +419,7 @@ Material :
     variants: ['Acne Calming SPF50 25ml', 'Acne Calming SPF35 35ml', 'Acne Calming SPF50 40ml'],
     shippingFee: 8000,
     isFreeShipping: false,
-    description: `Wardah UV Shield Acne Calming Sunscreen Serum SPF 50 PA++++ merupakan sunscreen serum with perlindungan tinggi.`,
+    description: `Wardah UV Shield Acne Calming Sunscreen Serum SPF 50 PA++++.`,
   },
   {
     id: 101,
@@ -419,7 +432,7 @@ Material :
     image: '/premium1.png',
     stock: 'Tersedia',
     tag: 'Best Seller',
-    description: 'Nikmati fitur premium Canva Pro untuk desain profesional tanpa batas.',
+    description: 'Nikmati fitur premium Canva Pro.',
     type: 'digital',
     shippingFee: 0,
     isFreeShipping: true
@@ -435,7 +448,7 @@ Material :
     image: '/premium1.png',
     stock: 'Tersedia',
     tag: 'Best Seller',
-    description: 'Musik tanpa iklan, download lagu, and kualitas suara terbaik with Spotify Premium.',
+    description: 'Musik tanpa iklan with Spotify Premium.',
     type: 'digital',
     shippingFee: 0,
     isFreeShipping: true
@@ -451,7 +464,7 @@ Material :
     image: '/premium1.png',
     stock: 'Tersedia',
     tag: 'Best Seller',
-    description: 'Nonton video tanpa gangguan iklan, putar di latar belakang, and YouTube Music Premium.',
+    description: 'Nonton video tanpa gangguan iklan.',
     type: 'digital',
     shippingFee: 0,
     isFreeShipping: true
@@ -467,7 +480,7 @@ Material :
     image: '/premium1.png',
     stock: 'Tersedia',
     tag: 'Recommended',
-    description: 'Streaming film and series kualitas 4K Ultra HD with akun Netflix Premium.',
+    description: 'Streaming film and series kualitas 4K Ultra HD.',
     type: 'digital',
     shippingFee: 0,
     isFreeShipping: true
@@ -483,7 +496,7 @@ Material :
     image: '/premium1.png',
     stock: 'Tersedia',
     tag: 'Best Seller',
-    description: 'Akses semua fitur editing pro, transisi, and efek eksklusif di CapCut.',
+    description: 'Akses semua fitur editing pro CapCut.',
     type: 'digital',
     shippingFee: 0,
     isFreeShipping: true
@@ -499,7 +512,7 @@ Material :
     image: '/premium1.png',
     stock: 'Tersedia',
     tag: 'Hot Item',
-    description: 'Gunakan kecerdasan AI terbaru GPT-4 with ChatGPT Plus premium.',
+    description: 'Gunakan kecerdasan AI terbaru GPT-4.',
     type: 'digital',
     shippingFee: 0,
     isFreeShipping: true
@@ -515,7 +528,7 @@ Material :
     image: '/premium1.png',
     stock: 'Tersedia',
     tag: 'Recommended',
-    description: 'Nonton bola, drama korea, and konten eksklusif lainnya di Vidio.',
+    description: 'Nonton bola and konten eksklusif lainnya di Vidio.',
     type: 'digital',
     shippingFee: 0,
     isFreeShipping: true
@@ -531,7 +544,7 @@ Material :
     image: '/premium1.png',
     stock: 'Tersedia',
     tag: 'Best Seller',
-    description: 'Edit motion graphic tanpa watermark with Alight Motion Premium.',
+    description: 'Edit motion graphic tanpa watermark.',
     type: 'digital',
     shippingFee: 0,
     isFreeShipping: true
