@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect, useMemo } from 'react';
@@ -38,7 +37,8 @@ export default function Home() {
   []);
   
   const recommendationList = useMemo(() => {
-    const priorityIds = [208, 207, 206, 205, 3, 1, 6, 201, 204, 203];
+    // Memasukkan produk skincare baru ke daftar rekomendasi prioritas
+    const priorityIds = [219, 218, 217, 216, 215, 214, 213, 208, 207, 206, 205, 3, 1, 6, 201, 204, 203];
     const priorityItems = priorityIds
       .map(id => Products.find(p => String(p.id) === String(id)))
       .filter(p => p && p.category !== 'Premium');
