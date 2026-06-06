@@ -88,7 +88,7 @@ export const Products = [
     reviews: 1540,
     sold: 4200,
     category: 'Beauty',
-    imageUrl: 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&w=600&h=600&auto=format&fit=crop',
+    imageUrl: 'https://i.ibb.co/dJ3C8QXw/IMG-1461.jpg',
     isFlashSale: false,
     discount: null,
     stock: 'Tersedia',
