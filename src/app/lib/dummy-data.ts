@@ -52,34 +52,32 @@ export const Vouchers = [
 export const Products = [
   {
     id: 209,
-    name: 'Wispie Girl Boss Fitted Shirt',
+    name: 'Wispie Girl Boss Shirt',
     price: 140900,
     hargaSupplier: 130410,
     originalPrice: 210000,
     rating: 4.9,
-    reviews: '1.2rb',
-    sold: 10000,
+    reviews: '842',
+    sold: 1250,
     category: 'Fashion',
     imageUrl: 'https://i.ibb.co/pC2pp68/IMG-1164.jpg',
     isFlashSale: true,
     discount: '33%',
-    stock: 'Tersedia',
+    stock: 100,
     tag: 'Produk Viral',
     gender: 'female',
     brand: 'Wispie',
     variants: ['S', 'M', 'L', 'XL'],
-    shippingFee: 0,
-    forceFreeShippingLabel: true,
-    description: `Wispie Girl Boss Fitted Shirt
-    
-Kemeja kerja wanita model fitted stripe dengan bahan lembut dan nyaman dipakai sehari-hari. Cocok untuk outfit kantor, kuliah, maupun casual look.
+    isFreeShipping: false,
+    tags: ['fashion', 'kemeja', 'wanita', 'wispie', 'kerja', 'kantor', 'girl boss'],
+    description: `Wispie Girl Boss Shirt merupakan kemeja premium dengan desain modern yang memberikan kesan profesional dan elegan. 
+
+Terbuat dari bahan pilihan yang sangat nyaman, adem, dan menyerap keringat, menjadikannya pilihan sempurna untuk outfit kantor, pertemuan bisnis, maupun gaya kasual harian. Potongan fitted-nya dirancang khusus untuk menonjolkan siluet yang rapi tanpa membatasi ruang gerak Anda.
 
 Detail Produk:
+- Brand: Wispie
 - Bahan: Premium Cotton Stripe
-- Model: Slim Fit / Fitted
-- Karakter: Adem, tidak menerawang, menyerap keringat.
-
-Tersedia dalam berbagai ukuran untuk menunjang penampilan profesional Anda sehari-hari.`,
+- Karakter: Tidak menerawang & Mudah disetrika.`,
   },
   {
     id: 206,
