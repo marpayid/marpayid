@@ -68,14 +68,13 @@ export const Products = [
     variants: ['S', 'M', 'L', 'XL'],
     colors: [
       { name: 'Burgundy', imageUrl: 'https://i.ibb.co/6JfnkWcW/IMG-1437.jpg' },
-      { name: 'Abu Abu', imageUrl: 'https://i.ibb.co/M5xpGhKf/IMG-1439.jpg' },
-      { name: 'Rose', imageUrl: 'https://i.ibb.co/xtwV88mz/IMG-1441.jpg' },
-      { name: 'Cream', imageUrl: 'https://i.ibb.co/R4ZySWg1/IMG-1440.jpg' },
+      { name: 'Abu Abu', imageUrl: 'https://i.ibb.co/6JfnkWcW/IMG-1437.jpg' },
+      { name: 'Rose Cream', imageUrl: 'https://i.ibb.co/R4ZySWg1/IMG-1440.jpg' },
       { name: 'Hitam', imageUrl: 'https://i.ibb.co/jvnMf5Hv/IMG-1438.jpg' },
-      { name: 'Mahogany', imageUrl: 'https://i.ibb.co/Y49xVXm5/IMG-1442.jpg' },
-      { name: 'Broken White', imageUrl: 'https://i.ibb.co/PZytJjLw/IMG-1443.jpg' },
-      { name: 'Navy', imageUrl: 'https://i.ibb.co/jk49jXGB/IMG-1444.jpg' },
-      { name: 'Rose Pink', imageUrl: 'https://i.ibb.co/M5xpGhKf/IMG-1439.jpg' }
+      { name: 'Mahogany', imageUrl: 'https://i.ibb.co/xtwV88mz/IMG-1441.jpg' },
+      { name: 'Broken White', imageUrl: 'https://i.ibb.co/Y49xVXm5/IMG-1442.jpg' },
+      { name: 'Navy', imageUrl: 'https://i.ibb.co/PZytJjLw/IMG-1443.jpg' },
+      { name: 'Rose Pink', imageUrl: 'https://i.ibb.co/jk49jXGB/IMG-1444.jpg' }
     ],
     isFreeShipping: false,
     shippingFee: 8000,
