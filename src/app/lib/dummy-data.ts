@@ -51,12 +51,54 @@ export const Vouchers = [
 
 export const Products = [
   {
+    id: 211,
+    name: 'ESSI Elton Fitted Shirt - kemeja fitted / kemeja ketat wanita / kemeja kantor / atasan hijab',
+    price: 160000,
+    rating: 4.9,
+    sold: 842,
+    category: 'Fashion',
+    imageUrl: 'https://i.ibb.co/wZ22cHFX/IMG-1435.jpg',
+    isFlashSale: false,
+    discount: '15%',
+    stock: 'Tersedia',
+    tag: 'Produk Baru',
+    gender: 'female',
+    brand: 'ESSI',
+    variants: ['S', 'M', 'L', 'XL'],
+    colors: ['Black', 'Grey', 'Coffe', 'White', 'Vanilla', 'Navy'],
+    isFreeShipping: false,
+    tags: ['fashion', 'kemeja', 'wanita', 'fitted shirt', 'kantor', 'formal', 'hijab style', 'essi'],
+    description: `ESSI Elton Fitted Shirt adalah kemeja fitted premium dengan potongan ketat yang memberikan kesan elegan dan profesional. 
+
+Sangat cocok untuk outfit kantor, atasan hijab, maupun acara formal lainnya. Terbuat dari bahan pilihan yang tidak menerawang dan tetap nyaman meski dipakai seharian. Siluetnya dirancang untuk menonjolkan kerapihan dan kenyamanan maksimal.`,
+  },
+  {
+    id: 210,
+    name: 'Oro Pants Wanita Celana Kekinian Kerja Kantor High Waist Korean Style Celana Anti Kusut Premium',
+    price: 59000,
+    rating: 4.8,
+    sold: 1250,
+    category: 'Fashion',
+    imageUrl: 'https://i.ibb.co/8g5kRP5j/IMG-1434.jpg',
+    isFlashSale: true,
+    discount: '30%',
+    stock: 'Tersedia',
+    tag: 'Trending',
+    gender: 'female',
+    brand: 'Oro',
+    variants: ['M', 'L', 'XL', 'XXL'],
+    colors: ['Beige', 'Hitam', 'Abu Muda', 'Abu Tua', 'Mocca'],
+    isFreeShipping: false,
+    tags: ['fashion', 'celana', 'wanita', 'high waist', 'korean style', 'kantor', 'kerja', 'anti kusut'],
+    description: `Oro Pants adalah celana high waist bergaya Korean Style yang dirancang khusus untuk kebutuhan kerja dan kantor. 
+
+Terbuat dari bahan premium anti kusut, celana ini memberikan siluet kaki yang lebih jenjang dan rapi sepanjang hari. Tekstur bahannya lembut dan jatuh, menjadikannya pilihan favorit untuk gaya kekinian yang tetap formal.`,
+  },
+  {
     id: 209,
     name: 'Wispie Girl Boss Shirt',
     price: 140900,
-    originalPrice: 210000,
     rating: 4.9,
-    reviews: '842',
     sold: 1250,
     category: 'Fashion',
     imageUrl: 'https://i.ibb.co/pC2pp68/IMG-1164.jpg',
@@ -71,12 +113,7 @@ export const Products = [
     tags: ['fashion', 'kemeja', 'wanita', 'wispie', 'kerja', 'kantor', 'girl boss'],
     description: `Wispie Girl Boss Shirt merupakan kemeja premium dengan desain modern yang memberikan kesan profesional dan elegan. 
 
-Terbuat dari bahan pilihan yang sangat nyaman, adem, dan menyerap keringat, menjadikannya pilihan sempurna untuk outfit kantor, pertemuan bisnis, maupun gaya kasual harian. Potongan fitted-nya dirancang khusus untuk menonjolkan siluet yang rapi tanpa membatasi ruang gerak Anda.
-
-Detail Produk:
-- Brand: Wispie
-- Bahan: Premium Cotton Stripe
-- Karakter: Tidak menerawang & Mudah disetrika.`,
+Terbuat dari bahan pilihan yang sangat nyaman, adem, dan menyerap keringat, menjadikannya pilihan sempurna untuk outfit kantor, pertemuan bisnis, maupun gaya kasual harian. Potongan fitted-nya dirancang khusus untuk menonjolkan siluet yang rapi tanpa membatasi ruang gerak Anda.`,
   },
   {
     id: 206,
