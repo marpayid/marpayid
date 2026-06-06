@@ -66,13 +66,13 @@ export const Products = [
     gender: 'female',
     brand: 'Alpha',
     variants: ['S', 'M', 'L', 'XL'],
-    colors: ['Burgundy', 'Abu Abu', 'Rose', 'Cream', 'Hitam', 'Mahogany', 'Broken White', 'Navy'],
+    colors: ['Burgundy', 'Rose', 'Cream', 'Hitam', 'Abu Abu', 'Mahogany', 'Broken White', 'Navy'],
     colorImages: {
       'Burgundy': 'https://i.ibb.co/6JfnkWcW/IMG-1437.jpg',
-      'Abu Abu': 'https://i.ibb.co/jvnMf5Hv/IMG-1438.jpg',
       'Rose': 'https://i.ibb.co/M5xpGhKf/IMG-1439.jpg',
       'Cream': 'https://i.ibb.co/R4ZySWg1/IMG-1440.jpg',
       'Hitam': 'https://i.ibb.co/xtwV88mz/IMG-1441.jpg',
+      'Abu Abu': 'https://i.ibb.co/jvnMf5Hv/IMG-1438.jpg',
       'Mahogany': 'https://i.ibb.co/Y49xVXm5/IMG-1442.jpg',
       'Broken White': 'https://i.ibb.co/PZytJjLw/IMG-1443.jpg',
       'Navy': 'https://i.ibb.co/jk49jXGB/IMG-1444.jpg'
@@ -80,9 +80,9 @@ export const Products = [
     isFreeShipping: false,
     shippingFee: 8000,
     tags: ['fashion', 'kemeja', 'wanita', 'fitted shirt', 'kantor', 'formal', 'stripe', 'alpha shirt'],
-    description: `Alpha Shirt adalah kemeja fitted premium dengan motif garis (stripe) yang elegan. 
+    description: `Alpha Shirt adalah kemeja fitted wanita premium dengan motif garis (stripe) yang memberikan kesan ramping dan elegan. 
 
-Dilengkapi dengan detail karet yang memberikan siluet ramping and rapi saat dikenakan. Sangat cocok untuk outfit kantor maupun acara formal lainnya. Terbuat dari bahan yang nyaman and tidak panas, menjamin kepercayaan diri Anda sepanjang hari.`,
+Terbuat dari bahan berkualitas yang adem dan nyaman digunakan sepanjang hari, cocok untuk aktivitas kantor maupun acara formal. Detail karet di bagian pinggang memastikan siluet tubuh terlihat proporsional dan rapi. Tersedia dalam berbagai pilihan warna yang cantik untuk melengkapi koleksi outfit harian Anda.`,
   },
   {
     id: 211,
@@ -102,10 +102,7 @@ Dilengkapi dengan detail karet yang memberikan siluet ramping and rapi saat dike
     variants: ['S', 'M', 'L', 'XL'],
     colors: ['Black', 'Grey', 'Coffe', 'White', 'Vanilla', 'Navy'],
     colorImages: {
-      'Black': 'https://i.ibb.co/wZ22cHFX/IMG-1435.jpg',
-      'White': 'https://picsum.photos/seed/essi-white/600/600',
-      'Navy': 'https://picsum.photos/seed/essi-navy/600/600',
-      'Grey': 'https://picsum.photos/seed/essi-grey/600/600'
+      'Black': 'https://i.ibb.co/wZ22cHFX/IMG-1435.jpg'
     },
     isFreeShipping: false,
     shippingFee: 8000,
@@ -132,10 +129,7 @@ Sangat cocok untuk outfit kantor, atasan hijab, maupun acara formal lainnya. Ter
     variants: ['M', 'L', 'XL', 'XXL'],
     colors: ['Beige', 'Hitam', 'Abu Muda', 'Abu Tua', 'Mocca'],
     colorImages: {
-      'Beige': 'https://i.ibb.co/8g5kRP5j/IMG-1434.jpg',
-      'Hitam': 'https://picsum.photos/seed/oro-black/600/600',
-      'Mocca': 'https://picsum.photos/seed/oro-mocca/600/600',
-      'Abu Muda': 'https://picsum.photos/seed/oro-grey/600/600'
+      'Beige': 'https://i.ibb.co/8g5kRP5j/IMG-1434.jpg'
     },
     isFreeShipping: false,
     shippingFee: 8000,
@@ -161,11 +155,6 @@ Terbuat dari bahan premium anti kusut, celana ini memberikan siluet kaki yang le
     brand: 'Wispie',
     variants: ['XS', 'M', 'XL'],
     colors: ['Pink', 'Biru', 'Hijau'],
-    colorImages: {
-      'Pink': 'https://i.ibb.co/pC2pp68/IMG-1164.jpg',
-      'Biru': 'https://picsum.photos/seed/wispie-blue/600/600',
-      'Hijau': 'https://picsum.photos/seed/wispie-green/600/600'
-    },
     isFreeShipping: false,
     shippingFee: 8000,
     tags: ['fashion', 'kemeja', 'wanita', 'wispie', 'kerja', 'kantor', 'girl boss'],
