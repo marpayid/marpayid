@@ -49,6 +49,13 @@ export default function ProductDetail() {
   const currentPrice = useMemo(() => {
     if (!product) return 0;
     
+    // Special Pricing Logic for Wardah Facial Wash (ID: 214)
+    if (String(product.id) === '214') {
+      const colorName = product.colors?.[selectedColor]?.name;
+      if (colorName === '100 ml') return 30129;
+      return 18223; // Default 50 ml
+    }
+
     // Special Pricing Logic for Wardah (ID: 208)
     if (String(product.id) === '208') {
       if (selectedVariant === 2) return 45000;
@@ -75,7 +82,7 @@ export default function ProductDetail() {
     if (String(product.id) === '2' && selectedVariant === 1) return 309000;
     
     return product.price;
-  }, [product, selectedVariant]);
+  }, [product, selectedVariant, selectedColor]);
 
   const similarProducts = useMemo(() => {
     if (!product) return [];
@@ -181,7 +188,7 @@ export default function ProductDetail() {
         <section className="mt-2 bg-white p-4 space-y-4">
           {colors.length > 0 && (
             <div>
-              <p className="text-[11px] font-bold text-gray-400 uppercase mb-2">Warna</p>
+              <p className="text-[11px] font-bold text-gray-400 uppercase mb-2">Pilihan</p>
               <div className="flex flex-wrap gap-2">
                 {colors.map((c: any, i: number) => {
                   const colorName = typeof c === 'object' ? c.name : c;
@@ -201,14 +208,16 @@ export default function ProductDetail() {
               </div>
             </div>
           )}
-          <div>
-            <p className="text-[11px] font-bold text-gray-400 uppercase mb-2">Varian</p>
-            <div className="flex flex-wrap gap-2">
-              {variants.map((v: string, i: number) => (
-                <button key={v} onClick={() => setSelectedVariant(i)} className={cn("px-4 py-2 rounded-lg text-xs border", selectedVariant === i ? "border-primary bg-primary/5 text-primary" : "border-gray-100")}>{v}</button>
-              ))}
+          {variants.length > 1 && (
+            <div>
+              <p className="text-[11px] font-bold text-gray-400 uppercase mb-2">Varian</p>
+              <div className="flex flex-wrap gap-2">
+                {variants.map((v: string, i: number) => (
+                  <button key={v} onClick={() => setSelectedVariant(i)} className={cn("px-4 py-2 rounded-lg text-xs border", selectedVariant === i ? "border-primary bg-primary/5 text-primary" : "border-gray-100")}>{v}</button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
           <div className="flex items-center justify-between pt-2">
             <p className="text-[11px] font-bold text-gray-400 uppercase">Jumlah</p>
             <div className="flex items-center gap-4 bg-gray-50 rounded-xl p-1 border border-gray-100">
