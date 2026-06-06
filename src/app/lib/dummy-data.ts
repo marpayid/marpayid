@@ -66,13 +66,13 @@ export const Products = [
     gender: 'female',
     brand: 'Alpha',
     variants: ['S', 'M', 'L', 'XL'],
-    colors: ['Burgundy', 'Rose', 'Cream', 'Hitam', 'Abu Abu', 'Mahogany', 'Broken White', 'Navy'],
+    colors: ['Burgundy', 'Abu Abu', 'Rose', 'Cream', 'Hitam', 'Mahogany', 'Broken White', 'Navy'],
     colorImages: {
       'Burgundy': 'https://i.ibb.co/6JfnkWcW/IMG-1437.jpg',
+      'Abu Abu': 'https://i.ibb.co/jvnMf5Hv/IMG-1438.jpg',
       'Rose': 'https://i.ibb.co/M5xpGhKf/IMG-1439.jpg',
       'Cream': 'https://i.ibb.co/R4ZySWg1/IMG-1440.jpg',
       'Hitam': 'https://i.ibb.co/xtwV88mz/IMG-1441.jpg',
-      'Abu Abu': 'https://i.ibb.co/jvnMf5Hv/IMG-1438.jpg',
       'Mahogany': 'https://i.ibb.co/Y49xVXm5/IMG-1442.jpg',
       'Broken White': 'https://i.ibb.co/PZytJjLw/IMG-1443.jpg',
       'Navy': 'https://i.ibb.co/jk49jXGB/IMG-1444.jpg'
@@ -129,7 +129,8 @@ Sangat cocok untuk outfit kantor, atasan hijab, maupun acara formal lainnya. Ter
     variants: ['M', 'L', 'XL', 'XXL'],
     colors: ['Beige', 'Hitam', 'Abu Muda', 'Abu Tua', 'Mocca'],
     colorImages: {
-      'Beige': 'https://i.ibb.co/8g5kRP5j/IMG-1434.jpg'
+      'Beige': 'https://i.ibb.co/8g5kRP5j/IMG-1434.jpg',
+      'Hitam': 'https://i.ibb.co/8g5kRP5j/IMG-1434.jpg'
     },
     isFreeShipping: false,
     shippingFee: 8000,
