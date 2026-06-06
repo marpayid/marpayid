@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Products } from '@/app/lib/dummy-data';
 import Image from 'next/image';
 import Link from 'next/link';
-import { cn, formatSold, getProductImage } from '@/lib/utils';
+import { cn, formatSold, formatReviews, getProductImage } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { ProductCard } from '@/components/product-grid';
 
@@ -164,7 +164,7 @@ export default function ProductDetail() {
               <span className="font-bold text-gray-700">{product.rating}</span>
             </div>
             <div className="h-3 w-px bg-gray-200" />
-            <span>{product.reviews || '0'} Ulasan</span>
+            <span>{formatReviews(product.reviews || 0)} Ulasan</span>
             <div className="h-3 w-px bg-gray-200" />
             <span>{formatSold(product.sold || 0)}</span>
           </div>

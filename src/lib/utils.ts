@@ -23,6 +23,25 @@ export function formatSold(count: number | string): string {
 }
 
 /**
+ * Formats the reviews count to compact Indonesian style (e.g. 1,2rb).
+ */
+export function formatReviews(count: number | string): string {
+  const num = typeof count === 'string' ? parseInt(count.replace(/[^0-9]/g, '')) || 0 : count;
+  
+  if (num < 1000) {
+    return num.toString();
+  } else if (num < 1000000) {
+    const val = num / 1000;
+    const formatted = val % 1 === 0 ? val.toFixed(0) : val.toFixed(1).replace('.', ',');
+    return `${formatted}rb`;
+  } else {
+    const val = num / 1000000;
+    const formatted = val % 1 === 0 ? val.toFixed(0) : val.toFixed(1).replace('.', ',');
+    return `${formatted}jt`;
+  }
+}
+
+/**
  * Mendapatkan gambar produk dengan logika kategori.
  * Mendukung field imageUrl (eksternal) dan image (lokal).
  */
