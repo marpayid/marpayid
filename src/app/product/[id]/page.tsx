@@ -155,7 +155,7 @@ export default function ProductDetail() {
   };
 
   return (
-    <div className="bg-gray-50 pb-12">
+    <div className="bg-gray-50 pb-32">
       <header className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md px-4 py-3 border-b border-gray-100 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="icon" onClick={() => router.back()}><ArrowLeft className="w-5 h-5" /></Button>
@@ -244,6 +244,8 @@ export default function ProductDetail() {
           <p className="text-xs text-gray-600 leading-relaxed whitespace-pre-line">
             {product.description}
           </p>
+          {/* Spacing after description for better readability */}
+          <div className="h-6"></div>
         </section>
 
         {similarProducts.length > 0 && (
