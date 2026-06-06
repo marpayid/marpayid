@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect, useMemo } from 'react';
@@ -126,9 +127,10 @@ export default function Home() {
     <div className="bg-gray-50 pb-32">
       <TopSearch />
       <PromoPopup />
-      <main className="pt-16 space-y-1">
+      <main className="pt-16">
         <QuickMenu />
-        <section className="px-4 pt-3 bg-white relative">
+        
+        <section className="px-4 py-3 bg-white relative">
           <Carousel opts={{ loop: true }} setApi={setApi}>
             <CarouselContent>
               {Banners.slice(0, 2).map((banner) => (
