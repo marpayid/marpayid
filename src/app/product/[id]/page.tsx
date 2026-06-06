@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useParams, useRouter } from 'next/navigation';
@@ -29,13 +30,29 @@ export default function ProductDetail() {
   const [selectedColor, setSelectedColor] = useState(0);
   const [activeImage, setActiveImage] = useState('');
 
+  // Pelacakan Interaksi untuk Algoritma Rekomendasi
+  useEffect(() => {
+    if (product) {
+      const viewedCats = JSON.parse(localStorage.getItem('marpay_viewed_cats') || '[]');
+      const viewedGenders = JSON.parse(localStorage.getItem('marpay_viewed_genders') || '[]');
+      
+      // Simpan 10 kategori terakhir yang dilihat
+      const newCats = [product.category, ...viewedCats.filter((c: string) => c !== product.category)].slice(0, 10);
+      localStorage.setItem('marpay_viewed_cats', JSON.stringify(newCats));
+      
+      // Simpan 20 gender terakhir (untuk deteksi preferensi)
+      const gender = product.gender || (product.name.toLowerCase().includes('pria') ? 'male' : product.name.toLowerCase().includes('wanita') ? 'female' : 'unisex');
+      const newGenders = [gender, ...viewedGenders].slice(0, 20);
+      localStorage.setItem('marpay_viewed_genders', JSON.stringify(newGenders));
+    }
+  }, [product]);
+
   // Perbaikan Sistem Galeri: Mapping berdasarkan Nama Warna (Key Matching)
   useEffect(() => {
     if (product) {
       const baseImg = getProductImage(product);
       const currentColorVarian = product.colors?.[selectedColor];
       
-      // Jika varian warna bertipe objek { name, imageUrl }
       if (currentColorVarian && typeof currentColorVarian === 'object') {
         setActiveImage(currentColorVarian.imageUrl || baseImg);
       } else {
@@ -49,34 +66,29 @@ export default function ProductDetail() {
   const currentPrice = useMemo(() => {
     if (!product) return 0;
     
-    // Special Pricing Logic for Glad2Glow (ID: 219)
     if (String(product.id) === '219') {
       const colorName = product.colors?.[selectedColor]?.name;
       if (colorName === 'NEW PDRN-30g' || colorName === 'Retinol 30g') return 48000;
       return 44890;
     }
 
-    // Special Pricing Logic for Wardah Facial Wash (ID: 214)
     if (String(product.id) === '214') {
       const colorName = product.colors?.[selectedColor]?.name;
       if (colorName === '100 ml') return 30129;
-      return 18223; // Default 50 ml
+      return 18223;
     }
 
-    // Special Pricing Logic for Wardah (ID: 208)
     if (String(product.id) === '208') {
       if (selectedVariant === 2) return 45000;
       return 28000;
     }
     
-    // Special Pricing Logic for Everyday Pants (ID: 203)
     if (String(product.id) === '203') {
       if (selectedVariant === 1) return 63102;
       if (selectedVariant === 2) return 70000;
       return 59252;
     }
     
-    // Special Pricing Logic for Case iPhone Clear (ID: 201)
     if (String(product.id) === '201') {
       const variantName = product.variants?.[selectedVariant] || '';
       if (variantName.includes('14') || variantName.includes('15') || variantName.includes('16') || variantName.includes('17')) {
@@ -85,7 +97,6 @@ export default function ProductDetail() {
       return 14899;
     }
     
-    // Special Pricing Logic for Akrilik (ID: 2)
     if (String(product.id) === '2' && selectedVariant === 1) return 309000;
     
     return product.price;
@@ -100,15 +111,6 @@ export default function ProductDetail() {
     ).slice(0, 4);
   }, [product]);
 
-  const recommendedProducts = useMemo(() => {
-    if (!product) return [];
-    const excludedIds = [String(product.id), ...similarProducts.map(p => String(p.id))];
-    return Products.filter(p => 
-      !excludedIds.includes(String(p.id)) && 
-      p.category !== 'Premium'
-    ).slice(0, 4);
-  }, [product, similarProducts]);
-
   if (!product) return <div className="p-8 text-center font-bold">Produk tidak ditemukan</div>;
 
   const variants = product.variants || ['Default'];
@@ -118,7 +120,6 @@ export default function ProductDetail() {
   const handleAction = (redirect = false) => {
     if (isOutOfStock) return;
     
-    // Mendapatkan nama warna secara dinamis (string atau object name)
     const currentColor = colors[selectedColor];
     const colorName = typeof currentColor === 'object' ? currentColor.name : currentColor;
     

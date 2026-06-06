@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect, useMemo } from 'react';
@@ -22,6 +23,7 @@ import { PromoPopup } from '@/components/promo-popup';
 export default function Home() {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
+  const [recommendationList, setRecommendationList] = useState<any[]>([]);
 
   useEffect(() => {
     if (!api) return;
@@ -32,26 +34,93 @@ export default function Home() {
     return () => clearInterval(intervalId);
   }, [api]);
 
+  // Algoritma Personalisasi Rekomendasi
+  useEffect(() => {
+    const calculatePersonalizedRecommendations = () => {
+      const searchHistory = JSON.parse(localStorage.getItem('marpay_search_history') || '[]');
+      const viewedCats = JSON.parse(localStorage.getItem('marpay_viewed_cats') || '[]');
+      const viewedGenders = JSON.parse(localStorage.getItem('marpay_viewed_genders') || '[]');
+
+      // Jika belum ada data interaksi, gunakan urutan prioritas standar (Produk Viral/Baru)
+      if (searchHistory.length === 0 && viewedCats.length === 0) {
+        const priorityIds = [219, 218, 217, 216, 215, 214, 213, 208, 207, 206, 205, 3, 1, 6, 201, 204, 203];
+        const initialList = Products.filter(p => p.category !== 'Premium').sort((a, b) => {
+          const aPriority = priorityIds.indexOf(Number(a.id));
+          const bPriority = priorityIds.indexOf(Number(b.id));
+          if (aPriority !== -1 && bPriority !== -1) return aPriority - bPriority;
+          if (aPriority !== -1) return -1;
+          if (bPriority !== -1) return 1;
+          return (b.sold || 0) - (a.sold || 0);
+        });
+        setRecommendationList(initialList);
+        return;
+      }
+
+      // Hitung Profil Minat
+      const catFreq: Record<string, number> = {};
+      viewedCats.forEach((c: string) => catFreq[c] = (catFreq[c] || 0) + 1);
+
+      const maleScore = viewedGenders.filter((g: string) => g === 'male').length;
+      const femaleScore = viewedGenders.filter((g: string) => g === 'female').length;
+
+      let userGenderPref = 'unisex';
+      if (maleScore > femaleScore + 2) userGenderPref = 'male';
+      if (femaleScore > maleScore + 2) userGenderPref = 'female';
+
+      // Scoring per Produk
+      const scoredProducts = Products.filter(p => p.category !== 'Premium').map(p => {
+        let score = 0;
+        const nameLower = p.name.toLowerCase();
+        const catLower = p.category.toLowerCase();
+        const productGender = p.gender || 'unisex';
+
+        // 1. Pencarian (Skor Tinggi)
+        searchHistory.forEach((term: string) => {
+          const t = term.toLowerCase();
+          if (nameLower.includes(t)) score += 50;
+          if (catLower.includes(t)) score += 30;
+          
+          // Keyword Intent mapping
+          if (t.includes('cowo') || t.includes('pria') || t.includes('cargo')) {
+            if (productGender === 'male') score += 20;
+          }
+          if (t.includes('cewe') || t.includes('wanita') || t.includes('skincare')) {
+            if (productGender === 'female') score += 20;
+          }
+        });
+
+        // 2. Afinitas Kategori (Berdasarkan jumlah klik)
+        if (catFreq[p.category]) {
+          score += catFreq[p.category] * 15;
+        }
+
+        // 3. Filter Gender (Menghilangkan yang tidak relevan secara drastis)
+        if (userGenderPref === 'male') {
+          if (productGender === 'male') score += 40;
+          if (productGender === 'female') score -= 150; // Penalti berat untuk lawan jenis
+        } else if (userGenderPref === 'female') {
+          if (productGender === 'female') score += 40;
+          if (productGender === 'male') score -= 150; // Penalti berat untuk lawan jenis
+        }
+
+        // 4. Skor Dasar (Rating & Penjualan)
+        score += (p.rating || 0) * 5;
+        score += (p.sold || 0) / 1000;
+
+        return { ...p, _score: score };
+      });
+
+      // Urutkan berdasarkan skor tertinggi
+      const sorted = scoredProducts.sort((a, b) => b._score - a._score);
+      setRecommendationList(sorted);
+    };
+
+    calculatePersonalizedRecommendations();
+  }, []);
+
   const viralProducts = useMemo(() => 
     Products.filter(p => p.tag === 'Produk Viral' && p.category !== 'Premium'), 
   []);
-  
-  const recommendationList = useMemo(() => {
-    // Memasukkan produk skincare baru ke daftar rekomendasi prioritas
-    const priorityIds = [219, 218, 217, 216, 215, 214, 213, 208, 207, 206, 205, 3, 1, 6, 201, 204, 203];
-    const priorityItems = priorityIds
-      .map(id => Products.find(p => String(p.id) === String(id)))
-      .filter(p => p && p.category !== 'Premium');
-
-    const others = Products.filter(p => 
-      !priorityIds.includes(Number(p.id)) && 
-      !priorityIds.includes(p.id) &&
-      String(p.id) !== '2' && 
-      p.category !== 'Premium'
-    );
-    
-    return [...priorityItems, ...others];
-  }, []);
 
   return (
     <div className="bg-gray-50 pb-32">
