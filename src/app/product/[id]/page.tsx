@@ -49,6 +49,13 @@ export default function ProductDetail() {
   const currentPrice = useMemo(() => {
     if (!product) return 0;
     
+    // Special Pricing Logic for Glad2Glow (ID: 219)
+    if (String(product.id) === '219') {
+      const colorName = product.colors?.[selectedColor]?.name;
+      if (colorName === 'NEW PDRN-30g' || colorName === 'Retinol 30g') return 48000;
+      return 44890;
+    }
+
     // Special Pricing Logic for Wardah Facial Wash (ID: 214)
     if (String(product.id) === '214') {
       const colorName = product.colors?.[selectedColor]?.name;
