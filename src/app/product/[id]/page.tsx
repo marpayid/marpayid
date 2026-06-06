@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useParams, useRouter } from 'next/navigation';
@@ -33,6 +32,17 @@ export default function ProductDetail() {
   useEffect(() => {
     if (product) setActiveImage(getProductImage(product));
   }, [product]);
+
+  // Update active image based on color selection (Marketplace Gallery Feature)
+  useEffect(() => {
+    if (product && product.colors && (product as any).colorImages) {
+      const colorName = product.colors[selectedColor];
+      const variantImage = (product as any).colorImages[colorName];
+      if (variantImage) {
+        setActiveImage(variantImage);
+      }
+    }
+  }, [selectedColor, product]);
 
   const isOutOfStock = product?.stock === 'Stok Habis';
 
