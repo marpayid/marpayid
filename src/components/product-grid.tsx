@@ -181,8 +181,8 @@ export function ProductCard({ product, compact = false }: { product: any, compac
     toast({ variant: "default", title: "Masuk Keranjang", description: "Siap untuk checkout", duration: 2000 });
   };
 
-  const hasShippingFee = (product.shippingFee || 0) > 0;
-  const isFreeShipping = !hasShippingFee || product.forceFreeShippingLabel;
+  // Logika baru untuk label gratis ongkir
+  const isFreeShipping = product.isFreeShipping === true;
 
   return (
     <div className={cn("bg-white rounded-[18px] border border-gray-100 overflow-hidden shadow-sm flex flex-col group relative transition-all active:scale-[0.98]", compact ? "min-w-[155px] w-[155px]" : "w-full", isOutOfStock && "opacity-75")}>

@@ -67,6 +67,7 @@ export const Products = [
     variants: ['S', 'M', 'L', 'XL'],
     colors: ['Black', 'Grey', 'Coffe', 'White', 'Vanilla', 'Navy'],
     isFreeShipping: false,
+    shippingFee: 8000,
     tags: ['fashion', 'kemeja', 'wanita', 'fitted shirt', 'kantor', 'formal', 'hijab style', 'essi'],
     description: `ESSI Elton Fitted Shirt adalah kemeja fitted premium dengan potongan ketat yang memberikan kesan elegan dan profesional. 
 
@@ -89,6 +90,7 @@ Sangat cocok untuk outfit kantor, atasan hijab, maupun acara formal lainnya. Ter
     variants: ['M', 'L', 'XL', 'XXL'],
     colors: ['Beige', 'Hitam', 'Abu Muda', 'Abu Tua', 'Mocca'],
     isFreeShipping: false,
+    shippingFee: 8000,
     tags: ['fashion', 'celana', 'wanita', 'high waist', 'korean style', 'kantor', 'kerja', 'anti kusut'],
     description: `Oro Pants adalah celana high waist bergaya Korean Style yang dirancang khusus untuk kebutuhan kerja dan kantor. 
 
@@ -99,7 +101,7 @@ Terbuat dari bahan premium anti kusut, celana ini memberikan siluet kaki yang le
     name: 'Wispie Girl Boss Shirt',
     price: 140900,
     rating: 4.9,
-    sold: 1250,
+    sold: 10000,
     category: 'Fashion',
     imageUrl: 'https://i.ibb.co/pC2pp68/IMG-1164.jpg',
     isFlashSale: true,
@@ -108,8 +110,10 @@ Terbuat dari bahan premium anti kusut, celana ini memberikan siluet kaki yang le
     tag: 'Produk Viral',
     gender: 'female',
     brand: 'Wispie',
-    variants: ['S', 'M', 'L', 'XL'],
+    variants: ['XS', 'M', 'XL'],
+    colors: ['Pink', 'Biru', 'Hijau'],
     isFreeShipping: false,
+    shippingFee: 8000,
     tags: ['fashion', 'kemeja', 'wanita', 'wispie', 'kerja', 'kantor', 'girl boss'],
     description: `Wispie Girl Boss Shirt merupakan kemeja premium dengan desain modern yang memberikan kesan profesional dan elegan. 
 
@@ -132,6 +136,7 @@ Terbuat dari bahan pilihan yang sangat nyaman, adem, dan menyerap keringat, menj
     tag: 'Produk Viral',
     variants: ['M', 'L', 'XL'],
     shippingFee: 12000,
+    isFreeShipping: false,
     description: `BETTERHALF Celana Pendek Cowo Polos Short Pants Boardshort - Black
 
 Material :
@@ -174,6 +179,7 @@ Terima kasih.`,
     variants: ['S-M', 'L-XL'],
     colors: ['Hitam🔥', 'Grey', 'Putih', 'Maroon', 'Mahogany', 'Navy'],
     shippingFee: 0,
+    isFreeShipping: true,
     description: `Alba Top Kemeja Wanita Salur dengan desain Stripe Fitted Shirt Slim Fit. Model casual cocok untuk kantor maupun gaya Korean Style. Bahan premium yang nyaman dan tidak menerawang, memberikan kesan ramping (press body) yang tetap elegan.`,
   },
   {
@@ -197,6 +203,7 @@ Terima kasih.`,
       'iPhone 14', 'iPhone 14 Pro', 'iPhone 14 Pro Max', 'iPhone 15', 'iPhone 15 Plus', 'iPhone 15 Pro', 'iPhone 15 Pro Max', 'iPhone 16', 'iPhone 16 Plus', 'iPhone 16 Pro', 'iPhone 16 Pro Max', 'iPhone 17', 'iPhone 17 Air', 'iPhone 17 Pro', 'iPhone 17 Pro Max'
     ],
     shippingFee: 0,
+    isFreeShipping: true,
     forceFreeShippingLabel: true,
     description: `Case iPhone Clear MagSafe Premium dengan desain transparan elegan and perlindungan maksimal.`
   },
@@ -224,6 +231,7 @@ Terima kasih.`,
       'iPhone 15', 'iPhone 15 Plus', 'iPhone 15 Pro', 'iPhone 15 Pro Max'
     ],
     shippingFee: 0,
+    isFreeShipping: true,
     forceFreeShippingLabel: true,
     description: `Case iPhone Street Art Premium with desain grafiti modern.`
   },
@@ -246,6 +254,7 @@ Terima kasih.`,
     variants: ['Standar (BB 35-55Kg)', 'Jumbo (BB 56-70Kg)', 'Super Jumbo (BB 71-85Kg)'],
     colors: ['Abu Grey', 'Hitam', 'Putih', 'Navi', 'Mahogani', 'Khaki', 'Ice Blue'],
     shippingFee: 0,
+    isFreeShipping: true,
     description: `Everyday Stripe Pants merupakan celana wanita model baggy kulot premium dengan motif garis pinstripe yang cocok digunakan untuk kuliah, kerja, kantor, jalan-jalan, maupun aktivitas sehari-hari. Menggunakan bahan yang nyaman, adem, tidak menerawang, and memiliki potongan loose fit sehingga tetap stylish digunakan sepanjang hari.`,
   },
   {
@@ -266,6 +275,7 @@ Terima kasih.`,
     variants: ['M', 'L', 'XL'],
     colors: ['Choco Stripe'],
     shippingFee: 0,
+    isFreeShipping: true,
     description: `Luna Stipe Kemeja Fitted
 bahan SemiWoll Stripe
 Bagian belakang terdapat tali sabuk bisa di adjust untuk
@@ -304,6 +314,7 @@ Toleransi ukuran 1-2 cm karena proses jahit`,
     tag: 'Produk Viral',
     variants: ['S', 'M', 'L', 'XL', '2XL', '3XL'],
     shippingFee: 12000,
+    isFreeShipping: false,
     description: `Kemeja wanita premium with desain fitted body.`
   },
   {
@@ -324,6 +335,7 @@ Toleransi ukuran 1-2 cm karena proses jahit`,
     hasPriceRange: true,
     variants: ['20x10', '20x15'],
     shippingFee: 20000,
+    isFreeShipping: false,
     description: `Akrilik Sertifikat Funded premium cocok untuk trader.`,
   },
   {
@@ -343,6 +355,7 @@ Toleransi ukuran 1-2 cm karena proses jahit`,
     tag: 'Produk Viral',
     variants: ['M', 'L', 'XL'],
     shippingFee: 8000,
+    isFreeShipping: false,
     description: `Hoodie boxy oversize unisex berbahan fleece cotton.`
   },
   {
@@ -362,6 +375,7 @@ Toleransi ukuran 1-2 cm karena proses jahit`,
     tag: 'Produk Viral',
     variants: ['Whitening Set 6Pcs', 'Anti-Acne Set 6Pcs'],
     shippingFee: 15000,
+    isFreeShipping: false,
     description: `BIOAQUA Skincare Set Lengkap 6Pcs.`
   },
   {
@@ -380,6 +394,7 @@ Toleransi ukuran 1-2 cm karena proses jahit`,
     stock: 'Tersedia',
     tag: 'Produk Viral',
     shippingFee: 0,
+    isFreeShipping: true,
     description: 'Sunscreen gel (chemical sunscreen) yang ringan and dingin di kulit, diformulasikan khusus untuk kulit berminyak, berjerawat, and sensitif. Mengandung Anti-Acne Active untuk menenangkan kulit and mengontrol sebum berlebih.',
   },
   {
@@ -400,6 +415,7 @@ Toleransi ukuran 1-2 cm karena proses jahit`,
     hasPriceRange: true,
     variants: ['Acne Calming SPF50 25ml', 'Acne Calming SPF35 35ml', 'Acne Calming SPF50 40ml'],
     shippingFee: 8000,
+    isFreeShipping: false,
     description: `Wardah UV Shield Acne Calming Sunscreen Serum SPF 50 PA++++ merupakan sunscreen serum with perlindungan tinggi yang diformulasikan khusus untuk kulit berminyak and rentan berjerawat. Membantu melindungi kulit dari sinar UVA, UVB, blue light, and polusi sekaligus memberikan efek menenangkan pada kulit.
 
 Keunggulan:
@@ -426,7 +442,8 @@ Keunggulan:
     tag: 'Best Seller',
     description: 'Nikmati fitur premium Canva Pro untuk desain profesional tanpa batas.',
     type: 'digital',
-    shippingFee: 0
+    shippingFee: 0,
+    isFreeShipping: true
   },
   {
     id: 102,
@@ -442,7 +459,8 @@ Keunggulan:
     tag: 'Best Seller',
     description: 'Musik tanpa iklan, download lagu, and kualitas suara terbaik with Spotify Premium.',
     type: 'digital',
-    shippingFee: 0
+    shippingFee: 0,
+    isFreeShipping: true
   },
   {
     id: 103,
@@ -458,7 +476,8 @@ Keunggulan:
     tag: 'Best Seller',
     description: 'Nonton video tanpa gangguan iklan, putar di latar belakang, and YouTube Music Premium.',
     type: 'digital',
-    shippingFee: 0
+    shippingFee: 0,
+    isFreeShipping: true
   },
   {
     id: 104,
@@ -474,7 +493,8 @@ Keunggulan:
     tag: 'Recommended',
     description: 'Streaming film and series kualitas 4K Ultra HD with akun Netflix Premium.',
     type: 'digital',
-    shippingFee: 0
+    shippingFee: 0,
+    isFreeShipping: true
   },
   {
     id: 105,
@@ -490,7 +510,8 @@ Keunggulan:
     tag: 'Best Seller',
     description: 'Akses semua fitur editing pro, transisi, and efek eksklusif di CapCut.',
     type: 'digital',
-    shippingFee: 0
+    shippingFee: 0,
+    isFreeShipping: true
   },
   {
     id: 106,
@@ -506,7 +527,8 @@ Keunggulan:
     tag: 'Hot Item',
     description: 'Gunakan kecerdasan AI terbaru GPT-4 with ChatGPT Plus premium.',
     type: 'digital',
-    shippingFee: 0
+    shippingFee: 0,
+    isFreeShipping: true
   },
   {
     id: 107,
@@ -522,7 +544,8 @@ Keunggulan:
     tag: 'Recommended',
     description: 'Nonton bola, drama korea, and konten eksklusif lainnya di Vidio.',
     type: 'digital',
-    shippingFee: 0
+    shippingFee: 0,
+    isFreeShipping: true
   },
   {
     id: 108,
@@ -538,7 +561,8 @@ Keunggulan:
     tag: 'Best Seller',
     description: 'Edit motion graphic tanpa watermark with Alight Motion Premium.',
     type: 'digital',
-    shippingFee: 0
+    shippingFee: 0,
+    isFreeShipping: true
   }
 ];
 
