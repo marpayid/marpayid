@@ -68,7 +68,6 @@ export const Products = [
     variants: ['S', 'M', 'L', 'XL'],
     colors: [
       { name: 'Burgundy', imageUrl: 'https://i.ibb.co/6JfnkWcW/IMG-1437.jpg' },
-      { name: 'Abu Abu', imageUrl: 'https://i.ibb.co/6JfnkWcW/IMG-1437.jpg' },
       { name: 'Rose Cream', imageUrl: 'https://i.ibb.co/R4ZySWg1/IMG-1440.jpg' },
       { name: 'Hitam', imageUrl: 'https://i.ibb.co/jvnMf5Hv/IMG-1438.jpg' },
       { name: 'Mahogany', imageUrl: 'https://i.ibb.co/xtwV88mz/IMG-1441.jpg' },
