@@ -51,6 +51,40 @@ export const Vouchers = [
 
 export const Products = [
   {
+    id: 212,
+    name: 'Alpha Shirt - Kemeja Fitted Wanita | Fitted Shirt Garis Stripe Karet | Atasan Lengan Panjang Kantor',
+    price: 72000,
+    rating: 4.9,
+    reviews: 1240,
+    sold: 4500,
+    category: 'Fashion',
+    imageUrl: 'https://i.ibb.co/6JfnkWcW/IMG-1437.jpg',
+    isFlashSale: false,
+    discount: '10%',
+    stock: 'Tersedia',
+    tag: 'Produk Baru',
+    gender: 'female',
+    brand: 'Alpha',
+    variants: ['S', 'M', 'L', 'XL'],
+    colors: ['Burgundy', 'Abu Abu', 'Rose', 'Cream', 'Hitam', 'Mahogany', 'Broken White', 'Navy'],
+    colorImages: {
+      'Burgundy': 'https://i.ibb.co/6JfnkWcW/IMG-1437.jpg',
+      'Abu Abu': 'https://i.ibb.co/jvnMf5Hv/IMG-1438.jpg',
+      'Rose': 'https://i.ibb.co/M5xpGhKf/IMG-1439.jpg',
+      'Cream': 'https://i.ibb.co/R4ZySWg1/IMG-1440.jpg',
+      'Hitam': 'https://i.ibb.co/xtwV88mz/IMG-1441.jpg',
+      'Mahogany': 'https://i.ibb.co/Y49xVXm5/IMG-1442.jpg',
+      'Broken White': 'https://i.ibb.co/PZytJjLw/IMG-1443.jpg',
+      'Navy': 'https://i.ibb.co/jk49jXGB/IMG-1444.jpg'
+    },
+    isFreeShipping: false,
+    shippingFee: 8000,
+    tags: ['fashion', 'kemeja', 'wanita', 'fitted shirt', 'kantor', 'formal', 'stripe', 'alpha shirt'],
+    description: `Alpha Shirt adalah kemeja fitted premium dengan motif garis (stripe) yang elegan. 
+
+Dilengkapi dengan detail karet yang memberikan siluet ramping and rapi saat dikenakan. Sangat cocok untuk outfit kantor maupun acara formal lainnya. Terbuat dari bahan yang nyaman and tidak panas, menjamin kepercayaan diri Anda sepanjang hari.`,
+  },
+  {
     id: 211,
     name: 'ESSI Elton Fitted Shirt - kemeja fitted / kemeja ketat wanita / kemeja kantor / atasan hijab',
     price: 160000,
