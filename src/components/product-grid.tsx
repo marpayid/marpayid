@@ -197,18 +197,16 @@ export function ProductCard({ product, compact = false }: { product: any, compac
       <div className="p-3 flex-1 flex flex-col">
         <Link href={`/product/${product.id}`} className="mb-1.5"><h3 className="text-[11.5px] font-bold text-gray-800 line-clamp-2 leading-tight h-[28px] overflow-hidden">{product.name}</h3></Link>
         <div className="mt-auto">
-          <div className="flex justify-between items-center mb-1">
+          <div className="flex justify-between items-center mb-1.5">
             <p className="text-[13px] font-black text-red-600">
               Rp {product.price.toLocaleString()}
             </p>
+            {isFreeShipping && (
+              <span className="text-[9px] font-black text-green-600 bg-green-50 px-1.5 py-0.5 rounded border border-green-100 uppercase tracking-tighter">
+                Gratis
+              </span>
+            )}
           </div>
-
-          {/* Badge Gratis Ongkir */}
-          {isFreeShipping && (
-            <div className="flex items-center text-[8px] text-green-600 font-bold uppercase gap-0.5 bg-green-50 px-1.5 py-0.5 rounded-full w-fit mb-1.5 border border-green-100">
-              <Truck className="w-2.5 h-2.5" /> GRATIS ONGKIR
-            </div>
-          )}
 
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1 overflow-hidden">
