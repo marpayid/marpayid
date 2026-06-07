@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft, Package, Clock, CheckCircle2, Truck, XCircle, Loader2, Copy, MapPin, DollarSign, MessageCircle, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -58,7 +58,7 @@ export default function OrderDetailPage() {
     switch (status) {
       case 'Selesai': return 'bg-green-50 text-green-600 border-green-100';
       case 'Dibatalkan': return 'bg-red-50 text-red-600 border-red-100';
-      case 'Dikirim': return 'bg-indigo-50 text-indigo-600 border-indigo-100';
+      case 'Dikirim': return 'bg-emerald-50 text-emerald-600 border-emerald-100';
       default: return 'bg-orange-50 text-orange-600 border-orange-100';
     }
   };
@@ -92,26 +92,38 @@ export default function OrderDetailPage() {
 
         {/* Shipping Status (Visible if Shipped) */}
         {order.status === 'Dikirim' && (
-          <section className="bg-indigo-600 text-white p-5 rounded-3xl shadow-lg shadow-indigo-200 space-y-4">
-            <div className="flex items-center gap-3">
-               <div className="w-10 h-10 bg-white/20 rounded-2xl flex items-center justify-center">
-                  <Truck className="w-6 h-6" />
+          <section className="bg-gradient-to-br from-[#22C55E] to-[#4ADE80] text-white p-5 rounded-[32px] shadow-xl shadow-green-100 space-y-4 relative overflow-hidden">
+            <div className="absolute right-[-15px] top-[-15px] opacity-10 pointer-events-none">
+              <Truck className="w-32 h-32 rotate-12" />
+            </div>
+            <div className="flex items-center gap-3 relative z-10">
+               <div className="w-10 h-10 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/20 shadow-inner">
+                  <Truck className="w-5 h-5 text-white" />
                </div>
                <div>
-                  <h3 className="text-xs font-bold uppercase tracking-widest opacity-80">Status Pengiriman</h3>
-                  <p className="text-base font-black">{order.shippingStatus || 'Sedang Diproses'}</p>
+                  <h3 className="text-[9px] font-black uppercase tracking-[0.2em] opacity-80">Status Pengiriman</h3>
+                  <p className="text-base font-black leading-tight">{order.shippingStatus || 'Dalam Pengiriman'}</p>
                </div>
             </div>
-            <div className="bg-white/10 p-4 rounded-2xl border border-white/10 space-y-3">
+            <div className="bg-white/15 backdrop-blur-sm p-4 rounded-[22px] border border-white/20 space-y-3 relative z-10 shadow-lg">
                <div className="flex justify-between items-center">
-                  <span className="text-[10px] font-bold uppercase opacity-70">Kurir: {order.courier || 'Ekspedisi'}</span>
+                  <div className="flex flex-col">
+                    <span className="text-[8px] font-bold uppercase tracking-widest opacity-70">Jasa Ekspedisi</span>
+                    <span className="text-[11px] font-black uppercase tracking-tight">{order.courier || 'Kurir Pilihan'}</span>
+                  </div>
                   {order.trackingNumber && (
-                    <button onClick={() => copyToClipboard(order.trackingNumber)} className="text-[10px] font-black bg-white text-indigo-600 px-3 py-1 rounded-lg">
-                      SALIN RESI
+                    <button 
+                      onClick={() => copyToClipboard(order.trackingNumber)} 
+                      className="text-[9px] font-black bg-white text-[#22C55E] px-3 py-1.5 rounded-xl shadow-sm active:scale-90 transition-transform uppercase tracking-tighter"
+                    >
+                      Salin Resi
                     </button>
                   )}
                </div>
-               <p className="text-sm font-black tracking-widest">{order.trackingNumber || 'Resi belum tersedia'}</p>
+               <div className="pt-1">
+                 <p className="text-[10px] font-bold text-white/70 uppercase tracking-widest leading-none mb-1">Nomor Resi</p>
+                 <p className="text-sm font-black tracking-[0.1em]">{order.trackingNumber || 'Menunggu Update Resi'}</p>
+               </div>
             </div>
           </section>
         )}
