@@ -130,7 +130,7 @@ export default function Home() {
       <main className="pt-16">
         <QuickMenu />
         
-        <section className="px-4 py-3 bg-white relative">
+        <section className="px-4 py-3 bg-[#F5F7FB] relative">
           <Carousel opts={{ loop: true }} setApi={setApi}>
             <CarouselContent>
               {Banners.slice(0, 2).map((banner) => (
