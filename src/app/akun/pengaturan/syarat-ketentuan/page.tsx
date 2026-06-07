@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useRouter } from 'next/navigation';
@@ -69,7 +70,6 @@ export default function TermsPage() {
              </div>
              <div>
                 <h2 className="text-base font-black text-gray-900 leading-tight">Ketentuan Layanan</h2>
-                <p className="text-[10px] font-bold text-primary uppercase tracking-widest mt-0.5">Versi 1.0.4</p>
              </div>
           </div>
           <p className="text-[11px] text-gray-500 leading-relaxed font-medium">
