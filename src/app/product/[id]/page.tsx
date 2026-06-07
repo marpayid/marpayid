@@ -259,7 +259,7 @@ export default function ProductDetail() {
                       onClick={() => handleColorSelect(i, colorName)}
                       type="button"
                       className={cn(
-                        "px-4 py-2.5 rounded-xl text-xs font-semibold border transition-all active:scale-95", 
+                        "px-4 py-2.5 rounded-xl text-xs font-medium border transition-all active:scale-95", 
                         isActive 
                           ? "border-primary bg-primary/5 text-primary ring-1 ring-primary/30 shadow-sm" 
                           : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
@@ -285,7 +285,7 @@ export default function ProductDetail() {
                       onClick={() => setSelectedVariantIndex(i)} 
                       type="button"
                       className={cn(
-                        "px-4 py-2.5 rounded-xl text-xs font-semibold border transition-all active:scale-95", 
+                        "px-4 py-2.5 rounded-xl text-xs font-medium border transition-all active:scale-95", 
                         isActive 
                           ? "border-primary bg-primary/5 text-primary ring-1 ring-primary/30 shadow-sm" 
                           : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
