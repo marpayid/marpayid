@@ -27,24 +27,21 @@ export default function ProductDetail() {
   }, [id]);
   
   const [quantity, setQuantity] = useState(1);
-  const [selectedVariant, setSelectedVariant] = useState(0);
+  const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
   const [selectedColorIndex, setSelectedColorIndex] = useState(0);
   const [api, setApi] = useState<CarouselApi>();
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  // Kata kunci untuk mendeteksi foto yang BUKAN varian warna (hanya informasi tambahan)
-  const informativeKeywords = ['detail', 'belakang', 'size', 'chart', 'tabel', 'ukuran', 'depan', 'view'];
+  const informativeKeywords = useMemo(() => ['detail', 'belakang', 'size', 'chart', 'tabel', 'ukuran', 'depan', 'view'], []);
 
-  // 1. Filter varian warna asli untuk ditampilkan di tombol pilihan
   const selectableColors = useMemo(() => {
     if (!product?.colors) return [];
     return product.colors.filter((c: any) => {
-      const name = (typeof c === 'object' ? c.name : c).toLowerCase();
+      const name = (typeof c === 'object' ? c.name : String(c)).toLowerCase();
       return !informativeKeywords.some(keyword => name.includes(keyword));
     });
-  }, [product]);
+  }, [product, informativeKeywords]);
 
-  // 2. Kumpulkan semua foto unik untuk galeri carousel
   const galleryItems = useMemo(() => {
     if (!product) return [];
     const items: { url: string; colorName?: string }[] = [];
@@ -54,7 +51,6 @@ export default function ProductDetail() {
     items.push({ url: mainImg });
     seenUrls.add(mainImg);
 
-    // Tambahkan semua foto dari list colors (termasuk yang informatif)
     product.colors?.forEach((c: any) => {
       if (typeof c === 'object' && c.imageUrl && !seenUrls.has(c.imageUrl)) {
         items.push({ 
@@ -66,9 +62,8 @@ export default function ProductDetail() {
     });
 
     return items;
-  }, [product]);
+  }, [product, informativeKeywords]);
 
-  // Pelacakan Interaksi untuk Algoritma Rekomendasi
   useEffect(() => {
     if (product) {
       const viewedCats = JSON.parse(localStorage.getItem('marpay_viewed_cats') || '[]');
@@ -83,7 +78,6 @@ export default function ProductDetail() {
     }
   }, [product]);
 
-  // Update slide index saat carousel bergeser
   useEffect(() => {
     if (!api) return;
     api.on("select", () => {
@@ -91,37 +85,34 @@ export default function ProductDetail() {
     });
   }, [api]);
 
-  // Fungsi untuk berpindah slide saat warna dipilih
-  const handleColorSelect = (index: number, colorName: string) => {
+  const handleColorSelect = useCallback((index: number, colorName: string) => {
     setSelectedColorIndex(index);
     if (!api) return;
 
-    // Cari index foto di galleryItems yang cocok dengan nama warna
     const slideIndex = galleryItems.findIndex(item => item.colorName === colorName);
     if (slideIndex !== -1) {
       api.scrollTo(slideIndex);
     }
-  };
+  }, [api, galleryItems]);
 
   const currentPrice = useMemo(() => {
     if (!product) return 0;
     
-    // Logika harga dinamis berdasarkan varian produk tertentu
     if (String(product.id) === '219') {
       const colorName = selectableColors[selectedColorIndex]?.name;
       if (colorName === 'NEW PDRN-30g' || colorName === 'Retinol 30g') return 48000;
     }
     if (String(product.id) === '214' && selectableColors[selectedColorIndex]?.name === '100 ml') return 30129;
-    if (String(product.id) === '208' && selectedVariant === 2) return 45000;
+    if (String(product.id) === '208' && selectedVariantIndex === 2) return 45000;
     if (String(product.id) === '203') {
-      if (selectedVariant === 1) return 63102;
-      if (selectedVariant === 2) return 70000;
+      if (selectedVariantIndex === 1) return 63102;
+      if (selectedVariantIndex === 2) return 70000;
     }
-    if (String(product.id) === '201' && (product.variants?.[selectedVariant] || '').match(/14|15|16|17/)) return 17999;
-    if (String(product.id) === '2' && selectedVariant === 1) return 309000;
+    if (String(product.id) === '201' && (product.variants?.[selectedVariantIndex] || '').match(/14|15|16|17/)) return 17999;
+    if (String(product.id) === '2' && selectedVariantIndex === 1) return 309000;
     
     return product.price;
-  }, [product, selectedVariant, selectedColorIndex, selectableColors]);
+  }, [product, selectedVariantIndex, selectedColorIndex, selectableColors]);
 
   const similarProducts = useMemo(() => {
     if (!product) return [];
@@ -132,18 +123,16 @@ export default function ProductDetail() {
     ).slice(0, 4);
   }, [product]);
 
-  if (!product) return <div className="p-8 text-center font-bold">Produk tidak ditemukan</div>;
-
-  const variants = product.variants || ['Default'];
-  const totalPrice = currentPrice * quantity;
-
-  const handleAction = (redirect = false) => {
+  const handleAction = useCallback((redirect = false) => {
+    if (!product) return;
+    
     const currentColor = selectableColors[selectedColorIndex];
-    const colorName = currentColor ? (typeof currentColor === 'object' ? currentColor.name : currentColor) : '';
+    const colorName = currentColor ? (typeof currentColor === 'object' ? currentColor.name : String(currentColor)) : '';
+    const variants = product.variants || ['Default'];
     
     const variantString = colorName 
-      ? `${variants[selectedVariant]} - ${colorName}` 
-      : variants[selectedVariant];
+      ? `${variants[selectedVariantIndex]} - ${colorName}` 
+      : variants[selectedVariantIndex];
 
     const activeImage = galleryItems[currentSlide]?.url || getProductImage(product);
 
@@ -170,23 +159,28 @@ export default function ProductDetail() {
       else cart.push(item);
       localStorage.setItem('marpay_cart', JSON.stringify(cart));
       window.dispatchEvent(new Event('cart-updated'));
-      toast({ variant: "default", title: "Masuk Keranjang" });
+      toast({ variant: "success", title: "Masuk Keranjang" });
     }
-  };
+  }, [product, selectableColors, selectedColorIndex, selectedVariantIndex, currentPrice, quantity, currentSlide, galleryItems, router, toast]);
+
+  if (!product) return <div className="p-8 text-center font-bold">Produk tidak ditemukan</div>;
+
+  const variants = product.variants || ['Default'];
+  const totalPrice = currentPrice * quantity;
 
   return (
     <div className="bg-gray-50 pb-32">
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md px-4 py-3 border-b border-gray-100 flex items-center justify-between">
+      <header className="fixed top-0 left-0 right-0 z-[100] bg-white/90 backdrop-blur-md px-4 py-3 border-b border-gray-100 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" onClick={() => router.back()}><ArrowLeft className="w-5 h-5" /></Button>
-          <span className="text-sm font-bold truncate max-w-[150px]">{product.name}</span>
+          <Button variant="ghost" size="icon" className="shrink-0" onClick={() => router.back()}><ArrowLeft className="w-5 h-5" /></Button>
+          <span className="text-sm font-bold truncate max-w-[180px]">{product.name}</span>
         </div>
         <Link href="/cart"><Button variant="ghost" size="icon"><ShoppingBag className="w-5 h-5" /></Button></Link>
       </header>
 
       <main className="pt-14">
         {/* Gallery Carousel */}
-        <div className="relative w-full bg-white group">
+        <div className="relative w-full bg-white group overflow-hidden">
           <Carousel setApi={setApi} className="w-full">
             <CarouselContent>
               {galleryItems.map((item, idx) => (
@@ -198,13 +192,14 @@ export default function ProductDetail() {
                       fill 
                       className="object-cover" 
                       priority={idx === 0} 
+                      sizes="100vw"
                     />
                   </div>
                 </CarouselItem>
               ))}
             </CarouselContent>
             {galleryItems.length > 1 && (
-              <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-1.5 z-10">
+              <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-1.5 z-10 pointer-events-none">
                 {galleryItems.map((_, idx) => (
                   <div 
                     key={idx} 
@@ -218,7 +213,6 @@ export default function ProductDetail() {
             )}
           </Carousel>
           
-          {/* Navigation Overlay Hints */}
           {galleryItems.length > 1 && (
              <div className="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-2 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
                 <div className="w-8 h-8 rounded-full bg-white/50 backdrop-blur-sm flex items-center justify-center text-gray-800"><ChevronLeft className="w-5 h-5" /></div>
@@ -251,20 +245,24 @@ export default function ProductDetail() {
           </div>
         </section>
 
-        <section className="mt-2 bg-white p-4 space-y-4">
+        <section className="mt-2 bg-white p-4 space-y-5">
           {selectableColors.length > 0 && (
             <div>
-              <p className="text-[11px] font-bold text-gray-400 uppercase mb-2">Pilihan Warna</p>
-              <div className="flex flex-wrap gap-2">
+              <p className="text-[11px] font-bold text-gray-400 uppercase mb-3 ml-0.5">Pilihan Warna</p>
+              <div className="flex flex-wrap gap-2.5">
                 {selectableColors.map((c: any, i: number) => {
-                  const colorName = typeof c === 'object' ? c.name : c;
+                  const colorName = typeof c === 'object' ? c.name : String(c);
+                  const isActive = selectedColorIndex === i;
                   return (
                     <button 
-                      key={colorName} 
-                      onClick={() => handleColorSelect(i, colorName)} 
+                      key={`${colorName}-${i}`} 
+                      onClick={() => handleColorSelect(i, colorName)}
+                      type="button"
                       className={cn(
-                        "px-4 py-2 rounded-lg text-xs border transition-all", 
-                        selectedColorIndex === i ? "border-primary bg-primary/5 text-primary shadow-sm" : "border-gray-100"
+                        "px-4 py-2.5 rounded-xl text-xs font-semibold border transition-all active:scale-95", 
+                        isActive 
+                          ? "border-primary bg-primary/5 text-primary ring-1 ring-primary/30 shadow-sm" 
+                          : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
                       )}
                     >
                       {colorName}
@@ -277,30 +275,50 @@ export default function ProductDetail() {
           
           {variants.length > 1 && (
             <div>
-              <p className="text-[11px] font-bold text-gray-400 uppercase mb-2">Varian Ukuran</p>
-              <div className="flex flex-wrap gap-2">
-                {variants.map((v: string, i: number) => (
-                  <button 
-                    key={v} 
-                    onClick={() => setSelectedVariant(i)} 
-                    className={cn(
-                      "px-4 py-2 rounded-lg text-xs border transition-all", 
-                      selectedVariant === i ? "border-primary bg-primary/5 text-primary" : "border-gray-100"
-                    )}
-                  >
-                    {v}
-                  </button>
-                ))}
+              <p className="text-[11px] font-bold text-gray-400 uppercase mb-3 ml-0.5">Varian Ukuran</p>
+              <div className="flex flex-wrap gap-2.5">
+                {variants.map((v: string, i: number) => {
+                  const isActive = selectedVariantIndex === i;
+                  return (
+                    <button 
+                      key={`${v}-${i}`} 
+                      onClick={() => setSelectedVariantIndex(i)} 
+                      type="button"
+                      className={cn(
+                        "px-4 py-2.5 rounded-xl text-xs font-semibold border transition-all active:scale-95", 
+                        isActive 
+                          ? "border-primary bg-primary/5 text-primary ring-1 ring-primary/30 shadow-sm" 
+                          : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
+                      )}
+                    >
+                      {v}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           )}
 
           <div className="flex items-center justify-between pt-2">
-            <p className="text-[11px] font-bold text-gray-400 uppercase">Jumlah</p>
-            <div className="flex items-center gap-4 bg-gray-50 rounded-xl p-1 border border-gray-100">
-              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => quantity > 1 && setQuantity(prev => prev - 1)}><Minus className="w-4 h-4" /></Button>
-              <span className="text-sm font-bold w-4 text-center">{quantity}</span>
-              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setQuantity(prev => prev + 1)}><Plus className="w-4 h-4" /></Button>
+            <p className="text-[11px] font-bold text-gray-400 uppercase ml-0.5">Jumlah</p>
+            <div className="flex items-center gap-4 bg-gray-50 rounded-xl p-1.5 border border-gray-100">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="h-8 w-8 rounded-lg active:bg-white" 
+                onClick={() => quantity > 1 && setQuantity(prev => prev - 1)}
+              >
+                <Minus className="w-4 h-4" />
+              </Button>
+              <span className="text-sm font-bold w-4 text-center select-none">{quantity}</span>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="h-8 w-8 rounded-lg active:bg-white" 
+                onClick={() => setQuantity(prev => prev + 1)}
+              >
+                <Plus className="w-4 h-4" />
+              </Button>
             </div>
           </div>
         </section>
@@ -325,7 +343,7 @@ export default function ProductDetail() {
               </div>
               <Link href={`/kategori/${product.category.toLowerCase()}`} className="text-[10px] font-bold text-primary">Lihat Semua</Link>
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-3.5">
               {similarProducts.map((p) => (
                 <ProductCard key={p.id} product={p} />
               ))}
@@ -334,14 +352,14 @@ export default function ProductDetail() {
         )}
       </main>
 
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-100 flex items-center justify-between gap-3 z-[100] shadow-[0_-4px_15px_rgba(0,0,0,0.05)]">
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-100 flex items-center justify-between gap-3 z-[200] shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
         <div className="flex flex-col min-w-[100px]">
            <p className="text-[9px] text-gray-400 font-bold uppercase leading-none mb-1">TOTAL HARGA</p>
            <p className="text-lg font-black text-primary leading-none">Rp {totalPrice.toLocaleString()}</p>
         </div>
         <div className="flex gap-2 flex-1">
-          <Button variant="outline" className="flex-1 border-primary text-primary font-bold h-11 rounded-xl text-xs" onClick={() => handleAction(false)}>+ Keranjang</Button>
-          <Button className="flex-1 bg-primary text-white font-bold h-11 rounded-xl shadow-lg text-xs" onClick={() => handleAction(true)}>Beli Sekarang</Button>
+          <Button variant="outline" className="flex-1 border-primary text-primary font-bold h-11 rounded-xl text-xs active:scale-95" onClick={() => handleAction(false)}>+ Keranjang</Button>
+          <Button className="flex-1 bg-primary text-white font-bold h-11 rounded-xl shadow-lg text-xs active:scale-95" onClick={() => handleAction(true)}>Beli Sekarang</Button>
         </div>
       </div>
     </div>
