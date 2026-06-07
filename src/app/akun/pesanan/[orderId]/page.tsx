@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useMemo, useState } from 'react';
@@ -58,7 +57,7 @@ export default function OrderDetailPage() {
     switch (status) {
       case 'Selesai': return 'bg-green-50 text-green-600 border-green-100';
       case 'Dibatalkan': return 'bg-red-50 text-red-600 border-red-100';
-      case 'Dikirim': return 'bg-emerald-50 text-emerald-600 border-emerald-100';
+      case 'Dikirim': return 'bg-blue-50 text-blue-600 border-blue-100';
       default: return 'bg-orange-50 text-orange-600 border-orange-100';
     }
   };
@@ -92,9 +91,9 @@ export default function OrderDetailPage() {
 
         {/* Shipping Status (Visible if Shipped or Selesai with Resi) */}
         {(order.status === 'Dikirim' || (order.status === 'Selesai' && order.trackingNumber)) && (
-          <section className="bg-gradient-to-br from-[#22C55E] to-[#4ADE80] text-white p-4 py-3.5 rounded-[24px] shadow-xl shadow-green-100 space-y-3 relative overflow-hidden">
+          <section className="bg-gradient-to-br from-[#1565FF] to-[#00C2FF] text-white p-4 py-3.5 rounded-[24px] shadow-xl shadow-blue-100 space-y-3 relative overflow-hidden">
             <div className="absolute right-[-10px] top-[-10px] opacity-[0.08] pointer-events-none">
-              <Truck className="w-24 h-24 rotate-12" />
+              <Truck className="w-20 h-20 rotate-12" />
             </div>
             <div className="flex items-center gap-3 relative z-10">
                <div className="w-8 h-8 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center border border-white/20 shadow-inner">
@@ -114,7 +113,7 @@ export default function OrderDetailPage() {
                   {order.trackingNumber && (
                     <button 
                       onClick={() => copyToClipboard(order.trackingNumber)} 
-                      className="text-[8px] font-black bg-white text-[#22C55E] px-2.5 py-1.5 rounded-lg shadow-sm active:scale-90 transition-transform uppercase tracking-tighter"
+                      className="text-[8px] font-black bg-white text-[#1565FF] px-2.5 py-1.5 rounded-lg shadow-sm active:scale-90 transition-transform uppercase tracking-tighter"
                     >
                       Salin Resi
                     </button>
@@ -194,7 +193,7 @@ export default function OrderDetailPage() {
         {/* Action Button */}
         <div className="pt-4 flex flex-col gap-3">
           <Button 
-            className="w-full h-12 rounded-2xl bg-green-500 hover:bg-green-600 text-white font-black flex items-center gap-2"
+            className="w-full h-12 rounded-2xl bg-primary hover:bg-primary/90 text-white font-black flex items-center gap-2"
             onClick={() => window.open(`https://wa.me/6283851278935?text=${encodeURIComponent(`Halo Admin MarPay, saya ingin bertanya status pesanan saya dengan ID: ${orderId.slice(-8).toUpperCase()}`)}`, '_blank')}
           >
             <MessageCircle className="w-5 h-5" />

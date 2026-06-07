@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useMemo, useEffect } from 'react';
@@ -250,7 +249,7 @@ export default function AdminOrderDetailPage() {
                  </div>
               </div>
               <div className="flex items-center gap-4">
-                 <div className="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center text-green-500"><MessageCircle className="w-5 h-5" /></div>
+                 <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-primary"><MessageCircle className="w-5 h-5" /></div>
                  <div className="flex-1">
                     <p className="text-[10px] font-bold text-gray-400 uppercase">Nomor WhatsApp</p>
                     <p className="text-xs font-black text-gray-900">{order.customerPhone}</p>
@@ -258,13 +257,13 @@ export default function AdminOrderDetailPage() {
                  <Button 
                    size="sm" 
                    onClick={() => window.open(`https://wa.me/${order.customerPhone?.replace(/[^0-9]/g, '')}`, '_blank')}
-                   className="bg-green-50 text-white rounded-lg px-4 h-8 text-[10px] font-black"
+                   className="bg-primary text-white rounded-lg px-4 h-8 text-[10px] font-black"
                  >
                    CHAT WA
                  </Button>
               </div>
               <div className="flex items-start gap-4">
-                 <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-500 shrink-0"><MapPin className="w-5 h-5" /></div>
+                 <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-primary shrink-0"><MapPin className="w-5 h-5" /></div>
                  <div>
                     <p className="text-[10px] font-bold text-gray-400 uppercase">Alamat Pengiriman</p>
                     <p className="text-[11px] text-gray-600 leading-relaxed mt-1">

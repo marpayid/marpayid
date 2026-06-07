@@ -118,7 +118,7 @@ Spesifikasi:
 - Bahan: Cotton Combed 20s
 - Warna: Deep Black
 - Cutting: Boxy Oversized
-- Tekstur bahan lembut, menyerap keringat, dan tidak menerawang.
+- Tekstur bahan lembut, menyerap keringat, and tidak menerawang.
 
 Cocok dipadukan dengan celana cargo atau baggy pants untuk look minimalis modern.`,
   },
@@ -267,7 +267,7 @@ Dapatkan sensasi aroma kelas dunia dengan konsentrasi Extrait de Parfum tertingg
     isFreeShipping: true,
     shippingFee: 0,
     tags: ['parfum', 'mykonos', 'satin blanc', 'unisex', 'extrait de parfum', 'viral'],
-    description: `Mykonos Satin Blanc Extrait de Parfum 100ml. Rasakan kelembutan satin yang mewah dalam bentuk aroma. Satin Blanc adalah parfum yang menenangkan, bersih, dan sangat berkelas.
+    description: `Mykonos Satin Blanc Extrait de Parfum 100ml. Rasakan kelembutan satin yang mewah dalam bentuk aroma. Satin Blanc adalah parfum yang menenangkan, bersih, and sangat berkelas.
 
 Aroma ini memadukan kesegaran floral putih dengan sentuhan milky yang lembut, menciptakan aura yang sopan namun tetap meninggalkan kesan mendalam bagi siapa pun yang menciumnya.
 
@@ -305,7 +305,7 @@ Status: Pre-Order (Estimasi pengiriman sesuai antrean).`,
     isFreeShipping: false,
     shippingFee: 6000,
     tags: ['moisturizer', 'glad2glow', 'skincare', 'brightening', 'retinol', 'acne'],
-    description: `[100% ORIGINAL] Glad2Glow Moisturizer Series. Solusi hidrasi kulit wajah dengan berbagai varian yang disesuaikan dengan kebutuhan kulit Anda. Tersedia varian Brightening, PDRN, Retinol untuk anti-aging, Blueberry untuk skin barrier, Centella untuk menenangkan, Dark Spot, dan Acne Moist.`,
+    description: `[100% ORIGINAL] Glad2Glow Moisturizer Series. Solusi hidrasi kulit wajah dengan berbagai varian yang disesuaikan dengan kebutuhan kulit Anda. Tersedia varian Brightening, PDRN, Retinol untuk anti-aging, Blueberry untuk skin barrier, Centella untuk menenangkan, Dark Spot, and Acne Moist.`,
   },
   {
     id: 218,
@@ -327,7 +327,7 @@ Status: Pre-Order (Estimasi pengiriman sesuai antrean).`,
     isFreeShipping: false,
     shippingFee: 7000,
     tags: ['serum', 'brightening', 'niacinamide', 'collagen', 'skincare'],
-    description: `Brightening Serum dengan kandungan Niacinamide dan Collagen yang membantu mencerahkan kulit wajah, menyamarkan noda hitam, and menjaga elastisitas kulit agar tampak lebih kenyal and sehat.`,
+    description: `Brightening Serum dengan kandungan Niacinamide and Collagen yang membantu mencerahkan kulit wajah, menyamarkan noda hitam, and menjaga elastisitas kulit agar tampak lebih kenyal and sehat.`,
   },
   {
     id: 217,
@@ -953,7 +953,7 @@ export const Banners = [
     subtitle: 'Pulsa, Paket Data, Token PLN, E-Wallet, Top Up Game, BPJS and Tagihan Internet',
     badges: ['PROSES INSTAN', 'AMAN & TERPERCAYA', '24 JAM NONSTOP'],
     type: 'digital',
-    gradient: 'from-blue-600 via-indigo-600 to-purple-700'
+    gradient: 'from-[#1565FF] via-[#1D4ED8] to-[#1E3A8A]'
   },
   {
     id: 2,
@@ -961,6 +961,6 @@ export const Banners = [
     subtitle: 'Gratis ongkir, promo spesial, produk pilihan and pengiriman cepat',
     badges: ['GRATIS ONGKIR', 'PROMO SPESIAL', 'PRODUK PILIHAN'],
     type: 'physical',
-    gradient: 'from-emerald-500 via-teal-600 to-blue-600'
+    gradient: 'from-[#1565FF] via-[#00C2FF] to-[#0085FF]'
   }
 ];

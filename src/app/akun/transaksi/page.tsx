@@ -1,9 +1,8 @@
-
 "use client"
 
 import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, ClipboardList, Package, Clock, CheckCircle2, Truck, XCircle, Loader2, Copy, ChevronRight } from 'lucide-react';
+import { ArrowLeft, ClipboardList, Package, Clock, CheckCircle2, Truck, XCircle, Loader2, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useUser, useFirestore, useCollection } from '@/firebase';
@@ -11,14 +10,12 @@ import { collection, query, where } from 'firebase/firestore';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
-import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
 
 export default function TransactionPage() {
   const router = useRouter();
   const db = useFirestore();
   const { user, loading: authLoading } = useUser();
-  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('all');
 
   const ordersRef = useMemo(() => {
@@ -57,9 +54,6 @@ export default function TransactionPage() {
       if (activeTab === 'Selesai') {
         return status === 'Selesai';
       }
-      if (activeTab === 'Dibatalkan') {
-        return status === 'Dibatalkan';
-      }
       return false;
     });
   }, [sortedOrders, activeTab]);
@@ -69,7 +63,6 @@ export default function TransactionPage() {
     { label: 'Proses', value: 'proses' },
     { label: 'Dikirim', value: 'Dikirim' },
     { label: 'Selesai', value: 'Selesai' },
-    { label: 'Batal', value: 'Dibatalkan' },
   ];
 
   if (authLoading || ordersLoading) {
@@ -83,8 +76,8 @@ export default function TransactionPage() {
   const getStatusIcon = (status: string) => {
     const s = status?.toLowerCase() || '';
     if (s.includes('menunggu') || s.includes('dikonfirmasi')) return <Clock className="w-4 h-4 text-orange-500" />;
-    if (s.includes('proses') || s.includes('kemas')) return <Package className="w-4 h-4 text-blue-500" />;
-    if (s.includes('kirim')) return <Truck className="w-4 h-4 text-indigo-500" />;
+    if (s.includes('proses') || s.includes('kemas')) return <Package className="w-4 h-4 text-primary" />;
+    if (s.includes('kirim')) return <Truck className="w-4 h-4 text-blue-500" />;
     if (s.includes('selesai')) return <CheckCircle2 className="w-4 h-4 text-green-500" />;
     if (s.includes('batal')) return <XCircle className="w-4 h-4 text-red-500" />;
     return <ClipboardList className="w-4 h-4 text-gray-400" />;
@@ -130,6 +123,7 @@ export default function TransactionPage() {
                           "text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-tighter border",
                           ['Selesai'].includes(order.status) ? "bg-green-50 text-green-600 border-green-100" :
                           ['Dibatalkan'].includes(order.status) ? "bg-red-50 text-red-600 border-red-100" :
+                          ['Dikirim'].includes(order.status) ? "bg-blue-50 text-blue-600 border-blue-100" :
                           "bg-orange-50 text-orange-600 border-orange-100"
                         )}>
                           {order.status || 'Menunggu Konfirmasi'}

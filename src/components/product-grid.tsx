@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect, useMemo } from 'react';
@@ -69,8 +68,8 @@ export function FashionDiscoveryCard() {
       subtitle: 'Kaos Oversized • Kemeja Premium • Fashion Casual',
       path: '/kategori/fashion',
       icon: Shirt,
-      gradient: 'from-[#004D2C] via-[#008F4C] to-[#00A859]',
-      glow: 'bg-emerald-400/20'
+      gradient: 'from-[#1E3A8A] via-[#1D4ED8] to-[#2563EB]',
+      glow: 'bg-blue-400/20'
     },
     {
       id: 'beauty',
@@ -192,8 +191,8 @@ export function ProductCard({ product, compact = false }: { product: any, compac
         {/* Premium Promo Strip Overlay */}
         <div className="absolute bottom-0 left-0 right-0 pointer-events-none z-10 flex items-end">
           <div className="flex h-[18px] overflow-hidden rounded-tr-lg shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
-            {/* Left Part: Branding (Teal) */}
-            <div className="bg-[#0EA5A4] px-2 flex items-center">
+            {/* Left Part: Branding (Blue) */}
+            <div className="bg-[#1565FF] px-2 flex items-center">
               <span className="text-[#FFFFFF] text-[7px] font-semibold leading-none tracking-tight">Promo Pilihan</span>
             </div>
             {/* Right Part: Free Shipping (Mint) */}
@@ -206,7 +205,7 @@ export function ProductCard({ product, compact = false }: { product: any, compac
           </div>
         </div>
 
-        {product.discount && !isOutOfStock && <div className="absolute top-0 left-0 bg-orange-500 text-white text-[9px] font-black px-2 py-0.5 rounded-br-xl shadow-sm uppercase">{product.discount} OFF</div>}
+        {product.discount && !isOutOfStock && <div className="absolute top-0 left-0 bg-[#FF4D4F] text-white text-[9px] font-black px-2 py-0.5 rounded-br-xl shadow-sm uppercase">{product.discount} OFF</div>}
         {isOutOfStock && <div className="absolute inset-0 bg-black/40 flex items-center justify-center"><span className="bg-red-600 text-white text-[10px] font-black px-2 py-1 rounded-md uppercase tracking-wider">Stok Habis</span></div>}
         <button onClick={handleToggleFavorite} className={cn("absolute top-2 right-2 p-2 bg-white/90 rounded-full shadow-sm backdrop-blur-sm transition-all active:scale-125 duration-200", isFavorited ? "text-red-500" : "text-gray-400")}>
           <Heart className={cn("w-4 h-4", isFavorited && "fill-red-500")} />

@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useMemo } from 'react';
@@ -152,6 +151,7 @@ export default function AdminOrdersPage() {
                           "text-[9px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-tighter",
                           order.status === 'Selesai' ? "bg-green-50 text-green-600 border-green-100" :
                           order.status === 'Dibatalkan' ? "bg-red-50 text-red-600 border-red-100" :
+                          order.status === 'Dikirim' ? "bg-blue-50 text-blue-600 border-blue-100" :
                           "bg-orange-50 text-orange-600 border-orange-100"
                         )}>
                           {order.status || 'Menunggu Konfirmasi'}
