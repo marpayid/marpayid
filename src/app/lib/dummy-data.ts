@@ -60,7 +60,7 @@ export const Products = [
     category: 'Fashion',
     imageUrl: 'https://i.ibb.co/3mMVXq3M/IMG-1491.jpg',
     isFlashSale: false,
-    discount: null,
+    discount: '10%',
     stock: 'Tersedia',
     tag: 'Produk Baru',
     gender: 'unisex',
@@ -132,7 +132,7 @@ Cocok dipadukan dengan celana cargo atau baggy pants untuk look minimalis modern
     category: 'Fashion',
     imageUrl: 'https://i.ibb.co/XkXmhtF9/IMG-1488.jpg',
     isFlashSale: false,
-    discount: null,
+    discount: '5%',
     stock: 'Tersedia',
     tag: 'Produk Pilihan',
     gender: 'unisex',
@@ -186,7 +186,7 @@ Tersedia varian:
 1. Velvet Rouge: Memberikan kesan mewah, elegan, dan berani dengan sentuhan floral and spicy.
 2. Garden Of Whisper: Memberikan kesan menenangkan, segar, dan feminin seperti berada di taman bunga.
 
-Cara Pakai: Semprotkan pada titik nadi seperti pergelangan tangan, leher, dan belakang telinga untuk hasil maksimal.`,
+Cara Pakai: Semprotkan pada titik nadi seperti pergelangan tangan, leher, and belakang telinga untuk hasil maksimal.`,
   },
   {
     id: 222,
@@ -198,7 +198,7 @@ Cara Pakai: Semprotkan pada titik nadi seperti pergelangan tangan, leher, dan be
     category: 'Beauty',
     imageUrl: 'https://i.ibb.co/jZGb49pk/IMG-1485.jpg',
     isFlashSale: false,
-    discount: null,
+    discount: '10%',
     stock: 'Tersedia',
     tag: 'Recommended',
     gender: 'female',
@@ -208,7 +208,7 @@ Cara Pakai: Semprotkan pada titik nadi seperti pergelangan tangan, leher, dan be
     isFreeShipping: true,
     shippingFee: 0,
     tags: ['parfum', 'pinkberry', 'twinkle', 'wanita', 'edp', 'floral'],
-    description: `Pinkberry Eau de Parfum Twinkle 50ml. Aroma yang memikat dengan perpaduan floral dan fruity yang memberikan kesan ceria dan feminin. Cocok untuk wanita yang aktif dan ingin tampil segar sepanjang hari.
+    description: `Pinkberry Eau de Parfum Twinkle 50ml. Aroma yang memikat dengan perpaduan floral dan fruity yang memberikan kesan ceria and feminin. Cocok untuk wanita yang aktif and ingin tampil segar sepanjang hari.
 
 Top Notes: Citrus, Berries
 Middle Notes: Jasmine, Rose
@@ -239,7 +239,7 @@ Keunggulan:
     isFreeShipping: true,
     shippingFee: 0,
     tags: ['parfum', 'crusita', 'superstar', 'unisex', 'extrait de parfum', 'new launching'],
-    description: `(NEW LAUNCHING) Crusita - Superstar Extrait De Parfum 50ML. Simbol kepercayaan diri dan kemewahan dalam satu botol. Superstar dirancang untuk kamu yang ingin menjadi pusat perhatian dengan aroma yang bold dan memikat.
+    description: `(NEW LAUNCHING) Crusita - Superstar Extrait De Parfum 50ML. Simbol kepercayaan diri and kemewahan dalam satu botol. Superstar dirancang untuk kamu yang ingin menjadi pusat perhatian dengan aroma yang bold and memikat.
 
 Karakter: Bold, Elegant, & Charismatic.
 Longevity: Up to 12-15 hours on skin.
@@ -257,7 +257,7 @@ Dapatkan sensasi aroma kelas dunia dengan konsentrasi Extrait de Parfum tertingg
     category: 'Beauty',
     imageUrl: 'https://i.ibb.co/zh4TjQSL/IMG-1482.jpg',
     isFlashSale: false,
-    discount: null,
+    discount: '10%',
     stock: 'Tersedia',
     tag: 'Trending',
     gender: 'unisex',
@@ -317,7 +317,7 @@ Status: Pre-Order (Estimasi pengiriman sesuai antrean).`,
     category: 'Beauty',
     imageUrl: 'https://i.ibb.co/dJ3C8QXw/IMG-1461.jpg',
     isFlashSale: true,
-    discount: null,
+    discount: '15%',
     stock: 'Tersedia',
     tag: 'Produk Viral',
     gender: 'female',
@@ -339,7 +339,7 @@ Status: Pre-Order (Estimasi pengiriman sesuai antrean).`,
     category: 'Beauty',
     imageUrl: 'https://i.ibb.co/cXcJB0q1/IMG-1452.jpg',
     isFlashSale: true,
-    discount: null,
+    discount: '10%',
     stock: 'Tersedia',
     tag: 'Produk Viral',
     gender: 'female',
@@ -361,7 +361,7 @@ Status: Pre-Order (Estimasi pengiriman sesuai antrean).`,
     category: 'Beauty',
     imageUrl: 'https://i.ibb.co/fGdgqtwt/IMG-1449.jpg',
     isFlashSale: true,
-    discount: null,
+    discount: '10%',
     stock: 'Tersedia',
     tag: 'Produk Viral',
     gender: 'female',
