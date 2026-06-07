@@ -1,4 +1,3 @@
-
 "use client"
 
 import { Flame, Package, Tag, Droplets } from 'lucide-react';
@@ -34,7 +33,7 @@ export function QuickMenu() {
   ];
 
   return (
-    <section className="bg-[#F5F7FB] px-4 pt-4 pb-2">
+    <section className="bg-transparent px-4 pt-4 pb-2">
       <div className="bg-white rounded-[20px] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-100 flex items-center h-[90px] divide-x divide-gray-50 overflow-hidden">
         {menuItems.map((item) => (
           <Link 
