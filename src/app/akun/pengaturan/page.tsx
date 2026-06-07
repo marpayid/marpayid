@@ -1,8 +1,7 @@
-
 "use client"
 
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Languages, Moon, Info, ChevronRight, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, Languages, Moon, Info, ChevronRight, ShieldCheck, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import Link from 'next/link';
@@ -56,6 +55,18 @@ export default function SettingsPage() {
                   <Info className="w-5 h-5" />
                 </div>
                 <h4 className="text-xs font-bold text-gray-800">Tentang Aplikasi</h4>
+              </div>
+              <ChevronRight className="w-4 h-4 text-gray-300" />
+            </div>
+          </Link>
+
+          <Link href="/akun/pengaturan/syarat-ketentuan">
+            <div className="flex items-center justify-between p-5 border-b border-gray-50 active:bg-gray-50 transition-colors">
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center text-gray-400">
+                  <FileText className="w-5 h-5" />
+                </div>
+                <h4 className="text-xs font-bold text-gray-800">Syarat & Ketentuan</h4>
               </div>
               <ChevronRight className="w-4 h-4 text-gray-300" />
             </div>
