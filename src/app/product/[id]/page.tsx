@@ -2,9 +2,9 @@
 "use client"
 
 import { useParams, useRouter } from 'next/navigation';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { 
-  ArrowLeft, ShoppingBag, Star, Minus, Plus, Info, Heart, LayoutGrid, Loader2
+  ArrowLeft, ShoppingBag, Star, Minus, Plus, Info, Heart, LayoutGrid, Loader2, ChevronRight, ChevronLeft
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -14,6 +14,7 @@ import Link from 'next/link';
 import { cn, formatSold, formatReviews, getProductImage } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { ProductCard } from '@/components/product-grid';
+import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from '@/components/ui/carousel';
 
 export default function ProductDetail() {
   const params = useParams();
@@ -27,8 +28,45 @@ export default function ProductDetail() {
   
   const [quantity, setQuantity] = useState(1);
   const [selectedVariant, setSelectedVariant] = useState(0);
-  const [selectedColor, setSelectedColor] = useState(0);
-  const [activeImage, setActiveImage] = useState('');
+  const [selectedColorIndex, setSelectedColorIndex] = useState(0);
+  const [api, setApi] = useState<CarouselApi>();
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  // Kata kunci untuk mendeteksi foto yang BUKAN varian warna (hanya informasi tambahan)
+  const informativeKeywords = ['detail', 'belakang', 'size', 'chart', 'tabel', 'ukuran', 'depan', 'view'];
+
+  // 1. Filter varian warna asli untuk ditampilkan di tombol pilihan
+  const selectableColors = useMemo(() => {
+    if (!product?.colors) return [];
+    return product.colors.filter((c: any) => {
+      const name = (typeof c === 'object' ? c.name : c).toLowerCase();
+      return !informativeKeywords.some(keyword => name.includes(keyword));
+    });
+  }, [product]);
+
+  // 2. Kumpulkan semua foto unik untuk galeri carousel
+  const galleryItems = useMemo(() => {
+    if (!product) return [];
+    const items: { url: string; colorName?: string }[] = [];
+    const seenUrls = new Set<string>();
+
+    const mainImg = getProductImage(product);
+    items.push({ url: mainImg });
+    seenUrls.add(mainImg);
+
+    // Tambahkan semua foto dari list colors (termasuk yang informatif)
+    product.colors?.forEach((c: any) => {
+      if (typeof c === 'object' && c.imageUrl && !seenUrls.has(c.imageUrl)) {
+        items.push({ 
+          url: c.imageUrl, 
+          colorName: !informativeKeywords.some(k => c.name.toLowerCase().includes(k)) ? c.name : undefined 
+        });
+        seenUrls.add(c.imageUrl);
+      }
+    });
+
+    return items;
+  }, [product]);
 
   // Pelacakan Interaksi untuk Algoritma Rekomendasi
   useEffect(() => {
@@ -36,71 +74,54 @@ export default function ProductDetail() {
       const viewedCats = JSON.parse(localStorage.getItem('marpay_viewed_cats') || '[]');
       const viewedGenders = JSON.parse(localStorage.getItem('marpay_viewed_genders') || '[]');
       
-      // Simpan 10 kategori terakhir yang dilihat
       const newCats = [product.category, ...viewedCats.filter((c: string) => c !== product.category)].slice(0, 10);
       localStorage.setItem('marpay_viewed_cats', JSON.stringify(newCats));
       
-      // Simpan 20 gender terakhir (untuk deteksi preferensi)
       const gender = product.gender || (product.name.toLowerCase().includes('pria') ? 'male' : product.name.toLowerCase().includes('wanita') ? 'female' : 'unisex');
       const newGenders = [gender, ...viewedGenders].slice(0, 20);
       localStorage.setItem('marpay_viewed_genders', JSON.stringify(newGenders));
     }
   }, [product]);
 
-  // Perbaikan Sistem Galeri: Mapping berdasarkan Nama Warna (Key Matching)
+  // Update slide index saat carousel bergeser
   useEffect(() => {
-    if (product) {
-      const baseImg = getProductImage(product);
-      const currentColorVarian = product.colors?.[selectedColor];
-      
-      if (currentColorVarian && typeof currentColorVarian === 'object') {
-        setActiveImage(currentColorVarian.imageUrl || baseImg);
-      } else {
-        setActiveImage(baseImg);
-      }
-    }
-  }, [product, selectedColor]);
+    if (!api) return;
+    api.on("select", () => {
+      setCurrentSlide(api.selectedScrollSnap());
+    });
+  }, [api]);
 
-  const isOutOfStock = product?.stock === 'Stok Habis';
+  // Fungsi untuk berpindah slide saat warna dipilih
+  const handleColorSelect = (index: number, colorName: string) => {
+    setSelectedColorIndex(index);
+    if (!api) return;
+
+    // Cari index foto di galleryItems yang cocok dengan nama warna
+    const slideIndex = galleryItems.findIndex(item => item.colorName === colorName);
+    if (slideIndex !== -1) {
+      api.scrollTo(slideIndex);
+    }
+  };
 
   const currentPrice = useMemo(() => {
     if (!product) return 0;
     
+    // Logika harga dinamis berdasarkan varian produk tertentu
     if (String(product.id) === '219') {
-      const colorName = product.colors?.[selectedColor]?.name;
+      const colorName = selectableColors[selectedColorIndex]?.name;
       if (colorName === 'NEW PDRN-30g' || colorName === 'Retinol 30g') return 48000;
-      return 44890;
     }
-
-    if (String(product.id) === '214') {
-      const colorName = product.colors?.[selectedColor]?.name;
-      if (colorName === '100 ml') return 30129;
-      return 18223;
-    }
-
-    if (String(product.id) === '208') {
-      if (selectedVariant === 2) return 45000;
-      return 28000;
-    }
-    
+    if (String(product.id) === '214' && selectableColors[selectedColorIndex]?.name === '100 ml') return 30129;
+    if (String(product.id) === '208' && selectedVariant === 2) return 45000;
     if (String(product.id) === '203') {
       if (selectedVariant === 1) return 63102;
       if (selectedVariant === 2) return 70000;
-      return 59252;
     }
-    
-    if (String(product.id) === '201') {
-      const variantName = product.variants?.[selectedVariant] || '';
-      if (variantName.includes('14') || variantName.includes('15') || variantName.includes('16') || variantName.includes('17')) {
-        return 17999;
-      }
-      return 14899;
-    }
-    
+    if (String(product.id) === '201' && (product.variants?.[selectedVariant] || '').match(/14|15|16|17/)) return 17999;
     if (String(product.id) === '2' && selectedVariant === 1) return 309000;
     
     return product.price;
-  }, [product, selectedVariant, selectedColor]);
+  }, [product, selectedVariant, selectedColorIndex, selectableColors]);
 
   const similarProducts = useMemo(() => {
     if (!product) return [];
@@ -114,18 +135,17 @@ export default function ProductDetail() {
   if (!product) return <div className="p-8 text-center font-bold">Produk tidak ditemukan</div>;
 
   const variants = product.variants || ['Default'];
-  const colors = product.colors || [];
   const totalPrice = currentPrice * quantity;
 
   const handleAction = (redirect = false) => {
-    if (isOutOfStock) return;
+    const currentColor = selectableColors[selectedColorIndex];
+    const colorName = currentColor ? (typeof currentColor === 'object' ? currentColor.name : currentColor) : '';
     
-    const currentColor = colors[selectedColor];
-    const colorName = typeof currentColor === 'object' ? currentColor.name : currentColor;
-    
-    const variantString = colors.length > 0 
+    const variantString = colorName 
       ? `${variants[selectedVariant]} - ${colorName}` 
       : variants[selectedVariant];
+
+    const activeImage = galleryItems[currentSlide]?.url || getProductImage(product);
 
     const item = { 
       id: product.id, 
@@ -165,8 +185,46 @@ export default function ProductDetail() {
       </header>
 
       <main className="pt-14">
-        <div className="relative aspect-square w-full bg-white">
-          <Image src={activeImage || getProductImage(product)} alt={product.name} fill className="object-cover" priority />
+        {/* Gallery Carousel */}
+        <div className="relative w-full bg-white group">
+          <Carousel setApi={setApi} className="w-full">
+            <CarouselContent>
+              {galleryItems.map((item, idx) => (
+                <CarouselItem key={idx}>
+                  <div className="relative aspect-square w-full">
+                    <Image 
+                      src={item.url} 
+                      alt={`${product.name} - ${idx + 1}`} 
+                      fill 
+                      className="object-cover" 
+                      priority={idx === 0} 
+                    />
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            {galleryItems.length > 1 && (
+              <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-1.5 z-10">
+                {galleryItems.map((_, idx) => (
+                  <div 
+                    key={idx} 
+                    className={cn(
+                      "h-1.5 rounded-full transition-all duration-300",
+                      currentSlide === idx ? "w-6 bg-primary" : "w-1.5 bg-black/20"
+                    )}
+                  />
+                ))}
+              </div>
+            )}
+          </Carousel>
+          
+          {/* Navigation Overlay Hints */}
+          {galleryItems.length > 1 && (
+             <div className="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-2 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="w-8 h-8 rounded-full bg-white/50 backdrop-blur-sm flex items-center justify-center text-gray-800"><ChevronLeft className="w-5 h-5" /></div>
+                <div className="w-8 h-8 rounded-full bg-white/50 backdrop-blur-sm flex items-center justify-center text-gray-800"><ChevronRight className="w-5 h-5" /></div>
+             </div>
+          )}
         </div>
 
         <section className="mt-2 bg-white p-4">
@@ -194,19 +252,19 @@ export default function ProductDetail() {
         </section>
 
         <section className="mt-2 bg-white p-4 space-y-4">
-          {colors.length > 0 && (
+          {selectableColors.length > 0 && (
             <div>
-              <p className="text-[11px] font-bold text-gray-400 uppercase mb-2">Pilihan</p>
+              <p className="text-[11px] font-bold text-gray-400 uppercase mb-2">Pilihan Warna</p>
               <div className="flex flex-wrap gap-2">
-                {colors.map((c: any, i: number) => {
+                {selectableColors.map((c: any, i: number) => {
                   const colorName = typeof c === 'object' ? c.name : c;
                   return (
                     <button 
                       key={colorName} 
-                      onClick={() => setSelectedColor(i)} 
+                      onClick={() => handleColorSelect(i, colorName)} 
                       className={cn(
                         "px-4 py-2 rounded-lg text-xs border transition-all", 
-                        selectedColor === i ? "border-primary bg-primary/5 text-primary shadow-sm" : "border-gray-100"
+                        selectedColorIndex === i ? "border-primary bg-primary/5 text-primary shadow-sm" : "border-gray-100"
                       )}
                     >
                       {colorName}
@@ -216,16 +274,27 @@ export default function ProductDetail() {
               </div>
             </div>
           )}
+          
           {variants.length > 1 && (
             <div>
-              <p className="text-[11px] font-bold text-gray-400 uppercase mb-2">Varian</p>
+              <p className="text-[11px] font-bold text-gray-400 uppercase mb-2">Varian Ukuran</p>
               <div className="flex flex-wrap gap-2">
                 {variants.map((v: string, i: number) => (
-                  <button key={v} onClick={() => setSelectedVariant(i)} className={cn("px-4 py-2 rounded-lg text-xs border", selectedVariant === i ? "border-primary bg-primary/5 text-primary" : "border-gray-100")}>{v}</button>
+                  <button 
+                    key={v} 
+                    onClick={() => setSelectedVariant(i)} 
+                    className={cn(
+                      "px-4 py-2 rounded-lg text-xs border transition-all", 
+                      selectedVariant === i ? "border-primary bg-primary/5 text-primary" : "border-gray-100"
+                    )}
+                  >
+                    {v}
+                  </button>
                 ))}
               </div>
             </div>
           )}
+
           <div className="flex items-center justify-between pt-2">
             <p className="text-[11px] font-bold text-gray-400 uppercase">Jumlah</p>
             <div className="flex items-center gap-4 bg-gray-50 rounded-xl p-1 border border-gray-100">
@@ -244,7 +313,6 @@ export default function ProductDetail() {
           <p className="text-xs text-gray-600 leading-relaxed whitespace-pre-line">
             {product.description}
           </p>
-          {/* Spacing after description for better readability */}
           <div className="h-6"></div>
         </section>
 
