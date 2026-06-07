@@ -2,11 +2,10 @@
 
 import { useMemo, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, ClipboardList, Package, Clock, CheckCircle2, Truck, XCircle, Loader2, Copy, Database, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, ClipboardList, Package, Clock, CheckCircle2, Truck, XCircle, Loader2, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useUser, useFirestore, useCollection } from '@/firebase';
-import { firebaseConfig } from '@/firebase/config';
 import { collection, query, where } from 'firebase/firestore';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
@@ -25,7 +24,7 @@ export default function TransactionPage() {
     return collection(db, 'orders');
   }, [db, user?.uid]);
 
-  const { data: orders, loading: ordersLoading, error: firestoreError } = useCollection(
+  const { data: orders, loading: ordersLoading } = useCollection(
     ordersRef ? query(
       ordersRef, 
       where('userId', '==', user?.uid)
@@ -104,25 +103,6 @@ export default function TransactionPage() {
       </header>
 
       <main className="pt-20 px-4">
-        {/* DIAGNOSTIC CONSOLE */}
-        <div className="mb-4 bg-slate-900 rounded-2xl p-4 text-[10px] font-mono text-cyan-400 space-y-2 border border-white/10">
-           <div className="flex items-center gap-2 mb-2 text-white border-b border-white/5 pb-2">
-              <Database className="w-3.5 h-3.5 text-emerald-400" /> 
-              <span className="font-bold uppercase tracking-widest">Customer Data Audit</span>
-           </div>
-           <p className="flex justify-between">
-             <span className="text-gray-500">Project:</span> 
-             <span className="text-white font-bold">{firebaseConfig.projectId}</span>
-           </p>
-           <p className="flex justify-between">
-             <span className="text-gray-500">Docs Found:</span> 
-             <span className="text-white font-black text-sm">{sortedOrders.length}</span>
-           </p>
-           {firestoreError && (
-             <p className="text-red-400 bg-red-500/10 p-2 rounded mt-2">Error: {firestoreError.message}</p>
-           )}
-        </div>
-
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="bg-transparent w-full flex overflow-x-auto no-scrollbar justify-start h-auto p-0 mb-6 gap-2">
             {statuses.map(s => (
@@ -145,7 +125,7 @@ export default function TransactionPage() {
                       <div className="flex items-center gap-2">
                         {getStatusIcon(order.status)}
                         <span className="text-[11px] font-bold">
-                          {order.createdAt?.toDate ? format(order.createdAt.toDate(), 'dd MMM yyyy', { locale: id }) : 'Waktu diproses...'}
+                          {order.createdAt?.toDate ? format(order.createdAt.toDate(), 'dd MMM yyyy, HH:mm', { locale: id }) : 'Waktu diproses...'}
                         </span>
                       </div>
                       <span className={cn(
