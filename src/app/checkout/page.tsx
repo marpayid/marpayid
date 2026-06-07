@@ -25,6 +25,7 @@ import Image from 'next/image';
 import { cn, getProductImage } from '@/lib/utils';
 import { useUser, useFirestore } from '@/firebase';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { useToast } from '@/hooks/use-toast';
 
 interface AddressData {
   name: string;
@@ -46,6 +47,7 @@ export default function Checkout() {
   const router = useRouter();
   const db = useFirestore();
   const { user } = useUser();
+  const { toast } = useToast();
   
   const [items, setItems] = useState<any[]>([]);
   const [address, setAddress] = useState<AddressData | null>(null);
@@ -111,7 +113,7 @@ export default function Checkout() {
     setIsAddressModalOpen(false);
   };
 
-  const handleWhatsAppCheckout = async () => {
+  const handleWhatsAppCheckout = () => {
     if (items.length === 0 || isSubmitting) return;
     
     if (!isDigital && !address) {
@@ -137,22 +139,6 @@ export default function Checkout() {
     }).join('\n\n');
 
     try {
-      // Simpan ke Firestore
-      await addDoc(collection(db, 'orders'), {
-        userId: user?.uid || 'guest',
-        customerName,
-        customerPhone,
-        customerEmail: user?.email || '',
-        items,
-        totalAmount: totalBill,
-        status: 'Menunggu Konfirmasi',
-        paymentStatus: 'Menunggu Pembayaran',
-        paymentMethod: paymentMethodLabel,
-        shippingAddress: isDigital ? { fullAddress: 'Digital' } : address,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp()
-      });
-
       // Format Pesan WhatsApp
       let message = `🛍️ ORDER BARU MARPAY\n\n`;
       message += `━━━━━━━━━━━━━━\n\n`;
@@ -177,15 +163,43 @@ export default function Checkout() {
       message += `Terima kasih 🙏`;
 
       const whatsappUrl = `https://wa.me/${adminWhatsApp}?text=${encodeURIComponent(message)}`;
-      
-      // Bersihkan keranjang dan temp
+
+      // Simpan ke Firestore (Non-blocking write)
+      addDoc(collection(db, 'orders'), {
+        userId: user?.uid || 'guest',
+        customerName,
+        customerPhone,
+        customerEmail: user?.email || '',
+        items,
+        totalAmount: totalBill,
+        status: 'Menunggu Konfirmasi',
+        paymentStatus: 'Menunggu Pembayaran',
+        paymentMethod: paymentMethodLabel,
+        shippingAddress: isDigital ? { fullAddress: 'Digital' } : address,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      }).catch((err) => {
+        console.error("Firestore Save Error:", err);
+      });
+
+      // Bersihkan keranjang
       localStorage.removeItem('marpay_checkout_temp');
       localStorage.removeItem('marpay_cart');
       window.dispatchEvent(new Event('cart-updated'));
 
+      // Redirect ke WhatsApp secara instan
       window.location.href = whatsappUrl;
+
+      // Safety reset agar jika redirect tertunda browser, tombol kembali normal setelah 2 detik
+      setTimeout(() => setIsSubmitting(false), 2000);
+
     } catch (e) {
-      console.error("Firestore Save Error:", e);
+      console.error("Process Checkout Error:", e);
+      toast({
+        variant: "destructive",
+        title: "Gagal Membuat Pesanan",
+        description: "Terjadi kesalahan teknis. Silakan coba lagi.",
+      });
       setIsSubmitting(false);
     }
   };
@@ -193,7 +207,6 @@ export default function Checkout() {
   const renderItemMedia = (item: any) => {
     if (item.type === 'digital') {
       const name = item.name?.toLowerCase() || '';
-      const category = item.category?.toLowerCase() || '';
       let Icon = CreditCard;
       let iconColor = "text-primary";
       let bgColor = "bg-primary/5";
