@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useRouter } from 'next/navigation';
@@ -35,8 +34,8 @@ export default function FashionCategoryPage() {
       </header>
 
       <main className="pt-20 px-4">
-        {/* Banner Hero Mini */}
-        <div className="relative rounded-[24px] overflow-hidden h-36 bg-gradient-to-br from-primary via-emerald-600 to-emerald-800 p-6 flex flex-col justify-center text-white shadow-lg shadow-primary/10 mb-6">
+        {/* Banner Hero Mini - Reverted to Emerald */}
+        <div className="relative rounded-[24px] overflow-hidden h-36 bg-gradient-to-br from-[#00A859] via-emerald-600 to-emerald-800 p-6 flex flex-col justify-center text-white shadow-lg shadow-primary/10 mb-6">
            <Shirt className="absolute right-[-15px] top-[-15px] w-36 h-36 text-white/10 rotate-12" />
            <div className="relative z-10">
              <h2 className="text-xl font-black leading-tight mb-1">Fashion Pilihan</h2>

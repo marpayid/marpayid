@@ -60,7 +60,8 @@ export default function PrivacyPage() {
       </header>
 
       <main className="pt-24 px-4 space-y-6 max-w-md mx-auto">
-        <div className="bg-gradient-to-br from-primary to-emerald-700 p-6 rounded-[32px] text-white shadow-xl shadow-primary/20 relative overflow-hidden">
+        {/* Banner Reverted to Emerald */}
+        <div className="bg-gradient-to-br from-emerald-600 to-emerald-700 p-6 rounded-[32px] text-white shadow-xl shadow-primary/20 relative overflow-hidden">
           <ShieldCheck className="absolute right-[-10px] top-[-10px] w-32 h-32 text-white/10 -rotate-12" />
           <h2 className="text-xl font-black mb-2">Privasi Anda Prioritas Kami</h2>
           <p className="text-xs text-white/80 leading-relaxed font-medium">

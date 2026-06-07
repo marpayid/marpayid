@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useRouter } from 'next/navigation';
@@ -102,8 +101,8 @@ export default function TopUpPage() {
           </div>
         </div>
 
-        {/* Promo Banner */}
-        <div className="mt-6 relative rounded-2xl overflow-hidden h-28 bg-gradient-to-r from-primary to-emerald-600 p-5 flex flex-col justify-center text-white shadow-lg shadow-primary/20">
+        {/* Promo Banner - Reverted to Emerald */}
+        <div className="mt-6 relative rounded-2xl overflow-hidden h-28 bg-gradient-to-r from-[#00A859] to-emerald-600 p-5 flex flex-col justify-center text-white shadow-lg shadow-primary/20">
            <Zap className="absolute right-[-10px] top-[-10px] w-28 h-28 text-white/10 rotate-12" />
            <p className="text-[8px] font-bold uppercase tracking-widest opacity-80 mb-1">PROMO HARI INI</p>
            <h2 className="text-base font-bold leading-tight mb-2">Cashback s/d Rp5.000<br/>Setiap Top Up Digital</h2>
