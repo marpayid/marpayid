@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useRouter } from 'next/navigation';
@@ -113,7 +112,7 @@ export default function PrivacyPage() {
         </section>
 
         <p className="text-center text-[10px] text-gray-400 font-bold uppercase tracking-widest py-6">
-          Pembaruan Terakhir: Januari 2024
+          Versi 1.0.4
         </p>
       </main>
     </div>

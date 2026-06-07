@@ -1,8 +1,7 @@
-
 "use client"
 
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Globe, MessageCircle, Mail, Info, ShieldCheck } from 'lucide-react';
+import { Globe, MessageCircle, Mail, ShieldCheck, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 
@@ -100,7 +99,7 @@ export default function AboutPage() {
             <ShieldCheck className="w-3.5 h-3.5" />
             Terverifikasi & Aman
           </div>
-          <p className="text-[9px] text-gray-300 mt-4 font-medium uppercase tracking-[0.2em]">© 2024 MarPay Digital Solution</p>
+          <p className="text-[9px] text-gray-300 mt-4 font-medium uppercase tracking-[0.2em]">MarPay Digital Solution • Versi 1.0.4</p>
         </div>
       </main>
     </div>

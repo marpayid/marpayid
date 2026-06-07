@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useRouter } from 'next/navigation';
@@ -63,7 +62,6 @@ export default function TermsPage() {
       </header>
 
       <main className="pt-24 px-4 space-y-6 max-w-md mx-auto">
-        {/* Intro Section - Clean Marketplace Design */}
         <div className="bg-white p-6 rounded-[28px] border border-gray-100 shadow-sm">
           <div className="flex items-center gap-4 mb-4">
              <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary shrink-0">
@@ -71,7 +69,7 @@ export default function TermsPage() {
              </div>
              <div>
                 <h2 className="text-base font-black text-gray-900 leading-tight">Ketentuan Layanan</h2>
-                <p className="text-[10px] font-bold text-primary uppercase tracking-widest mt-0.5">Januari 2024 • v1.2</p>
+                <p className="text-[10px] font-bold text-primary uppercase tracking-widest mt-0.5">Versi 1.0.4</p>
              </div>
           </div>
           <p className="text-[11px] text-gray-500 leading-relaxed font-medium">
@@ -79,7 +77,6 @@ export default function TermsPage() {
           </p>
         </div>
 
-        {/* Terms Grid */}
         <div className="space-y-4">
           {terms.map((term, idx) => (
             <section key={idx} className="bg-white p-5 rounded-[24px] border border-gray-100 shadow-sm space-y-3 transition-all active:scale-[0.99]">
@@ -96,7 +93,6 @@ export default function TermsPage() {
           ))}
         </div>
 
-        {/* Contact Footer Card */}
         <section className="bg-white p-6 rounded-[28px] border border-gray-100 shadow-sm space-y-4">
           <div className="flex items-center gap-3">
              <div className="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600">
@@ -120,7 +116,7 @@ export default function TermsPage() {
         </section>
 
         <p className="text-center text-[10px] text-gray-300 font-bold uppercase tracking-[0.2em] py-8">
-          MarPay Legal Solution • © 2024
+          MarPay Legal Solution • Versi 1.0.4
         </p>
       </main>
     </div>
