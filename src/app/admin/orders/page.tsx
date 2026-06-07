@@ -7,7 +7,7 @@ import {
   ArrowLeft, Search, Package, User, Phone, 
   Calendar, CreditCard, Truck, Loader2, 
   MoreVertical, CheckCircle2, Clock, XCircle, 
-  MapPin, ShoppingCart, DollarSign, Send
+  MapPin, ShoppingCart, DollarSign, Send, ClipboardCheck
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -26,6 +26,15 @@ import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
 
 const ADMIN_EMAIL = 'cs.marpay@gmail.com';
+
+const ORDER_STATUSES = [
+  "Menunggu Konfirmasi",
+  "Dikonfirmasi",
+  "Diproses",
+  "Dikirim",
+  "Selesai",
+  "Dibatalkan"
+];
 
 export default function AdminOrdersPage() {
   const router = useRouter();
@@ -67,9 +76,9 @@ export default function AdminOrdersPage() {
         ...updates, 
         updatedAt: serverTimestamp() 
       });
-      toast({ variant: "success", title: "Berhasil Update", description: "Data pesanan telah diperbarui di sistem." });
+      toast({ variant: "success", title: "Berhasil Update", description: "Data pesanan telah diperbarui." });
     } catch (e) {
-      toast({ variant: "destructive", title: "Gagal Update", description: "Terjadi kesalahan koneksi database." });
+      toast({ variant: "destructive", title: "Gagal Update", description: "Terjadi kesalahan sistem." });
     } finally {
       setUpdatingId(null);
     }
@@ -110,7 +119,7 @@ export default function AdminOrdersPage() {
         <div className="relative">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input 
-            placeholder="Cari Nama atau ID Pesanan..." 
+            placeholder="Cari Nama, ID, atau HP..." 
             className="w-full pl-11 pr-4 py-3.5 bg-white border border-gray-100 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 shadow-sm"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -124,11 +133,11 @@ export default function AdminOrdersPage() {
            </div>
            <div className="bg-white p-3 rounded-2xl border border-gray-100 shadow-sm text-center">
               <p className="text-[9px] font-bold text-gray-400 uppercase">Pending</p>
-              <p className="text-base font-black text-orange-500">{orders?.filter(o => o.status === 'perlu_diproses').length || 0}</p>
+              <p className="text-base font-black text-orange-500">{orders?.filter(o => o.status === 'Menunggu Konfirmasi' || o.status === 'perlu_diproses').length || 0}</p>
            </div>
            <div className="bg-white p-3 rounded-2xl border border-gray-100 shadow-sm text-center">
               <p className="text-[9px] font-bold text-gray-400 uppercase">Selesai</p>
-              <p className="text-base font-black text-emerald-500">{orders?.filter(o => o.status === 'selesai').length || 0}</p>
+              <p className="text-base font-black text-emerald-500">{orders?.filter(o => o.status === 'Selesai' || o.status === 'selesai').length || 0}</p>
            </div>
         </div>
 
@@ -143,11 +152,11 @@ export default function AdminOrdersPage() {
                         <span className="text-[10px] font-black text-primary bg-primary/5 px-2 py-0.5 rounded">ID: {order.id?.slice(-8).toUpperCase()}</span>
                         <span className={cn(
                           "text-[9px] font-black px-2.5 py-0.5 rounded-full uppercase",
-                          order.status === 'selesai' ? "bg-green-50 text-green-600 border border-green-100" :
-                          order.status === 'dibatalkan' ? "bg-red-50 text-red-600 border border-red-100" :
+                          order.status === 'Selesai' || order.status === 'selesai' ? "bg-green-50 text-green-600 border border-green-100" :
+                          order.status === 'Dibatalkan' || order.status === 'dibatalkan' ? "bg-red-50 text-red-600 border border-red-100" :
                           "bg-orange-50 text-orange-600 border border-orange-100"
                         )}>
-                          {order.status?.replace('_', ' ')}
+                          {order.status || 'Menunggu Konfirmasi'}
                         </span>
                       </div>
                       <div className="flex items-center gap-1.5 text-[11px] text-gray-400 font-medium">
@@ -162,8 +171,8 @@ export default function AdminOrdersPage() {
                       <div className="w-9 h-9 rounded-xl bg-white flex items-center justify-center text-primary shadow-sm border border-gray-100">
                          <User className="w-4.5 h-4.5" />
                       </div>
-                      <div>
-                         <p className="text-xs font-black text-gray-900">{order.customerName}</p>
+                      <div className="max-w-[120px]">
+                         <p className="text-xs font-black text-gray-900 truncate">{order.customerName}</p>
                          <p className="text-[10px] text-gray-400 font-bold">{order.customerPhone}</p>
                       </div>
                     </div>
@@ -250,16 +259,14 @@ export default function AdminOrdersPage() {
                           <SelectValue placeholder="Pilih Status" />
                         </SelectTrigger>
                         <SelectContent className="rounded-xl">
-                          <SelectItem value="perlu_diproses">Perlu Diproses</SelectItem>
-                          <SelectItem value="dikemas">Dikemas</SelectItem>
-                          <SelectItem value="dikirim">Kirim Produk (Input Resi)</SelectItem>
-                          <SelectItem value="selesai">Selesai</SelectItem>
-                          <SelectItem value="dibatalkan">Batalkan</SelectItem>
+                          {ORDER_STATUSES.map(s => (
+                            <SelectItem key={s} value={s}>{s}</SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </div>
 
-                    {(order.status === 'dikirim' || order.trackingNumber) && (
+                    {(order.status === 'Dikirim' || order.status === 'dikirim' || order.trackingNumber) && (
                       <div className="grid grid-cols-2 gap-3 p-4 bg-primary/5 rounded-2xl border border-primary/10 animate-in fade-in zoom-in-95">
                         <div className="space-y-1.5">
                           <label className="text-[9px] font-black text-primary/60 uppercase">Ekspedisi</label>

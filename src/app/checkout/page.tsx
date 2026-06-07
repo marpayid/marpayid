@@ -145,7 +145,7 @@ export default function Checkout() {
         customerEmail: user?.email || '',
         items,
         totalAmount: totalBill,
-        status: 'perlu_diproses',
+        status: 'Menunggu Konfirmasi',
         paymentStatus: 'Menunggu Pembayaran',
         paymentMethod: paymentMethodLabel,
         shippingAddress: isDigital ? { fullAddress: 'Digital' } : address,

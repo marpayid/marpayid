@@ -44,7 +44,7 @@
         "customerPhone": { "type": "string" },
         "items": { "type": "array" },
         "totalAmount": { "type": "number" },
-        "status": { "type": "string", "enum": ["perlu_diproses", "dikemas", "dikirim", "selesai", "dibatalkan"] },
+        "status": { "type": "string", "enum": ["Menunggu Konfirmasi", "Dikonfirmasi", "Diproses", "Dikirim", "Selesai", "Dibatalkan"] },
         "paymentStatus": { "type": "string", "enum": ["Menunggu Pembayaran", "Lunas", "Dibatalkan"] },
         "paymentMethod": { "type": "string" },
         "courier": { "type": "string" },

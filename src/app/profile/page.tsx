@@ -15,7 +15,8 @@ import {
   Search,
   Ticket,
   FileText,
-  Lock
+  Lock,
+  ClipboardList
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -132,6 +133,7 @@ export default function Profile() {
       path: '/admin/orders', 
       protected: true 
     }] : []),
+    { label: 'Riwayat Pesanan', description: 'Lihat status pesanan dan riwayat belanja.', icon: ClipboardList, color: 'text-blue-600', bgColor: 'bg-blue-50', path: '/akun/transaksi', protected: true },
     { label: 'Cek Resi Pengiriman', description: 'Lacak status paket pesanan fisik Anda.', icon: Search, color: 'text-orange-500', bgColor: 'bg-orange-50', path: '/cek-resi', protected: false },
     { label: 'Wishlist Saya', description: 'Produk favorit yang telah disimpan.', icon: Heart, color: 'text-red-500', bgColor: 'bg-red-50', path: '/favorit', protected: false },
     { label: 'Alamat Pengiriman', description: 'Kelola alamat pengiriman Anda.', icon: MapPin, color: 'text-emerald-500', bgColor: 'bg-emerald-50', path: '/akun/alamat', protected: true },
