@@ -1,9 +1,9 @@
 
 "use client"
 
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, ClipboardList, Package, Clock, CheckCircle2, Truck, XCircle, Loader2, Copy } from 'lucide-react';
+import { ArrowLeft, ClipboardList, Package, Clock, CheckCircle2, Truck, XCircle, Loader2, Copy, Database } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useUser, useFirestore, useCollection } from '@/firebase';
@@ -19,18 +19,29 @@ export default function TransactionPage() {
   const { user, loading: authLoading } = useUser();
   const { toast } = useToast();
 
+  // DEBUG INFO: Identifikasi sumber data secara eksplisit
   const ordersRef = useMemo(() => {
     if (!db || !user?.uid) return null;
     return collection(db, 'orders');
   }, [db, user?.uid]);
 
-  const { data: orders, loading: ordersLoading } = useCollection(
+  // QUERY: Mengambil data ASLI dari Firestore tanpa fallback
+  const { data: orders, loading: ordersLoading, error: firestoreError } = useCollection(
     ordersRef ? query(
       ordersRef, 
-      where('userId', '==', user?.uid),
-      orderBy('createdAt', 'desc')
+      where('userId', '==', user?.uid)
     ) : null
   );
+
+  // Sorting lokal untuk menghindari masalah Index Firestore sementara
+  const sortedOrders = useMemo(() => {
+    if (!orders) return [];
+    return [...orders].sort((a: any, b: any) => {
+      const timeA = a.createdAt?.seconds || 0;
+      const timeB = b.createdAt?.seconds || 0;
+      return timeB - timeA;
+    });
+  }, [orders]);
 
   const statuses = [
     { label: 'Semua', value: 'all' },
@@ -73,6 +84,18 @@ export default function TransactionPage() {
       </header>
 
       <main className="pt-20 px-4">
+        {/* DEBUG CONSOLE: Untuk memastikan data benar-benar dari Firestore */}
+        <div className="mb-4 bg-slate-100 rounded-xl p-3 text-[9px] font-mono text-slate-500 border border-slate-200">
+           <div className="flex items-center gap-2 mb-1 text-slate-800 font-bold uppercase">
+              <Database className="w-3 h-3" /> Technical Audit
+           </div>
+           <p>Collection: orders</p>
+           <p>User UID: {user?.uid}</p>
+           <p>Docs Found: {sortedOrders.length}</p>
+           {sortedOrders.length > 0 && <p>First ID: {sortedOrders[0].id}</p>}
+           {firestoreError && <p className="text-red-500">Error: {firestoreError.message}</p>}
+        </div>
+
         <Tabs defaultValue="all" className="w-full">
           <TabsList className="bg-transparent w-full flex overflow-x-auto no-scrollbar justify-start h-auto p-0 mb-6 gap-2">
             {statuses.map(s => (
@@ -87,20 +110,20 @@ export default function TransactionPage() {
           </TabsList>
 
           <TabsContent value="all" className="mt-0 space-y-4">
-            {orders && orders.length > 0 ? (
-              orders.map((order: any) => (
+            {sortedOrders.length > 0 ? (
+              sortedOrders.map((order: any) => (
                 <div key={order.id} className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden p-5 space-y-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       {getStatusIcon(order.status)}
                       <span className="text-[11px] font-bold">
-                        {order.createdAt?.toDate ? format(order.createdAt.toDate(), 'dd MMM yyyy', { locale: id }) : '...'}
+                        {order.createdAt?.toDate ? format(order.createdAt.toDate(), 'dd MMM yyyy', { locale: id }) : 'Waktu diproses...'}
                       </span>
                     </div>
                     <span className={cn(
                       "text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-tighter border",
-                      order.status?.toLowerCase().includes('selesai') ? "bg-green-50 text-green-600 border-green-100" :
-                      order.status?.toLowerCase().includes('batal') ? "bg-red-50 text-red-600 border-red-100" :
+                      ['Selesai', 'selesai'].includes(order.status) ? "bg-green-50 text-green-600 border-green-100" :
+                      ['Dibatalkan', 'dibatalkan'].includes(order.status) ? "bg-red-50 text-red-600 border-red-100" :
                       "bg-orange-50 text-orange-600 border-orange-100"
                     )}>
                       {order.status || 'Menunggu Konfirmasi'}
@@ -125,7 +148,7 @@ export default function TransactionPage() {
                     ))}
                   </div>
 
-                  {(order.status === 'Dikirim' || order.status === 'dikirim' || order.trackingNumber) && (
+                  {(order.status === 'Dikirim' || order.trackingNumber) && (
                     <div className="bg-primary/5 p-3 rounded-2xl border border-primary/10 space-y-2">
                        <div className="flex items-center justify-between">
                          <div className="flex items-center gap-2">
@@ -148,22 +171,13 @@ export default function TransactionPage() {
                       <p className="text-sm font-black text-primary">Rp {order.totalAmount?.toLocaleString()}</p>
                     </div>
                     
-                    {order.trackingNumber ? (
-                      <Button 
-                        onClick={() => router.push(`/cek-resi?resi=${order.trackingNumber}`)}
-                        className="bg-primary text-white text-[10px] font-bold h-9 px-4 rounded-xl shadow-lg shadow-primary/20"
-                      >
-                        Lacak Pesanan
-                      </Button>
-                    ) : (
-                      <Button 
-                        variant="outline"
-                        className="border-primary/20 text-primary text-[10px] font-bold h-9 px-4 rounded-xl"
-                        onClick={() => window.open(`https://wa.me/6283851278935?text=${encodeURIComponent(`Halo Admin MarPay, saya ingin bertanya status pesanan saya: ID ${order.id?.slice(-8).toUpperCase()}`)}`, '_blank')}
-                      >
-                        Tanya Admin
-                      </Button>
-                    )}
+                    <Button 
+                      variant="outline"
+                      className="border-primary/20 text-primary text-[10px] font-bold h-9 px-4 rounded-xl"
+                      onClick={() => window.open(`https://wa.me/6283851278935?text=${encodeURIComponent(`Halo Admin MarPay, saya ingin bertanya status pesanan saya: ID ${order.id?.slice(-8).toUpperCase()}`)}`, '_blank')}
+                    >
+                      Tanya Admin
+                    </Button>
                   </div>
                 </div>
               ))
@@ -173,7 +187,7 @@ export default function TransactionPage() {
                   <ClipboardList className="w-10 h-10" />
                 </div>
                 <h3 className="text-sm font-bold text-gray-900">Belum ada riwayat pesanan</h3>
-                <p className="text-[10px] font-medium text-gray-500 mt-1 max-w-[200px]">Semua pesanan Anda akan muncul di sini secara otomatis.</p>
+                <p className="text-[10px] font-medium text-gray-500 mt-1 max-w-[200px]">Semua pesanan yang Anda buat di MarPay akan muncul di sini secara otomatis.</p>
               </div>
             )}
           </TabsContent>
@@ -181,7 +195,7 @@ export default function TransactionPage() {
           {statuses.slice(1).map(statusTab => (
             <TabsContent key={statusTab.value} value={statusTab.value} className="mt-0">
                <div className="space-y-4 pt-4">
-                  {orders?.filter(o => {
+                  {sortedOrders.filter(o => {
                     const s = o.status?.toLowerCase() || '';
                     const tab = statusTab.value.toLowerCase();
                     if (tab === 'proses') return s.includes('menunggu') || s.includes('konfirmasi') || s.includes('proses') || s.includes('kemas');
@@ -198,14 +212,14 @@ export default function TransactionPage() {
                       </div>
                     </div>
                   ))}
-                  {orders?.filter(o => {
+                  {sortedOrders.filter(o => {
                     const s = o.status?.toLowerCase() || '';
                     const tab = statusTab.value.toLowerCase();
                     if (tab === 'proses') return s.includes('menunggu') || s.includes('konfirmasi') || s.includes('proses') || s.includes('kemas');
                     return s === tab;
                   }).length === 0 && (
                     <div className="py-20 text-center opacity-30">
-                      <p className="text-xs font-bold">Tidak ada pesanan di kategori ini</p>
+                      <p className="text-xs font-bold text-gray-400">Tidak ada pesanan di kategori {statusTab.label}</p>
                     </div>
                   )}
                </div>

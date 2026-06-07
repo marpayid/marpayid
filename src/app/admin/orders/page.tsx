@@ -1,13 +1,12 @@
 
 "use client"
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { 
   ArrowLeft, Search, Package, User, 
   Calendar, CreditCard, Loader2, 
-  XCircle, MapPin, ShoppingCart, 
-  DollarSign, AlertCircle, Database, ShieldAlert, Fingerprint
+  MapPin, DollarSign, Database, ShieldAlert
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -24,7 +23,6 @@ import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const ADMIN_EMAIL = 'cs.marpay@gmail.com';
 
@@ -46,13 +44,13 @@ export default function AdminOrdersPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [updatingId, setUpdatingId] = useState<string | null>(null);
 
-  // 1. INVESTIGASI PATH: Menggunakan path 'orders' (Root Collection)
+  // 1. INVESTIGASI PATH: Menggunakan root collection 'orders' (Sama dengan Customer)
   const ordersRef = useMemo(() => {
     if (!db) return null;
     return collection(db, 'orders');
   }, [db]);
 
-  // 2. QUERY GLOBAL: Mengambil semua tanpa filter userId
+  // 2. QUERY GLOBAL: Mengambil semua tanpa filter userId untuk Admin
   const { data: rawOrders, loading: ordersLoading, error: firestoreError } = useCollection(
     ordersRef ? query(ordersRef) : null
   );
@@ -66,7 +64,7 @@ export default function AdminOrdersPage() {
     });
   }, [rawOrders]);
 
-  // Proteksi Halaman
+  // Proteksi Halaman Admin
   if (!authLoading && (!user || user.email !== ADMIN_EMAIL)) {
     return (
       <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6 text-center">
@@ -138,7 +136,7 @@ export default function AdminOrdersPage() {
       </header>
 
       <main className="pt-20 px-4 space-y-4">
-        {/* DEBUG CONSOLE INVESTIGASI */}
+        {/* DEBUG AUDIT CONSOLE: Menyamakan visibility dengan sisi customer */}
         <div className="bg-slate-900 rounded-2xl p-4 text-[10px] font-mono text-cyan-400 space-y-2 border border-white/10 shadow-xl overflow-hidden">
            <div className="flex items-center gap-2 border-b border-white/5 pb-2 mb-2 text-white">
               <Database className="w-3.5 h-3.5" />
@@ -146,15 +144,14 @@ export default function AdminOrdersPage() {
            </div>
            <p><span className="text-gray-500">Source Collection:</span> collection(db, 'orders')</p>
            <p><span className="text-gray-500">Admin UID:</span> {user?.uid}</p>
-           <p><span className="text-gray-500">Docs Found:</span> {orders.length}</p>
+           <p><span className="text-gray-500">Total Docs Found:</span> {orders.length}</p>
            {orders.length > 0 && (
-             <p><span className="text-gray-500">First Doc ID:</span> {orders[0].id}</p>
+             <p><span className="text-gray-500">Sample Doc ID:</span> {orders[0].id}</p>
            )}
            {firestoreError && (
              <div className="mt-2 p-2 bg-red-500/20 border border-red-500/30 rounded text-red-400">
                 <p className="font-bold">PERMISSION ERROR:</p>
                 <p>{firestoreError.message}</p>
-                <p className="mt-1 text-gray-300">Catatan: Security rules mungkin memblokir baca data kolektif.</p>
              </div>
            )}
         </div>
@@ -187,7 +184,7 @@ export default function AdminOrdersPage() {
         <div className="space-y-4">
           {filteredOrders.length > 0 ? (
             filteredOrders.map((order: any) => (
-              <div key={order.id} className="bg-white rounded-[28px] border border-gray-100 shadow-sm overflow-hidden flex flex-col animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div key={order.id} className="bg-white rounded-[28px] border border-gray-100 shadow-sm overflow-hidden flex flex-col">
                 <div className="p-5 border-b border-gray-50 space-y-3">
                   <div className="flex items-start justify-between">
                     <div className="space-y-1">
@@ -204,7 +201,7 @@ export default function AdminOrdersPage() {
                       </div>
                       <div className="flex items-center gap-1.5 text-[11px] text-gray-400 font-medium">
                         <Calendar className="w-3 h-3" />
-                        <span>{order.createdAt?.toDate ? format(order.createdAt.toDate(), 'dd MMM yyyy, HH:mm', { locale: id }) : 'Waktu tidak valid'}</span>
+                        <span>{order.createdAt?.toDate ? format(order.createdAt.toDate(), 'dd MMM yyyy, HH:mm', { locale: id }) : 'Date N/A'}</span>
                       </div>
                     </div>
                   </div>
@@ -249,33 +246,6 @@ export default function AdminOrdersPage() {
                      <p className="text-base font-black">Rp {order.totalAmount?.toLocaleString()}</p>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3 py-1">
-                     <div className="space-y-1">
-                        <p className="text-[9px] font-bold text-gray-400 uppercase">Metode</p>
-                        <div className="flex items-center gap-1.5">
-                           <CreditCard className="w-3 h-3 text-blue-500" />
-                           <span className="text-[11px] font-bold text-gray-700">{order.paymentMethod || 'WhatsApp'}</span>
-                        </div>
-                     </div>
-                     <div className="space-y-1">
-                        <p className="text-[9px] font-bold text-gray-400 uppercase">Status Bayar</p>
-                        <Select 
-                          defaultValue={order.paymentStatus || "Menunggu Pembayaran"}
-                          onValueChange={(val) => handleUpdateOrder(order.id, { paymentStatus: val })}
-                          disabled={updatingId === order.id}
-                        >
-                          <SelectTrigger className="h-7 text-[10px] font-black border-none bg-transparent p-0 focus:ring-0 text-primary">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent className="rounded-xl">
-                            <SelectItem value="Menunggu Pembayaran">Menunggu Pembayaran</SelectItem>
-                            <SelectItem value="Lunas">Lunas</SelectItem>
-                            <SelectItem value="Dibatalkan">Dibatalkan</SelectItem>
-                          </SelectContent>
-                        </Select>
-                     </div>
-                  </div>
-
                   <div className="bg-orange-50/50 p-4 rounded-2xl border border-orange-100 space-y-2">
                      <div className="flex items-center gap-2">
                         <MapPin className="w-3.5 h-3.5 text-orange-500" />
@@ -288,7 +258,7 @@ export default function AdminOrdersPage() {
 
                   <div className="space-y-4 pt-2 border-t border-gray-50">
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-black text-gray-400 uppercase ml-1">Atur Progress Pesanan</label>
+                      <label className="text-[10px] font-black text-gray-400 uppercase ml-1">Atur Status Pesanan</label>
                       <Select 
                         defaultValue={order.status} 
                         onValueChange={(val) => handleUpdateOrder(order.id, { status: val })}
@@ -305,8 +275,8 @@ export default function AdminOrdersPage() {
                       </Select>
                     </div>
 
-                    {(order.status === 'Dikirim' || order.status === 'dikirim' || order.trackingNumber) && (
-                      <div className="grid grid-cols-2 gap-3 p-4 bg-primary/5 rounded-2xl border border-primary/10 animate-in fade-in zoom-in-95">
+                    {(order.status === 'Dikirim' || order.trackingNumber) && (
+                      <div className="grid grid-cols-2 gap-3 p-4 bg-primary/5 rounded-2xl border border-primary/10">
                         <div className="space-y-1.5">
                           <label className="text-[9px] font-black text-primary/60 uppercase">Ekspedisi</label>
                           <Input 
@@ -335,7 +305,7 @@ export default function AdminOrdersPage() {
             <div className="flex flex-col items-center justify-center py-20 text-center opacity-30">
               <Package className="w-16 h-16 mb-4 text-gray-300" />
               <p className="text-base font-black">Tidak ada pesanan di Firestore</p>
-              <p className="text-[10px] mt-2 max-w-[200px]">Data di Riwayat Customer mungkin berasal dari data mock atau kueri ter-filter.</p>
+              <p className="text-[10px] mt-2 max-w-[200px]">Data Riwayat akan tersinkronisasi otomatis saat ada pesanan baru yang masuk ke koleksi 'orders'.</p>
             </div>
           )}
         </div>
