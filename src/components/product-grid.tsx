@@ -201,7 +201,7 @@ export function ProductCard({ product, compact = false }: { product: any, compac
               Rp {product.price.toLocaleString()}
             </p>
             {isFreeShipping && (
-              <span className="text-[9px] font-black text-green-600 flex items-center gap-0.5 uppercase tracking-tighter">
+              <span className="text-[8px] font-bold text-green-600 flex items-center gap-0.5 bg-green-50/80 px-1.5 py-0.5 rounded uppercase tracking-tighter">
                 <Truck className="w-2.5 h-2.5" /> Gratis
               </span>
             )}
