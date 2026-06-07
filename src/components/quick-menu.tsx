@@ -1,7 +1,7 @@
 
 "use client"
 
-import { Flame, Gem, Sparkles, Tag } from 'lucide-react';
+import { Flame, Package, Tag, Droplets } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 
@@ -11,56 +11,49 @@ export function QuickMenu() {
       label: 'Sedang Viral', 
       sub: '120+ Produk',
       icon: Flame, 
-      color: 'text-orange-600', 
       path: '/' 
     },
     { 
-      label: 'Pilihan', 
-      sub: 'Rating Tinggi',
-      icon: Gem, 
-      color: 'text-blue-600', 
-      path: '/' 
-    },
-    { 
-      label: 'Terbaru', 
+      label: 'Produk Terbaru', 
       sub: 'Update Hari Ini',
-      icon: Sparkles, 
-      color: 'text-emerald-600', 
+      icon: Package, 
       path: '/' 
     },
     { 
-      label: 'Diskon Gede', 
+      label: 'Diskon Besar', 
       sub: 'Hingga 70%',
       icon: Tag, 
-      color: 'text-rose-600', 
       path: '/' 
+    },
+    { 
+      label: 'Beauty Terlaris', 
+      sub: 'Pilihan Terbaik',
+      icon: Droplets, 
+      path: '/kategori/beauty' 
     },
   ];
 
   return (
     <section className="bg-white px-4 pt-4 pb-2">
-      <div className="bg-white rounded-[20px] shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-gray-100 flex items-center h-[90px] divide-x divide-gray-50 overflow-hidden">
+      <div className="bg-white rounded-[20px] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-100 flex items-center h-[90px] divide-x divide-gray-50 overflow-hidden">
         {menuItems.map((item) => (
-          <div 
+          <Link 
             key={item.label}
+            href={item.path}
             className="flex-1 flex flex-col items-center justify-center h-full active:bg-gray-50/80 transition-all cursor-pointer group"
           >
-            <div className={cn(
-              "w-10 h-10 rounded-2xl flex items-center justify-center transition-all duration-300 group-active:scale-90 mb-1.5",
-              item.color.replace('text-', 'bg-') + '/10',
-              item.color
-            )}>
-              <item.icon className="w-5 h-5 stroke-[2.2px]" />
+            <div className="w-10 h-10 rounded-2xl bg-primary/5 flex items-center justify-center transition-all duration-300 group-active:scale-90 mb-1.5">
+              <item.icon className="w-5 h-5 text-primary stroke-[2.2px]" />
             </div>
             <div className="text-center flex flex-col items-center">
-              <span className="text-[9px] font-black text-gray-900 uppercase tracking-tighter leading-none">
+              <span className="text-[9px] font-black text-gray-800 uppercase tracking-tighter leading-none">
                 {item.label}
               </span>
               <span className="text-[7px] font-bold text-gray-400 uppercase tracking-wider mt-1 opacity-80">
                 {item.sub}
               </span>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </section>
