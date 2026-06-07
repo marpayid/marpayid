@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { ArrowLeft, Languages, Moon, Info, ChevronRight, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
+import Link from 'next/link';
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -48,25 +49,29 @@ export default function SettingsPage() {
         </section>
 
         <section className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
-          <div className="flex items-center justify-between p-5 border-b border-gray-50">
-            <div className="flex items-center gap-4">
-              <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center text-gray-400">
-                <Info className="w-5 h-5" />
+          <Link href="/akun/pengaturan/tentang">
+            <div className="flex items-center justify-between p-5 border-b border-gray-50 active:bg-gray-50 transition-colors">
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center text-gray-400">
+                  <Info className="w-5 h-5" />
+                </div>
+                <h4 className="text-xs font-bold text-gray-800">Tentang Aplikasi</h4>
               </div>
-              <h4 className="text-xs font-bold text-gray-800">Tentang Aplikasi</h4>
+              <ChevronRight className="w-4 h-4 text-gray-300" />
             </div>
-            <ChevronRight className="w-4 h-4 text-gray-300" />
-          </div>
+          </Link>
 
-          <div className="flex items-center justify-between p-5">
-            <div className="flex items-center gap-4">
-              <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center text-gray-400">
-                <ShieldCheck className="w-5 h-5" />
+          <Link href="/akun/pengaturan/privasi">
+            <div className="flex items-center justify-between p-5 active:bg-gray-50 transition-colors">
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center text-gray-400">
+                  <ShieldCheck className="w-5 h-5" />
+                </div>
+                <h4 className="text-xs font-bold text-gray-800">Kebijakan Privasi</h4>
               </div>
-              <h4 className="text-xs font-bold text-gray-800">Kebijakan Privasi</h4>
+              <ChevronRight className="w-4 h-4 text-gray-300" />
             </div>
-            <ChevronRight className="w-4 h-4 text-gray-300" />
-          </div>
+          </Link>
         </section>
 
         <div className="pt-6 text-center">
