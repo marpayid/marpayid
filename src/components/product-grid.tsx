@@ -187,6 +187,19 @@ export function ProductCard({ product, compact = false }: { product: any, compac
     <div className={cn("bg-white rounded-[18px] border border-gray-100 overflow-hidden shadow-sm flex flex-col group relative transition-all active:scale-[0.98]", compact ? "min-w-[155px] w-[155px]" : "w-full", isOutOfStock && "opacity-75")}>
       <Link href={`/product/${product.id}`} className="relative aspect-square block">
         <Image src={displayImage} alt={product.name} fill className={cn("object-cover", isOutOfStock && "grayscale")} sizes="(max-width: 768px) 50vw, 33vw" />
+        
+        {/* New Photo Overlays */}
+        <div className="absolute bottom-1.5 left-1.5 flex flex-col gap-1 pointer-events-none z-10">
+          <span className="bg-primary text-white text-[7px] font-black px-1.5 py-0.5 rounded shadow-sm uppercase tracking-tighter w-fit">
+            Promo MarPay
+          </span>
+          {isFreeShipping && (
+            <span className="bg-[#008F4C] text-white text-[7px] font-black px-1.5 py-0.5 rounded shadow-sm uppercase tracking-tighter w-fit">
+              GRATIS ONGKIR
+            </span>
+          )}
+        </div>
+
         {product.discount && !isOutOfStock && <div className="absolute top-0 left-0 bg-orange-500 text-white text-[9px] font-black px-2 py-0.5 rounded-br-xl shadow-sm uppercase">{product.discount} OFF</div>}
         {isOutOfStock && <div className="absolute inset-0 bg-black/40 flex items-center justify-center"><span className="bg-red-600 text-white text-[10px] font-black px-2 py-1 rounded-md uppercase tracking-wider">Stok Habis</span></div>}
         <button onClick={handleToggleFavorite} className={cn("absolute top-2 right-2 p-2 bg-white/90 rounded-full shadow-sm backdrop-blur-sm transition-all active:scale-125 duration-200", isFavorited ? "text-red-500" : "text-gray-400")}>
