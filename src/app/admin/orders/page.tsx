@@ -1,18 +1,18 @@
 
 "use client"
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { 
   ArrowLeft, Search, Package, User, Phone, 
   Calendar, CreditCard, Truck, Loader2, 
-  MoreVertical, CheckCircle2, Clock, XCircle, 
-  MapPin, ShoppingCart, DollarSign, Send, ClipboardCheck, AlertCircle
+  CheckCircle2, Clock, XCircle, 
+  MapPin, ShoppingCart, DollarSign, AlertCircle, RefreshCw, Database
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useUser, useFirestore, useCollection } from '@/firebase';
-import { collection, doc, updateDoc, query, orderBy, serverTimestamp } from 'firebase/firestore';
+import { collection, doc, updateDoc, query, serverTimestamp } from 'firebase/firestore';
 import {
   Select,
   SelectContent,
@@ -46,16 +46,27 @@ export default function AdminOrdersPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [updatingId, setUpdatingId] = useState<string | null>(null);
 
-  // Ambil referensi ke collection orders (Sama dengan customer)
+  // Ambil referensi ke collection orders utama (Sama dengan Riwayat Pesanan Customer)
   const ordersRef = useMemo(() => {
     if (!db) return null;
     return collection(db, 'orders');
   }, [db]);
 
-  // Query ALL orders untuk admin
-  const { data: orders, loading: ordersLoading, error: firestoreError } = useCollection(
-    ordersRef ? query(ordersRef, orderBy('createdAt', 'desc')) : null
+  // Query ALL orders tanpa filter userId untuk Admin
+  // Menghapus orderBy sementara untuk memastikan data muncul tanpa hambatan index
+  const { data: rawOrders, loading: ordersLoading, error: firestoreError } = useCollection(
+    ordersRef ? query(ordersRef) : null
   );
+
+  // Sorting lokal: Urutkan dari yang terbaru (berdasarkan createdAt)
+  const orders = useMemo(() => {
+    if (!rawOrders) return [];
+    return [...rawOrders].sort((a: any, b: any) => {
+      const timeA = a.createdAt?.seconds || 0;
+      const timeB = b.createdAt?.seconds || 0;
+      return timeB - timeA;
+    });
+  }, [rawOrders]);
 
   // Proteksi Halaman
   if (!authLoading && (!user || user.email !== ADMIN_EMAIL)) {
@@ -90,14 +101,28 @@ export default function AdminOrdersPage() {
 
   const filteredOrders = useMemo(() => {
     if (!orders) return [];
-    return orders.filter(o => 
+    return orders.filter((o: any) => 
       o.customerName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       o.id?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       o.customerPhone?.includes(searchQuery)
     );
   }, [orders, searchQuery]);
 
-  if (authLoading || (ordersLoading && !firestoreError)) {
+  // Statistik Dinamis
+  const stats = useMemo(() => {
+    if (!orders) return { total: 0, pending: 0, completed: 0 };
+    return {
+      total: orders.length,
+      pending: orders.filter((o: any) => 
+        ['Menunggu Konfirmasi', 'perlu_diproses', 'Diproses'].includes(o.status)
+      ).length,
+      completed: orders.filter((o: any) => 
+        ['Selesai', 'selesai'].includes(o.status)
+      ).length
+    };
+  }, [orders]);
+
+  if (authLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -126,11 +151,26 @@ export default function AdminOrdersPage() {
             <AlertCircle className="h-4 w-4" />
             <AlertTitle className="text-xs font-black uppercase">Firestore Error</AlertTitle>
             <AlertDescription className="text-[11px] mt-1 leading-relaxed">
-              Gagal memuat data dari koleksi &apos;orders&rdquo;. Pastikan Security Rules sudah mengizinkan akses untuk email admin ini.
+              Gagal memuat data dari koleksi 'orders'.
               <br />
               <span className="font-mono text-[9px] opacity-70">{firestoreError.message}</span>
             </AlertDescription>
           </Alert>
+        )}
+
+        {/* Debug Info Card (Muncul saat memuat atau data kosong) */}
+        {(ordersLoading || orders.length === 0) && !firestoreError && (
+          <div className="bg-blue-50 p-4 rounded-2xl border border-blue-100 flex items-start gap-3">
+             <Database className="w-5 h-5 text-blue-500 mt-0.5" />
+             <div className="space-y-1">
+                <p className="text-[11px] font-bold text-blue-800 uppercase tracking-widest">Debug Console</p>
+                <p className="text-[10px] text-blue-600 font-medium leading-relaxed">
+                  Source: <span className="font-mono">collection('orders')</span><br />
+                  Data ditemukan: <span className="font-bold">{orders.length} dokumen</span><br />
+                  {ordersLoading ? "Sedang menyambungkan ke Firestore..." : "Koneksi berhasil, koleksi terbaca."}
+                </p>
+             </div>
+          </div>
         )}
 
         <div className="relative">
@@ -146,15 +186,15 @@ export default function AdminOrdersPage() {
         <div className="grid grid-cols-3 gap-3">
            <div className="bg-white p-3 rounded-2xl border border-gray-100 shadow-sm text-center">
               <p className="text-[9px] font-bold text-gray-400 uppercase">Total</p>
-              <p className="text-base font-black text-gray-900">{orders?.length || 0}</p>
+              <p className="text-base font-black text-gray-900">{stats.total}</p>
            </div>
            <div className="bg-white p-3 rounded-2xl border border-gray-100 shadow-sm text-center">
               <p className="text-[9px] font-bold text-gray-400 uppercase">Pending</p>
-              <p className="text-base font-black text-orange-500">{orders?.filter(o => o.status === 'Menunggu Konfirmasi' || o.status === 'perlu_diproses').length || 0}</p>
+              <p className="text-base font-black text-orange-500">{stats.pending}</p>
            </div>
            <div className="bg-white p-3 rounded-2xl border border-gray-100 shadow-sm text-center">
               <p className="text-[9px] font-bold text-gray-400 uppercase">Selesai</p>
-              <p className="text-base font-black text-emerald-500">{orders?.filter(o => o.status === 'Selesai' || o.status === 'selesai').length || 0}</p>
+              <p className="text-base font-black text-emerald-500">{stats.completed}</p>
            </div>
         </div>
 
@@ -169,8 +209,8 @@ export default function AdminOrdersPage() {
                         <span className="text-[10px] font-black text-primary bg-primary/5 px-2 py-0.5 rounded">ID: {order.id?.slice(-8).toUpperCase()}</span>
                         <span className={cn(
                           "text-[9px] font-black px-2.5 py-0.5 rounded-full uppercase",
-                          order.status === 'Selesai' || order.status === 'selesai' ? "bg-green-50 text-green-600 border-green-100" :
-                          order.status === 'Dibatalkan' || order.status === 'dibatalkan' ? "bg-red-50 text-red-600 border-red-100" :
+                          ['Selesai', 'selesai'].includes(order.status) ? "bg-green-50 text-green-600 border-green-100" :
+                          ['Dibatalkan', 'dibatalkan'].includes(order.status) ? "bg-red-50 text-red-600 border-red-100" :
                           "bg-orange-50 text-orange-600 border-orange-100"
                         )}>
                           {order.status || 'Menunggu Konfirmasi'}
@@ -313,7 +353,7 @@ export default function AdminOrdersPage() {
             <div className="flex flex-col items-center justify-center py-20 text-center opacity-30">
               <Package className="w-16 h-16 mb-4 text-gray-300" />
               <p className="text-base font-black">Tidak ada pesanan</p>
-              {firestoreError && <p className="text-[10px] text-red-500 mt-2">Error: {firestoreError.message}</p>}
+              {ordersLoading && <p className="text-[10px] mt-2 animate-pulse">Menghubungkan ke database...</p>}
             </div>
           )}
         </div>
