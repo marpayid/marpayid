@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useMemo, useState } from 'react';
@@ -7,10 +8,11 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useUser, useFirestore, useCollection } from '@/firebase';
 import { collection, query, where } from 'firebase/firestore';
-import { cn } from '@/lib/utils';
+import { cn, getProductImage } from '@/lib/utils';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function TransactionPage() {
   const router = useRouter();
@@ -133,8 +135,17 @@ export default function TransactionPage() {
                       <div className="space-y-3">
                         {order.items?.slice(0, 1).map((item: any, idx: number) => (
                           <div key={idx} className="flex gap-4">
-                            <div className="w-12 h-12 rounded-xl bg-gray-50 flex-shrink-0 flex items-center justify-center border border-gray-100 overflow-hidden">
-                              <Package className="w-6 h-6 text-gray-300" />
+                            <div className="w-12 h-12 rounded-xl bg-gray-50 flex-shrink-0 flex items-center justify-center border border-gray-100 overflow-hidden relative">
+                              {item.image ? (
+                                <Image 
+                                  src={getProductImage(item)} 
+                                  alt={item.name} 
+                                  fill 
+                                  className="object-cover"
+                                />
+                              ) : (
+                                <Package className="w-6 h-6 text-gray-300" />
+                              )}
                             </div>
                             <div className="flex-1 min-w-0">
                               <h4 className="text-xs font-bold text-gray-800 truncate">{item.name}</h4>

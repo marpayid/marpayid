@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useMemo, useEffect } from 'react';
@@ -19,11 +20,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from '@/hooks/use-toast';
-import { cn } from '@/lib/utils';
+import { cn, getProductImage } from '@/lib/utils';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
+import Image from 'next/image';
 
 const ADMIN_EMAIL = 'cs.marpay@gmail.com';
 
@@ -280,11 +282,25 @@ export default function AdminOrderDetailPage() {
            <div className="space-y-4">
               {order.items?.map((item: any, idx: number) => (
                 <div key={idx} className="flex justify-between items-center gap-4 pb-3 border-b border-gray-50 last:border-none last:pb-0">
-                   <div className="flex-1">
-                      <p className="text-xs font-black text-gray-800 line-clamp-1">{item.name}</p>
-                      <p className="text-[10px] text-gray-400 mt-0.5">Varian: {item.variant || 'Default'} • x{item.quantity}</p>
+                   <div className="flex items-center gap-3 flex-1 min-w-0">
+                      <div className="w-12 h-12 rounded-lg bg-gray-50 flex-shrink-0 flex items-center justify-center border border-gray-100 overflow-hidden relative">
+                         {item.image ? (
+                           <Image 
+                             src={getProductImage(item)} 
+                             alt={item.name} 
+                             fill 
+                             className="object-cover"
+                           />
+                         ) : (
+                           <Package className="w-6 h-6 text-gray-300" />
+                         )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                         <p className="text-xs font-black text-gray-800 line-clamp-1">{item.name}</p>
+                         <p className="text-[10px] text-gray-400 mt-0.5">Varian: {item.variant || 'Default'} • x{item.quantity}</p>
+                      </div>
                    </div>
-                   <p className="text-xs font-black text-gray-900">Rp {item.price?.toLocaleString()}</p>
+                   <p className="text-xs font-black text-gray-900 shrink-0">Rp {item.price?.toLocaleString()}</p>
                 </div>
               ))}
               <div className="flex justify-between items-center pt-2">

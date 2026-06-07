@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useMemo, useState } from 'react';
@@ -6,10 +7,11 @@ import { ArrowLeft, Package, Clock, CheckCircle2, Truck, XCircle, Loader2, Copy,
 import { Button } from '@/components/ui/button';
 import { useUser, useFirestore, useDoc } from '@/firebase';
 import { doc } from 'firebase/firestore';
-import { cn } from '@/lib/utils';
+import { cn, getProductImage } from '@/lib/utils';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
 import { useToast } from '@/hooks/use-toast';
+import Image from 'next/image';
 
 export default function OrderDetailPage() {
   const router = useRouter();
@@ -89,7 +91,7 @@ export default function OrderDetailPage() {
           </div>
         </section>
 
-        {/* Shipping Status - Updated to Blue/White/Gray Theme */}
+        {/* Shipping Status - Blue/White/Gray Theme */}
         {(order.status === 'Dikirim' || (order.status === 'Selesai' && order.trackingNumber)) && (
           <section className="bg-gradient-to-br from-[#1565FF] to-[#0057E7] text-white p-4 py-3.5 rounded-[24px] shadow-xl shadow-blue-100 space-y-3 relative overflow-hidden">
             <div className="absolute right-[-5px] top-[-5px] opacity-[0.1] pointer-events-none">
@@ -133,8 +135,17 @@ export default function OrderDetailPage() {
           <div className="space-y-4">
             {order.items?.map((item: any, idx: number) => (
               <div key={idx} className="flex gap-4">
-                <div className="w-14 h-14 bg-gray-50 rounded-xl flex items-center justify-center border border-gray-100 overflow-hidden shrink-0">
-                  <Package className="w-7 h-7 text-gray-300" />
+                <div className="w-14 h-14 bg-gray-50 rounded-xl flex items-center justify-center border border-gray-100 overflow-hidden shrink-0 relative">
+                  {item.image ? (
+                    <Image 
+                      src={getProductImage(item)} 
+                      alt={item.name} 
+                      fill 
+                      className="object-cover"
+                    />
+                  ) : (
+                    <Package className="w-7 h-7 text-gray-300" />
+                  )}
                 </div>
                 <div className="flex-1 min-w-0">
                   <h4 className="text-xs font-bold text-gray-800 line-clamp-1">{item.name}</h4>
