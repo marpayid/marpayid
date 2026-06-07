@@ -1,29 +1,21 @@
+
 'use client';
 
 import { BottomNav } from '@/components/bottom-nav';
 import { 
-  Settings, 
   Heart, 
   MapPin, 
   ShieldCheck, 
   HelpCircle, 
   LogOut, 
   ChevronRight,
-  ClipboardList,
-  Bell,
   ShoppingBag,
-  Wallet,
-  Package,
-  CheckCircle,
-  XCircle,
-  LogIn,
-  UserPlus,
   Edit,
   Loader2,
   Search,
-  MessageCircle,
   Ticket,
-  FileText
+  FileText,
+  Lock
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -59,8 +51,8 @@ export default function Profile() {
   const [editForm, setEditForm] = useState({ name: '', phone: '' });
   const [wishlistCount, setWishlistCount] = useState(0);
 
-  // Perhitungan voucher aktif dari dummy-data
   const activeVoucherCount = useMemo(() => Vouchers.filter(v => v.active).length, []);
+  const isAdmin = user?.email === 'cs.marpay@gmail.com';
 
   const userProfileRef = useMemo(() => {
     if (!db || !user?.uid) return null;
@@ -131,6 +123,15 @@ export default function Profile() {
   };
 
   const menuItems = [
+    ...(isAdmin ? [{ 
+      label: 'Admin Pesanan', 
+      description: 'Kelola seluruh transaksi pelanggan MarPay.', 
+      icon: Lock, 
+      color: 'text-indigo-600', 
+      bgColor: 'bg-indigo-50', 
+      path: '/admin/orders', 
+      protected: true 
+    }] : []),
     { label: 'Cek Resi Pengiriman', description: 'Lacak status paket pesanan fisik Anda.', icon: Search, color: 'text-orange-500', bgColor: 'bg-orange-50', path: '/cek-resi', protected: false },
     { label: 'Wishlist Saya', description: 'Produk favorit yang telah disimpan.', icon: Heart, color: 'text-red-500', bgColor: 'bg-red-50', path: '/favorit', protected: false },
     { label: 'Alamat Pengiriman', description: 'Kelola alamat pengiriman Anda.', icon: MapPin, color: 'text-emerald-500', bgColor: 'bg-emerald-50', path: '/akun/alamat', protected: true },
@@ -150,7 +151,7 @@ export default function Profile() {
   }
 
   const userName = profileData?.fullName || profileData?.name || user?.displayName || (isLoggedIn ? "Pengguna MarPay" : "Masuk MarPay");
-  const userStatus = isLoggedIn ? "AKUN TERVERIFIKASI" : "Belum Masuk";
+  const userStatus = isLoggedIn ? (isAdmin ? "ADMIN OWNER" : "AKUN TERVERIFIKASI") : "Belum Masuk";
   const userSub = isLoggedIn ? (profileData?.email || user.email) : "Masuk atau daftar untuk menikmati semua fitur MarPay.";
   const userPhoto = "/profil1.png";
 
@@ -175,7 +176,7 @@ export default function Profile() {
                 </button>
               )}
             </div>
-            <p className="text-[10px] font-bold text-primary mt-0.5 uppercase tracking-wider">{userStatus}</p>
+            <p className={cn("text-[10px] font-bold mt-0.5 uppercase tracking-wider", isAdmin ? "text-indigo-600" : "text-primary")}>{userStatus}</p>
             <p className="text-[10px] text-gray-400 font-medium mt-1 leading-relaxed max-w-[200px]">{userSub}</p>
           </div>
         </div>
@@ -214,7 +215,6 @@ export default function Profile() {
       </header>
 
       <main className="px-4 py-6 space-y-6">
-        {/* Menu Grid Section */}
         <section className="bg-white rounded-[22px] border border-gray-100 shadow-sm overflow-hidden">
           {menuItems.map((item, idx) => {
             const isItemActive = isLoggedIn || !item.protected;
@@ -236,7 +236,6 @@ export default function Profile() {
           })}
         </section>
 
-        {/* AI Assistant Card - Placed below help menu */}
         <MarPayAIChat />
 
         {isLoggedIn && (
