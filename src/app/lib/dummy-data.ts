@@ -51,6 +51,126 @@ export const Vouchers = [
 
 export const Products = [
   {
+    id: 223,
+    name: 'SCARLETT (BEST SELLER!) - Extrait De Parfum 30ml - Unisex - Parfum Wanita',
+    price: 59000,
+    rating: 5.0,
+    reviews: 12500,
+    sold: 45000,
+    category: 'Beauty',
+    imageUrl: 'https://i.ibb.co/DPB2RN0T/IMG-1486.jpg',
+    isFlashSale: true,
+    discount: '15%',
+    stock: 'Tersedia',
+    tag: 'Best Seller',
+    gender: 'unisex',
+    brand: 'Scarlett',
+    variants: ['30ml'],
+    colors: [
+      { name: 'Velvet Rouge', imageUrl: 'https://i.ibb.co/DPB2RN0T/IMG-1486.jpg' },
+      { name: 'Garden Of Whisper', imageUrl: 'https://i.ibb.co/VWm5RM0p/IMG-1487.jpg' }
+    ],
+    isFreeShipping: false,
+    shippingFee: 8000,
+    tags: ['parfum', 'scarlett', 'extrait de parfum', 'unisex', 'velvet rouge', 'garden of whisper'],
+    description: `SCARLETT Extrait De Parfum 30ml. Parfum dengan konsentrasi tinggi yang dirancang untuk memberikan keharuman yang tahan lama hingga 10-12 jam.
+
+Tersedia varian:
+1. Velvet Rouge: Memberikan kesan mewah, elegan, dan berani dengan sentuhan floral and spicy.
+2. Garden Of Whisper: Memberikan kesan menenangkan, segar, dan feminin seperti berada di taman bunga.
+
+Cara Pakai: Semprotkan pada titik nadi seperti pergelangan tangan, leher, dan belakang telinga untuk hasil maksimal.`,
+  },
+  {
+    id: 222,
+    name: 'PINKBERRY Eau de Parfum Twinkle 50ml - Parfum wanita',
+    price: 53000,
+    rating: 4.9,
+    reviews: 4200,
+    sold: 12000,
+    category: 'Beauty',
+    imageUrl: 'https://i.ibb.co/jZGb49pk/IMG-1485.jpg',
+    isFlashSale: false,
+    discount: null,
+    stock: 'Tersedia',
+    tag: 'Recommended',
+    gender: 'female',
+    brand: 'Pinkberry',
+    variants: ['50ml'],
+    colors: [],
+    isFreeShipping: true,
+    shippingFee: 0,
+    tags: ['parfum', 'pinkberry', 'twinkle', 'wanita', 'edp', 'floral'],
+    description: `Pinkberry Eau de Parfum Twinkle 50ml. Aroma yang memikat dengan perpaduan floral dan fruity yang memberikan kesan ceria dan feminin. Cocok untuk wanita yang aktif dan ingin tampil segar sepanjang hari.
+
+Top Notes: Citrus, Berries
+Middle Notes: Jasmine, Rose
+Base Notes: Musk, Vanilla
+
+Keunggulan:
+- Aroma tahan lama 6-8 jam.
+- Botol spray yang praktis dibawa bepergian.
+- Terdaftar BPOM & Halal.`,
+  },
+  {
+    id: 221,
+    name: '(NEW LAUNCHING) Crusita - Superstar Extrait De Parfum 50ML',
+    price: 185000,
+    rating: 5.0,
+    reviews: 840,
+    sold: 2100,
+    category: 'Beauty',
+    imageUrl: 'https://i.ibb.co/CsSTq079/IMG-1483.jpg',
+    isFlashSale: false,
+    discount: '5%',
+    stock: 'Tersedia',
+    tag: 'Produk Baru',
+    gender: 'unisex',
+    brand: 'Crusita',
+    variants: ['50ml'],
+    colors: [],
+    isFreeShipping: true,
+    shippingFee: 0,
+    tags: ['parfum', 'crusita', 'superstar', 'unisex', 'extrait de parfum', 'new launching'],
+    description: `(NEW LAUNCHING) Crusita - Superstar Extrait De Parfum 50ML. Simbol kepercayaan diri dan kemewahan dalam satu botol. Superstar dirancang untuk kamu yang ingin menjadi pusat perhatian dengan aroma yang bold dan memikat.
+
+Karakter: Bold, Elegant, & Charismatic.
+Longevity: Up to 12-15 hours on skin.
+Sillage: Strong.
+
+Dapatkan sensasi aroma kelas dunia dengan konsentrasi Extrait de Parfum tertinggi di kelasnya.`,
+  },
+  {
+    id: 220,
+    name: 'Mykonos - Satin Blanc Extrait de Parfum 100ml (Pre Order)',
+    price: 289201,
+    rating: 4.9,
+    reviews: 3500,
+    sold: 8000,
+    category: 'Beauty',
+    imageUrl: 'https://i.ibb.co/zh4TjQSL/IMG-1482.jpg',
+    isFlashSale: false,
+    discount: null,
+    stock: 'Tersedia',
+    tag: 'Trending',
+    gender: 'unisex',
+    brand: 'Mykonos',
+    variants: ['100ml'],
+    colors: [],
+    isFreeShipping: true,
+    shippingFee: 0,
+    tags: ['parfum', 'mykonos', 'satin blanc', 'unisex', 'extrait de parfum', 'viral'],
+    description: `Mykonos Satin Blanc Extrait de Parfum 100ml. Rasakan kelembutan satin yang mewah dalam bentuk aroma. Satin Blanc adalah parfum yang menenangkan, bersih, dan sangat berkelas.
+
+Aroma ini memadukan kesegaran floral putih dengan sentuhan milky yang lembut, menciptakan aura yang sopan namun tetap meninggalkan kesan mendalam bagi siapa pun yang menciumnya.
+
+Top Notes: Bergamot, Apple
+Middle Notes: Jasmine, White Floral
+Base Notes: Sandalwood, Amber, Vanilla
+
+Status: Pre-Order (Estimasi pengiriman sesuai antrean).`,
+  },
+  {
     id: 219,
     name: '[100% ORI] Glad2Glow [ 1PC Persediaan ] Moisturizer',
     price: 44890,
@@ -504,7 +624,7 @@ export const Products = [
     reviews: 84,
     sold: 84,
     category: 'Sertifikat Funded',
-    image: '/akrilik1.png',
+    image: '/aklik1.png',
     isFlashSale: false,
     discount: '23%',
     stock: 'Tersedia',

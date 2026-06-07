@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect, useMemo } from 'react';
@@ -44,7 +43,7 @@ export default function Home() {
 
       // Jika belum ada data interaksi, gunakan urutan prioritas standar (Produk Viral/Baru)
       if (searchHistory.length === 0 && viewedCats.length === 0) {
-        const priorityIds = [219, 218, 217, 216, 215, 214, 213, 208, 207, 206, 205, 3, 1, 6, 201, 204, 203];
+        const priorityIds = [220, 221, 222, 223, 219, 218, 217, 216, 215, 214, 213, 208, 207, 206, 205, 3, 1, 6, 201, 204, 203];
         const initialList = Products.filter(p => p.category !== 'Premium').sort((a, b) => {
           const aPriority = priorityIds.indexOf(Number(a.id));
           const bPriority = priorityIds.indexOf(Number(b.id));
