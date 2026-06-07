@@ -1,0 +1,42 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Fungsi pembantu untuk mengecek apakah user adalah admin MarPay
+    function isAdmin() {
+      return request.auth != null && request.auth.token.email == 'cs.marpay@gmail.com';
+    }
+
+    // Koleksi Profil Pengguna
+    match /users/{userId} {
+      allow read, write: if request.auth != null && (request.auth.uid == userId || isAdmin());
+      
+      match /addresses/{addressId} {
+        allow read, write: if request.auth != null && (request.auth.uid == userId || isAdmin());
+      }
+    }
+
+    // Koleksi Utama Pesanan
+    match /orders/{orderId} {
+      // Izinkan siapapun yang login membuat pesanan (termasuk guest jika dikonfigurasi)
+      allow create: if request.auth != null;
+      
+      // Pelanggan hanya bisa membaca order miliknya sendiri (filter userId)
+      // Admin (cs.marpay@gmail.com) bisa membaca SELURUH koleksi orders tanpa filter
+      allow read: if request.auth != null && (resource.data.userId == request.auth.uid || isAdmin());
+      
+      // Hanya admin yang bisa mengupdate (status/resi) atau menghapus order
+      allow update, delete: if isAdmin();
+    }
+
+    // Koleksi Produk
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Token Notifikasi
+    match /notification_tokens/{tokenId} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}

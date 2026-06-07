@@ -1,14 +1,13 @@
-
 "use client"
 
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, ClipboardList, Package, Clock, CheckCircle2, Truck, XCircle, Loader2, Copy, Database, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useUser, useFirestore, useCollection } from '@/firebase';
 import { firebaseConfig } from '@/firebase/config';
-import { collection, query, where, orderBy } from 'firebase/firestore';
+import { collection, query, where } from 'firebase/firestore';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
@@ -20,13 +19,11 @@ export default function TransactionPage() {
   const { user, loading: authLoading } = useUser();
   const { toast } = useToast();
 
-  // 1. PATH INVESTIGATION
   const ordersRef = useMemo(() => {
     if (!db || !user?.uid) return null;
     return collection(db, 'orders');
   }, [db, user?.uid]);
 
-  // 2. QUERY CUSTOMER (Filtered by userId)
   const { data: orders, loading: ordersLoading, error: firestoreError } = useCollection(
     ordersRef ? query(
       ordersRef, 
@@ -34,7 +31,6 @@ export default function TransactionPage() {
     ) : null
   );
 
-  // Sorting lokal
   const sortedOrders = useMemo(() => {
     if (!orders) return [];
     return [...orders].sort((a: any, b: any) => {
@@ -85,33 +81,22 @@ export default function TransactionPage() {
       </header>
 
       <main className="pt-20 px-4">
-        {/* ENHANCED DIAGNOSTIC CONSOLE */}
+        {/* DIAGNOSTIC CONSOLE */}
         <div className="mb-4 bg-slate-900 rounded-2xl p-4 text-[10px] font-mono text-cyan-400 space-y-2 border border-white/10">
            <div className="flex items-center gap-2 mb-2 text-white border-b border-white/5 pb-2">
               <Database className="w-3.5 h-3.5 text-emerald-400" /> 
               <span className="font-bold uppercase tracking-widest">Customer Data Audit</span>
            </div>
            <p className="flex justify-between">
-             <span className="text-gray-500">Project ID:</span> 
+             <span className="text-gray-500">Project:</span> 
              <span className="text-white font-bold">{firebaseConfig.projectId}</span>
            </p>
            <p className="flex justify-between">
-             <span className="text-gray-500">Collection Path:</span> 
-             <span className="text-yellow-400">/orders</span>
-           </p>
-           <p className="flex justify-between">
-             <span className="text-gray-500">Query Filter:</span> 
-             <span className="text-emerald-400">userId == "{user?.uid?.slice(0,8)}..."</span>
-           </p>
-           <p className="flex justify-between bg-white/5 p-1 rounded mt-1">
-             <span className="text-gray-400 font-bold uppercase">Docs Found:</span> 
+             <span className="text-gray-500">Docs Found:</span> 
              <span className="text-white font-black text-sm">{sortedOrders.length}</span>
            </p>
-           {sortedOrders.length > 0 && (
-             <p className="text-[8px] text-gray-500 truncate">Doc ID: {sortedOrders[0].id}</p>
-           )}
            {firestoreError && (
-             <p className="text-red-400 bg-red-500/10 p-2 rounded mt-2 border border-red-500/20">Error: {firestoreError.message}</p>
+             <p className="text-red-400 bg-red-500/10 p-2 rounded mt-2">Error: {firestoreError.message}</p>
            )}
         </div>
 
@@ -121,7 +106,7 @@ export default function TransactionPage() {
               <TabsTrigger 
                 key={s.value} 
                 value={s.value} 
-                className="rounded-full px-5 py-2.5 text-[10px] font-bold uppercase tracking-wider data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-lg border border-gray-100 bg-white transition-all shadow-sm"
+                className="rounded-full px-5 py-2.5 text-[10px] font-bold uppercase border border-gray-100 bg-white data-[state=active]:bg-primary data-[state=active]:text-white transition-all shadow-sm"
               >
                 {s.label}
               </TabsTrigger>
@@ -141,8 +126,8 @@ export default function TransactionPage() {
                     </div>
                     <span className={cn(
                       "text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-tighter border",
-                      ['Selesai', 'selesai'].includes(order.status) ? "bg-green-50 text-green-600 border-green-100" :
-                      ['Dibatalkan', 'dibatalkan'].includes(order.status) ? "bg-red-50 text-red-600 border-red-100" :
+                      ['Selesai', 'Selesai'].includes(order.status) ? "bg-green-50 text-green-600 border-green-100" :
+                      ['Dibatalkan', 'Dibatalkan'].includes(order.status) ? "bg-red-50 text-red-600 border-red-100" :
                       "bg-orange-50 text-orange-600 border-orange-100"
                     )}>
                       {order.status || 'Menunggu Konfirmasi'}
@@ -152,12 +137,8 @@ export default function TransactionPage() {
                   <div className="space-y-3">
                     {order.items?.map((item: any, idx: number) => (
                       <div key={idx} className="flex gap-4">
-                        <div className="w-12 h-12 rounded-xl bg-gray-50 flex-shrink-0 flex items-center justify-center border border-gray-100 overflow-hidden relative">
-                           {item.image ? (
-                             <img src={item.image} alt="" className="object-cover w-full h-full" />
-                           ) : (
-                             <Package className="w-6 h-6 text-gray-300" />
-                           )}
+                        <div className="w-12 h-12 rounded-xl bg-gray-50 flex-shrink-0 flex items-center justify-center border border-gray-100 overflow-hidden">
+                           <Package className="w-6 h-6 text-gray-300" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <h4 className="text-xs font-bold text-gray-800 truncate">{item.name}</h4>
@@ -170,9 +151,9 @@ export default function TransactionPage() {
                   {(order.status === 'Dikirim' || order.trackingNumber) && (
                     <div className="bg-primary/5 p-3 rounded-2xl border border-primary/10 space-y-2">
                        <div className="flex items-center justify-between">
-                         <div className="flex items-center gap-2">
-                           <Truck className="w-3.5 h-3.5 text-primary" />
-                           <p className="text-[10px] font-black text-primary uppercase">{order.courier || 'Kurir Standar'}</p>
+                         <div className="flex items-center gap-2 text-primary">
+                           <Truck className="w-3.5 h-3.5" />
+                           <p className="text-[10px] font-black uppercase">{order.courier || 'Kurir Standar'}</p>
                          </div>
                          {order.trackingNumber && (
                            <button onClick={() => copyToClipboard(order.trackingNumber)} className="flex items-center gap-1 text-[9px] font-bold text-primary bg-white px-2 py-1 rounded-lg border border-primary/10">
@@ -189,7 +170,6 @@ export default function TransactionPage() {
                       <p className="text-[9px] text-gray-400 font-bold uppercase">Total Tagihan</p>
                       <p className="text-sm font-black text-primary">Rp {order.totalAmount?.toLocaleString()}</p>
                     </div>
-                    
                     <Button 
                       variant="outline"
                       className="border-primary/20 text-primary text-[10px] font-bold h-9 px-4 rounded-xl"
@@ -202,48 +182,11 @@ export default function TransactionPage() {
               ))
             ) : (
               <div className="flex flex-col items-center justify-center py-20 text-center opacity-30">
-                <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                  <ClipboardList className="w-10 h-10" />
-                </div>
+                <ClipboardList className="w-10 h-10 mb-4" />
                 <h3 className="text-sm font-bold text-gray-900">Belum ada riwayat pesanan</h3>
-                <p className="text-[10px] font-medium text-gray-500 mt-1 max-w-[200px]">Semua pesanan yang Anda buat di MarPay akan muncul di sini secara otomatis.</p>
               </div>
             )}
           </TabsContent>
-          
-          {statuses.slice(1).map(statusTab => (
-            <TabsContent key={statusTab.value} value={statusTab.value} className="mt-0">
-               <div className="space-y-4 pt-4">
-                  {sortedOrders.filter(o => {
-                    const s = o.status?.toLowerCase() || '';
-                    const tab = statusTab.value.toLowerCase();
-                    if (tab === 'proses') return s.includes('menunggu') || s.includes('konfirmasi') || s.includes('proses') || s.includes('kemas');
-                    return s === tab;
-                  }).map((order: any) => (
-                    <div key={order.id} className="bg-white rounded-3xl border border-gray-100 shadow-sm p-5 space-y-4">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[11px] font-bold">{order.createdAt?.toDate ? format(order.createdAt.toDate(), 'dd MMM yyyy', { locale: id }) : ''}</span>
-                        <span className="text-[10px] font-black text-primary">Rp {order.totalAmount?.toLocaleString()}</span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <p className="text-[10px] text-gray-400">ID: {order.id?.slice(-8).toUpperCase()}</p>
-                        <span className="text-[9px] font-black uppercase text-orange-500">{order.status}</span>
-                      </div>
-                    </div>
-                  ))}
-                  {sortedOrders.filter(o => {
-                    const s = o.status?.toLowerCase() || '';
-                    const tab = statusTab.value.toLowerCase();
-                    if (tab === 'proses') return s.includes('menunggu') || s.includes('konfirmasi') || s.includes('proses') || s.includes('kemas');
-                    return s === tab;
-                  }).length === 0 && (
-                    <div className="py-20 text-center opacity-30">
-                      <p className="text-xs font-bold text-gray-400">Tidak ada pesanan di kategori {statusTab.label}</p>
-                    </div>
-                  )}
-               </div>
-            </TabsContent>
-          ))}
         </Tabs>
       </main>
     </div>

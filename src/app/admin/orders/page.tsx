@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useMemo } from 'react';
@@ -6,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { 
   ArrowLeft, Search, Package, User, 
   Calendar, CreditCard, Loader2, 
-  MapPin, DollarSign, Database, ShieldAlert, Globe
+  MapPin, DollarSign, Database, ShieldAlert, Globe, RefreshCcw
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -24,6 +23,8 @@ import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
+import { errorEmitter } from '@/firebase/error-emitter';
+import { FirestorePermissionError } from '@/firebase/errors';
 
 const ADMIN_EMAIL = 'cs.marpay@gmail.com';
 
@@ -45,13 +46,12 @@ export default function AdminOrdersPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [updatingId, setUpdatingId] = useState<string | null>(null);
 
-  // 1. INVESTIGASI PATH
+  // 1. Koleksi Tanpa Filter (List All)
   const ordersRef = useMemo(() => {
     if (!db) return null;
     return collection(db, 'orders');
   }, [db]);
 
-  // 2. QUERY GLOBAL ADMIN (Tanpa filter userId)
   const { data: rawOrders, loading: ordersLoading, error: firestoreError } = useCollection(
     ordersRef ? query(ordersRef) : null
   );
@@ -65,7 +65,7 @@ export default function AdminOrdersPage() {
     });
   }, [rawOrders]);
 
-  // Proteksi Halaman Admin
+  // Proteksi Akses
   if (!authLoading && (!user || user.email !== ADMIN_EMAIL)) {
     return (
       <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6 text-center">
@@ -73,8 +73,8 @@ export default function AdminOrdersPage() {
           <ShieldAlert className="w-10 h-10" />
         </div>
         <h1 className="text-xl font-black text-gray-900">Akses Dibatasi</h1>
-        <p className="text-sm text-gray-500 mt-2">Hanya Admin MarPay (cs.marpay@gmail.com) yang diizinkan.</p>
-        <Button onClick={() => router.replace('/')} className="mt-8 bg-primary text-white rounded-2xl px-8">Kembali ke Beranda</Button>
+        <p className="text-sm text-gray-500 mt-2">Akun {user?.email || 'Guest'} tidak diizinkan.</p>
+        <Button onClick={() => router.replace('/')} className="mt-8 bg-primary text-white rounded-2xl px-8">Kembali</Button>
       </div>
     );
   }
@@ -82,18 +82,26 @@ export default function AdminOrdersPage() {
   const handleUpdateOrder = async (orderId: string, updates: any) => {
     if (!db) return;
     setUpdatingId(orderId);
-    try {
-      const orderDoc = doc(db, 'orders', orderId);
-      await updateDoc(orderDoc, { 
-        ...updates, 
-        updatedAt: serverTimestamp() 
+    
+    const orderDoc = doc(db, 'orders', orderId);
+    updateDoc(orderDoc, { 
+      ...updates, 
+      updatedAt: serverTimestamp() 
+    })
+    .then(() => {
+      toast({ variant: "success", title: "Berhasil Update" });
+    })
+    .catch(async (err) => {
+      const permError = new FirestorePermissionError({
+        path: orderDoc.path,
+        operation: 'update',
+        requestResourceData: updates
       });
-      toast({ variant: "success", title: "Berhasil Update", description: "Status pesanan telah diperbarui." });
-    } catch (e) {
-      toast({ variant: "destructive", title: "Gagal Update", description: "Periksa izin Firestore Admin Anda." });
-    } finally {
+      errorEmitter.emit('permission-error', permError);
+    })
+    .finally(() => {
       setUpdatingId(null);
-    }
+    });
   };
 
   const filteredOrders = useMemo(() => {
@@ -109,8 +117,8 @@ export default function AdminOrdersPage() {
     if (!orders) return { total: 0, pending: 0, completed: 0 };
     return {
       total: orders.length,
-      pending: orders.filter((o: any) => !['Selesai', 'selesai', 'Dibatalkan', 'dibatalkan'].includes(o.status)).length,
-      completed: orders.filter((o: any) => ['Selesai', 'selesai'].includes(o.status)).length
+      pending: orders.filter((o: any) => !['Selesai', 'Dibatalkan'].includes(o.status)).length,
+      completed: orders.filter((o: any) => o.status === 'Selesai').length
     };
   }, [orders]);
 
@@ -127,7 +135,7 @@ export default function AdminOrdersPage() {
       <header className="fixed top-0 left-0 right-0 z-50 bg-white px-4 py-4 border-b border-gray-100 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" onClick={() => router.back()}>
-            <ArrowLeft className="w-5 h-5 text-gray-800" />
+            <ArrowLeft className="w-5 h-5" />
           </Button>
           <h1 className="text-lg font-black">Dashboard Pesanan</h1>
         </div>
@@ -137,42 +145,37 @@ export default function AdminOrdersPage() {
       </header>
 
       <main className="pt-20 px-4 space-y-4">
-        {/* ENHANCED DIAGNOSTIC CONSOLE */}
+        {/* DIAGNOSTIC CONSOLE */}
         <div className="bg-slate-900 rounded-2xl p-4 text-[10px] font-mono text-cyan-400 space-y-2 border border-white/10 shadow-xl">
-           <div className="flex items-center gap-2 border-b border-white/5 pb-2 mb-2 text-white">
-              <Database className="w-3.5 h-3.5" />
-              <span className="font-bold uppercase tracking-widest">Admin Data Audit</span>
+           <div className="flex items-center justify-between border-b border-white/5 pb-2 mb-2">
+              <div className="flex items-center gap-2 text-white">
+                <Database className="w-3.5 h-3.5" />
+                <span className="font-bold uppercase tracking-widest">Admin Data Audit</span>
+              </div>
+              <button onClick={() => window.location.reload()} className="text-white/50 hover:text-white"><RefreshCcw className="w-3 h-3" /></button>
            </div>
            <p className="flex justify-between">
              <span className="text-gray-500">Project ID:</span> 
              <span className="text-white font-bold">{firebaseConfig.projectId}</span>
            </p>
            <p className="flex justify-between">
-             <span className="text-gray-500">Collection Path:</span> 
+             <span className="text-gray-500">Collection:</span> 
              <span className="text-yellow-400">/orders</span>
            </p>
            <p className="flex justify-between">
-             <span className="text-gray-500">Query Filter:</span> 
-             <span className="text-green-400">NONE (List All)</span>
-           </p>
-           <p className="flex justify-between border-t border-white/5 pt-1 mt-1">
-             <span className="text-gray-500">Admin Email:</span> 
+             <span className="text-gray-500">Admin:</span> 
              <span className="text-white">{user?.email}</span>
            </p>
-           <p className="flex justify-between">
-             <span className="text-gray-500">Admin UID:</span> 
-             <span className="text-white truncate max-w-[150px]">{user?.uid}</span>
-           </p>
            <p className="flex justify-between bg-white/5 p-1 rounded mt-1">
-             <span className="text-gray-400 font-bold">TOTAL DOCS:</span> 
-             <span className={cn("font-black text-base", orders.length > 0 ? "text-green-400" : "text-red-400")}>{orders.length}</span>
+             <span className="text-gray-400 font-bold uppercase">Docs Found:</span> 
+             <span className={cn("font-black text-sm", orders.length > 0 ? "text-green-400" : "text-red-400")}>{orders.length}</span>
            </p>
            
            {firestoreError && (
              <div className="mt-3 p-3 bg-red-500/20 border border-red-500/30 rounded-xl text-red-400">
-                <p className="font-bold flex items-center gap-1"><ShieldAlert className="w-3 h-3" /> PERMISSION ERROR:</p>
-                <p className="mt-1 leading-relaxed">{firestoreError.message}</p>
-                <p className="mt-2 text-[9px] text-gray-400 italic">Catatan: Pastikan Security Rules mengizinkan 'list' untuk Admin ini.</p>
+                <p className="font-bold flex items-center gap-1 uppercase"><ShieldAlert className="w-3 h-3" /> Error Ditemukan:</p>
+                <p className="mt-1 leading-relaxed break-words">{firestoreError.message}</p>
+                <p className="mt-2 text-[9px] text-gray-400 italic">Solusi: Pastikan email Anda sudah diizinkan di firestore.rules.</p>
              </div>
            )}
         </div>
@@ -180,7 +183,7 @@ export default function AdminOrdersPage() {
         <div className="relative">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input 
-            placeholder="Cari Nama, ID, atau HP..." 
+            placeholder="Cari Nama atau ID..." 
             className="w-full pl-11 pr-4 py-3.5 bg-white border border-gray-100 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 shadow-sm"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -190,7 +193,7 @@ export default function AdminOrdersPage() {
         <div className="grid grid-cols-3 gap-3">
            <div className="bg-white p-3 rounded-2xl border border-gray-100 shadow-sm text-center">
               <p className="text-[9px] font-bold text-gray-400 uppercase">Total</p>
-              <p className="text-base font-black text-gray-900">{stats.total}</p>
+              <p className="text-base font-black">{stats.total}</p>
            </div>
            <div className="bg-white p-3 rounded-2xl border border-gray-100 shadow-sm text-center">
               <p className="text-[9px] font-bold text-gray-400 uppercase">Pending</p>
@@ -212,9 +215,9 @@ export default function AdminOrdersPage() {
                       <div className="flex items-center gap-2">
                         <span className="text-[10px] font-black text-primary bg-primary/5 px-2 py-0.5 rounded">ID: {order.id?.slice(-8).toUpperCase()}</span>
                         <span className={cn(
-                          "text-[9px] font-black px-2.5 py-0.5 rounded-full uppercase",
-                          ['Selesai', 'selesai'].includes(order.status) ? "bg-green-50 text-green-600 border-green-100" :
-                          ['Dibatalkan', 'dibatalkan'].includes(order.status) ? "bg-red-50 text-red-600 border-red-100" :
+                          "text-[9px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-tighter",
+                          ['Selesai', 'Selesai'].includes(order.status) ? "bg-green-50 text-green-600 border-green-100" :
+                          ['Dibatalkan', 'Dibatalkan'].includes(order.status) ? "bg-red-50 text-red-600 border-red-100" :
                           "bg-orange-50 text-orange-600 border-orange-100"
                         )}>
                           {order.status || 'Menunggu Konfirmasi'}
@@ -239,7 +242,7 @@ export default function AdminOrdersPage() {
                     </div>
                     <Button 
                       onClick={() => window.open(`https://wa.me/${order.customerPhone?.replace(/[^0-9]/g, '')}`, '_blank')}
-                      className="h-8 px-4 rounded-lg bg-green-500 text-white text-[10px] font-black hover:bg-green-600"
+                      className="h-8 px-4 rounded-lg bg-green-500 text-white text-[10px] font-black"
                     >
                       CHAT WA
                     </Button>
@@ -265,16 +268,6 @@ export default function AdminOrdersPage() {
                         <span className="text-[11px] font-bold uppercase tracking-widest">Total Bayar</span>
                      </div>
                      <p className="text-base font-black">Rp {order.totalAmount?.toLocaleString()}</p>
-                  </div>
-
-                  <div className="bg-orange-50/50 p-4 rounded-2xl border border-orange-100 space-y-2">
-                     <div className="flex items-center gap-2">
-                        <MapPin className="w-3.5 h-3.5 text-orange-500" />
-                        <p className="text-[10px] font-black text-orange-600 uppercase tracking-widest">Alamat Pengiriman</p>
-                     </div>
-                     <p className="text-[11px] text-gray-600 leading-relaxed font-medium">
-                        {order.shippingAddress?.fullAddress || 'Digital Service / No Address'}
-                     </p>
                   </div>
 
                   <div className="space-y-4 pt-2 border-t border-gray-50">
@@ -303,7 +296,7 @@ export default function AdminOrdersPage() {
                           <Input 
                             placeholder="J&T / Sicepat"
                             defaultValue={order.courier || ''}
-                            className="rounded-xl h-10 border-white bg-white text-xs font-bold shadow-sm"
+                            className="rounded-xl h-10 border-white bg-white text-xs font-bold"
                             onBlur={(e) => handleUpdateOrder(order.id, { courier: e.target.value })}
                           />
                         </div>
@@ -312,7 +305,7 @@ export default function AdminOrdersPage() {
                           <Input 
                             placeholder="RESI12345"
                             defaultValue={order.trackingNumber || ''}
-                            className="rounded-xl h-10 border-white bg-white text-xs font-bold text-primary shadow-sm"
+                            className="rounded-xl h-10 border-white bg-white text-xs font-bold text-primary"
                             onBlur={(e) => handleUpdateOrder(order.id, { trackingNumber: e.target.value })}
                           />
                         </div>
@@ -325,8 +318,8 @@ export default function AdminOrdersPage() {
           ) : (
             <div className="flex flex-col items-center justify-center py-20 text-center opacity-30">
               <Package className="w-16 h-16 mb-4 text-gray-300" />
-              <p className="text-base font-black">Tidak ada pesanan di Firestore</p>
-              <p className="text-[10px] mt-2 max-w-[200px]">Jika Riwayat Pelanggan terisi tapi di sini kosong, kemungkinan besar query diblokir oleh Security Rules (Permission Denied).</p>
+              <p className="text-base font-black">Tidak ada pesanan masuk</p>
+              <p className="text-[10px] mt-2 max-w-[200px]">Data akan muncul otomatis saat pelanggan melakukan checkout.</p>
             </div>
           )}
         </div>
