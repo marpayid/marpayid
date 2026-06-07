@@ -1,0 +1,24 @@
+
+{
+  "name": "MarPay",
+  "short_name": "MarPay",
+  "description": "Marketplace digital dan produk pilihan dengan pengalaman belanja cepat, aman, dan mudah.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#16a34a",
+  "icons": [
+    {
+      "src": "/profil1.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/profil1.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
