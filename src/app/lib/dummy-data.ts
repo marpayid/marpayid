@@ -953,7 +953,7 @@ export const Banners = [
     subtitle: 'Pulsa, Paket Data, Token PLN, E-Wallet, Top Up Game, BPJS and Tagihan Internet',
     badges: ['PROSES INSTAN', 'AMAN & TERPERCAYA', '24 JAM NONSTOP'],
     type: 'digital',
-    gradient: 'from-[#1D4ED8] via-[#6D28D9] to-[#7E22CE]'
+    gradient: 'from-[#2563EB] to-[#1E40AF]'
   },
   {
     id: 2,
@@ -961,6 +961,6 @@ export const Banners = [
     subtitle: 'Gratis ongkir, promo spesial, produk pilihan and pengiriman cepat',
     badges: ['GRATIS ONGKIR', 'PROMO SPESIAL', 'PRODUK PILIHAN'],
     type: 'physical',
-    gradient: 'from-[#00A859] via-[#10B981] to-[#1565FF]'
+    gradient: 'from-[#10B981] to-[#0EA5E9]'
   }
 ];
