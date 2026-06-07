@@ -90,39 +90,39 @@ export default function OrderDetailPage() {
           </div>
         </section>
 
-        {/* Shipping Status (Visible if Shipped) */}
-        {order.status === 'Dikirim' && (
-          <section className="bg-gradient-to-br from-[#22C55E] to-[#4ADE80] text-white p-5 rounded-[32px] shadow-xl shadow-green-100 space-y-4 relative overflow-hidden">
-            <div className="absolute right-[-15px] top-[-15px] opacity-10 pointer-events-none">
-              <Truck className="w-32 h-32 rotate-12" />
+        {/* Shipping Status (Visible if Shipped or Selesai with Resi) */}
+        {(order.status === 'Dikirim' || (order.status === 'Selesai' && order.trackingNumber)) && (
+          <section className="bg-gradient-to-br from-[#22C55E] to-[#4ADE80] text-white p-4 py-3.5 rounded-[24px] shadow-xl shadow-green-100 space-y-3 relative overflow-hidden">
+            <div className="absolute right-[-10px] top-[-10px] opacity-[0.08] pointer-events-none">
+              <Truck className="w-24 h-24 rotate-12" />
             </div>
             <div className="flex items-center gap-3 relative z-10">
-               <div className="w-10 h-10 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/20 shadow-inner">
-                  <Truck className="w-5 h-5 text-white" />
+               <div className="w-8 h-8 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center border border-white/20 shadow-inner">
+                  <Truck className="w-4 h-4 text-white" />
                </div>
                <div>
-                  <h3 className="text-[9px] font-black uppercase tracking-[0.2em] opacity-80">Status Pengiriman</h3>
-                  <p className="text-base font-black leading-tight">{order.shippingStatus || 'Dalam Pengiriman'}</p>
+                  <h3 className="text-[8px] font-black uppercase tracking-[0.2em] opacity-80">Status Pengiriman</h3>
+                  <p className="text-sm font-black leading-tight">{order.shippingStatus || 'Dalam Pengiriman'}</p>
                </div>
             </div>
-            <div className="bg-white/15 backdrop-blur-sm p-4 rounded-[22px] border border-white/20 space-y-3 relative z-10 shadow-lg">
+            <div className="bg-white/15 backdrop-blur-sm p-3 rounded-2xl border border-white/20 space-y-2 relative z-10 shadow-lg">
                <div className="flex justify-between items-center">
                   <div className="flex flex-col">
-                    <span className="text-[8px] font-bold uppercase tracking-widest opacity-70">Jasa Ekspedisi</span>
-                    <span className="text-[11px] font-black uppercase tracking-tight">{order.courier || 'Kurir Pilihan'}</span>
+                    <span className="text-[7px] font-bold uppercase tracking-widest opacity-70">Jasa Ekspedisi</span>
+                    <span className="text-[10px] font-black uppercase tracking-tight">{order.courier || 'Kurir Pilihan'}</span>
                   </div>
                   {order.trackingNumber && (
                     <button 
                       onClick={() => copyToClipboard(order.trackingNumber)} 
-                      className="text-[9px] font-black bg-white text-[#22C55E] px-3 py-1.5 rounded-xl shadow-sm active:scale-90 transition-transform uppercase tracking-tighter"
+                      className="text-[8px] font-black bg-white text-[#22C55E] px-2.5 py-1.5 rounded-lg shadow-sm active:scale-90 transition-transform uppercase tracking-tighter"
                     >
                       Salin Resi
                     </button>
                   )}
                </div>
-               <div className="pt-1">
-                 <p className="text-[10px] font-bold text-white/70 uppercase tracking-widest leading-none mb-1">Nomor Resi</p>
-                 <p className="text-sm font-black tracking-[0.1em]">{order.trackingNumber || 'Menunggu Update Resi'}</p>
+               <div className="pt-0.5 border-t border-white/10 mt-1">
+                 <p className="text-[8px] font-bold text-white/70 uppercase tracking-widest leading-none mb-1">Nomor Resi</p>
+                 <p className="text-xs font-black tracking-[0.1em]">{order.trackingNumber || 'Menunggu Update Resi'}</p>
                </div>
             </div>
           </section>
