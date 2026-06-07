@@ -191,16 +191,16 @@ export function ProductCard({ product, compact = false }: { product: any, compac
         
         {/* Premium Promo Strip Overlay */}
         <div className="absolute bottom-0 left-0 right-0 pointer-events-none z-10 flex items-end">
-          <div className="flex h-[18px] overflow-hidden rounded-tr-lg">
-            {/* Left Part: Branding */}
-            <div className="bg-[#F97316] px-2 flex items-center">
-              <span className="text-[#FFFFFF] text-[7px] font-semibold leading-none">Promo Pilihan</span>
+          <div className="flex h-[18px] overflow-hidden rounded-tr-lg shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
+            {/* Left Part: Branding (Teal) */}
+            <div className="bg-[#0EA5A4] px-2 flex items-center">
+              <span className="text-[#FFFFFF] text-[7px] font-semibold leading-none tracking-tight">Promo Pilihan</span>
             </div>
-            {/* Right Part: Free Shipping (conditional) */}
+            {/* Right Part: Free Shipping (Mint) */}
             {isFreeShipping && (
-              <div className="bg-[#DCFCE7] px-2 flex items-center gap-1 border-l border-white/5">
-                <Truck className="w-2.5 h-2.5 text-[#16A34A]" />
-                <span className="text-[#16A34A] text-[7px] font-semibold leading-none">Gratis Ongkir</span>
+              <div className="bg-[#ECFDF5] px-2 flex items-center gap-1 border-l border-[#A7F3D0]">
+                <Truck className="w-2.5 h-2.5 text-[#059669]" />
+                <span className="text-[#059669] text-[7px] font-semibold leading-none tracking-tight">Gratis Ongkir</span>
               </div>
             )}
           </div>
