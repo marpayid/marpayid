@@ -193,14 +193,14 @@ export function ProductCard({ product, compact = false }: { product: any, compac
         <div className="absolute bottom-0 left-0 right-0 pointer-events-none z-10 flex items-end">
           <div className="flex h-[18px] overflow-hidden rounded-tr-lg">
             {/* Left Part: Branding */}
-            <div className="bg-[#004D2C] px-1.5 flex items-center">
-              <span className="text-white text-[6.5px] font-black uppercase tracking-tighter leading-none">PROMO MARPAY</span>
+            <div className="bg-[#134E4A] px-2 flex items-center">
+              <span className="text-white text-[7px] font-semibold leading-none">Promo Pilihan</span>
             </div>
             {/* Right Part: Free Shipping (conditional) */}
             {isFreeShipping && (
-              <div className="bg-[#00A859] px-1.5 flex items-center gap-0.5 border-l border-white/10">
-                <Truck className="w-2 h-2 text-white" />
-                <span className="text-white text-[6.5px] font-black uppercase tracking-tighter leading-none">GRATIS ONGKIR</span>
+              <div className="bg-[#ECFDF5] px-2 flex items-center gap-1 border-l border-white/5">
+                <Truck className="w-2.5 h-2.5 text-[#047857]" />
+                <span className="text-[#047857] text-[7px] font-semibold leading-none">Gratis Ongkir</span>
               </div>
             )}
           </div>
