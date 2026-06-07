@@ -29,7 +29,6 @@ export default function AboutPage() {
           </div>
           <div className="space-y-1">
             <h2 className="text-2xl font-black text-gray-900 tracking-tight">MarPay Marketplace</h2>
-            <p className="text-xs font-bold text-primary uppercase tracking-[0.2em]">Versi 1.0.4</p>
           </div>
         </div>
 
@@ -99,7 +98,7 @@ export default function AboutPage() {
             <ShieldCheck className="w-3.5 h-3.5" />
             Terverifikasi & Aman
           </div>
-          <p className="text-[9px] text-gray-300 mt-4 font-medium uppercase tracking-[0.2em]">MarPay Digital Solution • Versi 1.0.4</p>
+          <p className="text-[9px] text-gray-300 mt-4 font-medium uppercase tracking-[0.2em]">MarPay Digital Solution</p>
         </div>
       </main>
     </div>
