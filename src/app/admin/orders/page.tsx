@@ -7,7 +7,7 @@ import {
   ArrowLeft, Search, Package, User, Phone, 
   Calendar, CreditCard, Truck, Loader2, 
   MoreVertical, CheckCircle2, Clock, XCircle, 
-  MapPin, ShoppingCart, DollarSign, Send, ClipboardCheck
+  MapPin, ShoppingCart, DollarSign, Send, ClipboardCheck, AlertCircle
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -24,6 +24,7 @@ import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const ADMIN_EMAIL = 'cs.marpay@gmail.com';
 
@@ -45,15 +46,18 @@ export default function AdminOrdersPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [updatingId, setUpdatingId] = useState<string | null>(null);
 
+  // Ambil referensi ke collection orders (Sama dengan customer)
   const ordersRef = useMemo(() => {
     if (!db) return null;
     return collection(db, 'orders');
   }, [db]);
 
-  const { data: orders, loading: ordersLoading } = useCollection(
+  // Query ALL orders untuk admin
+  const { data: orders, loading: ordersLoading, error: firestoreError } = useCollection(
     ordersRef ? query(ordersRef, orderBy('createdAt', 'desc')) : null
   );
 
+  // Proteksi Halaman
   if (!authLoading && (!user || user.email !== ADMIN_EMAIL)) {
     return (
       <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6 text-center">
@@ -93,7 +97,7 @@ export default function AdminOrdersPage() {
     );
   }, [orders, searchQuery]);
 
-  if (authLoading || ordersLoading) {
+  if (authLoading || (ordersLoading && !firestoreError)) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -116,6 +120,19 @@ export default function AdminOrdersPage() {
       </header>
 
       <main className="pt-20 px-4 space-y-4">
+        {/* Firestore Error Alert */}
+        {firestoreError && (
+          <Alert variant="destructive" className="rounded-2xl border-red-200 bg-red-50">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle className="text-xs font-black uppercase">Firestore Error</AlertTitle>
+            <AlertDescription className="text-[11px] mt-1 leading-relaxed">
+              Gagal memuat data dari koleksi &apos;orders&rdquo;. Pastikan Security Rules sudah mengizinkan akses untuk email admin ini.
+              <br />
+              <span className="font-mono text-[9px] opacity-70">{firestoreError.message}</span>
+            </AlertDescription>
+          </Alert>
+        )}
+
         <div className="relative">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input 
@@ -152,9 +169,9 @@ export default function AdminOrdersPage() {
                         <span className="text-[10px] font-black text-primary bg-primary/5 px-2 py-0.5 rounded">ID: {order.id?.slice(-8).toUpperCase()}</span>
                         <span className={cn(
                           "text-[9px] font-black px-2.5 py-0.5 rounded-full uppercase",
-                          order.status === 'Selesai' || order.status === 'selesai' ? "bg-green-50 text-green-600 border border-green-100" :
-                          order.status === 'Dibatalkan' || order.status === 'dibatalkan' ? "bg-red-50 text-red-600 border border-red-100" :
-                          "bg-orange-50 text-orange-600 border border-orange-100"
+                          order.status === 'Selesai' || order.status === 'selesai' ? "bg-green-50 text-green-600 border-green-100" :
+                          order.status === 'Dibatalkan' || order.status === 'dibatalkan' ? "bg-red-50 text-red-600 border-red-100" :
+                          "bg-orange-50 text-orange-600 border-orange-100"
                         )}>
                           {order.status || 'Menunggu Konfirmasi'}
                         </span>
@@ -296,6 +313,7 @@ export default function AdminOrdersPage() {
             <div className="flex flex-col items-center justify-center py-20 text-center opacity-30">
               <Package className="w-16 h-16 mb-4 text-gray-300" />
               <p className="text-base font-black">Tidak ada pesanan</p>
+              {firestoreError && <p className="text-[10px] text-red-500 mt-2">Error: {firestoreError.message}</p>}
             </div>
           )}
         </div>
