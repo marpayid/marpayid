@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect, useMemo } from 'react';
@@ -202,8 +201,8 @@ export function ProductCard({ product, compact = false }: { product: any, compac
               Rp {product.price.toLocaleString()}
             </p>
             {isFreeShipping && (
-              <span className="text-[9px] font-black text-green-600 bg-green-50 px-1.5 py-0.5 rounded border border-green-100 uppercase tracking-tighter">
-                Gratis
+              <span className="text-[9px] font-black text-green-600 flex items-center gap-0.5 uppercase tracking-tighter">
+                <Truck className="w-2.5 h-2.5" /> Gratis
               </span>
             )}
           </div>
