@@ -51,6 +51,113 @@ export const Vouchers = [
 
 export const Products = [
   {
+    id: 226,
+    name: 'Screamous Kaos T-Shirt BOXY FIT 16s MAZAL',
+    price: 108000,
+    rating: 4.9,
+    reviews: 420,
+    sold: 1200,
+    category: 'Fashion',
+    imageUrl: 'https://i.ibb.co/3mMVXq3M/IMG-1491.jpg',
+    isFlashSale: false,
+    discount: null,
+    stock: 'Tersedia',
+    tag: 'Produk Baru',
+    gender: 'unisex',
+    brand: 'Screamous',
+    variants: ['S', 'M', 'L', 'XL', 'XXL'],
+    colors: [
+      { name: 'Black', imageUrl: 'https://i.ibb.co/3mMVXq3M/IMG-1491.jpg' },
+      { name: 'White', imageUrl: 'https://i.ibb.co/5Xh1sbhf/IMG-1492.jpg' }
+    ],
+    isFreeShipping: false,
+    shippingFee: 8000,
+    tags: ['kaos', 'screamous', 'boxy fit', 'tshirt', 'unisex', 'fashion'],
+    description: `SCREAMOUS T-SHIRT BOXY FIT MAZAL
+
+Kaos dengan potongan Boxy Fit yang sedang tren, memberikan siluet kotak yang stylish. Menggunakan material Cotton Combed 16s yang lebih tebal dan kokoh namun tetap adem.
+
+Detail Produk:
+- Material: Cotton Combed 16s (Heavy Weight)
+- Fit: Boxy Fit
+- Detail: Screenprinted Graphics
+- Pilihan Warna: Black & White
+
+Panduan Ukuran (Boxy Fit):
+S: Lebar 54cm | Panjang 66cm
+M: Lebar 56cm | Panjang 68cm
+L: Lebar 58cm | Panjang 70cm
+XL: Lebar 60cm | Panjang 72cm
+XXL: Lebar 62cm | Panjang 74cm`,
+  },
+  {
+    id: 225,
+    name: 'AccentAmbios Boxy Oversized T-Shirt Believe Black Unisex - Cotton Combed 20s',
+    price: 88000,
+    rating: 4.8,
+    reviews: 156,
+    sold: 540,
+    category: 'Fashion',
+    imageUrl: 'https://i.ibb.co/351j6Q35/IMG-1490.jpg',
+    isFlashSale: true,
+    discount: '10%',
+    stock: 'Tersedia',
+    tag: 'Trending',
+    gender: 'unisex',
+    brand: 'AccentAmbios',
+    variants: ['S', 'M', 'L', 'XL'],
+    colors: [],
+    isFreeShipping: false,
+    shippingFee: 8000,
+    tags: ['kaos', 'oversized', 'boxy', 'accentambios', 'hitam', 'streetwear'],
+    description: `ACCENTAMBIOS BELIEVE BLACK - BOXY OVERSIZED T-SHIRT
+
+Tampil percaya diri dengan koleksi 'Believe' dari AccentAmbios. Menggunakan bahan Katun Combed 20s premium yang memiliki ketebalan pas untuk gaya oversized.
+
+Spesifikasi:
+- Bahan: Cotton Combed 20s
+- Warna: Deep Black
+- Cutting: Boxy Oversized
+- Tekstur bahan lembut, menyerap keringat, dan tidak menerawang.
+
+Cocok dipadukan dengan celana cargo atau baggy pants untuk look minimalis modern.`,
+  },
+  {
+    id: 224,
+    name: 'AccentAmbios Kaos Boxy Oversized Savage Abu Tua - Katun Combed 20s',
+    price: 93000,
+    rating: 5.0,
+    reviews: 88,
+    sold: 320,
+    category: 'Fashion',
+    imageUrl: 'https://i.ibb.co/XkXmhtF9/IMG-1488.jpg',
+    isFlashSale: false,
+    discount: null,
+    stock: 'Tersedia',
+    tag: 'Produk Pilihan',
+    gender: 'unisex',
+    brand: 'AccentAmbios',
+    variants: ['S', 'M', 'L', 'XL'],
+    colors: [
+      { name: 'Abu Tua', imageUrl: 'https://i.ibb.co/XkXmhtF9/IMG-1488.jpg' },
+      { name: 'Detail Belakang', imageUrl: 'https://i.ibb.co/20LwwPYK/IMG-1489.jpg' }
+    ],
+    isFreeShipping: false,
+    shippingFee: 8000,
+    tags: ['kaos', 'boxy', 'oversized', 'abu tua', 'fashion pria', 'unisex', 'katun'],
+    description: `ACCENTAMBIOS SAVAGE DARK GREY - BOXY OVERSIZED T-SHIRT
+
+Kaos dengan material Cotton Combed 20s berkualitas tinggi. Potongan boxy memberikan kenyamanan ekstra dan kesan urban yang kuat.
+
+Fitur Utama:
+- Bahan High Quality Cotton Combed 20s.
+- Warna: Dark Grey (Abu Tua).
+- Model: Boxy Oversized (Lengan lebar dan badan rileks).
+- Jahitan rapi standar distro premium.
+
+Sangat nyaman untuk penggunaan harian maupun hangout.`,
+  },
+  {
     id: 223,
     name: 'SCARLETT (BEST SELLER!) - Extrait De Parfum 30ml - Unisex - Parfum Wanita',
     price: 59000,
