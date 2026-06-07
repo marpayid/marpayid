@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect, useMemo } from 'react';
@@ -188,15 +189,22 @@ export function ProductCard({ product, compact = false }: { product: any, compac
       <Link href={`/product/${product.id}`} className="relative aspect-square block">
         <Image src={displayImage} alt={product.name} fill className={cn("object-cover", isOutOfStock && "grayscale")} sizes="(max-width: 768px) 50vw, 33vw" />
         
-        {/* Photo Overlay Label */}
-        {isFreeShipping && (
-          <div className="absolute bottom-1.5 left-1.5 pointer-events-none z-10">
-            <span className="bg-[#008F4C] text-white text-[7px] font-black h-[18px] px-1.5 rounded-sm shadow-sm uppercase tracking-tighter flex items-center gap-1 leading-none">
-              <Truck className="w-2 h-2" />
-              GRATIS ONGKIR
-            </span>
+        {/* Premium Promo Strip Overlay */}
+        <div className="absolute bottom-0 left-0 right-0 pointer-events-none z-10 flex items-end">
+          <div className="flex h-[18px] overflow-hidden rounded-tr-lg">
+            {/* Left Part: Branding */}
+            <div className="bg-[#004D2C] px-1.5 flex items-center">
+              <span className="text-white text-[6.5px] font-black uppercase tracking-tighter leading-none">PROMO MARPAY</span>
+            </div>
+            {/* Right Part: Free Shipping (conditional) */}
+            {isFreeShipping && (
+              <div className="bg-[#00A859] px-1.5 flex items-center gap-0.5 border-l border-white/10">
+                <Truck className="w-2 h-2 text-white" />
+                <span className="text-white text-[6.5px] font-black uppercase tracking-tighter leading-none">GRATIS ONGKIR</span>
+              </div>
+            )}
           </div>
-        )}
+        </div>
 
         {product.discount && !isOutOfStock && <div className="absolute top-0 left-0 bg-orange-500 text-white text-[9px] font-black px-2 py-0.5 rounded-br-xl shadow-sm uppercase">{product.discount} OFF</div>}
         {isOutOfStock && <div className="absolute inset-0 bg-black/40 flex items-center justify-center"><span className="bg-red-600 text-white text-[10px] font-black px-2 py-1 rounded-md uppercase tracking-wider">Stok Habis</span></div>}
@@ -212,9 +220,10 @@ export function ProductCard({ product, compact = false }: { product: any, compac
               Rp {product.price.toLocaleString()}
             </p>
             {isFreeShipping && (
-              <span className="text-[8px] font-bold text-green-600 flex items-center gap-0.5 bg-green-50/80 px-1.5 py-0.5 rounded uppercase tracking-tighter">
-                <Truck className="w-2.5 h-2.5" /> Gratis
-              </span>
+              <div className="flex items-center gap-0.5 bg-green-50 px-1 py-0.5 rounded text-green-600">
+                <Truck className="w-2.5 h-2.5" />
+                <span className="text-[8px] font-black uppercase tracking-tighter">GRATIS</span>
+              </div>
             )}
           </div>
 
