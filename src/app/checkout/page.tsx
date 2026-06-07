@@ -60,6 +60,23 @@ export default function Checkout() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Alur Deteksi Kembali dari WhatsApp
+  useEffect(() => {
+    const handleFocus = () => {
+      const isRedirectPending = sessionStorage.getItem('marpay_checkout_pending');
+      if (isRedirectPending) {
+        sessionStorage.removeItem('marpay_checkout_pending');
+        router.replace('/akun/transaksi');
+      }
+    };
+
+    window.addEventListener('focus', handleFocus);
+    // Cek juga saat mount (jika komponen re-mount setelah kembali)
+    handleFocus();
+
+    return () => window.removeEventListener('focus', handleFocus);
+  }, [router]);
+
   useEffect(() => {
     const tempItem = localStorage.getItem('marpay_checkout_temp');
     if (tempItem) {
@@ -163,6 +180,9 @@ export default function Checkout() {
       message += `Terima kasih 🙏`;
 
       const whatsappUrl = `https://wa.me/${adminWhatsApp}?text=${encodeURIComponent(message)}`;
+
+      // Set flag redirect ke halaman riwayat pesanan
+      sessionStorage.setItem('marpay_checkout_pending', 'true');
 
       // Simpan ke Firestore (Non-blocking write)
       addDoc(collection(db, 'orders'), {
