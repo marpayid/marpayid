@@ -44,11 +44,14 @@
         "customerPhone": { "type": "string" },
         "items": { "type": "array" },
         "totalAmount": { "type": "number" },
-        "status": { "type": "string", "enum": ["Menunggu Pembayaran", "Pembayaran Diterima", "Diproses", "Dikirim", "Selesai", "Dibatalkan"] },
+        "status": { "type": "string", "enum": ["perlu_diproses", "dikemas", "dikirim", "selesai", "dibatalkan"] },
+        "paymentStatus": { "type": "string", "enum": ["Menunggu Pembayaran", "Lunas", "Dibatalkan"] },
+        "paymentMethod": { "type": "string" },
         "courier": { "type": "string" },
         "trackingNumber": { "type": "string" },
         "shippingAddress": { "type": "object" },
-        "createdAt": { "type": "string", "format": "date-time" }
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
       }
     },
     "NotificationToken": {

@@ -1,10 +1,11 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { 
   ArrowLeft, MapPin, CreditCard, Edit3, MessageCircle, AlertCircle, Wallet, QrCode, Truck, Info,
-  Smartphone, Zap, Gamepad2
+  Smartphone, Zap, Gamepad2, Loader2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -22,7 +23,8 @@ import {
 
 import Image from 'next/image';
 import { cn, getProductImage } from '@/lib/utils';
-import { useUser } from '@/firebase';
+import { useUser, useFirestore } from '@/firebase';
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 
 interface AddressData {
   name: string;
@@ -42,6 +44,7 @@ const PAYMENT_METHODS = [
 
 export default function Checkout() {
   const router = useRouter();
+  const db = useFirestore();
   const { user } = useUser();
   
   const [items, setItems] = useState<any[]>([]);
@@ -53,9 +56,9 @@ export default function Checkout() {
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    // Load Items
     const tempItem = localStorage.getItem('marpay_checkout_temp');
     if (tempItem) {
       try {
@@ -74,7 +77,6 @@ export default function Checkout() {
       }
     }
 
-    // Load Address
     const savedAddress = localStorage.getItem('marpay_address');
     if (savedAddress) {
       try {
@@ -109,8 +111,8 @@ export default function Checkout() {
     setIsAddressModalOpen(false);
   };
 
-  const handleWhatsAppCheckout = () => {
-    if (items.length === 0) return;
+  const handleWhatsAppCheckout = async () => {
+    if (items.length === 0 || isSubmitting) return;
     
     if (!isDigital && !address) {
       setError("Mohon isi alamat pengiriman terlebih dahulu.");
@@ -119,10 +121,11 @@ export default function Checkout() {
       return;
     }
 
+    setIsSubmitting(true);
+
     const adminWhatsApp = "6283851278935";
     const paymentMethodLabel = PAYMENT_METHODS.find(m => m.id === selectedPayment)?.label || selectedPayment;
 
-    // Variable Dinamis sesuai permintaan
     const customerName = isDigital ? (items[0].details?.customerName || user?.displayName || 'Pelanggan Digital') : (address?.name || 'N/A');
     const customerPhone = isDigital ? (items[0].details?.target || 'N/A') : (address?.phone || 'N/A');
     const customerAddress = isDigital 
@@ -133,63 +136,79 @@ export default function Checkout() {
       return `${index + 1}. ${item.name}\n   Varian: ${item.variant || 'Default'}\n   Jumlah: ${item.quantity} pcs\n   Harga: Rp ${item.price.toLocaleString()}`;
     }).join('\n\n');
 
-    // FORMAT PESAN PROFESIONAL & DINAMIS
-    let message = `🛍️ ORDER BARU MARPAY\n\n`;
-    message += `━━━━━━━━━━━━━━\n\n`;
-    message += `👤 DATA PEMBELI\n`;
-    message += `Nama : ${customerName}\n`;
-    message += `No. WA : ${customerPhone}\n\n`;
-    message += `📍 ALAMAT PENGIRIMAN\n`;
-    message += `${customerAddress}\n\n`;
-    message += `━━━━━━━━━━━━━━\n\n`;
-    message += `📦 DETAIL PESANAN\n\n`;
-    message += `${orderItemsList}\n\n`;
-    message += `━━━━━━━━━━━━━━\n\n`;
-    message += `💳 RINGKASAN PEMBAYARAN\n\n`;
-    message += `Subtotal : Rp ${totalItemsPrice.toLocaleString()}\n`;
-    message += `Ongkir : Rp ${totalShipping.toLocaleString()}\n`;
-    message += `Total Bayar : Rp ${totalBill.toLocaleString()}\n\n`;
-    message += `Metode Pembayaran :\n${paymentMethodLabel}\n\n`;
-    message += `━━━━━━━━━━━━━━\n\n`;
-    message += `📌 STATUS\n`;
-    message += `Menunggu Konfirmasi Admin\n\n`;
-    message += `Mohon diproses.\n`;
-    message += `Terima kasih 🙏`;
+    try {
+      // Simpan ke Firestore
+      await addDoc(collection(db, 'orders'), {
+        userId: user?.uid || 'guest',
+        customerName,
+        customerPhone,
+        customerEmail: user?.email || '',
+        items,
+        totalAmount: totalBill,
+        status: 'perlu_diproses',
+        paymentStatus: 'Menunggu Pembayaran',
+        paymentMethod: paymentMethodLabel,
+        shippingAddress: isDigital ? { fullAddress: 'Digital' } : address,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      });
 
-    const whatsappUrl = `https://wa.me/${adminWhatsApp}?text=${encodeURIComponent(message)}`;
-    window.location.href = whatsappUrl;
-    localStorage.removeItem('marpay_checkout_temp');
+      // Format Pesan WhatsApp
+      let message = `🛍️ ORDER BARU MARPAY\n\n`;
+      message += `━━━━━━━━━━━━━━\n\n`;
+      message += `👤 DATA PEMBELI\n`;
+      message += `Nama : ${customerName}\n`;
+      message += `No. WA : ${customerPhone}\n\n`;
+      message += `📍 ALAMAT PENGIRIMAN\n`;
+      message += `${customerAddress}\n\n`;
+      message += `━━━━━━━━━━━━━━\n\n`;
+      message += `📦 DETAIL PESANAN\n\n`;
+      message += `${orderItemsList}\n\n`;
+      message += `━━━━━━━━━━━━━━\n\n`;
+      message += `💳 RINGKASAN PEMBAYARAN\n\n`;
+      message += `Subtotal : Rp ${totalItemsPrice.toLocaleString()}\n`;
+      message += `Ongkir : Rp ${totalShipping.toLocaleString()}\n`;
+      message += `Total Bayar : Rp ${totalBill.toLocaleString()}\n\n`;
+      message += `Metode Pembayaran :\n${paymentMethodLabel}\n\n`;
+      message += `━━━━━━━━━━━━━━\n\n`;
+      message += `📌 STATUS\n`;
+      message += `Menunggu Konfirmasi Admin\n\n`;
+      message += `Mohon diproses.\n`;
+      message += `Terima kasih 🙏`;
+
+      const whatsappUrl = `https://wa.me/${adminWhatsApp}?text=${encodeURIComponent(message)}`;
+      
+      // Bersihkan keranjang dan temp
+      localStorage.removeItem('marpay_checkout_temp');
+      localStorage.removeItem('marpay_cart');
+      window.dispatchEvent(new Event('cart-updated'));
+
+      window.location.href = whatsappUrl;
+    } catch (e) {
+      console.error("Firestore Save Error:", e);
+      setIsSubmitting(false);
+    }
   };
 
   const renderItemMedia = (item: any) => {
     if (item.type === 'digital') {
       const name = item.name?.toLowerCase() || '';
       const category = item.category?.toLowerCase() || '';
-      
       let Icon = CreditCard;
       let iconColor = "text-primary";
       let bgColor = "bg-primary/5";
-
       if (name.includes('dana')) { Icon = Wallet; iconColor = "text-emerald-500"; bgColor = "bg-emerald-50"; }
       else if (name.includes('ovo')) { Icon = Wallet; iconColor = "text-purple-500"; bgColor = "bg-purple-50"; }
       else if (name.includes('gopay')) { Icon = Wallet; iconColor = "text-blue-500"; bgColor = "bg-blue-50"; }
-      else if (name.includes('shopeepay')) { Icon = Wallet; iconColor = "text-orange-500"; bgColor = "bg-orange-50"; }
-      else if (name.includes('pulsa') || category.includes('pulsa')) { Icon = Smartphone; iconColor = "text-blue-500"; bgColor = "bg-blue-50"; }
-      else if (name.includes('pln') || name.includes('token')) { Icon = Zap; iconColor = "text-yellow-600"; bgColor = "bg-yellow-50"; }
-      else if (name.includes('game') || category.includes('game') || name.includes('diamond') || name.includes('uc') || name.includes('robux')) { Icon = Gamepad2; iconColor = "text-indigo-500"; bgColor = "bg-indigo-50"; }
-
+      else if (name.includes('pulsa')) { Icon = Smartphone; iconColor = "text-blue-500"; bgColor = "bg-blue-50"; }
+      else if (name.includes('pln')) { Icon = Zap; iconColor = "text-yellow-600"; bgColor = "bg-yellow-50"; }
+      else if (name.includes('game')) { Icon = Gamepad2; iconColor = "text-indigo-500"; bgColor = "bg-indigo-50"; }
       return (
         <div className={cn("w-full h-full flex items-center justify-center rounded-xl", bgColor)}>
           <Icon className={cn("w-7 h-7", iconColor)} />
         </div>
       );
     }
-    
-    // Premium uses a fixed image
-    if (item.category === 'Premium' || item.category?.toLowerCase() === 'premium') {
-      return <Image src="/premium1.png" alt={item.name} fill className="object-cover" />;
-    }
-
     return <Image src={getProductImage(item)} alt={item.name} fill className="object-cover" />;
   };
 
@@ -287,7 +306,6 @@ export default function Checkout() {
               const itemShipping = (item.shippingFee || 0) > 0 
                 ? item.shippingFee + (Math.max(0, item.quantity - 1) * 5000) 
                 : 0;
-
               return (
                 <div key={`${item.id}-${idx}`} className="flex gap-3.5">
                   <div className="relative w-14 h-14 rounded-xl overflow-hidden flex-shrink-0 border border-gray-50 bg-gray-50">
@@ -295,18 +313,12 @@ export default function Checkout() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <h4 className="text-[11px] font-bold text-gray-800 truncate">{item.name}</h4>
-                    
                     <div className="mt-1 space-y-0.5">
-                      <p className="text-[10px] text-gray-400 font-medium truncate">
-                        Varian: {item.variant || 'Default'}
-                      </p>
+                      <p className="text-[10px] text-gray-400 font-medium truncate">Varian: {item.variant || 'Default'}</p>
                       {item.type !== 'digital' && (
-                        <p className="text-[10px] text-gray-400 font-medium">
-                          Ongkir: {itemShipping > 0 ? `Rp ${itemShipping.toLocaleString()}` : 'Gratis'}
-                        </p>
+                        <p className="text-[10px] text-gray-400 font-medium">Ongkir: {itemShipping > 0 ? `Rp ${itemShipping.toLocaleString()}` : 'Gratis'}</p>
                       )}
                     </div>
-
                     <div className="flex items-center justify-between mt-1.5">
                       <p className="text-xs font-bold text-primary">Rp {item.price.toLocaleString()}</p>
                       <p className="text-[10px] text-muted-foreground font-bold">x{item.quantity}</p>
@@ -316,18 +328,6 @@ export default function Checkout() {
               );
             })}
           </div>
-
-          {!isDigital && (
-            <div className="border-t border-gray-50 pt-3 flex justify-between items-center">
-              <div className="flex items-center gap-1.5">
-                <Truck className="w-3.5 h-3.5 text-primary" />
-                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tight">Total Pengiriman</span>
-              </div>
-              <span className={cn("text-[11px] font-bold", totalShipping > 0 ? "text-gray-900" : "text-green-500")}>
-                {totalShipping > 0 ? `Rp ${totalShipping.toLocaleString()}` : 'Gratis'}
-              </span>
-            </div>
-          )}
         </div>
 
         <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm space-y-3.5">
@@ -357,8 +357,6 @@ export default function Checkout() {
               );
             })}
           </RadioGroup>
-
-          {/* Info Box WhatsApp Processing */}
           <div className="mt-4 bg-blue-50/80 p-3.5 rounded-xl border border-blue-100 flex gap-3">
             <Info className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
             <p className="text-[10px] text-blue-700/80 leading-relaxed font-medium">
@@ -383,10 +381,11 @@ export default function Checkout() {
           <p className="text-base font-black text-primary leading-none">Rp {totalBill.toLocaleString()}</p>
         </div>
         <Button 
+          disabled={isSubmitting}
           onClick={handleWhatsAppCheckout} 
           className="bg-primary text-white font-bold h-11 px-6 rounded-xl flex items-center gap-2 shadow-lg shadow-primary/20 active:scale-95 transition-transform"
         >
-          <MessageCircle className="w-4 h-4" />
+          {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <MessageCircle className="w-4 h-4" />}
           Bayar Sekarang
         </Button>
       </div>

@@ -22,25 +22,20 @@ export default function TransactionPage() {
     return collection(db, 'orders');
   }, [db, user?.uid]);
 
-  // Syarat: Hanya tampilkan pesanan yang sudah dikonfirmasi admin
-  // (Paid, Processing, Shipped, Completed, Cancelled)
-  // Pesanan "Menunggu Pembayaran" tidak tampil sesuai instruksi revisi
-  const confirmedStatuses = ["Pembayaran Diterima", "Diproses", "Dikirim", "Selesai", "Dibatalkan"];
-
   const { data: orders, loading: ordersLoading } = useCollection(
     ordersRef ? query(
       ordersRef, 
       where('userId', '==', user?.uid),
-      where('status', 'in', confirmedStatuses)
+      orderBy('createdAt', 'desc')
     ) : null
   );
 
   const statuses = [
     { label: 'Semua', value: 'all' },
-    { label: 'Proses', value: 'Diproses' },
-    { label: 'Kirim', value: 'Dikirim' },
-    { label: 'Selesai', value: 'Selesai' },
-    { label: 'Batal', value: 'Dibatalkan' },
+    { label: 'Proses', value: 'perlu_diproses' },
+    { label: 'Kirim', value: 'dikirim' },
+    { label: 'Selesai', value: 'selesai' },
+    { label: 'Batal', value: 'dibatalkan' },
   ];
 
   if (authLoading || ordersLoading) {
@@ -53,12 +48,23 @@ export default function TransactionPage() {
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'Pembayaran Diterima': return <Clock className="w-4 h-4 text-orange-500" />;
-      case 'Diproses': return <Package className="w-4 h-4 text-blue-500" />;
-      case 'Dikirim': return <Truck className="w-4 h-4 text-indigo-500" />;
-      case 'Selesai': return <CheckCircle2 className="w-4 h-4 text-green-500" />;
-      case 'Dibatalkan': return <XCircle className="w-4 h-4 text-red-500" />;
+      case 'perlu_diproses': return <Clock className="w-4 h-4 text-orange-500" />;
+      case 'dikemas': return <Package className="w-4 h-4 text-blue-500" />;
+      case 'dikirim': return <Truck className="w-4 h-4 text-indigo-500" />;
+      case 'selesai': return <CheckCircle2 className="w-4 h-4 text-green-500" />;
+      case 'dibatalkan': return <XCircle className="w-4 h-4 text-red-500" />;
       default: return <ClipboardList className="w-4 h-4 text-gray-400" />;
+    }
+  };
+
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case 'perlu_diproses': return 'Perlu Diproses';
+      case 'dikemas': return 'Sedang Dikemas';
+      case 'dikirim': return 'Sedang Dikirim';
+      case 'selesai': return 'Selesai';
+      case 'dibatalkan': return 'Dibatalkan';
+      default: return status;
     }
   };
 
@@ -97,12 +103,12 @@ export default function TransactionPage() {
                       </span>
                     </div>
                     <span className={cn(
-                      "text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-tighter",
-                      order.status === 'Selesai' ? "bg-green-50 text-green-600" :
-                      order.status === 'Dibatalkan' ? "bg-red-50 text-red-600" :
-                      "bg-orange-50 text-orange-600"
+                      "text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-tighter border",
+                      order.status === 'selesai' ? "bg-green-50 text-green-600 border-green-100" :
+                      order.status === 'dibatalkan' ? "bg-red-50 text-red-600 border-red-100" :
+                      "bg-orange-50 text-orange-600 border-orange-100"
                     )}>
-                      {order.status}
+                      {getStatusLabel(order.status)}
                     </span>
                   </div>
 
@@ -126,7 +132,7 @@ export default function TransactionPage() {
                       <p className="text-sm font-black text-primary">Rp {order.totalAmount?.toLocaleString()}</p>
                     </div>
                     
-                    {order.status === 'Dikirim' && order.trackingNumber ? (
+                    {order.status === 'dikirim' && order.trackingNumber ? (
                       <Button 
                         onClick={() => router.push(`/cek-resi?resi=${order.trackingNumber}`)}
                         className="bg-primary text-white text-[10px] font-bold h-9 px-4 rounded-xl shadow-lg shadow-primary/20"
@@ -137,7 +143,7 @@ export default function TransactionPage() {
                       <Button 
                         variant="outline"
                         className="border-primary/20 text-primary text-[10px] font-bold h-9 px-4 rounded-xl"
-                        onClick={() => window.open(`https://wa.me/6283851278935?text=${encodeURIComponent(`Halo Admin MarPay, saya ingin bertanya status pesanan saya: ID ${order.id?.slice(-6)}`)}`, '_blank')}
+                        onClick={() => window.open(`https://wa.me/6283851278935?text=${encodeURIComponent(`Halo Admin MarPay, saya ingin bertanya status pesanan saya: ID ${order.id?.slice(-8).toUpperCase()}`)}`, '_blank')}
                       >
                         Tanya Admin
                       </Button>
@@ -151,18 +157,29 @@ export default function TransactionPage() {
                   <ClipboardList className="w-10 h-10" />
                 </div>
                 <h3 className="text-sm font-bold text-gray-900">Belum ada riwayat pesanan</h3>
-                <p className="text-[10px] font-medium text-gray-500 mt-1 max-w-[200px]">Pesanan akan muncul setelah pembayaran Anda dikonfirmasi oleh Admin.</p>
+                <p className="text-[10px] font-medium text-gray-500 mt-1 max-w-[200px]">Semua pesanan Anda akan muncul di sini secara otomatis.</p>
               </div>
             )}
           </TabsContent>
           
-          {/* Tabs lainnya mengikuti filter sederhana dari array orders */}
           {statuses.slice(1).map(statusTab => (
             <TabsContent key={statusTab.value} value={statusTab.value} className="mt-0">
-               {/* Filter logic inside UI for brevity in prototype */}
-               <div className="space-y-4 pt-4 text-center opacity-30 py-20">
-                  <p className="text-xs font-bold">Fitur filter sedang dalam pengembangan</p>
-                  <p className="text-[10px]">Silakan cek tab "Semua" untuk melihat detail pesanan Anda.</p>
+               <div className="space-y-4 pt-4">
+                  {orders?.filter(o => o.status === statusTab.value).map((order: any) => (
+                    <div key={order.id} className="bg-white rounded-3xl border border-gray-100 shadow-sm p-5 space-y-4">
+                      {/* Item content same as above... simplified for brevity in prototype */}
+                      <div className="flex items-center justify-between">
+                        <span className="text-[11px] font-bold">{order.customerName}</span>
+                        <span className="text-[10px] font-black text-primary">Rp {order.totalAmount?.toLocaleString()}</span>
+                      </div>
+                      <p className="text-[10px] text-gray-400">ID: {order.id?.slice(-8).toUpperCase()}</p>
+                    </div>
+                  ))}
+                  {orders?.filter(o => o.status === statusTab.value).length === 0 && (
+                    <div className="py-20 text-center opacity-30">
+                      <p className="text-xs font-bold">Tidak ada pesanan dengan status ini</p>
+                    </div>
+                  )}
                </div>
             </TabsContent>
           ))}
