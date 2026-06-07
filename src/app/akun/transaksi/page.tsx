@@ -3,10 +3,11 @@
 
 import { useMemo, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, ClipboardList, Package, Clock, CheckCircle2, Truck, XCircle, Loader2, Copy, Database } from 'lucide-react';
+import { ArrowLeft, ClipboardList, Package, Clock, CheckCircle2, Truck, XCircle, Loader2, Copy, Database, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useUser, useFirestore, useCollection } from '@/firebase';
+import { firebaseConfig } from '@/firebase/config';
 import { collection, query, where, orderBy } from 'firebase/firestore';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
@@ -19,13 +20,13 @@ export default function TransactionPage() {
   const { user, loading: authLoading } = useUser();
   const { toast } = useToast();
 
-  // DEBUG INFO: Identifikasi sumber data secara eksplisit
+  // 1. PATH INVESTIGATION
   const ordersRef = useMemo(() => {
     if (!db || !user?.uid) return null;
     return collection(db, 'orders');
   }, [db, user?.uid]);
 
-  // QUERY: Mengambil data ASLI dari Firestore tanpa fallback
+  // 2. QUERY CUSTOMER (Filtered by userId)
   const { data: orders, loading: ordersLoading, error: firestoreError } = useCollection(
     ordersRef ? query(
       ordersRef, 
@@ -33,7 +34,7 @@ export default function TransactionPage() {
     ) : null
   );
 
-  // Sorting lokal untuk menghindari masalah Index Firestore sementara
+  // Sorting lokal
   const sortedOrders = useMemo(() => {
     if (!orders) return [];
     return [...orders].sort((a: any, b: any) => {
@@ -84,16 +85,34 @@ export default function TransactionPage() {
       </header>
 
       <main className="pt-20 px-4">
-        {/* DEBUG CONSOLE: Untuk memastikan data benar-benar dari Firestore */}
-        <div className="mb-4 bg-slate-100 rounded-xl p-3 text-[9px] font-mono text-slate-500 border border-slate-200">
-           <div className="flex items-center gap-2 mb-1 text-slate-800 font-bold uppercase">
-              <Database className="w-3 h-3" /> Technical Audit
+        {/* ENHANCED DIAGNOSTIC CONSOLE */}
+        <div className="mb-4 bg-slate-900 rounded-2xl p-4 text-[10px] font-mono text-cyan-400 space-y-2 border border-white/10">
+           <div className="flex items-center gap-2 mb-2 text-white border-b border-white/5 pb-2">
+              <Database className="w-3.5 h-3.5 text-emerald-400" /> 
+              <span className="font-bold uppercase tracking-widest">Customer Data Audit</span>
            </div>
-           <p>Collection: orders</p>
-           <p>User UID: {user?.uid}</p>
-           <p>Docs Found: {sortedOrders.length}</p>
-           {sortedOrders.length > 0 && <p>First ID: {sortedOrders[0].id}</p>}
-           {firestoreError && <p className="text-red-500">Error: {firestoreError.message}</p>}
+           <p className="flex justify-between">
+             <span className="text-gray-500">Project ID:</span> 
+             <span className="text-white font-bold">{firebaseConfig.projectId}</span>
+           </p>
+           <p className="flex justify-between">
+             <span className="text-gray-500">Collection Path:</span> 
+             <span className="text-yellow-400">/orders</span>
+           </p>
+           <p className="flex justify-between">
+             <span className="text-gray-500">Query Filter:</span> 
+             <span className="text-emerald-400">userId == "{user?.uid?.slice(0,8)}..."</span>
+           </p>
+           <p className="flex justify-between bg-white/5 p-1 rounded mt-1">
+             <span className="text-gray-400 font-bold uppercase">Docs Found:</span> 
+             <span className="text-white font-black text-sm">{sortedOrders.length}</span>
+           </p>
+           {sortedOrders.length > 0 && (
+             <p className="text-[8px] text-gray-500 truncate">Doc ID: {sortedOrders[0].id}</p>
+           )}
+           {firestoreError && (
+             <p className="text-red-400 bg-red-500/10 p-2 rounded mt-2 border border-red-500/20">Error: {firestoreError.message}</p>
+           )}
         </div>
 
         <Tabs defaultValue="all" className="w-full">

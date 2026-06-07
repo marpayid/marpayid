@@ -6,11 +6,12 @@ import { useRouter } from 'next/navigation';
 import { 
   ArrowLeft, Search, Package, User, 
   Calendar, CreditCard, Loader2, 
-  MapPin, DollarSign, Database, ShieldAlert
+  MapPin, DollarSign, Database, ShieldAlert, Globe
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useUser, useFirestore, useCollection } from '@/firebase';
+import { firebaseConfig } from '@/firebase/config';
 import { collection, doc, updateDoc, query, serverTimestamp } from 'firebase/firestore';
 import {
   Select,
@@ -44,13 +45,13 @@ export default function AdminOrdersPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [updatingId, setUpdatingId] = useState<string | null>(null);
 
-  // 1. INVESTIGASI PATH: Menggunakan root collection 'orders' (Sama dengan Customer)
+  // 1. INVESTIGASI PATH
   const ordersRef = useMemo(() => {
     if (!db) return null;
     return collection(db, 'orders');
   }, [db]);
 
-  // 2. QUERY GLOBAL: Mengambil semua tanpa filter userId untuk Admin
+  // 2. QUERY GLOBAL ADMIN (Tanpa filter userId)
   const { data: rawOrders, loading: ordersLoading, error: firestoreError } = useCollection(
     ordersRef ? query(ordersRef) : null
   );
@@ -136,22 +137,42 @@ export default function AdminOrdersPage() {
       </header>
 
       <main className="pt-20 px-4 space-y-4">
-        {/* DEBUG AUDIT CONSOLE: Menyamakan visibility dengan sisi customer */}
-        <div className="bg-slate-900 rounded-2xl p-4 text-[10px] font-mono text-cyan-400 space-y-2 border border-white/10 shadow-xl overflow-hidden">
+        {/* ENHANCED DIAGNOSTIC CONSOLE */}
+        <div className="bg-slate-900 rounded-2xl p-4 text-[10px] font-mono text-cyan-400 space-y-2 border border-white/10 shadow-xl">
            <div className="flex items-center gap-2 border-b border-white/5 pb-2 mb-2 text-white">
               <Database className="w-3.5 h-3.5" />
-              <span className="font-bold uppercase tracking-widest">Diagnostic Console</span>
+              <span className="font-bold uppercase tracking-widest">Admin Data Audit</span>
            </div>
-           <p><span className="text-gray-500">Source Collection:</span> collection(db, 'orders')</p>
-           <p><span className="text-gray-500">Admin UID:</span> {user?.uid}</p>
-           <p><span className="text-gray-500">Total Docs Found:</span> {orders.length}</p>
-           {orders.length > 0 && (
-             <p><span className="text-gray-500">Sample Doc ID:</span> {orders[0].id}</p>
-           )}
+           <p className="flex justify-between">
+             <span className="text-gray-500">Project ID:</span> 
+             <span className="text-white font-bold">{firebaseConfig.projectId}</span>
+           </p>
+           <p className="flex justify-between">
+             <span className="text-gray-500">Collection Path:</span> 
+             <span className="text-yellow-400">/orders</span>
+           </p>
+           <p className="flex justify-between">
+             <span className="text-gray-500">Query Filter:</span> 
+             <span className="text-green-400">NONE (List All)</span>
+           </p>
+           <p className="flex justify-between border-t border-white/5 pt-1 mt-1">
+             <span className="text-gray-500">Admin Email:</span> 
+             <span className="text-white">{user?.email}</span>
+           </p>
+           <p className="flex justify-between">
+             <span className="text-gray-500">Admin UID:</span> 
+             <span className="text-white truncate max-w-[150px]">{user?.uid}</span>
+           </p>
+           <p className="flex justify-between bg-white/5 p-1 rounded mt-1">
+             <span className="text-gray-400 font-bold">TOTAL DOCS:</span> 
+             <span className={cn("font-black text-base", orders.length > 0 ? "text-green-400" : "text-red-400")}>{orders.length}</span>
+           </p>
+           
            {firestoreError && (
-             <div className="mt-2 p-2 bg-red-500/20 border border-red-500/30 rounded text-red-400">
-                <p className="font-bold">PERMISSION ERROR:</p>
-                <p>{firestoreError.message}</p>
+             <div className="mt-3 p-3 bg-red-500/20 border border-red-500/30 rounded-xl text-red-400">
+                <p className="font-bold flex items-center gap-1"><ShieldAlert className="w-3 h-3" /> PERMISSION ERROR:</p>
+                <p className="mt-1 leading-relaxed">{firestoreError.message}</p>
+                <p className="mt-2 text-[9px] text-gray-400 italic">Catatan: Pastikan Security Rules mengizinkan 'list' untuk Admin ini.</p>
              </div>
            )}
         </div>
@@ -305,7 +326,7 @@ export default function AdminOrdersPage() {
             <div className="flex flex-col items-center justify-center py-20 text-center opacity-30">
               <Package className="w-16 h-16 mb-4 text-gray-300" />
               <p className="text-base font-black">Tidak ada pesanan di Firestore</p>
-              <p className="text-[10px] mt-2 max-w-[200px]">Data Riwayat akan tersinkronisasi otomatis saat ada pesanan baru yang masuk ke koleksi 'orders'.</p>
+              <p className="text-[10px] mt-2 max-w-[200px]">Jika Riwayat Pelanggan terisi tapi di sini kosong, kemungkinan besar query diblokir oleh Security Rules (Permission Denied).</p>
             </div>
           )}
         </div>
