@@ -59,6 +59,7 @@ export default function Checkout() {
   const [error, setError] = useState<string | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isFromCart, setIsFromCart] = useState(false);
 
   // Alur Deteksi Kembali dari WhatsApp
   useEffect(() => {
@@ -71,25 +72,28 @@ export default function Checkout() {
     };
 
     window.addEventListener('focus', handleFocus);
-    // Cek juga saat mount (jika komponen re-mount setelah kembali)
     handleFocus();
 
     return () => window.removeEventListener('focus', handleFocus);
   }, [router]);
 
   useEffect(() => {
+    // 1. Cek apakah ada data checkout sementara (dari Beli Sekarang)
     const tempItem = localStorage.getItem('marpay_checkout_temp');
     if (tempItem) {
       try {
         setItems(JSON.parse(tempItem));
+        setIsFromCart(false); // Flag bahwa ini adalah pembelian langsung
       } catch (e) {
         console.error("Failed to parse temp checkout item");
       }
     } else {
+      // 2. Jika tidak ada, muat data dari keranjang utama
       const savedCart = localStorage.getItem('marpay_cart');
       if (savedCart) {
         try {
           setItems(JSON.parse(savedCart));
+          setIsFromCart(true); // Flag bahwa ini checkout seluruh keranjang
         } catch (e) {
           console.error("Failed to parse cart");
         }
@@ -156,7 +160,6 @@ export default function Checkout() {
     }).join('\n\n');
 
     try {
-      // Format Pesan WhatsApp
       let message = `🛍️ ORDER BARU MARPAY\n\n`;
       message += `━━━━━━━━━━━━━━\n\n`;
       message += `👤 DATA PEMBELI\n`;
@@ -181,10 +184,9 @@ export default function Checkout() {
 
       const whatsappUrl = `https://wa.me/${adminWhatsApp}?text=${encodeURIComponent(message)}`;
 
-      // Set flag redirect ke halaman riwayat pesanan
       sessionStorage.setItem('marpay_checkout_pending', 'true');
 
-      // Simpan ke Firestore (Non-blocking write)
+      // Simpan ke Firestore
       addDoc(collection(db, 'orders'), {
         userId: user?.uid || 'guest',
         customerName,
@@ -202,15 +204,20 @@ export default function Checkout() {
         console.error("Firestore Save Error:", err);
       });
 
-      // Bersihkan keranjang
-      localStorage.removeItem('marpay_checkout_temp');
-      localStorage.removeItem('marpay_cart');
+      // LOGIKA PEMBERSIHAN YANG DIPERBAIKI:
+      if (!isFromCart) {
+        // Jika dari 'Beli Sekarang', hanya hapus data temp
+        localStorage.removeItem('marpay_checkout_temp');
+      } else {
+        // Jika dari 'Keranjang', baru bersihkan keranjang utama
+        localStorage.removeItem('marpay_cart');
+      }
+      
       window.dispatchEvent(new Event('cart-updated'));
 
-      // Redirect ke WhatsApp secara instan
+      // Redirect ke WhatsApp
       window.location.href = whatsappUrl;
 
-      // Safety reset agar jika redirect tertunda browser, tombol kembali normal setelah 2 detik
       setTimeout(() => setIsSubmitting(false), 2000);
 
     } catch (e) {
@@ -254,7 +261,10 @@ export default function Checkout() {
   return (
     <div className="min-h-screen bg-gray-50 pb-32">
       <header className="fixed top-0 left-0 right-0 z-50 bg-white px-4 py-3.5 border-b border-gray-100 flex items-center gap-4">
-        <Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => router.back()}>
+        <Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => {
+          localStorage.removeItem('marpay_checkout_temp');
+          router.back();
+        }}>
           <ArrowLeft className="w-5 h-5" />
         </Button>
         <h1 className="text-base font-bold">Checkout</h1>
