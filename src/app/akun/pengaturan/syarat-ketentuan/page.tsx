@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useRouter } from 'next/navigation';
@@ -62,28 +63,33 @@ export default function TermsPage() {
       </header>
 
       <main className="pt-24 px-4 space-y-6 max-w-md mx-auto">
-        {/* Intro Section */}
-        <div className="bg-gradient-to-br from-indigo-600 to-primary p-6 rounded-[32px] text-white shadow-xl shadow-primary/20 relative overflow-hidden">
-          <ShieldAlert className="absolute right-[-10px] top-[-10px] w-32 h-32 text-white/10 -rotate-12" />
-          <div className="relative z-10">
-             <h2 className="text-xl font-black mb-2 leading-tight">Ketentuan Layanan</h2>
-             <p className="text-[11px] text-white/80 leading-relaxed font-medium">
-               Selamat datang di MarPay. Dengan menggunakan layanan kami, Anda dianggap telah menyetujui seluruh syarat yang berlaku.
-             </p>
+        {/* Intro Section - Clean Marketplace Design */}
+        <div className="bg-white p-6 rounded-[28px] border border-gray-100 shadow-sm">
+          <div className="flex items-center gap-4 mb-4">
+             <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary shrink-0">
+                <ShieldAlert className="w-6 h-6" />
+             </div>
+             <div>
+                <h2 className="text-base font-black text-gray-900 leading-tight">Ketentuan Layanan</h2>
+                <p className="text-[10px] font-bold text-primary uppercase tracking-widest mt-0.5">Januari 2024 • v1.2</p>
+             </div>
           </div>
+          <p className="text-[11px] text-gray-500 leading-relaxed font-medium">
+            Selamat datang di MarPay. Dengan menggunakan layanan kami, Anda dianggap telah membaca, memahami, dan menyetujui seluruh ketentuan yang berlaku demi keamanan dan kenyamanan bersama.
+          </p>
         </div>
 
         {/* Terms Grid */}
         <div className="space-y-4">
           {terms.map((term, idx) => (
-            <section key={idx} className="bg-white p-5 rounded-[28px] border border-gray-100 shadow-sm space-y-3 active:scale-[0.98] transition-all">
+            <section key={idx} className="bg-white p-5 rounded-[24px] border border-gray-100 shadow-sm space-y-3 transition-all active:scale-[0.99]">
               <div className="flex items-center gap-3">
                 <div className={`w-9 h-9 ${term.bgColor} ${term.color} rounded-xl flex items-center justify-center`}>
                   <term.icon className="w-5 h-5" />
                 </div>
-                <h3 className="text-sm font-black text-gray-800 uppercase tracking-tight">{term.title}</h3>
+                <h3 className="text-[13px] font-black text-gray-800 uppercase tracking-tight">{term.title}</h3>
               </div>
-              <p className="text-xs text-gray-600 font-medium leading-relaxed pl-2">
+              <p className="text-xs text-gray-600 font-medium leading-relaxed pl-0.5">
                 {term.text}
               </p>
             </section>
@@ -91,21 +97,23 @@ export default function TermsPage() {
         </div>
 
         {/* Contact Footer Card */}
-        <section className="bg-white p-6 rounded-[32px] border border-dashed border-gray-200 space-y-4">
+        <section className="bg-white p-6 rounded-[28px] border border-gray-100 shadow-sm space-y-4">
           <div className="flex items-center gap-3">
-             <MessageSquare className="w-5 h-5 text-primary" />
-             <h3 className="text-sm font-black text-gray-800 uppercase">Hubungi Kami</h3>
+             <div className="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600">
+               <MessageSquare className="w-5 h-5" />
+             </div>
+             <h3 className="text-sm font-black text-gray-800 uppercase">Hubungi Support</h3>
           </div>
           <p className="text-[11px] text-gray-500 leading-relaxed font-medium">
-            Jika memiliki pertanyaan seputar syarat dan ketentuan layanan kami, silakan hubungi tim support:
+            Jika memiliki pertanyaan seputar syarat dan ketentuan layanan kami, silakan hubungi tim legal support MarPay:
           </p>
-          <div className="grid grid-cols-1 gap-2 pt-1">
-             <div className="flex items-center justify-between p-3 bg-gray-50 rounded-2xl">
-               <span className="text-[10px] font-bold text-gray-400 uppercase">WhatsApp</span>
+          <div className="grid grid-cols-1 gap-2">
+             <div className="flex items-center justify-between p-3.5 bg-gray-50 rounded-2xl border border-gray-100">
+               <span className="text-[10px] font-bold text-gray-400 uppercase">WhatsApp Admin</span>
                <span className="text-xs font-black text-primary">083851278935</span>
              </div>
-             <div className="flex items-center justify-between p-3 bg-gray-50 rounded-2xl">
-               <span className="text-[10px] font-bold text-gray-400 uppercase">Email</span>
+             <div className="flex items-center justify-between p-3.5 bg-gray-50 rounded-2xl border border-gray-100">
+               <span className="text-[10px] font-bold text-gray-400 uppercase">Email Layanan</span>
                <span className="text-xs font-black text-primary">cs.marpay@gmail.com</span>
              </div>
           </div>
