@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect, useMemo } from 'react';
@@ -128,10 +129,10 @@ export default function Home() {
       <PromoPopup />
       <main className="pt-16">
         {/* Wrapper Khusus Area Atas dengan Background #F5F7FB */}
-        <div className="bg-[#F5F7FB] pb-4">
+        <div className="bg-[#F5F7FB] pb-1">
           <QuickMenu />
           
-          <section className="px-4 py-2 relative">
+          <section className="px-4 pt-2 pb-1 relative">
             <Carousel opts={{ loop: true }} setApi={setApi}>
               <CarouselContent>
                 {Banners.slice(0, 2).map((banner) => (
@@ -208,7 +209,7 @@ export default function Home() {
                 ))}
               </CarouselContent>
             </Carousel>
-            <div className="flex justify-center gap-1.5 mt-3">
+            <div className="flex justify-center gap-1.5 mt-2">
               {Banners.slice(0, 2).map((_, index) => (
                 <div 
                   key={index}

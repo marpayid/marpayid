@@ -23,7 +23,7 @@ export function CategoryMenu() {
   };
 
   return (
-    <div className="flex overflow-x-auto no-scrollbar gap-5 px-4 py-6 bg-white border-b border-gray-50 items-start">
+    <div className="flex overflow-x-auto no-scrollbar gap-5 px-4 pt-3 pb-6 bg-white border-b border-gray-50 items-start">
       {Categories.map((cat) => {
         const LucideIcon = (Icons as any)[cat.icon];
         return (
