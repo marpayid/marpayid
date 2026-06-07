@@ -1,8 +1,9 @@
+
 "use client"
 
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, ClipboardList, Package, Clock, CheckCircle2, Truck, XCircle, Loader2, Copy } from 'lucide-react';
+import { ArrowLeft, ClipboardList, Package, Clock, CheckCircle2, Truck, XCircle, Loader2, Copy, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useUser, useFirestore, useCollection } from '@/firebase';
@@ -11,6 +12,7 @@ import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
 import { useToast } from '@/hooks/use-toast';
+import Link from 'next/link';
 
 export default function TransactionPage() {
   const router = useRouter();
@@ -88,11 +90,6 @@ export default function TransactionPage() {
     return <ClipboardList className="w-4 h-4 text-gray-400" />;
   };
 
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
-    toast({ title: "Berhasil", description: "Nomor resi telah disalin." });
-  };
-
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
       <header className="fixed top-0 left-0 right-0 z-50 bg-white px-4 py-4 border-b border-gray-100 flex items-center gap-4 shadow-sm">
@@ -120,69 +117,53 @@ export default function TransactionPage() {
             <TabsContent key={s.value} value={s.value} className="mt-0 space-y-4">
               {filteredOrders.length > 0 ? (
                 filteredOrders.map((order: any) => (
-                  <div key={order.id} className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden p-5 space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        {getStatusIcon(order.status)}
-                        <span className="text-[11px] font-bold">
-                          {order.createdAt?.toDate ? format(order.createdAt.toDate(), 'dd MMM yyyy, HH:mm', { locale: id }) : 'Waktu diproses...'}
+                  <Link key={order.id} href={`/akun/pesanan/${order.id}`}>
+                    <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden p-5 space-y-4 mb-4 active:scale-[0.98] transition-all">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          {getStatusIcon(order.status)}
+                          <span className="text-[11px] font-bold">
+                            {order.createdAt?.toDate ? format(order.createdAt.toDate(), 'dd MMM yyyy, HH:mm', { locale: id }) : 'Waktu diproses...'}
+                          </span>
+                        </div>
+                        <span className={cn(
+                          "text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-tighter border",
+                          ['Selesai'].includes(order.status) ? "bg-green-50 text-green-600 border-green-100" :
+                          ['Dibatalkan'].includes(order.status) ? "bg-red-50 text-red-600 border-red-100" :
+                          "bg-orange-50 text-orange-600 border-orange-100"
+                        )}>
+                          {order.status || 'Menunggu Konfirmasi'}
                         </span>
                       </div>
-                      <span className={cn(
-                        "text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-tighter border",
-                        ['Selesai'].includes(order.status) ? "bg-green-50 text-green-600 border-green-100" :
-                        ['Dibatalkan'].includes(order.status) ? "bg-red-50 text-red-600 border-red-100" :
-                        "bg-orange-50 text-orange-600 border-orange-100"
-                      )}>
-                        {order.status || 'Menunggu Konfirmasi'}
-                      </span>
-                    </div>
 
-                    <div className="space-y-3">
-                      {order.items?.map((item: any, idx: number) => (
-                        <div key={idx} className="flex gap-4">
-                          <div className="w-12 h-12 rounded-xl bg-gray-50 flex-shrink-0 flex items-center justify-center border border-gray-100 overflow-hidden">
-                             <Package className="w-6 h-6 text-gray-300" />
+                      <div className="space-y-3">
+                        {order.items?.slice(0, 1).map((item: any, idx: number) => (
+                          <div key={idx} className="flex gap-4">
+                            <div className="w-12 h-12 rounded-xl bg-gray-50 flex-shrink-0 flex items-center justify-center border border-gray-100 overflow-hidden">
+                              <Package className="w-6 h-6 text-gray-300" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h4 className="text-xs font-bold text-gray-800 truncate">{item.name}</h4>
+                              <p className="text-[10px] text-gray-400 mt-0.5">{item.quantity} barang x Rp {item.price?.toLocaleString()}</p>
+                            </div>
                           </div>
-                          <div className="flex-1 min-w-0">
-                            <h4 className="text-xs font-bold text-gray-800 truncate">{item.name}</h4>
-                            <p className="text-[10px] text-gray-400 mt-0.5">{item.quantity} barang x Rp {item.price?.toLocaleString()}</p>
-                          </div>
+                        ))}
+                        {order.items?.length > 1 && (
+                          <p className="text-[10px] text-gray-400 font-medium">+ {order.items.length - 1} produk lainnya</p>
+                        )}
+                      </div>
+
+                      <div className="border-t border-gray-50 pt-4 flex items-center justify-between">
+                        <div>
+                          <p className="text-[9px] text-gray-400 font-bold uppercase">Total Tagihan</p>
+                          <p className="text-sm font-black text-primary">Rp {order.totalAmount?.toLocaleString()}</p>
                         </div>
-                      ))}
-                    </div>
-
-                    {(order.status === 'Dikirim' || order.trackingNumber) && (
-                      <div className="bg-primary/5 p-3 rounded-2xl border border-primary/10 space-y-2">
-                         <div className="flex items-center justify-between">
-                           <div className="flex items-center gap-2 text-primary">
-                             <Truck className="w-3.5 h-3.5" />
-                             <p className="text-[10px] font-black uppercase">{order.courier || 'Kurir Standar'}</p>
-                           </div>
-                           {order.trackingNumber && (
-                             <button onClick={() => copyToClipboard(order.trackingNumber)} className="flex items-center gap-1 text-[9px] font-bold text-primary bg-white px-2 py-1 rounded-lg border border-primary/10">
-                               <Copy className="w-2.5 h-2.5" /> Salin Resi
-                             </button>
-                           )}
-                         </div>
-                         <p className="text-[11px] font-bold text-gray-600">No. Resi: <span className="text-primary">{order.trackingNumber || 'Belum diupdate'}</span></p>
+                        <div className="flex items-center gap-1 text-[10px] font-bold text-primary">
+                          Detail Pesanan <ChevronRight className="w-3.5 h-3.5" />
+                        </div>
                       </div>
-                    )}
-
-                    <div className="border-t border-gray-50 pt-4 flex items-center justify-between">
-                      <div>
-                        <p className="text-[9px] text-gray-400 font-bold uppercase">Total Tagihan</p>
-                        <p className="text-sm font-black text-primary">Rp {order.totalAmount?.toLocaleString()}</p>
-                      </div>
-                      <Button 
-                        variant="outline"
-                        className="border-primary/20 text-primary text-[10px] font-bold h-9 px-4 rounded-xl"
-                        onClick={() => window.open(`https://wa.me/6283851278935?text=${encodeURIComponent(`Halo Admin MarPay, saya ingin bertanya status pesanan saya: ID ${order.id?.slice(-8).toUpperCase()}`)}`, '_blank')}
-                      >
-                        Tanya Admin
-                      </Button>
                     </div>
-                  </div>
+                  </Link>
                 ))
               ) : (
                 <div className="flex flex-col items-center justify-center py-20 text-center opacity-30">

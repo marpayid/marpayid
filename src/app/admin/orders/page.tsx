@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useMemo } from 'react';
@@ -5,46 +6,25 @@ import { useRouter } from 'next/navigation';
 import { 
   ArrowLeft, Search, Package, User, 
   Calendar, CreditCard, Loader2, 
-  MapPin, DollarSign, Database, ShieldAlert, Globe, RefreshCcw
+  MapPin, DollarSign, Database, ShieldAlert, RefreshCcw, ChevronRight
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { useUser, useFirestore, useCollection } from '@/firebase';
 import { firebaseConfig } from '@/firebase/config';
-import { collection, doc, updateDoc, query, serverTimestamp } from 'firebase/firestore';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { useToast } from '@/hooks/use-toast';
+import { collection, query } from 'firebase/firestore';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
-import { errorEmitter } from '@/firebase/error-emitter';
-import { FirestorePermissionError } from '@/firebase/errors';
+import Link from 'next/link';
 
 const ADMIN_EMAIL = 'cs.marpay@gmail.com';
-
-const ORDER_STATUSES = [
-  "Menunggu Konfirmasi",
-  "Dikonfirmasi",
-  "Diproses",
-  "Dikirim",
-  "Selesai",
-  "Dibatalkan"
-];
 
 export default function AdminOrdersPage() {
   const router = useRouter();
   const db = useFirestore();
   const { user, loading: authLoading } = useUser();
-  const { toast } = useToast();
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [updatingId, setUpdatingId] = useState<string | null>(null);
 
   // 1. Koleksi Tanpa Filter (List All)
   const ordersRef = useMemo(() => {
@@ -73,36 +53,11 @@ export default function AdminOrdersPage() {
           <ShieldAlert className="w-10 h-10" />
         </div>
         <h1 className="text-xl font-black text-gray-900">Akses Dibatasi</h1>
-        <p className="text-sm text-gray-500 mt-2">Akun {user?.email || 'Guest'} tidak diizinkan.</p>
-        <Button onClick={() => router.replace('/')} className="mt-8 bg-primary text-white rounded-2xl px-8">Kembali</Button>
+        <p className="text-sm text-gray-500 mt-2">Halaman ini hanya untuk Administrator.</p>
+        <Button onClick={() => router.replace('/')} className="mt-8">Kembali</Button>
       </div>
     );
   }
-
-  const handleUpdateOrder = async (orderId: string, updates: any) => {
-    if (!db) return;
-    setUpdatingId(orderId);
-    
-    const orderDoc = doc(db, 'orders', orderId);
-    updateDoc(orderDoc, { 
-      ...updates, 
-      updatedAt: serverTimestamp() 
-    })
-    .then(() => {
-      toast({ variant: "success", title: "Berhasil Update" });
-    })
-    .catch(async (err) => {
-      const permError = new FirestorePermissionError({
-        path: orderDoc.path,
-        operation: 'update',
-        requestResourceData: updates
-      });
-      errorEmitter.emit('permission-error', permError);
-    })
-    .finally(() => {
-      setUpdatingId(null);
-    });
-  };
 
   const filteredOrders = useMemo(() => {
     if (!orders) return [];
@@ -140,7 +95,7 @@ export default function AdminOrdersPage() {
           <h1 className="text-lg font-black">Dashboard Pesanan</h1>
         </div>
         <div className="bg-primary/10 px-3 py-1 rounded-full border border-primary/20">
-          <span className="text-[10px] font-black text-primary uppercase">ADMIN MODE</span>
+          <span className="text-[10px] font-black text-primary uppercase">ADMIN</span>
         </div>
       </header>
 
@@ -154,30 +109,9 @@ export default function AdminOrdersPage() {
               </div>
               <button onClick={() => window.location.reload()} className="text-white/50 hover:text-white"><RefreshCcw className="w-3 h-3" /></button>
            </div>
-           <p className="flex justify-between">
-             <span className="text-gray-500">Project ID:</span> 
-             <span className="text-white font-bold">{firebaseConfig.projectId}</span>
-           </p>
-           <p className="flex justify-between">
-             <span className="text-gray-500">Collection:</span> 
-             <span className="text-yellow-400">/orders</span>
-           </p>
-           <p className="flex justify-between">
-             <span className="text-gray-500">Admin:</span> 
-             <span className="text-white">{user?.email}</span>
-           </p>
-           <p className="flex justify-between bg-white/5 p-1 rounded mt-1">
-             <span className="text-gray-400 font-bold uppercase">Docs Found:</span> 
-             <span className={cn("font-black text-sm", orders.length > 0 ? "text-green-400" : "text-red-400")}>{orders.length}</span>
-           </p>
-           
-           {firestoreError && (
-             <div className="mt-3 p-3 bg-red-500/20 border border-red-500/30 rounded-xl text-red-400">
-                <p className="font-bold flex items-center gap-1 uppercase"><ShieldAlert className="w-3 h-3" /> Error Ditemukan:</p>
-                <p className="mt-1 leading-relaxed break-words">{firestoreError.message}</p>
-                <p className="mt-2 text-[9px] text-gray-400 italic">Solusi: Pastikan email Anda sudah diizinkan di firestore.rules.</p>
-             </div>
-           )}
+           <p className="flex justify-between"><span className="text-gray-500">Project ID:</span> <span className="text-white font-bold">{firebaseConfig.projectId}</span></p>
+           <p className="flex justify-between"><span className="text-gray-400 font-bold uppercase">Docs Found:</span> <span className={cn("font-black text-sm", orders.length > 0 ? "text-green-400" : "text-red-400")}>{orders.length}</span></p>
+           {firestoreError && <p className="text-red-400 mt-1">Error: {firestoreError.message}</p>}
         </div>
 
         <div className="relative">
@@ -208,16 +142,16 @@ export default function AdminOrdersPage() {
         <div className="space-y-4">
           {filteredOrders.length > 0 ? (
             filteredOrders.map((order: any) => (
-              <div key={order.id} className="bg-white rounded-[28px] border border-gray-100 shadow-sm overflow-hidden flex flex-col">
-                <div className="p-5 border-b border-gray-50 space-y-3">
+              <Link key={order.id} href={`/admin/orders/${order.id}`}>
+                <div className="bg-white rounded-[28px] border border-gray-100 shadow-sm overflow-hidden flex flex-col p-5 space-y-4 active:bg-gray-50 transition-colors">
                   <div className="flex items-start justify-between">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         <span className="text-[10px] font-black text-primary bg-primary/5 px-2 py-0.5 rounded">ID: {order.id?.slice(-8).toUpperCase()}</span>
                         <span className={cn(
                           "text-[9px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-tighter",
-                          ['Selesai', 'Selesai'].includes(order.status) ? "bg-green-50 text-green-600 border-green-100" :
-                          ['Dibatalkan', 'Dibatalkan'].includes(order.status) ? "bg-red-50 text-red-600 border-red-100" :
+                          order.status === 'Selesai' ? "bg-green-50 text-green-600 border-green-100" :
+                          order.status === 'Dibatalkan' ? "bg-red-50 text-red-600 border-red-100" :
                           "bg-orange-50 text-orange-600 border-orange-100"
                         )}>
                           {order.status || 'Menunggu Konfirmasi'}
@@ -225,101 +159,40 @@ export default function AdminOrdersPage() {
                       </div>
                       <div className="flex items-center gap-1.5 text-[11px] text-gray-400 font-medium">
                         <Calendar className="w-3 h-3" />
-                        <span>{order.createdAt?.toDate ? format(order.createdAt.toDate(), 'dd MMM yyyy, HH:mm', { locale: id }) : 'Date N/A'}</span>
+                        <span>{order.createdAt?.toDate ? format(order.createdAt.toDate(), 'dd MMM yyyy', { locale: id }) : 'Date N/A'}</span>
                       </div>
                     </div>
+                    <ChevronRight className="w-5 h-5 text-gray-300" />
                   </div>
 
-                  <div className="bg-gray-50/80 p-4 rounded-2xl space-y-2 border border-gray-100/50 flex items-center justify-between">
+                  <div className="bg-gray-50/80 p-4 rounded-2xl flex items-center justify-between border border-gray-100/50">
                     <div className="flex items-center gap-3">
                       <div className="w-9 h-9 rounded-xl bg-white flex items-center justify-center text-primary shadow-sm border border-gray-100">
                          <User className="w-4.5 h-4.5" />
                       </div>
-                      <div className="max-w-[120px]">
+                      <div className="max-w-[150px]">
                          <p className="text-xs font-black text-gray-900 truncate">{order.customerName}</p>
                          <p className="text-[10px] text-gray-400 font-bold">{order.customerPhone}</p>
                       </div>
                     </div>
-                    <Button 
-                      onClick={() => window.open(`https://wa.me/${order.customerPhone?.replace(/[^0-9]/g, '')}`, '_blank')}
-                      className="h-8 px-4 rounded-lg bg-green-500 text-white text-[10px] font-black"
-                    >
-                      CHAT WA
-                    </Button>
+                    <p className="text-sm font-black text-primary">Rp {order.totalAmount?.toLocaleString()}</p>
                   </div>
-                </div>
 
-                <div className="p-5 pt-0 space-y-4 mt-4">
-                  <div className="space-y-3">
-                    {order.items?.map((item: any, idx: number) => (
-                      <div key={idx} className="flex justify-between items-start gap-4 pb-2 border-b border-gray-50 last:border-none">
-                        <div className="flex-1">
-                          <p className="text-xs font-bold text-gray-800 line-clamp-1">{item.name}</p>
-                          <p className="text-[10px] text-gray-400 mt-0.5">{item.variant || 'Default'} • x{item.quantity}</p>
-                        </div>
-                        <p className="text-xs font-black text-gray-900">Rp {item.price?.toLocaleString()}</p>
+                  <div className="flex gap-2">
+                    {order.items?.slice(0, 2).map((item: any, idx: number) => (
+                      <div key={idx} className="bg-gray-50 px-2 py-1 rounded-md text-[9px] font-medium text-gray-500 max-w-[100px] truncate">
+                        {item.name}
                       </div>
                     ))}
-                  </div>
-
-                  <div className="flex justify-between items-center bg-gray-900 text-white p-4 rounded-2xl">
-                     <div className="flex items-center gap-2 opacity-70">
-                        <DollarSign className="w-4 h-4" />
-                        <span className="text-[11px] font-bold uppercase tracking-widest">Total Bayar</span>
-                     </div>
-                     <p className="text-base font-black">Rp {order.totalAmount?.toLocaleString()}</p>
-                  </div>
-
-                  <div className="space-y-4 pt-2 border-t border-gray-50">
-                    <div className="space-y-1.5">
-                      <label className="text-[10px] font-black text-gray-400 uppercase ml-1">Atur Status Pesanan</label>
-                      <Select 
-                        defaultValue={order.status} 
-                        onValueChange={(val) => handleUpdateOrder(order.id, { status: val })}
-                        disabled={updatingId === order.id}
-                      >
-                        <SelectTrigger className="rounded-2xl h-12 border-gray-100 bg-gray-50/50 font-bold">
-                          <SelectValue placeholder="Pilih Status" />
-                        </SelectTrigger>
-                        <SelectContent className="rounded-xl">
-                          {ORDER_STATUSES.map(s => (
-                            <SelectItem key={s} value={s}>{s}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    {(order.status === 'Dikirim' || order.trackingNumber) && (
-                      <div className="grid grid-cols-2 gap-3 p-4 bg-primary/5 rounded-2xl border border-primary/10">
-                        <div className="space-y-1.5">
-                          <label className="text-[9px] font-black text-primary/60 uppercase">Ekspedisi</label>
-                          <Input 
-                            placeholder="J&T / Sicepat"
-                            defaultValue={order.courier || ''}
-                            className="rounded-xl h-10 border-white bg-white text-xs font-bold"
-                            onBlur={(e) => handleUpdateOrder(order.id, { courier: e.target.value })}
-                          />
-                        </div>
-                        <div className="space-y-1.5">
-                          <label className="text-[9px] font-black text-primary/60 uppercase">Nomor Resi</label>
-                          <Input 
-                            placeholder="RESI12345"
-                            defaultValue={order.trackingNumber || ''}
-                            className="rounded-xl h-10 border-white bg-white text-xs font-bold text-primary"
-                            onBlur={(e) => handleUpdateOrder(order.id, { trackingNumber: e.target.value })}
-                          />
-                        </div>
-                      </div>
-                    )}
+                    {order.items?.length > 2 && <span className="text-[9px] text-gray-400 mt-1">+{order.items.length - 2}</span>}
                   </div>
                 </div>
-              </div>
+              </Link>
             ))
           ) : (
             <div className="flex flex-col items-center justify-center py-20 text-center opacity-30">
               <Package className="w-16 h-16 mb-4 text-gray-300" />
-              <p className="text-base font-black">Tidak ada pesanan masuk</p>
-              <p className="text-[10px] mt-2 max-w-[200px]">Data akan muncul otomatis saat pelanggan melakukan checkout.</p>
+              <p className="text-base font-black">Tidak ada pesanan</p>
             </div>
           )}
         </div>

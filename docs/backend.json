@@ -49,9 +49,13 @@
         "paymentMethod": { "type": "string" },
         "courier": { "type": "string" },
         "trackingNumber": { "type": "string" },
+        "shippingStatus": { "type": "string", "enum": ["Resi Dibuat", "Paket Diserahkan ke Kurir", "Dalam Perjalanan", "Sampai di Kota Tujuan", "Sedang Diantar", "Terkirim"] },
         "shippingAddress": { "type": "object" },
         "createdAt": { "type": "string", "format": "date-time" },
-        "updatedAt": { "type": "string", "format": "date-time" }
+        "updatedAt": { "type": "string", "format": "date-time" },
+        "shippedAt": { "type": "string", "format": "date-time" },
+        "completedAt": { "type": "string", "format": "date-time" },
+        "cancelledAt": { "type": "string", "format": "date-time" }
       }
     },
     "NotificationToken": {
