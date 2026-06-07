@@ -96,14 +96,21 @@ export default function AdminOrderDetailPage() {
     if (!orderRef || !order) return;
     setIsSubmitting(true);
 
+    // Otomatis ubah status pesanan ke Selesai jika pengiriman sudah Terkirim
+    let targetStatus = formData.status;
+    if (formData.shippingStatus === 'Terkirim') {
+      targetStatus = 'Selesai';
+    }
+
     const updates: any = {
       ...formData,
+      status: targetStatus,
       updatedAt: serverTimestamp()
     };
 
-    if (formData.status === 'Dikirim' && !order.shippedAt) updates.shippedAt = serverTimestamp();
-    if (formData.status === 'Selesai' && !order.completedAt) updates.completedAt = serverTimestamp();
-    if (formData.status === 'Dibatalkan' && !order.cancelledAt) updates.cancelledAt = serverTimestamp();
+    if (targetStatus === 'Dikirim' && !order.shippedAt) updates.shippedAt = serverTimestamp();
+    if (targetStatus === 'Selesai' && !order.completedAt) updates.completedAt = serverTimestamp();
+    if (targetStatus === 'Dibatalkan' && !order.cancelledAt) updates.cancelledAt = serverTimestamp();
 
     updateDoc(orderRef, updates)
       .then(() => {
@@ -160,7 +167,10 @@ export default function AdminOrderDetailPage() {
            <div className="space-y-4">
               <div className="space-y-1.5">
                  <label className="text-[10px] font-black text-gray-400 uppercase ml-1">Utama: Status Pesanan</label>
-                 <Select value={formData.status} onValueChange={(val) => setFormData({...formData, status: val})}>
+                 <Select 
+                    value={formData.status} 
+                    onValueChange={(val) => setFormData({...formData, status: val})}
+                  >
                     <SelectTrigger className="h-14 rounded-2xl border-gray-100 bg-gray-50/50 font-bold">
                        <SelectValue placeholder="Pilih Status" />
                     </SelectTrigger>
@@ -170,7 +180,7 @@ export default function AdminOrderDetailPage() {
                  </Select>
               </div>
 
-              {(formData.status === 'Dikirim' || order.trackingNumber) && (
+              {(formData.status === 'Dikirim' || order.trackingNumber || formData.status === 'Selesai') && (
                 <div className="space-y-4 pt-2 animate-in fade-in slide-in-from-top-2 duration-300">
                    <div className="grid grid-cols-2 gap-3">
                       <div className="space-y-1.5">
@@ -194,7 +204,17 @@ export default function AdminOrderDetailPage() {
                    </div>
                    <div className="space-y-1.5">
                       <label className="text-[10px] font-black text-gray-400 uppercase ml-1">Progress Pengiriman</label>
-                      <Select value={formData.shippingStatus} onValueChange={(val) => setFormData({...formData, shippingStatus: val})}>
+                      <Select 
+                        value={formData.shippingStatus} 
+                        onValueChange={(val) => {
+                          // Jika disetel ke Terkirim, otomatis set status pesanan ke Selesai
+                          setFormData(prev => ({
+                            ...prev, 
+                            shippingStatus: val,
+                            status: val === 'Terkirim' ? 'Selesai' : prev.status
+                          }));
+                        }}
+                      >
                          <SelectTrigger className="h-12 rounded-xl border-gray-100 bg-gray-50/50">
                             <SelectValue placeholder="Pilih Status Pengiriman" />
                          </SelectTrigger>
@@ -238,7 +258,7 @@ export default function AdminOrderDetailPage() {
                  <Button 
                    size="sm" 
                    onClick={() => window.open(`https://wa.me/${order.customerPhone?.replace(/[^0-9]/g, '')}`, '_blank')}
-                   className="bg-green-500 text-white rounded-lg px-4 h-8 text-[10px] font-black"
+                   className="bg-green-50 text-white rounded-lg px-4 h-8 text-[10px] font-black"
                  >
                    CHAT WA
                  </Button>
