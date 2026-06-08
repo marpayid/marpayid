@@ -181,7 +181,6 @@ export function ProductCard({ product, compact = false }: { product: any, compac
     toast({ variant: "default", title: "Masuk Keranjang", description: "Siap untuk checkout", duration: 2000 });
   };
 
-  // Logika label gratis ongkir (Shipping fee 0 dan bukan produk digital)
   const isFreeShipping = (product.shippingFee === 0 || product.isFreeShipping === true) && product.type !== 'digital';
 
   return (
@@ -189,14 +188,11 @@ export function ProductCard({ product, compact = false }: { product: any, compac
       <Link href={`/product/${product.id}`} className="relative aspect-square block">
         <Image src={displayImage} alt={product.name} fill className={cn("object-cover", isOutOfStock && "grayscale")} sizes="(max-width: 768px) 50vw, 33vw" />
         
-        {/* Premium Promo Strip Overlay */}
         <div className="absolute bottom-0 left-0 right-0 pointer-events-none z-10 flex items-end">
           <div className="flex h-[18px] overflow-hidden rounded-tr-lg shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
-            {/* Left Part: Branding (Blue) */}
             <div className="bg-[#1565FF] px-2 flex items-center">
               <span className="text-[#FFFFFF] text-[7px] font-semibold leading-none tracking-tight">Promo Pilihan</span>
             </div>
-            {/* Right Part: Free Shipping (Mint) */}
             {isFreeShipping && (
               <div className="bg-[#ECFDF5] px-2 flex items-center gap-1 border-l border-[#A7F3D0]">
                 <Truck className="w-2.5 h-2.5 text-[#059669]" />
@@ -213,18 +209,20 @@ export function ProductCard({ product, compact = false }: { product: any, compac
         </button>
       </Link>
       <div className="p-3 flex-1 flex flex-col">
-        <Link href={`/product/${product.id}`} className="mb-1.5 block">
-          <div className="flex items-start gap-1.5 h-[28px] overflow-hidden">
-            {product.isOfficialStore && (
-              <div className="shrink-0 mt-[1.5px] w-[14px] h-[14px] relative flex items-center justify-center rounded-[3.5px] bg-gradient-to-tr from-[#059669] via-[#10B981] to-[#4ADE80] shadow-[0_1.5px_3px_rgba(5,150,105,0.3)] border-[0.5px] border-white/20 overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-b from-white/30 to-transparent opacity-60"></div>
-                <ShieldCheck className="w-[10px] h-[10px] text-white stroke-[3.5px] relative z-10 drop-shadow-[0_0.5px_0.5px_rgba(0,0,0,0.1)]" />
-              </div>
-            )}
-            <h3 className="text-[11.5px] font-bold text-gray-800 line-clamp-2 leading-tight flex-1">
-              {product.name}
-            </h3>
-          </div>
+        <Link href={`/product/${product.id}`} className="mb-1.5 block relative min-h-[28px]">
+          {product.isOfficialStore && (
+            <div className="absolute left-0 top-[1px] w-[13px] h-[13px] rounded-full bg-gradient-to-br from-[#10B981] to-[#059669] flex items-center justify-center shadow-[0_1px_3px_rgba(16,185,129,0.3)] z-10 border-[0.5px] border-white/20">
+              <svg viewBox="0 0 24 24" className="w-[8px] h-[8px] text-white stroke-[5px]" fill="none" stroke="currentColor">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            </div>
+          )}
+          <h3 
+            className="text-[11.5px] font-bold text-gray-800 line-clamp-2 leading-tight"
+            style={{ textIndent: product.isOfficialStore ? '17px' : '0' }}
+          >
+            {product.name}
+          </h3>
         </Link>
         <div className="mt-auto">
           <div className="flex justify-between items-center mb-1.5">
