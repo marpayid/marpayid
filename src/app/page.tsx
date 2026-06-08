@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect, useMemo } from 'react';
@@ -12,7 +13,7 @@ import { cn } from '@/lib/utils';
 import { 
   Smartphone, Gamepad2, Package, Truck, 
   Tag, Zap, Wallet, ShoppingBag as ShoppingBagIcon,
-  Sparkles
+  Sparkles, ShieldCheck
 } from 'lucide-react';
 import { PromotionalCards } from '@/components/promotional-cards';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -120,6 +121,10 @@ export default function Home() {
 
   const viralProducts = useMemo(() => 
     Products.filter(p => p.tag === 'Produk Viral' && p.category !== 'Premium'), 
+  []);
+
+  const officialProducts = useMemo(() => 
+    Products.filter(p => p.isOfficialStore && p.category !== 'Premium'), 
   []);
 
   return (
@@ -240,13 +245,28 @@ export default function Home() {
 
         <section className="bg-white py-4 px-4">
           <Tabs defaultValue="viral">
-            <TabsList className="bg-transparent border-b border-gray-100 w-full flex justify-start mb-4 gap-6 px-1">
-              <TabsTrigger value="viral" className="font-bold text-base px-0">Produk Viral</TabsTrigger>
-              <TabsTrigger value="semua" className="font-bold text-base px-0">Semua Produk</TabsTrigger>
+            <TabsList className="bg-transparent border-b border-gray-100 w-full flex justify-start mb-4 gap-6 px-1 overflow-x-auto no-scrollbar">
+              <TabsTrigger value="viral" className="font-bold text-base px-0 whitespace-nowrap">Produk Viral</TabsTrigger>
+              <TabsTrigger value="official" className="font-bold text-base px-0 flex items-center gap-1.5 whitespace-nowrap">
+                <ShieldCheck className="w-4 h-4 text-[#00A859]" /> Official Store
+              </TabsTrigger>
+              <TabsTrigger value="semua" className="font-bold text-base px-0 whitespace-nowrap">Semua Produk</TabsTrigger>
             </TabsList>
             <TabsContent value="viral">
               <div className="grid grid-cols-2 gap-3.5">
                 {viralProducts.map((p) => <ProductCard key={p.id} product={p} />)}
+              </div>
+            </TabsContent>
+            <TabsContent value="official">
+              <div className="grid grid-cols-2 gap-3.5">
+                {officialProducts.length > 0 ? (
+                  officialProducts.map((p) => <ProductCard key={p.id} product={p} />)
+                ) : (
+                  <div className="col-span-2 py-10 text-center opacity-30">
+                    <ShieldCheck className="w-12 h-12 mx-auto mb-2" />
+                    <p className="text-xs font-bold uppercase tracking-widest">Belum ada produk Official</p>
+                  </div>
+                )}
               </div>
             </TabsContent>
             <TabsContent value="semua">

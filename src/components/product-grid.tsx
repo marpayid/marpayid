@@ -1,9 +1,10 @@
+
 "use client"
 
 import { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Star, ShoppingBag, Heart, ArrowRight, Shirt, Sparkles, Truck } from 'lucide-react';
+import { Star, ShoppingBag, Heart, ArrowRight, Shirt, Sparkles, Truck, ShieldCheck } from 'lucide-react';
 import { Products } from '@/app/lib/dummy-data';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn, formatSold, getProductImage } from '@/lib/utils';
@@ -212,6 +213,13 @@ export function ProductCard({ product, compact = false }: { product: any, compac
         </button>
       </Link>
       <div className="p-3 flex-1 flex flex-col">
+        {/* Official Store Badge */}
+        {product.isOfficialStore && (
+          <div className="flex items-center gap-1 mb-1 text-[#00A859]">
+            <ShieldCheck className="w-2.5 h-2.5 fill-current/20" />
+            <span className="text-[9px] font-black uppercase tracking-tighter">Official Store</span>
+          </div>
+        )}
         <Link href={`/product/${product.id}`} className="mb-1.5"><h3 className="text-[11.5px] font-bold text-gray-800 line-clamp-2 leading-tight h-[28px] overflow-hidden">{product.name}</h3></Link>
         <div className="mt-auto">
           <div className="flex justify-between items-center mb-1.5">

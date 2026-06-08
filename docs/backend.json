@@ -85,6 +85,7 @@
         "sold": { "type": "number" },
         "discount": { "type": "string" },
         "isFlashSale": { "type": "boolean" },
+        "isOfficialStore": { "type": "boolean" },
         "shippingFee": { "type": "number" },
         "createdAt": { "type": "string", "format": "date-time" }
       },
