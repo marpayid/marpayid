@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
@@ -473,7 +472,7 @@ export default function Checkout() {
               <Ticket className="w-4 h-4 text-primary" />
               <span className="text-xs font-bold text-gray-800">Voucher</span>
               
-              <div className="flex gap-1.5 ml-1">
+              <div className="flex items-center gap-1.5 ml-2.5">
                 {appliedVoucher && (
                   <div className="px-2 py-0.5 border border-red-200 rounded-sm bg-white text-[9px] font-black text-red-500 uppercase tracking-tighter">
                     -Rp{discountAmount >= 1000 ? (discountAmount/1000).toFixed(0) + 'RB' : discountAmount}
@@ -607,4 +606,3 @@ export default function Checkout() {
     </div>
   );
 }
-
