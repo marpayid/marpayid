@@ -105,6 +105,9 @@ export default function TransactionPage() {
       if (activeTab === 'Selesai') {
         return status === 'Selesai';
       }
+      if (activeTab === 'Dibatalkan') {
+        return ['Dibatalkan', 'Dibatalkan Otomatis', 'Gagal Bayar', 'Tidak Dibayar'].includes(status);
+      }
       return false;
     });
   }, [orders, activeTab]);
@@ -114,6 +117,7 @@ export default function TransactionPage() {
     { label: 'Proses', value: 'proses' },
     { label: 'Dikirim', value: 'Dikirim' },
     { label: 'Selesai', value: 'Selesai' },
+    { label: 'Dibatalkan', value: 'Dibatalkan' },
   ];
 
   if (authLoading || (ordersLoading && orders.length === 0)) {
@@ -130,7 +134,7 @@ export default function TransactionPage() {
     if (s.includes('proses') || s.includes('kemas')) return <Package className="w-4 h-4 text-primary" />;
     if (s.includes('kirim')) return <Truck className="w-4 h-4 text-blue-500" />;
     if (s.includes('selesai')) return <CheckCircle2 className="w-4 h-4 text-green-500" />;
-    if (s.includes('batal')) return <XCircle className="w-4 h-4 text-red-500" />;
+    if (s.includes('batal') || s.includes('gagal')) return <XCircle className="w-4 h-4 text-red-500" />;
     return <ClipboardList className="w-4 h-4 text-gray-400" />;
   };
 
@@ -151,7 +155,7 @@ export default function TransactionPage() {
               <TabsTrigger 
                 key={s.value} 
                 value={s.value} 
-                className="rounded-full px-5 py-2.5 text-[10px] font-bold uppercase border border-gray-100 bg-white data-[state=active]:bg-primary data-[state=active]:text-white transition-all shadow-sm"
+                className="rounded-full px-5 py-2.5 text-[10px] font-bold uppercase border border-gray-100 bg-white data-[state=active]:bg-primary data-[state=active]:text-white transition-all shadow-sm shrink-0"
               >
                 {s.label}
               </TabsTrigger>
@@ -202,6 +206,9 @@ export default function TransactionPage() {
                             </div>
                           </div>
                         ))}
+                        {order.items?.length > 1 && (
+                          <p className="text-[10px] text-gray-400 font-medium">+{order.items.length - 1} produk lainnya</p>
+                        )}
                       </div>
 
                       <div className="border-t border-gray-50 pt-4 flex items-center justify-between">
