@@ -1,10 +1,9 @@
-
 "use client"
 
 import { useParams, useRouter } from 'next/navigation';
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import { 
-  ArrowLeft, ShoppingBag, Star, Minus, Plus, Info, Heart, LayoutGrid, Loader2, ChevronRight, ChevronLeft
+  ArrowLeft, ShoppingBag, Star, Minus, Plus, Info, Heart, LayoutGrid, Loader2, ChevronRight, ChevronLeft, Sparkles
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
