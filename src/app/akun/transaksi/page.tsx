@@ -29,11 +29,11 @@ function OrderCountdown({ expiredAt, orderId, status }: { expiredAt: any, orderI
       if (distance <= 0) {
         clearInterval(timer);
         setTimeLeft('Expired');
-        // Auto update status to cancelled
+        // Auto update status to failed (Dibatalkan Otomatis)
         const orderRef = doc(db, 'orders', orderId);
         updateDoc(orderRef, {
           status: 'Dibatalkan Otomatis',
-          cancelReason: 'Pesanan tidak dikonfirmasi dalam 6 jam',
+          cancelReason: 'Pembayaran tidak dikonfirmasi dalam batas waktu 3 jam.',
           cancelledAt: serverTimestamp(),
           updatedAt: serverTimestamp()
         });
@@ -44,7 +44,7 @@ function OrderCountdown({ expiredAt, orderId, status }: { expiredAt: any, orderI
       const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
       const s = Math.floor((distance % (1000 * 60)) / 1000);
 
-      setTimeLeft(`${h}j ${m}m ${s}d`);
+      setTimeLeft(`${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`);
     }, 1000);
 
     return () => clearInterval(timer);
@@ -53,9 +53,9 @@ function OrderCountdown({ expiredAt, orderId, status }: { expiredAt: any, orderI
   if (status !== 'Menunggu Konfirmasi') return null;
 
   return (
-    <div className="flex items-center gap-1.5 text-[10px] font-bold text-orange-500 bg-orange-50 px-2 py-0.5 rounded-full border border-orange-100">
+    <div className="flex items-center gap-1.5 text-[10px] font-bold text-orange-500 bg-orange-50 px-2.5 py-1 rounded-full border border-orange-100">
       <Timer className="w-3 h-3" />
-      <span>Konfirmasi dalam: {timeLeft}</span>
+      <span>Bayar dalam: {timeLeft}</span>
     </div>
   );
 }
@@ -88,8 +88,6 @@ export default function TransactionPage() {
       return timeB - timeA;
     });
 
-    // Filtering logic including hiding deleted (older than 15 days) is handled by Firestore deletion logic,
-    // but here we can add extra safety.
     return sorted.filter((order: any) => {
       const status = order.status || 'Menunggu Konfirmasi';
       
@@ -172,7 +170,7 @@ export default function TransactionPage() {
                            <span className={cn(
                              "text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-tighter border",
                              ['Selesai'].includes(order.status) ? "bg-green-50 text-green-600 border-green-100" :
-                             ['Dibatalkan', 'Dibatalkan Otomatis'].includes(order.status) ? "bg-red-50 text-red-600 border-red-100" :
+                             ['Dibatalkan', 'Dibatalkan Otomatis', 'Gagal Bayar', 'Tidak Dibayar'].includes(order.status) ? "bg-red-50 text-red-600 border-red-100" :
                              ['Dikirim'].includes(order.status) ? "bg-blue-50 text-blue-600 border-blue-100" :
                              "bg-orange-50 text-orange-600 border-orange-100"
                            )}>

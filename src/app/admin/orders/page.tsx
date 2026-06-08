@@ -53,23 +53,22 @@ export default function AdminOrdersPage() {
       const fifteenDaysMs = 15 * 24 * 60 * 60 * 1000;
 
       orders.forEach(async (order: any) => {
-        // 1. Auto-Cancel Expired Orders (6 Hours)
+        // 1. Auto-Cancel Expired Orders (3 Hours)
         if (order.status === 'Menunggu Konfirmasi' && order.expiredAt) {
           const distance = order.expiredAt.toMillis() - now;
           if (distance <= 0) {
             updateDoc(doc(db, 'orders', order.id), {
               status: 'Dibatalkan Otomatis',
-              cancelReason: 'Pesanan tidak dikonfirmasi dalam 6 jam',
+              cancelReason: 'Pembayaran tidak dikonfirmasi dalam batas waktu 3 jam.',
               cancelledAt: serverTimestamp(),
               updatedAt: serverTimestamp()
             });
           }
         }
 
-        // 2. Permanent Delete Old Cancelled Orders (15 Days)
-        const cancelledStatuses = ['Dibatalkan', 'Dibatalkan Otomatis', 'Gagal Bayar', 'Tidak Dibayar'];
-        if (cancelledStatuses.includes(order.status)) {
-          // Fallback ke updatedAt jika cancelledAt belum ada
+        // 2. Permanent Delete Old Cancelled/Failed Orders (15 Days)
+        const cleanupStatuses = ['Dibatalkan', 'Dibatalkan Otomatis', 'Gagal Bayar', 'Tidak Dibayar'];
+        if (cleanupStatuses.includes(order.status)) {
           const lastActionTime = (order.cancelledAt || order.updatedAt || order.createdAt)?.toMillis() || now;
           if (now - lastActionTime > fifteenDaysMs) {
             deleteDoc(doc(db, 'orders', order.id));
@@ -135,6 +134,7 @@ export default function AdminOrdersPage() {
       </header>
 
       <main className="pt-20 px-4 space-y-4">
+        {/* MARPAY CONTROL CENTER */}
         <div className="bg-[#0B1120] rounded-[28px] p-5 border border-white/5 shadow-2xl relative overflow-hidden">
            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 blur-[50px] rounded-full"></div>
            <div className="relative z-10 space-y-3.5">
@@ -207,7 +207,7 @@ export default function AdminOrdersPage() {
                         <span className={cn(
                           "text-[9px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-tighter",
                           order.status === 'Selesai' ? "bg-green-50 text-green-600 border-green-100" :
-                          ['Dibatalkan', 'Dibatalkan Otomatis'].includes(order.status) ? "bg-red-50 text-red-600 border-red-100" :
+                          ['Dibatalkan', 'Dibatalkan Otomatis', 'Gagal Bayar', 'Tidak Dibayar'].includes(order.status) ? "bg-red-50 text-red-600 border-red-100" :
                           order.status === 'Dikirim' ? "bg-blue-50 text-blue-600 border-blue-100" :
                           "bg-orange-50 text-orange-600 border-orange-100"
                         )}>
@@ -247,9 +247,12 @@ export default function AdminOrdersPage() {
 
         <div className="bg-blue-50/50 p-4 rounded-2xl border border-blue-100 flex gap-3">
           <AlertCircle className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
-          <p className="text-[10px] text-blue-500 font-medium leading-relaxed">
-            Sistem Pembersihan Aktif: Pesanan dengan status Batal akan dihapus otomatis secara permanen setelah 15 hari untuk menjaga performa database.
-          </p>
+          <div className="space-y-1">
+             <p className="text-[10px] text-blue-700 font-black uppercase tracking-tight">Informasi Pembersihan Sistem</p>
+             <p className="text-[10px] text-blue-500 font-medium leading-relaxed">
+               Pesanan dengan status Batal/Gagal akan dihapus otomatis secara permanen setelah 15 hari. Pesanan dengan status Selesai atau Dikirim akan disimpan selamanya.
+             </p>
+          </div>
         </div>
       </main>
     </div>

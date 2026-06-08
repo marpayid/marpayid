@@ -156,9 +156,9 @@ export default function Checkout() {
       return `${index + 1}. ${item.name}\n   Varian: ${item.variant || 'Default'}\n   Jumlah: ${item.quantity} pcs\n   Harga: Rp ${item.price.toLocaleString()}`;
     }).join('\n\n');
 
-    // EXPIRED LOGIC: 6 Hours from now
+    // EXPIRED LOGIC: 3 Hours from now (Marketplace Standard)
     const now = new Date();
-    const expireTime = new Date(now.getTime() + 6 * 60 * 60 * 1000);
+    const expireTime = new Date(now.getTime() + 3 * 60 * 60 * 1000);
 
     try {
       let message = `🛍️ ORDER BARU MARPAY\n\n`;
@@ -194,7 +194,7 @@ export default function Checkout() {
         customerEmail: user?.email || '',
         items,
         totalAmount: totalBill,
-        status: 'Menunggu Konfirmasi',
+        status: 'Menunggu Konfirmasi', // Equivalent to "pending"
         paymentStatus: 'Menunggu Pembayaran',
         paymentMethod: paymentMethodLabel,
         shippingAddress: isDigital ? { fullAddress: 'Digital' } : address,

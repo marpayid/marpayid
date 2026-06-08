@@ -43,7 +43,7 @@ export default function OrderDetailPage() {
         if (orderRef) {
           updateDoc(orderRef, {
             status: 'Dibatalkan Otomatis',
-            cancelReason: 'Pesanan tidak dikonfirmasi dalam 6 jam',
+            cancelReason: 'Pembayaran tidak dikonfirmasi dalam batas waktu 3 jam.',
             cancelledAt: serverTimestamp(),
             updatedAt: serverTimestamp()
           });
@@ -54,7 +54,7 @@ export default function OrderDetailPage() {
       const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
       const s = Math.floor((distance % (1000 * 60)) / 1000);
-      setTimeLeft(`${h}j ${m}m ${s}d`);
+      setTimeLeft(`${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`);
     }, 1000);
 
     return () => clearInterval(timer);
@@ -108,13 +108,34 @@ export default function OrderDetailPage() {
       </header>
 
       <main className="pt-20 px-4 space-y-4">
-        {/* Expiration Countdown */}
+        {/* Payment Expiration Countdown */}
         {order.status === 'Menunggu Konfirmasi' && timeLeft && (
-          <div className="bg-orange-50 border border-orange-100 p-4 rounded-2xl flex items-center gap-3">
-             <Timer className="w-5 h-5 text-orange-500 animate-pulse" />
+          <div className="bg-orange-50 border border-orange-100 p-4 rounded-3xl flex items-center gap-4 shadow-sm">
+             <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-orange-500 shadow-sm shrink-0">
+                <Timer className="w-6 h-6 animate-pulse" />
+             </div>
              <div>
-                <p className="text-[10px] font-bold text-orange-600 uppercase tracking-widest">Sisa Waktu Konfirmasi</p>
-                <p className="text-sm font-black text-orange-700">{timeLeft}</p>
+                <p className="text-[10px] font-black text-orange-600 uppercase tracking-widest leading-none mb-1.5">⏳ Menunggu Konfirmasi Pembayaran</p>
+                <div className="flex flex-col">
+                   <p className="text-xs text-orange-700/70 font-medium">Sisa waktu:</p>
+                   <p className="text-lg font-black text-orange-700 tracking-tighter">{timeLeft}</p>
+                </div>
+                <p className="text-[9px] text-orange-600/60 mt-1 font-medium italic">Pesanan akan dibatalkan otomatis jika pembayaran tidak dikonfirmasi dalam 3 jam.</p>
+             </div>
+          </div>
+        )}
+
+        {/* Failed / Cancelled Notice */}
+        {(order.status === 'Dibatalkan Otomatis' || order.status === 'Gagal Bayar') && (
+          <div className="bg-red-50 border border-red-100 p-4 rounded-3xl flex items-center gap-4 shadow-sm">
+             <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-red-500 shadow-sm shrink-0">
+                <XCircle className="w-6 h-6" />
+             </div>
+             <div>
+                <p className="text-[10px] font-black text-red-600 uppercase tracking-widest leading-none mb-1">❌ Pesanan Dibatalkan</p>
+                <p className="text-xs text-red-700/80 font-medium leading-relaxed">
+                  {order.cancelReason || 'Pembayaran tidak dikonfirmasi dalam batas waktu yang ditentukan.'}
+                </p>
              </div>
           </div>
         )}
@@ -134,47 +155,43 @@ export default function OrderDetailPage() {
             <Clock className="w-3.5 h-3.5" />
             <span>{order.createdAt?.toDate ? format(order.createdAt.toDate(), 'dd MMMM yyyy, HH:mm', { locale: id }) : '-'}</span>
           </div>
-          {order.cancelReason && (
-            <div className="pt-2 border-t border-gray-50 mt-2">
-              <p className="text-[10px] font-bold text-red-400 uppercase">Alasan Batal</p>
-              <p className="text-[11px] text-red-600 italic">{order.cancelReason}</p>
-            </div>
-          )}
         </section>
 
-        {/* Shipping Status */}
+        {/* Shipping Status (Premium Look - Adjusted) */}
         {(order.status === 'Dikirim' || (order.status === 'Selesai' && order.trackingNumber)) && (
-          <section className="bg-gradient-to-br from-[#1565FF] to-[#0057E7] text-white p-4 py-3.5 rounded-[24px] shadow-xl shadow-blue-100 space-y-3 relative overflow-hidden">
-            <div className="absolute right-[-5px] top-[-5px] opacity-[0.1] pointer-events-none">
-              <Truck className="w-16 h-16 rotate-12" />
+          <section className="bg-gradient-to-br from-[#1565FF] to-[#0057E7] text-white p-4 rounded-[28px] shadow-xl shadow-blue-100/50 space-y-3 relative overflow-hidden">
+            <div className="absolute right-[-10px] top-[-10px] opacity-10 pointer-events-none">
+              <Truck className="w-20 h-20 rotate-12" />
             </div>
+            
             <div className="flex items-center gap-3 relative z-10">
-               <div className="w-8 h-8 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center border border-white/20 shadow-inner">
-                  <Truck className="w-4 h-4 text-white" />
+               <div className="w-9 h-9 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center border border-white/20 shadow-inner">
+                  <Truck className="w-4.5 h-4.5 text-white" />
                </div>
                <div>
-                  <h3 className="text-[8px] font-black uppercase tracking-[0.2em] opacity-80">Status Pengiriman</h3>
-                  <p className="text-sm font-black leading-tight">{order.shippingStatus || 'Dalam Pengiriman'}</p>
+                  <h3 className="text-[9px] font-black uppercase tracking-[0.2em] opacity-80 mb-0.5">Lacak Pengiriman</h3>
+                  <p className="text-[13px] font-black leading-tight tracking-tight">{order.shippingStatus || 'Pesanan sedang diantar'}</p>
                </div>
             </div>
-            <div className="bg-[#F8FAFC] p-3 rounded-2xl border border-white/20 space-y-2 relative z-10 shadow-lg">
+
+            <div className="bg-[#F8FAFC] p-3.5 rounded-2xl space-y-2.5 relative z-10 shadow-lg">
                <div className="flex justify-between items-center">
                   <div className="flex flex-col">
-                    <span className="text-[7px] font-bold uppercase tracking-widest text-gray-400">Jasa Ekspedisi</span>
-                    <span className="text-[10px] font-black uppercase tracking-tight text-[#0F172A]">{order.courier || 'Kurir Pilihan'}</span>
+                    <span className="text-[8px] font-black uppercase tracking-widest text-gray-400 mb-0.5">Jasa Ekspedisi</span>
+                    <span className="text-[11px] font-black uppercase tracking-tight text-[#0F172A]">{order.courier || 'Kurir Pilihan'}</span>
                   </div>
                   {order.trackingNumber && (
                     <button 
                       onClick={() => copyToClipboard(order.trackingNumber)} 
-                      className="text-[8px] font-black bg-[#1565FF] text-white px-2.5 py-1.5 rounded-lg shadow-sm active:scale-90 transition-transform uppercase tracking-tighter"
+                      className="text-[9px] font-black bg-primary text-white px-3 py-1.5 rounded-xl shadow-sm active:scale-95 transition-all uppercase tracking-tighter"
                     >
                       Salin Resi
                     </button>
                   )}
                </div>
-               <div className="pt-0.5 border-t border-gray-100 mt-1">
-                 <p className="text-[8px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-1">Nomor Resi</p>
-                 <p className="text-xs font-black tracking-[0.1em] text-[#0F172A]">{order.trackingNumber || 'Menunggu Update Resi'}</p>
+               <div className="pt-2 border-t border-gray-100">
+                 <p className="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1">Nomor Resi</p>
+                 <p className="text-sm font-black tracking-[0.08em] text-[#0F172A]">{order.trackingNumber || 'Menunggu Update Resi'}</p>
                </div>
             </div>
           </section>
