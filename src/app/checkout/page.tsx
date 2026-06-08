@@ -38,10 +38,10 @@ interface AddressData {
 }
 
 const PAYMENT_METHODS = [
+  { id: 'qris', label: 'QRIS (Otomatis)', icon: QrCode, iconColor: 'text-orange-500' },
   { id: 'dana', label: 'DANA', icon: Wallet, iconColor: 'text-emerald-500' },
   { id: 'gopay', label: 'GoPay', icon: Wallet, iconColor: 'text-blue-500' },
   { id: 'ovo', label: 'OVO', icon: Wallet, iconColor: 'text-purple-500' },
-  { id: 'shopeepay', label: 'ShopeePay', icon: Wallet, iconColor: 'text-orange-500' },
   { id: 'bank_transfer', label: 'Transfer Bank (Manual)', icon: CreditCard, iconColor: 'text-gray-600' }
 ];
 
@@ -56,7 +56,7 @@ export default function Checkout() {
   const [tempAddress, setTempAddress] = useState<AddressData>({
     name: '', phone: '', province: '', city: '', district: '', fullAddress: '', notes: ''
   });
-  const [selectedPayment, setSelectedPayment] = useState<string>('dana');
+  const [selectedPayment, setSelectedPayment] = useState<string>('qris');
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -493,7 +493,7 @@ export default function Checkout() {
                     <p className="text-[11px] font-bold">{pay.label}</p>
                   </div>
                   <RadioGroupItem value={pay.id} id={pay.id} className="sr-only" />
-                  {selectedPayment === pay.id && <div className="w-2 + 2 rounded-full bg-primary" />}
+                  {selectedPayment === pay.id && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}
                 </div>
               );
             })}
