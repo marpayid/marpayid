@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { 
   ArrowLeft, Package, User, Calendar, CreditCard, Loader2, 
   MapPin, DollarSign, Database, ShieldAlert, RefreshCcw, Truck, 
-  MessageCircle, Save, CheckCircle2, AlertCircle
+  MessageCircle, Save, CheckCircle2, AlertCircle, Smartphone
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -265,12 +265,16 @@ export default function AdminOrderDetailPage() {
                 <div key={idx} className="flex justify-between items-center gap-4 pb-3 border-b border-gray-50 last:border-none last:pb-0">
                    <div className="flex items-center gap-3 flex-1 min-w-0">
                       <div className="w-12 h-12 rounded-lg bg-gray-50 flex-shrink-0 flex items-center justify-center border border-gray-100 overflow-hidden relative">
-                         <Image 
-                           src={getProductImage(item)} 
-                           alt={item.name} 
-                           fill 
-                           className="object-cover"
-                         />
+                         {item.type === 'digital' ? (
+                            <Smartphone className="w-6 h-6 text-primary opacity-30" />
+                         ) : (
+                            <Image 
+                              src={getProductImage(item)} 
+                              alt={item.name} 
+                              fill 
+                              className="object-cover"
+                            />
+                         )}
                       </div>
                       <div className="flex-1 min-w-0">
                          <p className="text-xs font-black text-gray-800 line-clamp-1">{item.name}</p>

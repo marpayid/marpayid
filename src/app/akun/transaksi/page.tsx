@@ -2,7 +2,7 @@
 
 import { useMemo, useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, ClipboardList, Package, Clock, CheckCircle2, Truck, XCircle, Loader2, ChevronRight, AlertCircle, Timer } from 'lucide-react';
+import { ArrowLeft, ClipboardList, Package, Clock, CheckCircle2, Truck, XCircle, Loader2, ChevronRight, AlertCircle, Timer, Smartphone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useUser, useFirestore, useCollection } from '@/firebase';
@@ -205,12 +205,16 @@ export default function TransactionPage() {
                         {order.items?.slice(0, 1).map((item: any, idx: number) => (
                           <div key={idx} className="flex gap-4">
                             <div className="w-12 h-12 rounded-xl bg-gray-50 flex-shrink-0 flex items-center justify-center border border-gray-100 overflow-hidden relative">
-                              <Image 
-                                src={getProductImage(item)} 
-                                alt={item.name} 
-                                fill 
-                                className="object-cover"
-                              />
+                              {item.type === 'digital' ? (
+                                <Smartphone className="w-6 h-6 text-primary opacity-40" />
+                              ) : (
+                                <Image 
+                                  src={getProductImage(item)} 
+                                  alt={item.name} 
+                                  fill 
+                                  className="object-cover"
+                                />
+                              )}
                             </div>
                             <div className="flex-1 min-w-0">
                               <h4 className="text-xs font-bold text-gray-800 truncate">{item.name}</h4>

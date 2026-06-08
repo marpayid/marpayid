@@ -2,7 +2,7 @@
 
 import { useMemo, useState, useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, Package, Clock, CheckCircle2, Truck, XCircle, Loader2, Copy, MapPin, DollarSign, MessageCircle, AlertCircle, Timer, QrCode } from 'lucide-react';
+import { ArrowLeft, Package, Clock, CheckCircle2, Truck, XCircle, Loader2, Copy, MapPin, DollarSign, MessageCircle, AlertCircle, Timer, QrCode, Smartphone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useUser, useFirestore, useDoc } from '@/firebase';
 import { doc, updateDoc, serverTimestamp } from 'firebase/firestore';
@@ -118,7 +118,7 @@ export default function OrderDetailPage() {
           </Button>
           <h1 className="text-lg font-bold">Detail Pesanan</h1>
         </div>
-        {orderLoading && <Loader2 className="w-4 h-4 animate-spin text-gray-300" />}
+        {orderLoading && <Loader2 className="w-4 h-4 animate-spin text-gray-300 ml-auto" />}
       </header>
 
       <main className="pt-20 px-4 space-y-4">
@@ -215,12 +215,16 @@ export default function OrderDetailPage() {
             {order.items?.map((item: any, idx: number) => (
               <div key={idx} className="flex gap-4">
                 <div className="w-14 h-14 bg-gray-50 rounded-xl flex items-center justify-center border border-gray-100 overflow-hidden shrink-0 relative">
-                  <Image 
-                    src={getProductImage(item)} 
-                    alt={item.name} 
-                    fill 
-                    className="object-cover"
-                  />
+                  {item.type === 'digital' ? (
+                    <Smartphone className="w-7 h-7 text-primary opacity-30" />
+                  ) : (
+                    <Image 
+                      src={getProductImage(item)} 
+                      alt={item.name} 
+                      fill 
+                      className="object-cover"
+                    />
+                  )}
                 </div>
                 <div className="flex-1 min-w-0">
                   <h4 className="text-xs font-bold text-gray-800 line-clamp-1">{item.name}</h4>
