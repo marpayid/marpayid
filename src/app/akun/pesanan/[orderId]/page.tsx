@@ -3,7 +3,7 @@
 
 import { useMemo, useState, useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, Package, Clock, CheckCircle2, Truck, XCircle, Loader2, Copy, MapPin, DollarSign, MessageCircle, AlertCircle, Timer } from 'lucide-react';
+import { ArrowLeft, Package, Clock, CheckCircle2, Truck, XCircle, Loader2, Copy, MapPin, DollarSign, MessageCircle, AlertCircle, Timer, QrCode, RefreshCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useUser, useFirestore, useDoc } from '@/firebase';
 import { doc, updateDoc, serverTimestamp } from 'firebase/firestore';
@@ -22,6 +22,7 @@ export default function OrderDetailPage() {
   const { toast } = useToast();
   
   const [timeLeft, setTimeLeft] = useState<string>('');
+  const [isCheckingStatus, setIsCheckingStatus] = useState(false);
   const isExpiringRef = useRef(false);
 
   const orderRef = useMemo(() => {
@@ -32,7 +33,6 @@ export default function OrderDetailPage() {
   const { data: order, loading: orderLoading } = useDoc<any>(orderRef);
 
   useEffect(() => {
-    // Timer only runs if status is still 'Menunggu Konfirmasi'
     if (!order?.expiredAt || order.status !== 'Menunggu Konfirmasi') {
       setTimeLeft('');
       return;
@@ -47,7 +47,6 @@ export default function OrderDetailPage() {
         clearInterval(timer);
         setTimeLeft('Expired');
         
-        // Final protection to only update if not already being processed
         if (orderRef && !isExpiringRef.current) {
           isExpiringRef.current = true;
           try {
@@ -73,6 +72,30 @@ export default function OrderDetailPage() {
 
     return () => clearInterval(timer);
   }, [order?.status, order?.expiredAt, orderRef]);
+
+  const handleCheckStatus = async () => {
+    if (!orderId || isCheckingStatus) return;
+    setIsCheckingStatus(true);
+    
+    try {
+      const res = await fetch('/api/sanpay/status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId })
+      });
+      const result = await res.json();
+      
+      if (result.status === 'success' && result.data?.status === 'PAID') {
+        toast({ title: "Pembayaran Berhasil", description: "Status pesanan sedang diperbarui.", variant: "success" });
+      } else {
+        toast({ title: "Belum Dibayar", description: "Silakan selesaikan pembayaran sesuai instruksi." });
+      }
+    } catch (e) {
+      toast({ variant: "destructive", title: "Gagal Cek Status", description: "Coba lagi beberapa saat lagi." });
+    } finally {
+      setIsCheckingStatus(false);
+    }
+  };
 
   const isAdmin = user?.email === 'cs.marpay@gmail.com';
   const isOwner = order?.userId === user?.uid || isAdmin;
@@ -125,26 +148,58 @@ export default function OrderDetailPage() {
       </header>
 
       <main className="pt-20 px-4 space-y-4">
-        {/* Payment Expiration Countdown */}
+        {/* Payment QRIS Display */}
+        {order.status === 'Menunggu Konfirmasi' && order.paymentMethod?.includes('QRIS') && (
+          <div className="bg-white p-6 rounded-[32px] border border-gray-100 shadow-sm flex flex-col items-center text-center space-y-4">
+             <div className="space-y-1">
+                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Metode Pembayaran</p>
+                <h3 className="text-sm font-black text-gray-900">QRIS (Otomatis)</h3>
+             </div>
+             
+             <div className="relative w-56 h-56 bg-gray-50 rounded-2xl flex items-center justify-center overflow-hidden border-4 border-white shadow-xl">
+                <Image 
+                  src={`https://pay.sanpay.id/qr_display.php?mitra_reference=${orderId}`} 
+                  alt="QRIS Payment"
+                  width={224}
+                  height={224}
+                  className="object-contain"
+                />
+             </div>
+             
+             <div className="space-y-1">
+                <p className="text-[10px] font-black text-gray-400 uppercase">Total Tagihan</p>
+                <p className="text-2xl font-black text-primary">Rp {order.totalAmount?.toLocaleString()}</p>
+             </div>
+
+             <Button 
+                onClick={handleCheckStatus} 
+                disabled={isCheckingStatus}
+                variant="outline" 
+                className="w-full h-12 rounded-2xl border-primary/20 text-primary font-bold flex items-center gap-2"
+              >
+                {isCheckingStatus ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCcw className="w-4 h-4" />}
+                Cek Status Pembayaran
+             </Button>
+          </div>
+        )}
+
+        {/* Countdown */}
         {order.status === 'Menunggu Konfirmasi' && timeLeft && (
-          <div className="bg-orange-50 border border-orange-100 p-4 rounded-3xl flex items-center gap-4 shadow-sm animate-in fade-in duration-300">
+          <div className="bg-orange-50 border border-orange-100 p-4 rounded-3xl flex items-center gap-4 shadow-sm">
              <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-orange-500 shadow-sm shrink-0">
                 <Timer className="w-6 h-6 animate-pulse" />
              </div>
              <div>
-                <p className="text-[10px] font-black text-orange-600 uppercase tracking-widest leading-none mb-1.5">⏳ Menunggu Konfirmasi Pembayaran</p>
-                <div className="flex flex-col">
-                   <p className="text-xs text-orange-700/70 font-medium">Sisa waktu:</p>
-                   <p className="text-lg font-black text-orange-700 tracking-tighter">{timeLeft}</p>
-                </div>
-                <p className="text-[9px] text-orange-600/60 mt-1 font-medium italic">Pesanan akan dibatalkan otomatis jika pembayaran tidak dikonfirmasi dalam 3 jam.</p>
+                <p className="text-[10px] font-black text-orange-600 uppercase tracking-widest leading-none mb-1.5">Selesaikan Pembayaran</p>
+                <p className="text-lg font-black text-orange-700 tracking-tighter">{timeLeft}</p>
+                <p className="text-[9px] text-orange-600/60 mt-1 font-medium italic">Status akan otomatis berubah setelah pembayaran diterima.</p>
              </div>
           </div>
         )}
 
         {/* Failed / Cancelled Notice */}
         {(order.status === 'Dibatalkan Otomatis' || order.status === 'Gagal Bayar' || order.status === 'Dibatalkan') && (
-          <div className="bg-red-50 border border-red-100 p-4 rounded-3xl flex items-center gap-4 shadow-sm animate-in slide-in-from-top-2">
+          <div className="bg-red-50 border border-red-100 p-4 rounded-3xl flex items-center gap-4 shadow-sm">
              <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-red-500 shadow-sm shrink-0">
                 <XCircle className="w-6 h-6" />
              </div>
@@ -176,7 +231,7 @@ export default function OrderDetailPage() {
 
         {/* Shipping Status */}
         {(order.status === 'Dikirim' || (order.status === 'Selesai' && order.trackingNumber)) && (
-          <section className="bg-gradient-to-br from-[#1565FF] to-[#0057E7] text-white p-4 rounded-[28px] shadow-xl shadow-blue-100/50 space-y-3 relative overflow-hidden animate-in fade-in zoom-in-95 duration-500">
+          <section className="bg-gradient-to-br from-[#1565FF] to-[#0057E7] text-white p-4 rounded-[28px] shadow-xl shadow-blue-100/50 space-y-3 relative overflow-hidden">
             <div className="absolute right-[-10px] top-[-10px] opacity-10 pointer-events-none">
               <Truck className="w-20 h-20 rotate-12" />
             </div>
@@ -191,11 +246,11 @@ export default function OrderDetailPage() {
                </div>
             </div>
 
-            <div className="bg-[#F8FAFC] p-3.5 rounded-2xl space-y-2.5 relative z-10 shadow-lg">
+            <div className="bg-[#F8FAFC] p-3.5 rounded-2xl space-y-2.5 relative z-10 shadow-lg text-[#0F172A]">
                <div className="flex justify-between items-center">
                   <div className="flex flex-col">
                     <span className="text-[8px] font-black uppercase tracking-widest text-gray-400 mb-0.5">Jasa Ekspedisi</span>
-                    <span className="text-[11px] font-black uppercase tracking-tight text-[#0F172A]">{order.courier || 'Kurir Pilihan'}</span>
+                    <span className="text-[11px] font-black uppercase tracking-tight">{order.courier || 'Kurir Pilihan'}</span>
                   </div>
                   {order.trackingNumber && (
                     <button 
@@ -208,7 +263,7 @@ export default function OrderDetailPage() {
                </div>
                <div className="pt-2 border-t border-gray-100">
                  <p className="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1">Nomor Resi</p>
-                 <p className="text-sm font-black tracking-[0.08em] text-[#0F172A]">{order.trackingNumber || 'Menunggu Update Resi'}</p>
+                 <p className="text-sm font-black tracking-[0.08em]">{order.trackingNumber || 'Menunggu Update Resi'}</p>
                </div>
             </div>
           </section>
@@ -262,7 +317,7 @@ export default function OrderDetailPage() {
           <div className="space-y-2.5">
              <div className="flex justify-between text-xs">
                 <span className="text-gray-400">Metode Pembayaran</span>
-                <span className="font-bold text-gray-800">{order.paymentMethod || 'WhatsApp Confirmation'}</span>
+                <span className="font-bold text-gray-800">{order.paymentMethod || 'Otomatis'}</span>
              </div>
              <div className="flex justify-between text-xs">
                 <span className="text-gray-400">Total Harga Barang</span>

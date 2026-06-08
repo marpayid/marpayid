@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
@@ -38,9 +39,8 @@ interface AddressData {
 }
 
 const PAYMENT_METHODS = [
-  { id: 'bank_transfer', label: 'Bank Transfer', icon: CreditCard, iconColor: 'text-blue-500' },
-  { id: 'e_wallet', label: 'E-Wallet (OVO/DANA/GoPay)', icon: Wallet, iconColor: 'text-emerald-500' },
-  { id: 'qris', label: 'QRIS', icon: QrCode, iconColor: 'text-orange-500' }
+  { id: 'bank_transfer', label: 'Bank Transfer', icon: CreditCard, iconColor: 'text-blue-500', sanpay_method: 'BT' },
+  { id: 'qris', label: 'QRIS (Otomatis)', icon: QrCode, iconColor: 'text-orange-500', sanpay_method: 'QRIS' }
 ];
 
 export default function Checkout() {
@@ -213,7 +213,7 @@ export default function Checkout() {
     setIsAddressModalOpen(false);
   };
 
-  const handleWhatsAppCheckout = () => {
+  const handleSanPayCheckout = async () => {
     if (items.length === 0 || isSubmitting) return;
     
     if (!isDigital && !address) {
@@ -225,58 +225,15 @@ export default function Checkout() {
 
     setIsSubmitting(true);
 
-    const adminWhatsApp = "6283851278935";
-    const paymentMethodLabel = PAYMENT_METHODS.find(m => m.id === selectedPayment)?.label || selectedPayment;
-
     const customerName = isDigital ? (items[0].details?.customerName || user?.displayName || 'Pelanggan Digital') : (address?.name || 'N/A');
     const customerPhone = isDigital ? (items[0].details?.target || 'N/A') : (address?.phone || 'N/A');
-    const customerAddress = isDigital 
-      ? 'Produk Digital (Pengiriman Instan)' 
-      : `${address?.fullAddress}${address?.notes ? ` (${address?.notes})` : ''}, ${address?.district}, ${address?.city}, ${address?.province}`;
-
-    const orderItemsList = items.map((item, index) => {
-      return `${index + 1}. ${item.name}\n   Varian: ${item.variant || 'Default'}\n   Jumlah: ${item.quantity} pcs\n   Harga: Rp ${item.price.toLocaleString()}`;
-    }).join('\n\n');
-
+    
     const now = new Date();
     const expireTime = new Date(now.getTime() + 3 * 60 * 60 * 1000);
 
     try {
-      let message = `🛍️ ORDER BARU MARPAY\n\n`;
-      message += `━━━━━━━━━━━━━━\n\n`;
-      message += `👤 DATA PEMBELI\n`;
-      message += `Nama : ${customerName}\n`;
-      message += `No. WA : ${customerPhone}\n\n`;
-      message += `📍 ALAMAT PENGIRIMAN\n`;
-      message += `${customerAddress}\n\n`;
-      message += `━━━━━━━━━━━━━━\n\n`;
-      message += `📦 DETAIL PESANAN\n\n`;
-      message += `${orderItemsList}\n\n`;
-      if (appliedVoucher) {
-        message += `🎟️ VOUCHER: ${appliedVoucher.code} (-Rp ${discountAmount.toLocaleString()})\n\n`;
-      }
-      if (shippingDetails.autoDiscount > 0) {
-        message += `🚚 GRATIS ONGKIR: (-Rp ${shippingDetails.autoDiscount.toLocaleString()})\n\n`;
-      }
-      message += `━━━━━━━━━━━━━━\n\n`;
-      message += `💳 RINGKASAN PEMBAYARAN\n\n`;
-      message += `Subtotal : Rp ${totalItemsPrice.toLocaleString()}\n`;
-      message += `Ongkir : Rp ${shippingDetails.raw.toLocaleString()}\n`;
-      if (appliedVoucher) message += `Diskon : -Rp ${discountAmount.toLocaleString()}\n`;
-      if (shippingDetails.autoDiscount > 0) message += `Potongan Ongkir : -Rp ${shippingDetails.autoDiscount.toLocaleString()}\n`;
-      message += `Total Bayar : Rp ${totalBill.toLocaleString()}\n\n`;
-      message += `Metode Pembayaran :\n${paymentMethodLabel}\n\n`;
-      message += `━━━━━━━━━━━━━━\n\n`;
-      message += `📌 STATUS\n`;
-      message += `Menunggu Konfirmasi Admin\n\n`;
-      message += `Mohon diproses.\n`;
-      message += `Terima kasih 🙏`;
-
-      const whatsappUrl = `https://wa.me/${adminWhatsApp}?text=${encodeURIComponent(message)}`;
-
-      sessionStorage.setItem('marpay_checkout_pending', 'true');
-
-      addDoc(collection(db, 'orders'), {
+      // 1. Create Order Doc First to get ID
+      const orderRef = await addDoc(collection(db, 'orders'), {
         userId: user?.uid || 'guest',
         customerName,
         customerPhone,
@@ -285,18 +242,35 @@ export default function Checkout() {
         totalAmount: totalBill,
         discountAmount: discountAmount + shippingDetails.autoDiscount,
         voucherUsed: appliedVoucher?.code || null,
-        autoFreeShipping: shippingDetails.autoDiscount > 0,
         status: 'Menunggu Konfirmasi',
         paymentStatus: 'Menunggu Pembayaran',
-        paymentMethod: paymentMethodLabel,
+        paymentMethod: PAYMENT_METHODS.find(m => m.id === selectedPayment)?.label || selectedPayment,
         shippingAddress: isDigital ? { fullAddress: 'Digital' } : address,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
         expiredAt: Timestamp.fromDate(expireTime)
-      }).catch((err) => {
-        console.error("Firestore Save Error:", err);
       });
 
+      // 2. Call SanPay API via internal route
+      const sanpayRes = await fetch('/api/sanpay/invoice', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          orderId: orderRef.id,
+          amount: totalBill,
+          method: selectedPayment === 'qris' ? 'qris' : 'BT',
+          customerName,
+          customerPhone
+        })
+      });
+
+      const sanpayData = await sanpayRes.json();
+
+      if (sanpayData.error) {
+        throw new Error(sanpayData.error);
+      }
+
+      // 3. Clear Local Storage
       if (!isFromCart) {
         localStorage.removeItem('marpay_checkout_temp');
       } else {
@@ -304,16 +278,18 @@ export default function Checkout() {
       }
       
       window.dispatchEvent(new Event('cart-updated'));
-      window.location.href = whatsappUrl;
-      setTimeout(() => setIsSubmitting(false), 2000);
 
-    } catch (e) {
-      console.error("Process Checkout Error:", e);
+      // 4. Redirect to Order Detail to show QRIS / Instructions
+      router.push(`/akun/pesanan/${orderRef.id}`);
+
+    } catch (e: any) {
+      console.error("SanPay Checkout Error:", e);
       toast({
         variant: "destructive",
-        title: "Gagal Membuat Pesanan",
-        description: "Terjadi kesalahan teknis. Silakan coba lagi.",
+        title: "Gagal Membuat Invoice",
+        description: e.message || "Terjadi kesalahan sistem.",
       });
+    } finally {
       setIsSubmitting(false);
     }
   };
@@ -465,7 +441,7 @@ export default function Checkout() {
           </div>
         </div>
 
-        {/* Voucher Section (Marketplace Style) */}
+        {/* Voucher Section */}
         <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm space-y-4">
           <div className="flex items-center justify-between group active:bg-gray-50 transition-colors cursor-pointer">
             <div className="flex items-center gap-3">
@@ -561,7 +537,7 @@ export default function Checkout() {
           <div className="mt-4 bg-blue-50/80 p-3.5 rounded-xl border border-blue-100 flex gap-3">
             <Info className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
             <p className="text-[10px] text-blue-700/80 leading-relaxed font-medium">
-              Pesanan akan diproses melalui WhatsApp Admin MarPay untuk memastikan transaksi berjalan aman dan cepat.
+              Pesanan diproses otomatis melalui SanPay untuk verifikasi pembayaran yang lebih cepat dan aman.
             </p>
           </div>
         </div>
@@ -572,7 +548,6 @@ export default function Checkout() {
             <div className="flex justify-between items-center"><span className="text-[11px] text-gray-500 font-medium">Subtotal</span><span className="text-[11px] font-bold text-gray-800">Rp {totalItemsPrice.toLocaleString()}</span></div>
             <div className="flex justify-between items-center"><span className="text-[11px] text-gray-500 font-medium">Ongkir</span><span className="text-[11px] font-bold text-gray-800">Rp {shippingDetails.raw.toLocaleString()}</span></div>
             
-            {/* Tampilan Diskon Ongkir */}
             {shippingDetails.autoDiscount > 0 && (
               <div className="flex justify-between items-center bg-emerald-50/30 -mx-1 px-1 rounded">
                 <span className="text-[11px] text-emerald-600 font-bold uppercase tracking-tighter flex items-center gap-1">
@@ -598,10 +573,10 @@ export default function Checkout() {
         </div>
         <Button 
           disabled={isSubmitting}
-          onClick={handleWhatsAppCheckout} 
+          onClick={handleSanPayCheckout} 
           className="bg-primary text-white font-bold h-11 px-6 rounded-xl flex items-center gap-2 shadow-lg shadow-primary/20 active:scale-95 transition-transform"
         >
-          {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <MessageCircle className="w-4 h-4" />}
+          {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <QrCode className="w-4 h-4" />}
           Bayar Sekarang
         </Button>
       </div>
