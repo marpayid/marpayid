@@ -124,11 +124,11 @@ export default function ProductDetail() {
 
   const youMightLikeProducts = useMemo(() => {
     if (!product) return [];
-    // Get products from different categories for variety
+    // Get products from different categories for variety, increased limit to 20
     return Products.filter(p => 
       p.category !== product.category && 
       p.category !== 'Premium'
-    ).slice(0, 4);
+    ).slice(0, 20);
   }, [product]);
 
   const handleAction = useCallback((redirect = false) => {
