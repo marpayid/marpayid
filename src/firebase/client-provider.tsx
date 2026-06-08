@@ -17,24 +17,13 @@ export const FirebaseClientProvider: React.FC<{ children: React.ReactNode }> = (
     }
 
     try {
-      // Inisialisasi App
+      // Initialize App
       const existingApp = getApps().length > 0 ? getApp() : null;
       const app: FirebaseApp = existingApp || initializeApp(firebaseConfig);
       
-      // Inisialisasi layanan secara terpisah untuk mencegah crash jika config tidak lengkap
-      let db: Firestore | null = null;
-      try {
-        db = getFirestore(app);
-      } catch (dbErr) {
-        console.warn("Firestore failed to initialize:", dbErr);
-      }
-
-      let auth: Auth | null = null;
-      try {
-        auth = getAuth(app);
-      } catch (authErr) {
-        console.warn("Firebase Auth failed to initialize:", authErr);
-      }
+      // Initialize services
+      const db: Firestore = getFirestore(app);
+      const auth: Auth = getAuth(app);
       
       return { app, db, auth };
     } catch (err: any) {

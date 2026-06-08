@@ -98,10 +98,7 @@ export default function Profile() {
   };
 
   const handleUpdateProfile = async () => {
-    if (!user?.uid || !userProfileRef || !db) {
-      toast({ variant: "destructive", title: "Gagal", description: "Layanan database tidak tersedia saat ini." });
-      return;
-    }
+    if (!user?.uid || !userProfileRef) return;
 
     if (!editForm.name.trim() || !editForm.phone.trim()) {
       toast({ variant: "destructive", title: "Gagal", description: "Nama dan Nomor WhatsApp wajib diisi." });
@@ -227,7 +224,7 @@ export default function Profile() {
               <div key={item.label} className={cn("flex items-center justify-between p-4 active:bg-gray-50 transition-colors cursor-pointer", idx !== menuItems.length - 1 ? 'border-b border-gray-50' : '', !isItemActive && "opacity-60")}>
                 <div className="flex items-center gap-4">
                   <div className={cn("w-11 h-11 rounded-2xl flex items-center justify-center", item.bgColor, item.color)}>
-                    <item.icon className="w-5 h-5 stroke-[2px]" />
+                    <item.icon className="w-5 h-5 stroke-[2.2px]" />
                   </div>
                   <div>
                     <h4 className="text-sm font-bold text-gray-800">{item.label}</h4>
