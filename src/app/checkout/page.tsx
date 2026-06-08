@@ -219,6 +219,8 @@ export default function Checkout() {
     const expireTime = new Date(now.getTime() + 3 * 60 * 60 * 1000);
 
     try {
+      if (!db) throw new Error("Database not initialized");
+
       const orderRef = await addDoc(collection(db, 'orders'), {
         userId: user?.uid || 'guest',
         customerName,
@@ -251,7 +253,7 @@ export default function Checkout() {
       toast({
         variant: "destructive",
         title: "Gagal Membuat Pesanan",
-        description: "Terjadi kesalahan sistem.",
+        description: "Terjadi kesalahan sistem atau database belum siap.",
       });
     } finally {
       setIsSubmitting(false);

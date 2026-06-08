@@ -72,7 +72,7 @@ export default function OrderDetailPage() {
   }, [order?.status, order?.expiredAt, orderRef]);
 
   const isAdmin = user?.email === 'cs.marpay@gmail.com';
-  const isOwner = order?.userId === user?.uid || isAdmin;
+  const isOwner = order?.userId === user?.uid || isAdmin || order?.userId === 'guest';
 
   if (authLoading || (orderLoading && !order)) {
     return (
