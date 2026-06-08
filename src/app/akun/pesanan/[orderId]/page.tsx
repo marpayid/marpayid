@@ -3,7 +3,7 @@
 
 import { useMemo, useState, useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, Package, Clock, CheckCircle2, Truck, XCircle, Loader2, Copy, MapPin, DollarSign, MessageCircle, AlertCircle, Timer, QrCode, RefreshCcw } from 'lucide-react';
+import { ArrowLeft, Package, Clock, CheckCircle2, Truck, XCircle, Loader2, Copy, MapPin, DollarSign, MessageCircle, AlertCircle, Timer, QrCode } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useUser, useFirestore, useDoc } from '@/firebase';
 import { doc, updateDoc, serverTimestamp } from 'firebase/firestore';
@@ -22,7 +22,6 @@ export default function OrderDetailPage() {
   const { toast } = useToast();
   
   const [timeLeft, setTimeLeft] = useState<string>('');
-  const [isCheckingStatus, setIsCheckingStatus] = useState(false);
   const isExpiringRef = useRef(false);
 
   const orderRef = useMemo(() => {
@@ -73,30 +72,6 @@ export default function OrderDetailPage() {
     return () => clearInterval(timer);
   }, [order?.status, order?.expiredAt, orderRef]);
 
-  const handleCheckStatus = async () => {
-    if (!orderId || isCheckingStatus) return;
-    setIsCheckingStatus(true);
-    
-    try {
-      const res = await fetch('/api/sanpay/status', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ orderId })
-      });
-      const result = await res.json();
-      
-      if (result.status === 'success' && result.data?.status === 'PAID') {
-        toast({ title: "Pembayaran Berhasil", description: "Status pesanan sedang diperbarui.", variant: "success" });
-      } else {
-        toast({ title: "Belum Dibayar", description: "Silakan selesaikan pembayaran sesuai instruksi." });
-      }
-    } catch (e) {
-      toast({ variant: "destructive", title: "Gagal Cek Status", description: "Coba lagi beberapa saat lagi." });
-    } finally {
-      setIsCheckingStatus(false);
-    }
-  };
-
   const isAdmin = user?.email === 'cs.marpay@gmail.com';
   const isOwner = order?.userId === user?.uid || isAdmin;
 
@@ -122,7 +97,7 @@ export default function OrderDetailPage() {
   const copyToClipboard = (text: string) => {
     if (!text) return;
     navigator.clipboard.writeText(text);
-    toast({ title: "Berhasil", description: "Nomor resi telah disalin." });
+    toast({ title: "Berhasil", description: "Teks telah disalin." });
   };
 
   const getStatusColor = (status: string) => {
@@ -148,41 +123,6 @@ export default function OrderDetailPage() {
       </header>
 
       <main className="pt-20 px-4 space-y-4">
-        {/* Payment QRIS Display */}
-        {order.status === 'Menunggu Konfirmasi' && order.paymentMethod?.includes('QRIS') && (
-          <div className="bg-white p-6 rounded-[32px] border border-gray-100 shadow-sm flex flex-col items-center text-center space-y-4">
-             <div className="space-y-1">
-                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Metode Pembayaran</p>
-                <h3 className="text-sm font-black text-gray-900">QRIS (Otomatis)</h3>
-             </div>
-             
-             <div className="relative w-56 h-56 bg-gray-50 rounded-2xl flex items-center justify-center overflow-hidden border-4 border-white shadow-xl">
-                <Image 
-                  src={`https://pay.sanpay.id/qr_display.php?mitra_reference=${orderId}`} 
-                  alt="QRIS Payment"
-                  width={224}
-                  height={224}
-                  className="object-contain"
-                />
-             </div>
-             
-             <div className="space-y-1">
-                <p className="text-[10px] font-black text-gray-400 uppercase">Total Tagihan</p>
-                <p className="text-2xl font-black text-primary">Rp {order.totalAmount?.toLocaleString()}</p>
-             </div>
-
-             <Button 
-                onClick={handleCheckStatus} 
-                disabled={isCheckingStatus}
-                variant="outline" 
-                className="w-full h-12 rounded-2xl border-primary/20 text-primary font-bold flex items-center gap-2"
-              >
-                {isCheckingStatus ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCcw className="w-4 h-4" />}
-                Cek Status Pembayaran
-             </Button>
-          </div>
-        )}
-
         {/* Countdown */}
         {order.status === 'Menunggu Konfirmasi' && timeLeft && (
           <div className="bg-orange-50 border border-orange-100 p-4 rounded-3xl flex items-center gap-4 shadow-sm">
@@ -192,7 +132,7 @@ export default function OrderDetailPage() {
              <div>
                 <p className="text-[10px] font-black text-orange-600 uppercase tracking-widest leading-none mb-1.5">Selesaikan Pembayaran</p>
                 <p className="text-lg font-black text-orange-700 tracking-tighter">{timeLeft}</p>
-                <p className="text-[9px] text-orange-600/60 mt-1 font-medium italic">Status akan otomatis berubah setelah pembayaran diterima.</p>
+                <p className="text-[9px] text-orange-600/60 mt-1 font-medium">Segera konfirmasi ke Admin setelah melakukan transfer.</p>
              </div>
           </div>
         )}
@@ -303,7 +243,8 @@ export default function OrderDetailPage() {
              <p className="font-black text-gray-900">{order.customerName}</p>
              <p className="font-bold text-gray-400">{order.customerPhone}</p>
              <p className="text-gray-600 leading-relaxed mt-1">
-               {order.shippingAddress?.fullAddress}, {order.shippingAddress?.district}, {order.shippingAddress?.city}, {order.shippingAddress?.province}
+               {order.shippingAddress?.fullAddress || 'Digital Product'}
+               {!order.shippingAddress?.fullAddress && order.shippingAddress?.city && `, ${order.shippingAddress.city}, ${order.shippingAddress.province}`}
              </p>
           </div>
         </section>
@@ -317,7 +258,7 @@ export default function OrderDetailPage() {
           <div className="space-y-2.5">
              <div className="flex justify-between text-xs">
                 <span className="text-gray-400">Metode Pembayaran</span>
-                <span className="font-bold text-gray-800">{order.paymentMethod || 'Otomatis'}</span>
+                <span className="font-bold text-gray-800">{order.paymentMethod || 'Manual'}</span>
              </div>
              <div className="flex justify-between text-xs">
                 <span className="text-gray-400">Total Harga Barang</span>
@@ -334,10 +275,10 @@ export default function OrderDetailPage() {
         <div className="pt-4 flex flex-col gap-3">
           <Button 
             className="w-full h-12 rounded-2xl bg-primary hover:bg-primary/90 text-white font-black flex items-center gap-2 transition-all active:scale-95"
-            onClick={() => window.open(`https://wa.me/6283851278935?text=${encodeURIComponent(`Halo Admin MarPay, saya ingin bertanya status pesanan saya dengan ID: ${orderId.slice(-8).toUpperCase()}`)}`, '_blank')}
+            onClick={() => window.open(`https://wa.me/6283851278935?text=${encodeURIComponent(`Halo Admin MarPay, saya ingin konfirmasi pembayaran pesanan saya dengan ID: ${orderId.slice(-8).toUpperCase()}`)}`, '_blank')}
           >
             <MessageCircle className="w-5 h-5" />
-            Tanya Admin di WhatsApp
+            Konfirmasi di WhatsApp
           </Button>
         </div>
       </main>

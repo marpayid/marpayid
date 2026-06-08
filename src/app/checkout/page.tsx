@@ -39,8 +39,11 @@ interface AddressData {
 }
 
 const PAYMENT_METHODS = [
-  { id: 'bank_transfer', label: 'Bank Transfer', icon: CreditCard, iconColor: 'text-blue-500', sanpay_method: 'BT' },
-  { id: 'qris', label: 'QRIS (Otomatis)', icon: QrCode, iconColor: 'text-orange-500', sanpay_method: 'QRIS' }
+  { id: 'dana', label: 'DANA', icon: Wallet, iconColor: 'text-emerald-500' },
+  { id: 'gopay', label: 'GoPay', icon: Wallet, iconColor: 'text-blue-500' },
+  { id: 'ovo', label: 'OVO', icon: Wallet, iconColor: 'text-purple-500' },
+  { id: 'shopeepay', label: 'ShopeePay', icon: Wallet, iconColor: 'text-orange-500' },
+  { id: 'bank_transfer', label: 'Transfer Bank (Manual)', icon: CreditCard, iconColor: 'text-gray-600' }
 ];
 
 export default function Checkout() {
@@ -54,7 +57,7 @@ export default function Checkout() {
   const [tempAddress, setTempAddress] = useState<AddressData>({
     name: '', phone: '', province: '', city: '', district: '', fullAddress: '', notes: ''
   });
-  const [selectedPayment, setSelectedPayment] = useState<string>('bank_transfer');
+  const [selectedPayment, setSelectedPayment] = useState<string>('dana');
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -65,21 +68,6 @@ export default function Checkout() {
   const [voucherCode, setVoucherCode] = useState('');
   const [appliedVoucher, setAppliedVoucher] = useState<any>(null);
   const [voucherError, setVoucherError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const handleFocus = () => {
-      const isRedirectPending = sessionStorage.getItem('marpay_checkout_pending');
-      if (isRedirectPending) {
-        sessionStorage.removeItem('marpay_checkout_pending');
-        router.replace('/akun/transaksi');
-      }
-    };
-
-    window.addEventListener('focus', handleFocus);
-    handleFocus();
-
-    return () => window.removeEventListener('focus', handleFocus);
-  }, [router]);
 
   useEffect(() => {
     const tempItem = localStorage.getItem('marpay_checkout_temp');
@@ -213,7 +201,7 @@ export default function Checkout() {
     setIsAddressModalOpen(false);
   };
 
-  const handleSanPayCheckout = async () => {
+  const handleCheckout = async () => {
     if (items.length === 0 || isSubmitting) return;
     
     if (!isDigital && !address) {
@@ -232,7 +220,6 @@ export default function Checkout() {
     const expireTime = new Date(now.getTime() + 3 * 60 * 60 * 1000);
 
     try {
-      // 1. Create Order Doc First to get ID
       const orderRef = await addDoc(collection(db, 'orders'), {
         userId: user?.uid || 'guest',
         customerName,
@@ -251,26 +238,6 @@ export default function Checkout() {
         expiredAt: Timestamp.fromDate(expireTime)
       });
 
-      // 2. Call SanPay API via internal route
-      const sanpayRes = await fetch('/api/sanpay/invoice', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          orderId: orderRef.id,
-          amount: totalBill,
-          method: selectedPayment === 'qris' ? 'qris' : 'BT',
-          customerName,
-          customerPhone
-        })
-      });
-
-      const sanpayData = await sanpayRes.json();
-
-      if (sanpayData.error) {
-        throw new Error(sanpayData.error);
-      }
-
-      // 3. Clear Local Storage
       if (!isFromCart) {
         localStorage.removeItem('marpay_checkout_temp');
       } else {
@@ -278,16 +245,14 @@ export default function Checkout() {
       }
       
       window.dispatchEvent(new Event('cart-updated'));
-
-      // 4. Redirect to Order Detail to show QRIS / Instructions
       router.push(`/akun/pesanan/${orderRef.id}`);
 
     } catch (e: any) {
-      console.error("SanPay Checkout Error:", e);
+      console.error("Checkout Error:", e);
       toast({
         variant: "destructive",
-        title: "Gagal Membuat Invoice",
-        description: e.message || "Terjadi kesalahan sistem.",
+        title: "Gagal Membuat Pesanan",
+        description: "Terjadi kesalahan sistem.",
       });
     } finally {
       setIsSubmitting(false);
@@ -443,7 +408,7 @@ export default function Checkout() {
 
         {/* Voucher Section */}
         <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm space-y-4">
-          <div className="flex items-center justify-between group active:bg-gray-50 transition-colors cursor-pointer">
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Ticket className="w-4 h-4 text-primary" />
               <span className="text-xs font-bold text-gray-800">Voucher</span>
@@ -467,7 +432,7 @@ export default function Checkout() {
           </div>
           
           {appliedVoucher ? (
-            <div className="flex items-center justify-between bg-emerald-50/50 border border-emerald-100 p-3 rounded-xl animate-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between bg-emerald-50/50 border border-emerald-100 p-3 rounded-xl">
                <div className="flex items-center gap-3">
                  <div className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center text-white shadow-sm">
                    <CheckCircle2 className="w-5 h-5" />
@@ -493,7 +458,7 @@ export default function Checkout() {
                  <Button 
                    onClick={handleApplyVoucher}
                    variant="outline" 
-                   className="rounded-xl border-primary/20 text-primary font-bold text-xs h-10 px-5 active:scale-95 transition-transform"
+                   className="rounded-xl border-primary/20 text-primary font-bold text-xs h-10 px-5"
                  >
                    Pakai
                  </Button>
@@ -537,7 +502,7 @@ export default function Checkout() {
           <div className="mt-4 bg-blue-50/80 p-3.5 rounded-xl border border-blue-100 flex gap-3">
             <Info className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
             <p className="text-[10px] text-blue-700/80 leading-relaxed font-medium">
-              Pesanan diproses otomatis melalui SanPay untuk verifikasi pembayaran yang lebih cepat dan aman.
+              Pesanan diproses manual oleh Admin MarPay. Silakan lakukan transfer setelah checkout.
             </p>
           </div>
         </div>
@@ -573,11 +538,10 @@ export default function Checkout() {
         </div>
         <Button 
           disabled={isSubmitting}
-          onClick={handleSanPayCheckout} 
-          className="bg-primary text-white font-bold h-11 px-6 rounded-xl flex items-center gap-2 shadow-lg shadow-primary/20 active:scale-95 transition-transform"
+          onClick={handleCheckout} 
+          className="bg-primary text-white font-bold h-11 px-8 rounded-xl shadow-lg shadow-primary/20 active:scale-95 transition-transform"
         >
-          {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <QrCode className="w-4 h-4" />}
-          Bayar Sekarang
+          {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Buat Pesanan"}
         </Button>
       </div>
     </div>
