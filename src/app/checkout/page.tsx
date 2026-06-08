@@ -499,7 +499,7 @@ export default function Checkout() {
           <div className="mt-4 bg-blue-50/80 p-3.5 rounded-xl border border-blue-100 flex gap-3">
             <Info className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
             <p className="text-[10px] text-blue-700/80 leading-relaxed font-medium">
-              Pesanan diproses manual oleh Admin MarPay. Silakan lakukan transfer setelah checkout.
+              Pesanan akan diproses melalui WhatsApp Admin MarPay untuk memastikan transaksi berjalan aman dan cepat.
             </p>
           </div>
         </div>
