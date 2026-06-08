@@ -211,7 +211,7 @@ export function ProductCard({ product, compact = false }: { product: any, compac
       <div className="p-3 flex-1 flex flex-col">
         <Link href={`/product/${product.id}`} className="mb-1.5 block relative min-h-[28px]">
           {product.isOfficialStore && (
-            <div className="absolute left-0 top-[1.5px] w-[13.5px] h-[13.5px] z-10 flex items-center justify-center">
+            <div className="absolute left-0 top-[1px] w-[13.5px] h-[13.5px] z-10 flex items-center justify-center">
               <div className="relative w-full h-full flex items-center justify-center">
                 {/* Shadow & Glow layer */}
                 <div className="absolute inset-0 bg-[#1565FF]/20 rounded-full blur-[2px]"></div>
