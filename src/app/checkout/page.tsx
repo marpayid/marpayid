@@ -5,7 +5,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { 
   ArrowLeft, MapPin, CreditCard, Edit3, MessageCircle, AlertCircle, Wallet, QrCode, Truck, Info,
-  Smartphone, Zap, Gamepad2, Loader2, Ticket, CheckCircle2, X
+  Smartphone, Zap, Gamepad2, Loader2, Ticket, CheckCircle2, X, ChevronRight
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -118,7 +118,6 @@ export default function Checkout() {
 
   const totalItemsPrice = useMemo(() => items.reduce((acc, curr) => acc + (curr.price * curr.quantity), 0), [items]);
   
-  // Perhitungan Ongkir Baru: Mengakomodasi Gratis Ongkir Otomatis
   const shippingDetails = useMemo(() => {
     let raw = 0;
     let autoDiscount = 0;
@@ -126,14 +125,12 @@ export default function Checkout() {
     items.forEach(item => {
       if (item.type === 'digital') return;
       
-      // Hitung Ongkir Dasar (Gunakan 10.000 sebagai base jika produk ditandai Gratis Ongkir, agar bisa didiskon visual)
       const baseFee = (item.shippingFee && item.shippingFee > 0) ? item.shippingFee : 10000;
       const additional = Math.max(0, item.quantity - 1) * 5000;
       const totalItemShipping = baseFee + additional;
       
       raw += totalItemShipping;
       
-      // Jika produk memiliki label Gratis Ongkir (atau isFreeShipping dari data produk)
       if (item.isFreeShipping === true || item.shippingFee === 0) {
         autoDiscount += totalItemShipping;
       }
@@ -260,7 +257,7 @@ export default function Checkout() {
         message += `🎟️ VOUCHER: ${appliedVoucher.code} (-Rp ${discountAmount.toLocaleString()})\n\n`;
       }
       if (shippingDetails.autoDiscount > 0) {
-        message += `🚚 GRATIS ONGKIR: Otomatis (-Rp ${shippingDetails.autoDiscount.toLocaleString()})\n\n`;
+        message += `🚚 GRATIS ONGKIR: (-Rp ${shippingDetails.autoDiscount.toLocaleString()})\n\n`;
       }
       message += `━━━━━━━━━━━━━━\n\n`;
       message += `💳 RINGKASAN PEMBAYARAN\n\n`;
@@ -469,15 +466,31 @@ export default function Checkout() {
           </div>
         </div>
 
-        {/* Voucher Section */}
-        <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm space-y-3">
-          <div className="flex items-center gap-2">
-            <Ticket className="w-4 h-4 text-primary" />
-            <h3 className="text-xs font-bold uppercase tracking-wide">Voucher MarPay</h3>
+        {/* Voucher Section (Marketplace Style) */}
+        <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm space-y-4">
+          <div className="flex items-center justify-between group active:bg-gray-50 transition-colors cursor-pointer">
+            <div className="flex items-center gap-3">
+              <Ticket className="w-4 h-4 text-primary" />
+              <span className="text-xs font-bold text-gray-800">Voucher</span>
+              
+              <div className="flex gap-1.5 ml-1">
+                {appliedVoucher && (
+                  <div className="px-2 py-0.5 border border-red-200 rounded-sm bg-white text-[9px] font-black text-red-500 uppercase tracking-tighter">
+                    -Rp{discountAmount >= 1000 ? (discountAmount/1000).toFixed(0) + 'RB' : discountAmount}
+                  </div>
+                )}
+                {shippingDetails.autoDiscount > 0 && (
+                  <div className="px-2 py-0.5 border border-emerald-200 rounded-sm bg-white text-[9px] font-black text-emerald-600 uppercase tracking-tighter">
+                    Gratis Ongkir
+                  </div>
+                )}
+              </div>
+            </div>
+            <ChevronRight className="w-4 h-4 text-gray-300" />
           </div>
           
           {appliedVoucher ? (
-            <div className="flex items-center justify-between bg-emerald-50 border border-emerald-100 p-3 rounded-xl animate-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between bg-emerald-50/50 border border-emerald-100 p-3 rounded-xl animate-in zoom-in-95 duration-200">
                <div className="flex items-center gap-3">
                  <div className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center text-white shadow-sm">
                    <CheckCircle2 className="w-5 h-5" />
@@ -514,14 +527,6 @@ export default function Checkout() {
                  </p>
                )}
             </div>
-          )}
-
-          {/* Info Promo Otomatis */}
-          {shippingDetails.autoDiscount > 0 && (
-             <div className="bg-emerald-50/50 border border-dashed border-emerald-200 p-2.5 rounded-xl flex items-center gap-2">
-                <Truck className="w-3.5 h-3.5 text-emerald-500" />
-                <p className="text-[10px] text-emerald-700 font-bold uppercase tracking-tight">🚚 Gratis Ongkir Diterapkan Otomatis</p>
-             </div>
           )}
         </div>
 
@@ -566,11 +571,11 @@ export default function Checkout() {
             <div className="flex justify-between items-center"><span className="text-[11px] text-gray-500 font-medium">Subtotal</span><span className="text-[11px] font-bold text-gray-800">Rp {totalItemsPrice.toLocaleString()}</span></div>
             <div className="flex justify-between items-center"><span className="text-[11px] text-gray-500 font-medium">Ongkir</span><span className="text-[11px] font-bold text-gray-800">Rp {shippingDetails.raw.toLocaleString()}</span></div>
             
-            {/* Tampilan Diskon Otomatis */}
+            {/* Tampilan Diskon Ongkir */}
             {shippingDetails.autoDiscount > 0 && (
               <div className="flex justify-between items-center bg-emerald-50/30 -mx-1 px-1 rounded">
                 <span className="text-[11px] text-emerald-600 font-bold uppercase tracking-tighter flex items-center gap-1">
-                  <Truck className="w-3 h-3" /> Voucher Ongkir Otomatis
+                  <Truck className="w-3 h-3" /> Gratis Ongkir
                 </span>
                 <span className="text-[11px] font-bold text-emerald-600">-Rp {shippingDetails.autoDiscount.toLocaleString()}</span>
               </div>
@@ -602,3 +607,4 @@ export default function Checkout() {
     </div>
   );
 }
+
