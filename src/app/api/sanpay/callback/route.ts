@@ -1,12 +1,18 @@
-
 import { NextResponse } from 'next/server';
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getFirestore, doc, updateDoc, serverTimestamp, collection, query, where, getDocs } from 'firebase/firestore';
-import { firebaseConfig } from '@/firebase/config';
+import { firebaseConfig, isFirebaseConfigValid } from '@/firebase/config';
 
-// Initialize Firebase for API Route
-const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
-const db = getFirestore(app);
+/**
+ * Helper untuk mendapatkan DB Firestore di sisi server dengan aman.
+ */
+function getDb() {
+  if (!isFirebaseConfigValid()) {
+    throw new Error('Firebase config is invalid or missing in server environment');
+  }
+  const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+  return getFirestore(app);
+}
 
 /**
  * Webhook for SanPay Payment Callback
@@ -24,6 +30,7 @@ export async function POST(req: Request) {
     }
 
     if (status === 'PAID') {
+      const db = getDb();
       const ordersRef = collection(db, 'orders');
       const q = query(ordersRef, where('__name__', '==', mitra_reference));
       const querySnapshot = await getDocs(q);
