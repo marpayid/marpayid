@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
@@ -22,8 +23,7 @@ import {
 
 import Image from 'next/image';
 import { cn, getProductImage } from '@/lib/utils';
-import { useUser, useFirestore } from '@/firebase';
-import { addDoc, collection, serverTimestamp, Timestamp } from 'firebase/firestore';
+import { useUser } from '@/firebase';
 import { useToast } from '@/hooks/use-toast';
 import { MasterVouchers } from '@/app/lib/dummy-data';
 
@@ -45,7 +45,6 @@ const PAYMENT_METHODS = [
 
 export default function Checkout() {
   const router = useRouter();
-  const db = useFirestore();
   const { user } = useUser();
   const { toast } = useToast();
   
@@ -213,28 +212,57 @@ export default function Checkout() {
     const customerName = isDigital ? (items[0].details?.customerName || user?.displayName || 'Pelanggan Digital') : (address?.name || 'N/A');
     const customerPhone = isDigital ? (items[0].details?.target || 'N/A') : (address?.phone || 'N/A');
     
-    const now = new Date();
-    const expireTime = new Date(now.getTime() + 3 * 60 * 60 * 1000);
+    // Construct Product List
+    const productList = items.map(item => `- ${item.name} (x${item.quantity})`).join('\n');
+    
+    // Construct Shipping Address
+    const shippingAddressStr = isDigital 
+      ? 'Produk Digital (Tanpa Alamat Fisik)' 
+      : `${address?.fullAddress}\n${address?.district}, ${address?.city}, ${address?.province}`;
+
+    // Payment Method Label
+    const paymentMethodLabel = PAYMENT_METHODS.find(m => m.id === selectedPayment)?.label || 'Bank Transfer';
+
+    // WhatsApp Message Construction (Exact Template Requested)
+    const message = `🛍️ ORDER BARU MARPAY
+
+━━━━━━━━━━━━━━
+
+👤 DATA PEMBELI
+Nama : ${customerName}
+No. WA : ${customerPhone}
+
+📍 ALAMAT PENGIRIMAN
+${shippingAddressStr}
+
+━━━━━━━━━━━━━━
+
+📦 DETAIL PESANAN
+${productList}
+
+━━━━━━━━━━━━━━
+
+💳 RINGKASAN PEMBAYARAN
+Subtotal : Rp ${totalItemsPrice.toLocaleString()}
+Ongkir : Rp ${shippingDetails.net.toLocaleString()}
+Total Bayar : Rp ${totalBill.toLocaleString()}
+
+Metode Pembayaran :
+${paymentMethodLabel}
+
+━━━━━━━━━━━━━━
+
+📌 STATUS
+Menunggu Konfirmasi Admin
+
+Mohon diproses.
+Terima kasih 🙏`;
+
+    const adminWhatsApp = "6283851278935";
+    const waUrl = `https://wa.me/${adminWhatsApp}?text=${encodeURIComponent(message)}`;
 
     try {
-      const orderRef = await addDoc(collection(db, 'orders'), {
-        userId: user?.uid || 'guest',
-        customerName,
-        customerPhone,
-        customerEmail: user?.email || '',
-        items,
-        totalAmount: totalBill,
-        discountAmount: discountAmount + shippingDetails.autoDiscount,
-        voucherUsed: appliedVoucher?.code || null,
-        status: 'Menunggu Konfirmasi',
-        paymentStatus: 'Menunggu Pembayaran',
-        paymentMethod: PAYMENT_METHODS.find(m => m.id === selectedPayment)?.label || selectedPayment,
-        shippingAddress: isDigital ? { fullAddress: 'Digital' } : address,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
-        expiredAt: Timestamp.fromDate(expireTime)
-      });
-
+      // Clear Cart Storage
       if (!isFromCart) {
         localStorage.removeItem('marpay_checkout_temp');
       } else {
@@ -242,14 +270,26 @@ export default function Checkout() {
       }
       
       window.dispatchEvent(new Event('cart-updated'));
-      router.push(`/akun/pesanan/${orderRef.id}`);
+      
+      // Redirect to WhatsApp flow
+      window.open(waUrl, '_blank');
+      
+      toast({ 
+        title: "Mengalihkan ke WhatsApp...", 
+        description: "Silakan kirim pesan ke Admin untuk memproses pesanan Anda." 
+      });
+
+      // Navigate home after a short delay
+      setTimeout(() => {
+        router.push('/');
+      }, 1500);
 
     } catch (e: any) {
-      console.error("Checkout Error:", e);
+      console.error("WhatsApp Redirection Error:", e);
       toast({
         variant: "destructive",
-        title: "Gagal Membuat Pesanan",
-        description: "Terjadi kesalahan sistem saat memproses pesanan.",
+        title: "Terjadi Kesalahan",
+        description: "Gagal menghubungkan ke WhatsApp Admin.",
       });
     } finally {
       setIsSubmitting(false);
