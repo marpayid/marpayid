@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { 
   ArrowLeft, MapPin, CreditCard, Edit3, MessageCircle, AlertCircle, Wallet, QrCode, Truck, Info,
@@ -23,7 +23,8 @@ import {
 
 import Image from 'next/image';
 import { cn, getProductImage } from '@/lib/utils';
-import { useUser } from '@/firebase';
+import { useUser, useFirestore } from '@/firebase';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import { MasterVouchers } from '@/app/lib/dummy-data';
 
@@ -45,6 +46,7 @@ const PAYMENT_METHODS = [
 
 export default function Checkout() {
   const router = useRouter();
+  const db = useFirestore();
   const { user } = useUser();
   const { toast } = useToast();
   
@@ -58,6 +60,7 @@ export default function Checkout() {
   const [error, setError] = useState<string | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isWaitingReturn, setIsWaitingReturn] = useState(false);
   const [isFromCart, setIsFromCart] = useState(false);
 
   // Voucher States
@@ -142,6 +145,58 @@ export default function Checkout() {
   const totalBill = Math.max(0, totalItemsPrice + shippingDetails.net - discountAmount);
   const isDigital = items.length > 0 && items.every(item => item.type === 'digital');
 
+  const finalizeOrder = useCallback(async () => {
+    const pendingData = localStorage.getItem('marpay_pending_checkout_data');
+    if (!pendingData || !db) return;
+
+    setIsSubmitting(true);
+    try {
+      const orderData = JSON.parse(pendingData);
+      
+      // Create Firestore Entry
+      await addDoc(collection(db, 'orders'), {
+        ...orderData,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+        expiredAt: new Date(Date.now() + 3 * 60 * 60 * 1000), // 3 Hours
+      });
+
+      // Cleanup
+      localStorage.removeItem('marpay_pending_checkout_data');
+      if (isFromCart) {
+        localStorage.removeItem('marpay_cart');
+      } else {
+        localStorage.removeItem('marpay_checkout_temp');
+      }
+      window.dispatchEvent(new Event('cart-updated'));
+
+      toast({ variant: "success", title: "Berhasil", description: "Pesanan Anda telah tercatat." });
+      router.push('/akun/transaksi');
+    } catch (e) {
+      console.error("Finalization Error:", e);
+      toast({ variant: "destructive", title: "Error", description: "Gagal menyimpan pesanan. Silakan hubungi admin." });
+      setIsSubmitting(false);
+      setIsWaitingReturn(false);
+    }
+  }, [db, isFromCart, router, toast]);
+
+  // Return detector
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && isWaitingReturn) {
+        finalizeOrder();
+      }
+    };
+
+    window.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', handleVisibilityChange);
+    
+    return () => {
+      window.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', handleVisibilityChange);
+    };
+  }, [isWaitingReturn, finalizeOrder]);
+
   const handleApplyVoucher = () => {
     setVoucherError(null);
     const code = voucherCode.trim().toUpperCase();
@@ -207,23 +262,17 @@ export default function Checkout() {
       return;
     }
 
-    setIsSubmitting(true);
-
     const customerName = isDigital ? (items[0].details?.customerName || user?.displayName || 'Pelanggan Digital') : (address?.name || 'N/A');
     const customerPhone = isDigital ? (items[0].details?.target || 'N/A') : (address?.phone || 'N/A');
     
-    // Construct Product List
     const productList = items.map(item => `- ${item.name} (x${item.quantity})`).join('\n');
-    
-    // Construct Shipping Address
     const shippingAddressStr = isDigital 
       ? 'Produk Digital (Tanpa Alamat Fisik)' 
       : `${address?.fullAddress}\n${address?.district}, ${address?.city}, ${address?.province}`;
 
-    // Payment Method Label
     const paymentMethodLabel = PAYMENT_METHODS.find(m => m.id === selectedPayment)?.label || 'Bank Transfer';
 
-    // WhatsApp Message Construction (Exact Template Requested)
+    // WhatsApp Message
     const message = `🛍️ ORDER BARU MARPAY
 
 ━━━━━━━━━━━━━━
@@ -258,42 +307,34 @@ Menunggu Konfirmasi Admin
 Mohon diproses.
 Terima kasih 🙏`;
 
+    // Data for Firestore (Saved to storage first)
+    const orderObject = {
+      userId: user?.uid || 'guest',
+      customerName,
+      customerPhone,
+      customerEmail: user?.email || '',
+      items,
+      totalAmount: totalBill,
+      status: 'Menunggu Konfirmasi',
+      paymentStatus: 'Menunggu Pembayaran',
+      paymentMethod: paymentMethodLabel,
+      shippingAddress: isDigital ? { fullAddress: 'Digital Product' } : address,
+      type: isDigital ? 'digital' : 'physical'
+    };
+
+    localStorage.setItem('marpay_pending_checkout_data', JSON.stringify(orderObject));
+
     const adminWhatsApp = "6283851278935";
     const waUrl = `https://wa.me/${adminWhatsApp}?text=${encodeURIComponent(message)}`;
 
-    try {
-      // Clear Cart Storage
-      if (!isFromCart) {
-        localStorage.removeItem('marpay_checkout_temp');
-      } else {
-        localStorage.removeItem('marpay_cart');
-      }
-      
-      window.dispatchEvent(new Event('cart-updated'));
-      
-      // Redirect to WhatsApp flow
-      window.open(waUrl, '_blank');
-      
-      toast({ 
-        title: "Mengalihkan ke WhatsApp...", 
-        description: "Silakan kirim pesan ke Admin untuk memproses pesanan Anda." 
-      });
-
-      // Navigate home after a short delay
-      setTimeout(() => {
-        router.push('/');
-      }, 1500);
-
-    } catch (e: any) {
-      console.error("WhatsApp Redirection Error:", e);
-      toast({
-        variant: "destructive",
-        title: "Terjadi Kesalahan",
-        description: "Gagal menghubungkan ke WhatsApp Admin.",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
+    // Open WhatsApp and set state
+    window.open(waUrl, '_blank');
+    setIsWaitingReturn(true);
+    
+    toast({ 
+      title: "Mengalihkan ke WhatsApp...", 
+      description: "Kembali ke aplikasi setelah mengirim pesan untuk melihat riwayat pesanan." 
+    });
   };
 
   const renderItemMedia = (item: any) => {
@@ -320,6 +361,34 @@ Terima kasih 🙏`;
   if (!isLoaded) return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
       <div className="w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+    </div>
+  );
+
+  if (isWaitingReturn) return (
+    <div className="min-h-screen bg-white flex flex-col items-center justify-center p-8 text-center space-y-6">
+       <div className="relative">
+          <div className="w-20 h-20 bg-primary/10 rounded-full animate-ping absolute inset-0"></div>
+          <div className="w-20 h-20 bg-white rounded-full border-4 border-primary border-t-transparent animate-spin relative flex items-center justify-center">
+             <MessageCircle className="w-10 h-10 text-primary animate-pulse" />
+          </div>
+       </div>
+       <div className="space-y-2">
+          <h2 className="text-xl font-black text-gray-900">Menunggu Konfirmasi...</h2>
+          <p className="text-sm text-gray-500 leading-relaxed">
+             Sistem sedang menunggu Anda kembali dari WhatsApp untuk menyimpan pesanan secara otomatis.
+          </p>
+       </div>
+       <div className="pt-8 space-y-3 w-full max-w-xs">
+          <Button 
+            onClick={finalizeOrder}
+            disabled={isSubmitting}
+            className="w-full h-12 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/20"
+          >
+            {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+            Saya Sudah Chat (Selesaikan)
+          </Button>
+          <p className="text-[10px] text-gray-400 font-medium">Jangan menutup halaman ini sebelum proses selesai.</p>
+       </div>
     </div>
   );
 
@@ -574,7 +643,7 @@ Terima kasih 🙏`;
           <p className="text-base font-black text-primary leading-none">Rp {totalBill.toLocaleString()}</p>
         </div>
         <Button 
-          disabled={isSubmitting}
+          disabled={isSubmitting || isWaitingReturn}
           onClick={handleCheckout} 
           className="bg-primary text-white font-bold h-11 px-8 rounded-xl shadow-lg shadow-primary/20 active:scale-95 transition-transform"
         >
