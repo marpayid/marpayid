@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useMemo, useState, useEffect, useRef } from 'react';
@@ -65,7 +64,9 @@ function OrderCountdown({ expiredAt, orderId, status }: { expiredAt: any, orderI
 
   return (
     <div className="flex items-center gap-1.5 text-[10px] font-bold text-orange-500 bg-orange-50 px-2.5 py-1 rounded-full border border-orange-100">
-      <Timer className="w-3 h-3" />
+      <div className="w-3 h-3 flex items-center justify-center">
+        <Timer className="w-full h-full" />
+      </div>
       <span>Bayar dalam: {timeLeft || '00:00:00'}</span>
     </div>
   );

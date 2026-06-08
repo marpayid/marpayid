@@ -43,21 +43,23 @@ export function formatReviews(count: number | string): string {
 
 /**
  * Mendapatkan gambar produk dengan logika kategori.
- * Mendukung field imageUrl (eksternal) dan image (lokal).
+ * Mendukung field productImage (normalized), image (saved in order), dan imageUrl (external).
  */
 export function getProductImage(product: any): string {
-  if (!product) return 'https://placehold.co/600x600?text=Produk+MarPay';
+  const DEFAULT_PLACEHOLDER = 'https://placehold.co/600x600?text=MarPay+Product';
+  
+  if (!product) return DEFAULT_PLACEHOLDER;
   
   // Spesifik untuk kategori Premium
   if (product.category === 'Premium' || product.category?.toLowerCase() === 'premium') {
     return '/premium1.png';
   }
   
-  // Prioritas field: image (saved in order) -> imageUrl (external) -> image (local)
-  const imgPath = product.image || product.imageUrl || '';
+  // Prioritas field: productImage (normalized) -> image (order data) -> imageUrl (external) -> image (local)
+  const imgPath = product.productImage || product.image || product.imageUrl || '';
   
   if (!imgPath) {
-    return 'https://placehold.co/600x600?text=Produk+MarPay';
+    return DEFAULT_PLACEHOLDER;
   }
 
   // Jika image adalah URL eksternal (http/https), langsung kembalikan

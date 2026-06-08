@@ -311,9 +311,11 @@ Mohon diproses.
 Terima kasih 🙏`;
 
     // CRITICAL: Ensure every item has its resolved image URL saved to the order document
+    // Using 'productImage' as the normalized field name as requested
     const processedItems = items.map(item => ({
       ...item,
-      image: getProductImage(item) 
+      productImage: getProductImage(item),
+      image: getProductImage(item) // Legacy support
     }));
 
     const orderObject = {
