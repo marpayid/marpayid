@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { 
   ArrowLeft, Search, Package, User, 
@@ -23,6 +23,7 @@ export default function AdminOrdersPage() {
   const router = useRouter();
   const db = useFirestore();
   const { user, loading: authLoading } = useUser();
+  const hasCleanedUpRef = useRef(false);
 
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -31,7 +32,6 @@ export default function AdminOrdersPage() {
     return collection(db, 'orders');
   }, [db]);
 
-  // STABILIZE QUERY TO PREVENT RE-SUBSCRIPTION LOOPS
   const ordersQuery = useMemo(() => {
     if (!ordersRef) return null;
     return query(ordersRef);
@@ -48,16 +48,19 @@ export default function AdminOrdersPage() {
     });
   }, [rawOrders]);
 
-  // SYSTEM CLEANUP & AUTO-CANCEL LOGIC
+  // SYSTEM CLEANUP - RUN ONCE ON MOUNT OR DATA LOAD
   useEffect(() => {
-    if (!orders || orders.length === 0 || !db) return;
+    if (!orders || orders.length === 0 || !db || hasCleanedUpRef.current) return;
+    
+    // Set flag to prevent infinite loops from real-time updates
+    hasCleanedUpRef.current = true;
 
     const runCleanup = async () => {
       const now = new Date().getTime();
       const fifteenDaysMs = 15 * 24 * 60 * 60 * 1000;
 
       orders.forEach(async (order: any) => {
-        // 1. Auto-Cancel Expired Orders (Check on Admin side too for consistency)
+        // 1. Auto-Cancel Expired Orders
         if (order.status === 'Menunggu Konfirmasi' && order.expiredAt) {
           const expiryTime = order.expiredAt?.toMillis ? order.expiredAt.toMillis() : new Date(order.expiredAt).getTime();
           if (now >= expiryTime) {
@@ -66,7 +69,7 @@ export default function AdminOrdersPage() {
               cancelReason: 'Batas waktu pembayaran habis',
               cancelledAt: serverTimestamp(),
               updatedAt: serverTimestamp()
-            });
+            }).catch(e => console.error("Cleanup update failed", e));
           }
         }
 
@@ -75,14 +78,14 @@ export default function AdminOrdersPage() {
         if (cleanupStatuses.includes(order.status)) {
           const lastActionTime = (order.cancelledAt || order.updatedAt || order.createdAt)?.toMillis ? (order.cancelledAt || order.updatedAt || order.createdAt).toMillis() : now;
           if (now - lastActionTime > fifteenDaysMs) {
-            deleteDoc(doc(db, 'orders', order.id));
+            deleteDoc(doc(db, 'orders', order.id)).catch(e => console.error("Cleanup delete failed", e));
           }
         }
       });
     };
 
     runCleanup();
-  }, [orders, db]);
+  }, [orders.length > 0, db]); // Only trigger when list first populates
 
   if (!authLoading && (!user || user.email !== ADMIN_EMAIL)) {
     return (
@@ -141,7 +144,6 @@ export default function AdminOrdersPage() {
       </header>
 
       <main className="pt-20 px-4 space-y-4">
-        {/* MARPAY CONTROL CENTER */}
         <div className="bg-[#0B1120] rounded-[28px] p-5 border border-white/5 shadow-2xl relative overflow-hidden">
            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 blur-[50px] rounded-full"></div>
            <div className="relative z-10 space-y-3.5">
