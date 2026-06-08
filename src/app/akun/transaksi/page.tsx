@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, ClipboardList, Package, Clock, CheckCircle2, Truck, XCircle, Loader2, ChevronRight, AlertCircle, Timer } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -18,25 +18,36 @@ import Image from 'next/image';
 function OrderCountdown({ expiredAt, orderId, status }: { expiredAt: any, orderId: string, status: string }) {
   const [timeLeft, setTimeLeft] = useState<string>('');
   const db = useFirestore();
+  const isExpiringRef = useRef(false);
 
   useEffect(() => {
     if (!expiredAt || status !== 'Menunggu Konfirmasi') return;
 
-    const timer = setInterval(() => {
+    const timer = setInterval(async () => {
       const now = new Date().getTime();
-      const distance = expiredAt.toMillis() - now;
+      const expiryTime = expiredAt?.toMillis ? expiredAt.toMillis() : new Date(expiredAt).getTime();
+      const distance = expiryTime - now;
 
       if (distance <= 0) {
         clearInterval(timer);
         setTimeLeft('Expired');
-        // Auto update status to failed (Dibatalkan Otomatis)
-        const orderRef = doc(db, 'orders', orderId);
-        updateDoc(orderRef, {
-          status: 'Dibatalkan Otomatis',
-          cancelReason: 'Pembayaran tidak dikonfirmasi dalam batas waktu 3 jam.',
-          cancelledAt: serverTimestamp(),
-          updatedAt: serverTimestamp()
-        });
+        
+        // Prevent multiple simultaneous updates
+        if (!isExpiringRef.current) {
+          isExpiringRef.current = true;
+          const orderRef = doc(db, 'orders', orderId);
+          try {
+            await updateDoc(orderRef, {
+              status: 'Dibatalkan Otomatis',
+              cancelReason: 'Batas waktu pembayaran habis',
+              cancelledAt: serverTimestamp(),
+              updatedAt: serverTimestamp()
+            });
+          } catch (e) {
+            console.error("Auto-cancel update failed:", e);
+            isExpiringRef.current = false;
+          }
+        }
         return;
       }
 
@@ -55,7 +66,7 @@ function OrderCountdown({ expiredAt, orderId, status }: { expiredAt: any, orderI
   return (
     <div className="flex items-center gap-1.5 text-[10px] font-bold text-orange-500 bg-orange-50 px-2.5 py-1 rounded-full border border-orange-100">
       <Timer className="w-3 h-3" />
-      <span>Bayar dalam: {timeLeft}</span>
+      <span>Bayar dalam: {timeLeft || '00:00:00'}</span>
     </div>
   );
 }

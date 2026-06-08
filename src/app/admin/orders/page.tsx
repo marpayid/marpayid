@@ -57,13 +57,13 @@ export default function AdminOrdersPage() {
       const fifteenDaysMs = 15 * 24 * 60 * 60 * 1000;
 
       orders.forEach(async (order: any) => {
-        // 1. Auto-Cancel Expired Orders (3 Hours)
+        // 1. Auto-Cancel Expired Orders (Check on Admin side too for consistency)
         if (order.status === 'Menunggu Konfirmasi' && order.expiredAt) {
-          const distance = order.expiredAt.toMillis() - now;
-          if (distance <= 0) {
+          const expiryTime = order.expiredAt?.toMillis ? order.expiredAt.toMillis() : new Date(order.expiredAt).getTime();
+          if (now >= expiryTime) {
             updateDoc(doc(db, 'orders', order.id), {
               status: 'Dibatalkan Otomatis',
-              cancelReason: 'Pembayaran tidak dikonfirmasi dalam batas waktu 3 jam.',
+              cancelReason: 'Batas waktu pembayaran habis',
               cancelledAt: serverTimestamp(),
               updatedAt: serverTimestamp()
             });
@@ -73,7 +73,7 @@ export default function AdminOrdersPage() {
         // 2. Permanent Delete Old Cancelled/Failed Orders (15 Days)
         const cleanupStatuses = ['Dibatalkan', 'Dibatalkan Otomatis', 'Gagal Bayar', 'Tidak Dibayar'];
         if (cleanupStatuses.includes(order.status)) {
-          const lastActionTime = (order.cancelledAt || order.updatedAt || order.createdAt)?.toMillis() || now;
+          const lastActionTime = (order.cancelledAt || order.updatedAt || order.createdAt)?.toMillis ? (order.cancelledAt || order.updatedAt || order.createdAt).toMillis() : now;
           if (now - lastActionTime > fifteenDaysMs) {
             deleteDoc(doc(db, 'orders', order.id));
           }

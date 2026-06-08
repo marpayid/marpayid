@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft, Package, Clock, CheckCircle2, Truck, XCircle, Loader2, Copy, MapPin, DollarSign, MessageCircle, AlertCircle, Timer } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -22,6 +22,7 @@ export default function OrderDetailPage() {
   const { toast } = useToast();
   
   const [timeLeft, setTimeLeft] = useState<string>('');
+  const isExpiringRef = useRef(false);
 
   const orderRef = useMemo(() => {
     if (!db || !orderId) return null;
@@ -37,20 +38,29 @@ export default function OrderDetailPage() {
       return;
     }
 
-    const timer = setInterval(() => {
+    const timer = setInterval(async () => {
       const now = new Date().getTime();
-      const distance = order.expiredAt.toMillis() - now;
+      const expiryTime = order.expiredAt?.toMillis ? order.expiredAt.toMillis() : new Date(order.expiredAt).getTime();
+      const distance = expiryTime - now;
 
       if (distance <= 0) {
         clearInterval(timer);
         setTimeLeft('Expired');
-        if (orderRef) {
-          updateDoc(orderRef, {
-            status: 'Dibatalkan Otomatis',
-            cancelReason: 'Pembayaran tidak dikonfirmasi dalam batas waktu 3 jam.',
-            cancelledAt: serverTimestamp(),
-            updatedAt: serverTimestamp()
-          });
+        
+        // Final protection to only update if not already being processed
+        if (orderRef && !isExpiringRef.current) {
+          isExpiringRef.current = true;
+          try {
+            await updateDoc(orderRef, {
+              status: 'Dibatalkan Otomatis',
+              cancelReason: 'Batas waktu pembayaran habis',
+              cancelledAt: serverTimestamp(),
+              updatedAt: serverTimestamp()
+            });
+          } catch (e) {
+            console.error("Failed to update expired status:", e);
+            isExpiringRef.current = false;
+          }
         }
         return;
       }
@@ -141,7 +151,7 @@ export default function OrderDetailPage() {
              <div>
                 <p className="text-[10px] font-black text-red-600 uppercase tracking-widest leading-none mb-1">❌ Pesanan Dibatalkan</p>
                 <p className="text-xs text-red-700/80 font-medium leading-relaxed">
-                  {order.cancelReason || 'Pembayaran tidak dikonfirmasi dalam batas waktu yang ditentukan.'}
+                  {order.cancelReason || 'Batas waktu pembayaran habis.'}
                 </p>
              </div>
           </div>
