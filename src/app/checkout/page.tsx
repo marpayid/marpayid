@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { 
   ArrowLeft, MapPin, CreditCard, Edit3, MessageCircle, AlertCircle, Wallet, QrCode, Truck, Info,
@@ -62,6 +62,9 @@ export default function Checkout() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isWaitingReturn, setIsWaitingReturn] = useState(false);
   const [isFromCart, setIsFromCart] = useState(false);
+
+  // Prevention for duplicate orders
+  const creationProcessedRef = useRef(false);
 
   // Voucher States
   const [voucherCode, setVoucherCode] = useState('');
@@ -147,8 +150,9 @@ export default function Checkout() {
 
   const finalizeOrder = useCallback(async () => {
     const pendingData = localStorage.getItem('marpay_pending_checkout_data');
-    if (!pendingData || !db) return;
+    if (!pendingData || !db || creationProcessedRef.current) return;
 
+    creationProcessedRef.current = true;
     setIsSubmitting(true);
     try {
       const orderData = JSON.parse(pendingData);
@@ -174,6 +178,7 @@ export default function Checkout() {
       router.push('/akun/transaksi');
     } catch (e) {
       console.error("Finalization Error:", e);
+      creationProcessedRef.current = false; // Reset lock on error to allow retry if needed
       toast({ variant: "destructive", title: "Error", description: "Gagal menyimpan pesanan. Silakan hubungi admin." });
       setIsSubmitting(false);
       setIsWaitingReturn(false);
@@ -308,12 +313,18 @@ Mohon diproses.
 Terima kasih 🙏`;
 
     // Data for Firestore (Saved to storage first)
+    // Map items to include finalized image path to avoid missing images in orders
+    const processedItems = items.map(item => ({
+      ...item,
+      image: getProductImage(item) 
+    }));
+
     const orderObject = {
       userId: user?.uid || 'guest',
       customerName,
       customerPhone,
       customerEmail: user?.email || '',
-      items,
+      items: processedItems,
       totalAmount: totalBill,
       status: 'Menunggu Konfirmasi',
       paymentStatus: 'Menunggu Pembayaran',

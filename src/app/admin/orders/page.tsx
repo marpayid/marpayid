@@ -26,6 +26,7 @@ export default function AdminOrdersPage() {
   const hasCleanedUpRef = useRef(false);
 
   const [searchQuery, setSearchQuery] = useState('');
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const ordersRef = useMemo(() => {
     if (!db) return null;
@@ -35,7 +36,7 @@ export default function AdminOrdersPage() {
   const ordersQuery = useMemo(() => {
     if (!ordersRef) return null;
     return query(ordersRef);
-  }, [ordersRef]);
+  }, [ordersRef, refreshKey]);
 
   const { data: rawOrders, loading: ordersLoading } = useCollection(ordersQuery);
 
@@ -48,11 +49,15 @@ export default function AdminOrdersPage() {
     });
   }, [rawOrders]);
 
+  // Manual Refresh Handler
+  const handleRefresh = () => {
+    setRefreshKey(prev => prev + 1);
+  };
+
   // SYSTEM CLEANUP - RUN ONCE ON MOUNT OR DATA LOAD
   useEffect(() => {
     if (!orders || orders.length === 0 || !db || hasCleanedUpRef.current) return;
     
-    // Set flag to prevent infinite loops from real-time updates
     hasCleanedUpRef.current = true;
 
     const runCleanup = async () => {
@@ -85,7 +90,7 @@ export default function AdminOrdersPage() {
     };
 
     runCleanup();
-  }, [orders.length > 0, db]); // Only trigger when list first populates
+  }, [orders.length > 0, db]);
 
   if (!authLoading && (!user || user.email !== ADMIN_EMAIL)) {
     return (
@@ -136,7 +141,14 @@ export default function AdminOrdersPage() {
           <h1 className="text-lg font-black">Dashboard Pesanan</h1>
         </div>
         <div className="flex items-center gap-2">
-          {ordersLoading && <Loader2 className="w-4 h-4 animate-spin text-primary/40" />}
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={handleRefresh}
+            className={cn("h-8 w-8 text-gray-400", ordersLoading && "animate-spin text-primary")}
+          >
+            <RefreshCcw className="w-4 h-4" />
+          </Button>
           <div className="bg-primary/10 px-3 py-1 rounded-full border border-primary/20">
             <span className="text-[10px] font-black text-primary uppercase">ADMIN</span>
           </div>
