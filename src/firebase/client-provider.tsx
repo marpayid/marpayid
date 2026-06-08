@@ -17,11 +17,11 @@ export const FirebaseClientProvider: React.FC<{ children: React.ReactNode }> = (
     }
 
     try {
-      // Initialize App
+      // Ensure app is only initialized once
       const existingApp = getApps().length > 0 ? getApp() : null;
       const app: FirebaseApp = existingApp || initializeApp(firebaseConfig);
       
-      // Initialize services
+      // Initialize services using the valid app instance
       const db: Firestore = getFirestore(app);
       const auth: Auth = getAuth(app);
       
@@ -34,11 +34,12 @@ export const FirebaseClientProvider: React.FC<{ children: React.ReactNode }> = (
 
   useEffect(() => {
     const initAuth = async () => {
+      // Configure auth persistence once on the client
       if (firebaseInstance.auth) {
         try {
           await setPersistence(firebaseInstance.auth, browserLocalPersistence);
         } catch (err) {
-          // Ignore persistence errors
+          console.warn("Auth persistence could not be set:", err);
         }
       }
       setIsInitialized(true);
@@ -46,10 +47,12 @@ export const FirebaseClientProvider: React.FC<{ children: React.ReactNode }> = (
     initAuth();
   }, [firebaseInstance.auth]);
 
+  // Prevent rendering children until Firebase is ready on the client
   if (typeof window === 'undefined' || !isInitialized) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
+        <Loader2 className="w-8 h-8 animate-spin text-primary mb-4" />
+        <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Inisialisasi Sistem...</p>
       </div>
     );
   }
