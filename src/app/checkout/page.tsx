@@ -24,7 +24,7 @@ import {
 import Image from 'next/image';
 import { cn, getProductImage } from '@/lib/utils';
 import { useUser, useFirestore } from '@/firebase';
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { addDoc, collection, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 
 interface AddressData {
@@ -61,7 +61,6 @@ export default function Checkout() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isFromCart, setIsFromCart] = useState(false);
 
-  // Alur Deteksi Kembali dari WhatsApp
   useEffect(() => {
     const handleFocus = () => {
       const isRedirectPending = sessionStorage.getItem('marpay_checkout_pending');
@@ -78,22 +77,20 @@ export default function Checkout() {
   }, [router]);
 
   useEffect(() => {
-    // 1. Cek apakah ada data checkout sementara (dari Beli Sekarang)
     const tempItem = localStorage.getItem('marpay_checkout_temp');
     if (tempItem) {
       try {
         setItems(JSON.parse(tempItem));
-        setIsFromCart(false); // Flag bahwa ini adalah pembelian langsung
+        setIsFromCart(false);
       } catch (e) {
         console.error("Failed to parse temp checkout item");
       }
     } else {
-      // 2. Jika tidak ada, muat data dari keranjang utama
       const savedCart = localStorage.getItem('marpay_cart');
       if (savedCart) {
         try {
           setItems(JSON.parse(savedCart));
-          setIsFromCart(true); // Flag bahwa ini checkout seluruh keranjang
+          setIsFromCart(true);
         } catch (e) {
           console.error("Failed to parse cart");
         }
@@ -159,6 +156,10 @@ export default function Checkout() {
       return `${index + 1}. ${item.name}\n   Varian: ${item.variant || 'Default'}\n   Jumlah: ${item.quantity} pcs\n   Harga: Rp ${item.price.toLocaleString()}`;
     }).join('\n\n');
 
+    // EXPIRED LOGIC: 6 Hours from now
+    const now = new Date();
+    const expireTime = new Date(now.getTime() + 6 * 60 * 60 * 1000);
+
     try {
       let message = `🛍️ ORDER BARU MARPAY\n\n`;
       message += `━━━━━━━━━━━━━━\n\n`;
@@ -186,7 +187,6 @@ export default function Checkout() {
 
       sessionStorage.setItem('marpay_checkout_pending', 'true');
 
-      // Simpan ke Firestore
       addDoc(collection(db, 'orders'), {
         userId: user?.uid || 'guest',
         customerName,
@@ -199,25 +199,20 @@ export default function Checkout() {
         paymentMethod: paymentMethodLabel,
         shippingAddress: isDigital ? { fullAddress: 'Digital' } : address,
         createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp()
+        updatedAt: serverTimestamp(),
+        expiredAt: Timestamp.fromDate(expireTime)
       }).catch((err) => {
         console.error("Firestore Save Error:", err);
       });
 
-      // LOGIKA PEMBERSIHAN YANG DIPERBAIKI:
       if (!isFromCart) {
-        // Jika dari 'Beli Sekarang', hanya hapus data temp
         localStorage.removeItem('marpay_checkout_temp');
       } else {
-        // Jika dari 'Keranjang', baru bersihkan keranjang utama
         localStorage.removeItem('marpay_cart');
       }
       
       window.dispatchEvent(new Event('cart-updated'));
-
-      // Redirect ke WhatsApp
       window.location.href = whatsappUrl;
-
       setTimeout(() => setIsSubmitting(false), 2000);
 
     } catch (e) {

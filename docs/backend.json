@@ -44,7 +44,7 @@
         "customerPhone": { "type": "string" },
         "items": { "type": "array" },
         "totalAmount": { "type": "number" },
-        "status": { "type": "string", "enum": ["Menunggu Konfirmasi", "Dikonfirmasi", "Diproses", "Dikirim", "Selesai", "Dibatalkan"] },
+        "status": { "type": "string", "enum": ["Menunggu Konfirmasi", "Dikonfirmasi", "Diproses", "Dikirim", "Selesai", "Dibatalkan", "Dibatalkan Otomatis", "Gagal Bayar", "Tidak Dibayar"] },
         "paymentStatus": { "type": "string", "enum": ["Menunggu Pembayaran", "Lunas", "Dibatalkan"] },
         "paymentMethod": { "type": "string" },
         "courier": { "type": "string" },
@@ -53,9 +53,9 @@
         "shippingAddress": { "type": "object" },
         "createdAt": { "type": "string", "format": "date-time" },
         "updatedAt": { "type": "string", "format": "date-time" },
-        "shippedAt": { "type": "string", "format": "date-time" },
-        "completedAt": { "type": "string", "format": "date-time" },
-        "cancelledAt": { "type": "string", "format": "date-time" }
+        "expiredAt": { "type": "string", "format": "date-time" },
+        "cancelledAt": { "type": "string", "format": "date-time" },
+        "cancelReason": { "type": "string" }
       }
     },
     "NotificationToken": {
@@ -77,7 +77,6 @@
       "properties": {
         "name": { "type": "string" },
         "price": { "type": "number" },
-        "hargaSupplier": { "type": "number" },
         "category": { "type": "string" },
         "description": { "type": "string" },
         "image": { "type": "string" },
@@ -86,14 +85,7 @@
         "sold": { "type": "number" },
         "discount": { "type": "string" },
         "isFlashSale": { "type": "boolean" },
-        "tag": { "type": "string" },
-        "type": { "type": "string", "enum": ["physical", "digital"] },
         "shippingFee": { "type": "number" },
-        "variants": { "type": "array", "items": { "type": "string" } },
-        "colors": { "type": "array", "items": { "type": "string" } },
-        "gender": { "type": "string", "enum": ["male", "female", "unisex"] },
-        "brand": { "type": "string" },
-        "tags": { "type": "array", "items": { "type": "string" } },
         "createdAt": { "type": "string", "format": "date-time" }
       },
       "required": ["name", "price", "category"]

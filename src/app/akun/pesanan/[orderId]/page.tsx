@@ -1,12 +1,12 @@
 
 "use client"
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, Package, Clock, CheckCircle2, Truck, XCircle, Loader2, Copy, MapPin, DollarSign, MessageCircle, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Package, Clock, CheckCircle2, Truck, XCircle, Loader2, Copy, MapPin, DollarSign, MessageCircle, AlertCircle, Timer } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useUser, useFirestore, useDoc } from '@/firebase';
-import { doc } from 'firebase/firestore';
+import { doc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { cn, getProductImage } from '@/lib/utils';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
@@ -20,6 +20,8 @@ export default function OrderDetailPage() {
   const db = useFirestore();
   const { user, loading: authLoading } = useUser();
   const { toast } = useToast();
+  
+  const [timeLeft, setTimeLeft] = useState<string>('');
 
   const orderRef = useMemo(() => {
     if (!db || !orderId) return null;
@@ -27,6 +29,36 @@ export default function OrderDetailPage() {
   }, [db, orderId]);
 
   const { data: order, loading: orderLoading } = useDoc<any>(orderRef);
+
+  useEffect(() => {
+    if (!order?.expiredAt || order.status !== 'Menunggu Konfirmasi') return;
+
+    const timer = setInterval(() => {
+      const now = new Date().getTime();
+      const distance = order.expiredAt.toMillis() - now;
+
+      if (distance <= 0) {
+        clearInterval(timer);
+        setTimeLeft('Expired');
+        if (orderRef) {
+          updateDoc(orderRef, {
+            status: 'Dibatalkan Otomatis',
+            cancelReason: 'Pesanan tidak dikonfirmasi dalam 6 jam',
+            cancelledAt: serverTimestamp(),
+            updatedAt: serverTimestamp()
+          });
+        }
+        return;
+      }
+
+      const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const s = Math.floor((distance % (1000 * 60)) / 1000);
+      setTimeLeft(`${h}j ${m}m ${s}d`);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [order, orderRef]);
 
   const isAdmin = user?.email === 'cs.marpay@gmail.com';
   const isOwner = order?.userId === user?.uid || isAdmin;
@@ -58,7 +90,8 @@ export default function OrderDetailPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'Selesai': return 'bg-green-50 text-green-600 border-green-100';
-      case 'Dibatalkan': return 'bg-red-50 text-red-600 border-red-100';
+      case 'Dibatalkan':
+      case 'Dibatalkan Otomatis': return 'bg-red-50 text-red-600 border-red-100';
       case 'Dikirim': return 'bg-blue-50 text-blue-600 border-blue-100';
       default: return 'bg-orange-50 text-orange-600 border-orange-100';
     }
@@ -74,6 +107,17 @@ export default function OrderDetailPage() {
       </header>
 
       <main className="pt-20 px-4 space-y-4">
+        {/* Expiration Countdown */}
+        {order.status === 'Menunggu Konfirmasi' && timeLeft && (
+          <div className="bg-orange-50 border border-orange-100 p-4 rounded-2xl flex items-center gap-3">
+             <Timer className="w-5 h-5 text-orange-500 animate-pulse" />
+             <div>
+                <p className="text-[10px] font-bold text-orange-600 uppercase tracking-widest">Sisa Waktu Konfirmasi</p>
+                <p className="text-sm font-black text-orange-700">{timeLeft}</p>
+             </div>
+          </div>
+        )}
+
         {/* Order Header */}
         <section className="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm space-y-3">
           <div className="flex justify-between items-start">
@@ -89,9 +133,15 @@ export default function OrderDetailPage() {
             <Clock className="w-3.5 h-3.5" />
             <span>{order.createdAt?.toDate ? format(order.createdAt.toDate(), 'dd MMMM yyyy, HH:mm', { locale: id }) : '-'}</span>
           </div>
+          {order.cancelReason && (
+            <div className="pt-2 border-t border-gray-50 mt-2">
+              <p className="text-[10px] font-bold text-red-400 uppercase">Alasan Batal</p>
+              <p className="text-[11px] text-red-600 italic">{order.cancelReason}</p>
+            </div>
+          )}
         </section>
 
-        {/* Shipping Status - Blue/White/Gray Theme */}
+        {/* Shipping Status */}
         {(order.status === 'Dikirim' || (order.status === 'Selesai' && order.trackingNumber)) && (
           <section className="bg-gradient-to-br from-[#1565FF] to-[#0057E7] text-white p-4 py-3.5 rounded-[24px] shadow-xl shadow-blue-100 space-y-3 relative overflow-hidden">
             <div className="absolute right-[-5px] top-[-5px] opacity-[0.1] pointer-events-none">
@@ -136,16 +186,12 @@ export default function OrderDetailPage() {
             {order.items?.map((item: any, idx: number) => (
               <div key={idx} className="flex gap-4">
                 <div className="w-14 h-14 bg-gray-50 rounded-xl flex items-center justify-center border border-gray-100 overflow-hidden shrink-0 relative">
-                  {item.image ? (
-                    <Image 
-                      src={getProductImage(item)} 
-                      alt={item.name} 
-                      fill 
-                      className="object-cover"
-                    />
-                  ) : (
-                    <Package className="w-7 h-7 text-gray-300" />
-                  )}
+                  <Image 
+                    src={getProductImage(item)} 
+                    alt={item.name} 
+                    fill 
+                    className="object-cover"
+                  />
                 </div>
                 <div className="flex-1 min-w-0">
                   <h4 className="text-xs font-bold text-gray-800 line-clamp-1">{item.name}</h4>
@@ -169,9 +215,6 @@ export default function OrderDetailPage() {
              <p className="text-gray-600 leading-relaxed mt-1">
                {order.shippingAddress?.fullAddress}, {order.shippingAddress?.district}, {order.shippingAddress?.city}, {order.shippingAddress?.province}
              </p>
-             {order.shippingAddress?.notes && (
-               <p className="italic text-primary">Catatan: {order.shippingAddress.notes}</p>
-             )}
           </div>
         </section>
 
@@ -190,10 +233,6 @@ export default function OrderDetailPage() {
                 <span className="text-gray-400">Total Harga Barang</span>
                 <span className="font-bold text-gray-800">Rp {order.items?.reduce((acc: number, i: any) => acc + (i.price * i.quantity), 0).toLocaleString()}</span>
              </div>
-             <div className="flex justify-between text-xs">
-                <span className="text-gray-400">Ongkos Kirim</span>
-                <span className="font-bold text-gray-800">Rp {(order.totalAmount - order.items?.reduce((acc: number, i: any) => acc + (i.price * i.quantity), 0)).toLocaleString()}</span>
-             </div>
              <div className="border-t border-gray-50 pt-2.5 flex justify-between">
                 <span className="text-xs font-black uppercase text-gray-900">Total Bayar</span>
                 <span className="text-base font-black text-primary">Rp {order.totalAmount?.toLocaleString()}</span>
@@ -210,9 +249,6 @@ export default function OrderDetailPage() {
             <MessageCircle className="w-5 h-5" />
             Tanya Admin di WhatsApp
           </Button>
-          <p className="text-[10px] text-gray-400 text-center px-6 leading-relaxed">
-            Jika terjadi kendala pada pesanan Anda, silakan hubungi tim support MarPay melalui WhatsApp dengan menyertakan Nomor Pesanan.
-          </p>
         </div>
       </main>
     </div>

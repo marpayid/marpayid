@@ -1,18 +1,64 @@
 
 "use client"
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, ClipboardList, Package, Clock, CheckCircle2, Truck, XCircle, Loader2, ChevronRight } from 'lucide-react';
+import { ArrowLeft, ClipboardList, Package, Clock, CheckCircle2, Truck, XCircle, Loader2, ChevronRight, AlertCircle, Timer } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useUser, useFirestore, useCollection } from '@/firebase';
-import { collection, query, where } from 'firebase/firestore';
+import { collection, query, where, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { cn, getProductImage } from '@/lib/utils';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
 import Link from 'next/link';
 import Image from 'next/image';
+
+// Countdown Component for expired orders
+function OrderCountdown({ expiredAt, orderId, status }: { expiredAt: any, orderId: string, status: string }) {
+  const [timeLeft, setTimeLeft] = useState<string>('');
+  const db = useFirestore();
+
+  useEffect(() => {
+    if (!expiredAt || status !== 'Menunggu Konfirmasi') return;
+
+    const timer = setInterval(() => {
+      const now = new Date().getTime();
+      const distance = expiredAt.toMillis() - now;
+
+      if (distance <= 0) {
+        clearInterval(timer);
+        setTimeLeft('Expired');
+        // Auto update status to cancelled
+        const orderRef = doc(db, 'orders', orderId);
+        updateDoc(orderRef, {
+          status: 'Dibatalkan Otomatis',
+          cancelReason: 'Pesanan tidak dikonfirmasi dalam 6 jam',
+          cancelledAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
+        });
+        return;
+      }
+
+      const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const s = Math.floor((distance % (1000 * 60)) / 1000);
+
+      setTimeLeft(`${h}j ${m}m ${s}d`);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [expiredAt, orderId, status, db]);
+
+  if (status !== 'Menunggu Konfirmasi') return null;
+
+  return (
+    <div className="flex items-center gap-1.5 text-[10px] font-bold text-orange-500 bg-orange-50 px-2 py-0.5 rounded-full border border-orange-100">
+      <Timer className="w-3 h-3" />
+      <span>Konfirmasi dalam: {timeLeft}</span>
+    </div>
+  );
+}
 
 export default function TransactionPage() {
   const router = useRouter();
@@ -32,21 +78,22 @@ export default function TransactionPage() {
     ) : null
   );
 
-  const sortedOrders = useMemo(() => {
+  const filteredOrders = useMemo(() => {
     if (!orders) return [];
-    return [...orders].sort((a: any, b: any) => {
+    
+    // Sort by Date Desc
+    const sorted = [...orders].sort((a: any, b: any) => {
       const timeA = a.createdAt?.seconds || 0;
       const timeB = b.createdAt?.seconds || 0;
       return timeB - timeA;
     });
-  }, [orders]);
 
-  const filteredOrders = useMemo(() => {
-    if (activeTab === 'all') return sortedOrders;
-    
-    return sortedOrders.filter((order: any) => {
+    // Filtering logic including hiding deleted (older than 15 days) is handled by Firestore deletion logic,
+    // but here we can add extra safety.
+    return sorted.filter((order: any) => {
       const status = order.status || 'Menunggu Konfirmasi';
       
+      if (activeTab === 'all') return true;
       if (activeTab === 'proses') {
         return ['Menunggu Konfirmasi', 'Dikonfirmasi', 'Diproses'].includes(status);
       }
@@ -58,7 +105,7 @@ export default function TransactionPage() {
       }
       return false;
     });
-  }, [sortedOrders, activeTab]);
+  }, [orders, activeTab]);
 
   const statuses = [
     { label: 'Semua', value: 'all' },
@@ -114,38 +161,37 @@ export default function TransactionPage() {
                 filteredOrders.map((order: any) => (
                   <Link key={order.id} href={`/akun/pesanan/${order.id}`}>
                     <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden p-5 space-y-4 mb-4 active:scale-[0.98] transition-all">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          {getStatusIcon(order.status)}
-                          <span className="text-[11px] font-bold">
-                            {order.createdAt?.toDate ? format(order.createdAt.toDate(), 'dd MMM yyyy, HH:mm', { locale: id }) : 'Waktu diproses...'}
-                          </span>
+                      <div className="flex flex-col gap-3">
+                        <div className="flex items-center justify-between">
+                           <div className="flex items-center gap-2">
+                             {getStatusIcon(order.status)}
+                             <span className="text-[11px] font-bold">
+                               {order.createdAt?.toDate ? format(order.createdAt.toDate(), 'dd MMM yyyy, HH:mm', { locale: id }) : 'Proses...'}
+                             </span>
+                           </div>
+                           <span className={cn(
+                             "text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-tighter border",
+                             ['Selesai'].includes(order.status) ? "bg-green-50 text-green-600 border-green-100" :
+                             ['Dibatalkan', 'Dibatalkan Otomatis'].includes(order.status) ? "bg-red-50 text-red-600 border-red-100" :
+                             ['Dikirim'].includes(order.status) ? "bg-blue-50 text-blue-600 border-blue-100" :
+                             "bg-orange-50 text-orange-600 border-orange-100"
+                           )}>
+                             {order.status || 'Menunggu Konfirmasi'}
+                           </span>
                         </div>
-                        <span className={cn(
-                          "text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-tighter border",
-                          ['Selesai'].includes(order.status) ? "bg-green-50 text-green-600 border-green-100" :
-                          ['Dibatalkan'].includes(order.status) ? "bg-red-50 text-red-600 border-red-100" :
-                          ['Dikirim'].includes(order.status) ? "bg-blue-50 text-blue-600 border-blue-100" :
-                          "bg-orange-50 text-orange-600 border-orange-100"
-                        )}>
-                          {order.status || 'Menunggu Konfirmasi'}
-                        </span>
+                        <OrderCountdown expiredAt={order.expiredAt} orderId={order.id} status={order.status} />
                       </div>
 
                       <div className="space-y-3">
                         {order.items?.slice(0, 1).map((item: any, idx: number) => (
                           <div key={idx} className="flex gap-4">
                             <div className="w-12 h-12 rounded-xl bg-gray-50 flex-shrink-0 flex items-center justify-center border border-gray-100 overflow-hidden relative">
-                              {item.image ? (
-                                <Image 
-                                  src={getProductImage(item)} 
-                                  alt={item.name} 
-                                  fill 
-                                  className="object-cover"
-                                />
-                              ) : (
-                                <Package className="w-6 h-6 text-gray-300" />
-                              )}
+                              <Image 
+                                src={getProductImage(item)} 
+                                alt={item.name} 
+                                fill 
+                                className="object-cover"
+                              />
                             </div>
                             <div className="flex-1 min-w-0">
                               <h4 className="text-xs font-bold text-gray-800 truncate">{item.name}</h4>
@@ -153,9 +199,6 @@ export default function TransactionPage() {
                             </div>
                           </div>
                         ))}
-                        {order.items?.length > 1 && (
-                          <p className="text-[10px] text-gray-400 font-medium">+ {order.items.length - 1} produk lainnya</p>
-                        )}
                       </div>
 
                       <div className="border-t border-gray-50 pt-4 flex items-center justify-between">

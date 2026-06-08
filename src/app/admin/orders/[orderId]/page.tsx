@@ -35,7 +35,10 @@ const ORDER_STATUSES = [
   "Diproses",
   "Dikirim",
   "Selesai",
-  "Dibatalkan"
+  "Dibatalkan",
+  "Dibatalkan Otomatis",
+  "Gagal Bayar",
+  "Tidak Dibayar"
 ];
 
 const SHIPPING_STATUSES = [
@@ -81,7 +84,6 @@ export default function AdminOrderDetailPage() {
     }
   }, [order]);
 
-  // Proteksi Akses
   if (!authLoading && (!user || user.email !== ADMIN_EMAIL)) {
     return (
       <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6 text-center">
@@ -97,7 +99,6 @@ export default function AdminOrderDetailPage() {
     if (!orderRef || !order) return;
     setIsSubmitting(true);
 
-    // Otomatis ubah status pesanan ke Selesai jika pengiriman sudah Terkirim
     let targetStatus = formData.status;
     if (formData.shippingStatus === 'Terkirim') {
       targetStatus = 'Selesai';
@@ -111,7 +112,7 @@ export default function AdminOrderDetailPage() {
 
     if (targetStatus === 'Dikirim' && !order.shippedAt) updates.shippedAt = serverTimestamp();
     if (targetStatus === 'Selesai' && !order.completedAt) updates.completedAt = serverTimestamp();
-    if (targetStatus === 'Dibatalkan' && !order.cancelledAt) updates.cancelledAt = serverTimestamp();
+    if (['Dibatalkan', 'Dibatalkan Otomatis', 'Gagal Bayar'].includes(targetStatus) && !order.cancelledAt) updates.cancelledAt = serverTimestamp();
 
     updateDoc(orderRef, updates)
       .then(() => {
@@ -150,11 +151,10 @@ export default function AdminOrderDetailPage() {
       </header>
 
       <main className="pt-20 px-4 space-y-5">
-        {/* Header Admin Card */}
         <section className="bg-slate-900 text-white p-6 rounded-[32px] shadow-xl relative overflow-hidden">
            <Database className="absolute right-[-10px] top-[-10px] w-32 h-32 text-white/5 -rotate-12" />
            <div className="relative z-10 space-y-1">
-              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-400">Order Data Management</p>
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-400">Order Management</p>
               <h2 className="text-2xl font-black">#{orderId.slice(-8).toUpperCase()}</h2>
               <div className="flex items-center gap-2 pt-2">
                  <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
@@ -163,7 +163,6 @@ export default function AdminOrderDetailPage() {
            </div>
         </section>
 
-        {/* Status Update Form */}
         <section className="bg-white p-6 rounded-[28px] border border-gray-100 shadow-sm space-y-6">
            <div className="space-y-4">
               <div className="space-y-1.5">
@@ -208,7 +207,6 @@ export default function AdminOrderDetailPage() {
                       <Select 
                         value={formData.shippingStatus} 
                         onValueChange={(val) => {
-                          // Jika disetel ke Terkirim, otomatis set status pesanan ke Selesai
                           setFormData(prev => ({
                             ...prev, 
                             shippingStatus: val,
@@ -238,7 +236,6 @@ export default function AdminOrderDetailPage() {
            </Button>
         </section>
 
-        {/* Customer Details */}
         <section className="bg-white p-6 rounded-[28px] border border-gray-100 shadow-sm space-y-4">
            <h3 className="text-xs font-black uppercase tracking-widest text-gray-400">Data Pelanggan</h3>
            <div className="grid grid-cols-1 gap-4">
@@ -250,33 +247,18 @@ export default function AdminOrderDetailPage() {
                     <p className="text-[10px] text-gray-500">{order.customerEmail || 'No Email'}</p>
                  </div>
               </div>
-              <div className="flex items-center gap-4">
-                 <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-primary"><MessageCircle className="w-5 h-5" /></div>
-                 <div className="flex-1">
-                    <p className="text-[10px] font-bold text-gray-400 uppercase">Nomor WhatsApp</p>
-                    <p className="text-xs font-black text-gray-900">{order.customerPhone}</p>
-                 </div>
-                 <Button 
-                   size="sm" 
-                   onClick={() => window.open(`https://wa.me/${order.customerPhone?.replace(/[^0-9]/g, '')}`, '_blank')}
-                   className="bg-primary text-white rounded-lg px-4 h-8 text-[10px] font-black"
-                 >
-                   CHAT WA
-                 </Button>
-              </div>
               <div className="flex items-start gap-4">
                  <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-primary shrink-0"><MapPin className="w-5 h-5" /></div>
                  <div>
                     <p className="text-[10px] font-bold text-gray-400 uppercase">Alamat Pengiriman</p>
                     <p className="text-[11px] text-gray-600 leading-relaxed mt-1">
-                       {order.shippingAddress?.fullAddress}, {order.shippingAddress?.district}, {order.shippingAddress?.city}, {order.shippingAddress?.province}
+                       {order.shippingAddress?.fullAddress || 'Digital Product'}
                     </p>
                  </div>
               </div>
            </div>
         </section>
 
-        {/* Order Items */}
         <section className="bg-white p-6 rounded-[28px] border border-gray-100 shadow-sm space-y-4">
            <h3 className="text-xs font-black uppercase tracking-widest text-gray-400">Daftar Belanja</h3>
            <div className="space-y-4">
@@ -284,16 +266,12 @@ export default function AdminOrderDetailPage() {
                 <div key={idx} className="flex justify-between items-center gap-4 pb-3 border-b border-gray-50 last:border-none last:pb-0">
                    <div className="flex items-center gap-3 flex-1 min-w-0">
                       <div className="w-12 h-12 rounded-lg bg-gray-50 flex-shrink-0 flex items-center justify-center border border-gray-100 overflow-hidden relative">
-                         {item.image ? (
-                           <Image 
-                             src={getProductImage(item)} 
-                             alt={item.name} 
-                             fill 
-                             className="object-cover"
-                           />
-                         ) : (
-                           <Package className="w-6 h-6 text-gray-300" />
-                         )}
+                         <Image 
+                           src={getProductImage(item)} 
+                           alt={item.name} 
+                           fill 
+                           className="object-cover"
+                         />
                       </div>
                       <div className="flex-1 min-w-0">
                          <p className="text-xs font-black text-gray-800 line-clamp-1">{item.name}</p>

@@ -1,17 +1,17 @@
+
 "use client"
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { 
   ArrowLeft, Search, Package, User, 
   Calendar, CreditCard, Loader2, 
   MapPin, DollarSign, Database, ShieldAlert, RefreshCcw, ChevronRight,
-  ShieldCheck, Activity, Server
+  ShieldCheck, Activity, Server, AlertCircle
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useUser, useFirestore, useCollection } from '@/firebase';
-import { firebaseConfig } from '@/firebase/config';
-import { collection, query } from 'firebase/firestore';
+import { collection, query, updateDoc, doc, serverTimestamp, deleteDoc } from 'firebase/firestore';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
@@ -26,13 +26,12 @@ export default function AdminOrdersPage() {
 
   const [searchQuery, setSearchQuery] = useState('');
 
-  // 1. Koleksi Tanpa Filter (List All)
   const ordersRef = useMemo(() => {
     if (!db) return null;
     return collection(db, 'orders');
   }, [db]);
 
-  const { data: rawOrders, loading: ordersLoading, error: firestoreError } = useCollection(
+  const { data: rawOrders, loading: ordersLoading } = useCollection(
     ordersRef ? query(ordersRef) : null
   );
 
@@ -45,7 +44,42 @@ export default function AdminOrdersPage() {
     });
   }, [rawOrders]);
 
-  // Proteksi Akses
+  // SYSTEM CLEANUP & AUTO-CANCEL LOGIC
+  useEffect(() => {
+    if (!orders || orders.length === 0 || !db) return;
+
+    const runCleanup = async () => {
+      const now = new Date().getTime();
+      const fifteenDaysMs = 15 * 24 * 60 * 60 * 1000;
+
+      orders.forEach(async (order: any) => {
+        // 1. Auto-Cancel Expired Orders (6 Hours)
+        if (order.status === 'Menunggu Konfirmasi' && order.expiredAt) {
+          const distance = order.expiredAt.toMillis() - now;
+          if (distance <= 0) {
+            updateDoc(doc(db, 'orders', order.id), {
+              status: 'Dibatalkan Otomatis',
+              cancelReason: 'Pesanan tidak dikonfirmasi dalam 6 jam',
+              cancelledAt: serverTimestamp(),
+              updatedAt: serverTimestamp()
+            });
+          }
+        }
+
+        // 2. Permanent Delete Old Cancelled Orders (15 Days)
+        const cancelledStatuses = ['Dibatalkan', 'Dibatalkan Otomatis', 'Gagal Bayar', 'Tidak Dibayar'];
+        if (cancelledStatuses.includes(order.status) && order.cancelledAt) {
+          const cancelTime = order.cancelledAt.toMillis();
+          if (now - cancelTime > fifteenDaysMs) {
+            deleteDoc(doc(db, 'orders', order.id));
+          }
+        }
+      });
+    };
+
+    runCleanup();
+  }, [orders, db]);
+
   if (!authLoading && (!user || user.email !== ADMIN_EMAIL)) {
     return (
       <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6 text-center">
@@ -72,7 +106,7 @@ export default function AdminOrdersPage() {
     if (!orders) return { total: 0, pending: 0, completed: 0 };
     return {
       total: orders.length,
-      pending: orders.filter((o: any) => !['Selesai', 'Dibatalkan'].includes(o.status)).length,
+      pending: orders.filter((o: any) => !['Selesai', 'Dibatalkan', 'Dibatalkan Otomatis', 'Gagal Bayar'].includes(o.status)).length,
       completed: orders.filter((o: any) => o.status === 'Selesai').length
     };
   }, [orders]);
@@ -100,12 +134,8 @@ export default function AdminOrdersPage() {
       </header>
 
       <main className="pt-20 px-4 space-y-4">
-        {/* MARPAY CONTROL CENTER - PREMIUM DESIGN (COMPACT VERSION) */}
         <div className="bg-[#0B1120] rounded-[28px] p-5 border border-white/5 shadow-2xl relative overflow-hidden">
-           {/* Glow Effects */}
            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 blur-[50px] rounded-full"></div>
-           <div className="absolute bottom-0 left-0 w-24 h-24 bg-emerald-500/5 blur-[40px] rounded-full"></div>
-
            <div className="relative z-10 space-y-3.5">
               <div className="flex items-center justify-between">
                  <div className="flex items-center gap-2.5">
@@ -115,14 +145,11 @@ export default function AdminOrdersPage() {
                     <div className="flex flex-col">
                        <h2 className="text-[11px] font-black text-white/90 uppercase tracking-[0.2em] leading-none">MarPay Control Center</h2>
                        <div className="flex items-center gap-1.5 mt-1.5">
-                          <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]"></div>
+                          <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></div>
                           <span className="text-[9px] font-bold text-emerald-400 uppercase tracking-widest">System Online</span>
                        </div>
                     </div>
                  </div>
-                 <button onClick={() => window.location.reload()} className="w-8 h-8 bg-white/5 rounded-full flex items-center justify-center text-white/40 hover:text-white transition-colors">
-                    <RefreshCcw className="w-3.5 h-3.5" />
-                 </button>
               </div>
 
               <div className="grid grid-cols-1 gap-2.5">
@@ -133,10 +160,6 @@ export default function AdminOrdersPage() {
                  <div className="flex items-center justify-between py-0.5 border-b border-white/5">
                     <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Order Collection</span>
                     <span className="text-xs font-black text-white">{orders.length} Records</span>
-                 </div>
-                 <div className="flex items-center justify-between py-0.5 border-b border-white/5">
-                    <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Last Sync</span>
-                    <span className="text-[10px] font-bold text-blue-400">Just Now</span>
                  </div>
                  <div className="flex items-center justify-between py-0.5">
                     <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Admin Access</span>
@@ -183,7 +206,7 @@ export default function AdminOrdersPage() {
                         <span className={cn(
                           "text-[9px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-tighter",
                           order.status === 'Selesai' ? "bg-green-50 text-green-600 border-green-100" :
-                          order.status === 'Dibatalkan' ? "bg-red-50 text-red-600 border-red-100" :
+                          ['Dibatalkan', 'Dibatalkan Otomatis'].includes(order.status) ? "bg-red-50 text-red-600 border-red-100" :
                           order.status === 'Dikirim' ? "bg-blue-50 text-blue-600 border-blue-100" :
                           "bg-orange-50 text-orange-600 border-orange-100"
                         )}>
@@ -210,15 +233,6 @@ export default function AdminOrdersPage() {
                     </div>
                     <p className="text-sm font-black text-primary">Rp {order.totalAmount?.toLocaleString()}</p>
                   </div>
-
-                  <div className="flex gap-2">
-                    {order.items?.slice(0, 2).map((item: any, idx: number) => (
-                      <div key={idx} className="bg-gray-50 px-2 py-1 rounded-md text-[9px] font-medium text-gray-500 max-w-[100px] truncate">
-                        {item.name}
-                      </div>
-                    ))}
-                    {order.items?.length > 2 && <span className="text-[9px] text-gray-400 mt-1">+{order.items.length - 2}</span>}
-                  </div>
                 </div>
               </Link>
             ))
@@ -228,6 +242,13 @@ export default function AdminOrdersPage() {
               <p className="text-base font-black">Tidak ada pesanan</p>
             </div>
           )}
+        </div>
+
+        <div className="bg-blue-50/50 p-4 rounded-2xl border border-blue-100 flex gap-3">
+          <AlertCircle className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
+          <p className="text-[10px] text-blue-500 font-medium leading-relaxed">
+            Sistem Pembersihan Aktif: Pesanan dengan status Batal akan dihapus otomatis secara permanen setelah 15 hari untuk menjaga performa database.
+          </p>
         </div>
       </main>
     </div>
