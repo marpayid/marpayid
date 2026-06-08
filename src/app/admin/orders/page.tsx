@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useMemo, useEffect, useRef } from 'react';
@@ -35,6 +34,7 @@ export default function AdminOrdersPage() {
 
   const ordersQuery = useMemo(() => {
     if (!ordersRef) return null;
+    // Adding refreshKey to the query hook dependency ensures re-subscription
     return query(ordersRef);
   }, [ordersRef, refreshKey]);
 
@@ -90,7 +90,7 @@ export default function AdminOrdersPage() {
     };
 
     runCleanup();
-  }, [orders.length > 0, db]);
+  }, [orders.length, db]);
 
   if (!authLoading && (!user || user.email !== ADMIN_EMAIL)) {
     return (
@@ -145,7 +145,7 @@ export default function AdminOrdersPage() {
             variant="ghost" 
             size="icon" 
             onClick={handleRefresh}
-            className={cn("h-8 w-8 text-gray-400", ordersLoading && "animate-spin text-primary")}
+            className={cn("h-8 w-8 text-gray-400 transition-all active:scale-90", ordersLoading && "animate-spin text-primary")}
           >
             <RefreshCcw className="w-4 h-4" />
           </Button>

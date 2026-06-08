@@ -11,17 +11,15 @@ import { Loader2 } from 'lucide-react';
 export const FirebaseClientProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isInitialized, setIsInitialized] = useState(false);
 
+  // Initialize Firebase App and services immediately in useMemo
   const firebaseInstance = useMemo(() => {
     if (typeof window === 'undefined') {
       return { app: null, db: null, auth: null };
     }
 
     try {
-      // Ensure app is only initialized once
       const existingApp = getApps().length > 0 ? getApp() : null;
       const app: FirebaseApp = existingApp || initializeApp(firebaseConfig);
-      
-      // Initialize services using the valid app instance
       const db: Firestore = getFirestore(app);
       const auth: Auth = getAuth(app);
       
@@ -33,22 +31,20 @@ export const FirebaseClientProvider: React.FC<{ children: React.ReactNode }> = (
   }, []);
 
   useEffect(() => {
-    const initAuth = async () => {
-      // Configure auth persistence once on the client
-      if (firebaseInstance.auth) {
-        try {
-          await setPersistence(firebaseInstance.auth, browserLocalPersistence);
-        } catch (err) {
-          console.warn("Auth persistence could not be set:", err);
-        }
-      }
+    if (!firebaseInstance.auth) {
       setIsInitialized(true);
-    };
-    initAuth();
+      return;
+    }
+
+    // Set persistence once in the background
+    setPersistence(firebaseInstance.auth, browserLocalPersistence)
+      .finally(() => {
+        setIsInitialized(true);
+      });
   }, [firebaseInstance.auth]);
 
-  // Prevent rendering children until Firebase is ready on the client
-  if (typeof window === 'undefined' || !isInitialized) {
+  // Only block the very first load if we don't even have the app instance yet
+  if (typeof window !== 'undefined' && !firebaseInstance.app && !isInitialized) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
         <Loader2 className="w-8 h-8 animate-spin text-primary mb-4" />

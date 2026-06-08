@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
@@ -178,7 +177,7 @@ export default function Checkout() {
       router.push('/akun/transaksi');
     } catch (e) {
       console.error("Finalization Error:", e);
-      creationProcessedRef.current = false; // Reset lock on error to allow retry if needed
+      creationProcessedRef.current = false; 
       toast({ variant: "destructive", title: "Error", description: "Gagal menyimpan pesanan. Silakan hubungi admin." });
       setIsSubmitting(false);
       setIsWaitingReturn(false);
@@ -277,7 +276,6 @@ export default function Checkout() {
 
     const paymentMethodLabel = PAYMENT_METHODS.find(m => m.id === selectedPayment)?.label || 'Bank Transfer';
 
-    // WhatsApp Message
     const message = `🛍️ ORDER BARU MARPAY
 
 ━━━━━━━━━━━━━━
@@ -312,8 +310,7 @@ Menunggu Konfirmasi Admin
 Mohon diproses.
 Terima kasih 🙏`;
 
-    // Data for Firestore (Saved to storage first)
-    // Map items to include finalized image path to avoid missing images in orders
+    // CRITICAL: Ensure every item has its resolved image URL saved to the order document
     const processedItems = items.map(item => ({
       ...item,
       image: getProductImage(item) 
@@ -338,7 +335,6 @@ Terima kasih 🙏`;
     const adminWhatsApp = "6283851278935";
     const waUrl = `https://wa.me/${adminWhatsApp}?text=${encodeURIComponent(message)}`;
 
-    // Open WhatsApp and set state
     window.open(waUrl, '_blank');
     setIsWaitingReturn(true);
     

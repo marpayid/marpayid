@@ -53,8 +53,8 @@ export function getProductImage(product: any): string {
     return '/premium1.png';
   }
   
-  // Prioritas field: imageUrl (eksternal) -> image (lokal)
-  const imgPath = product.imageUrl || product.image || '';
+  // Prioritas field: image (saved in order) -> imageUrl (external) -> image (local)
+  const imgPath = product.image || product.imageUrl || '';
   
   if (!imgPath) {
     return 'https://placehold.co/600x600?text=Produk+MarPay';
