@@ -68,9 +68,10 @@ export default function AdminOrdersPage() {
 
         // 2. Permanent Delete Old Cancelled Orders (15 Days)
         const cancelledStatuses = ['Dibatalkan', 'Dibatalkan Otomatis', 'Gagal Bayar', 'Tidak Dibayar'];
-        if (cancelledStatuses.includes(order.status) && order.cancelledAt) {
-          const cancelTime = order.cancelledAt.toMillis();
-          if (now - cancelTime > fifteenDaysMs) {
+        if (cancelledStatuses.includes(order.status)) {
+          // Fallback ke updatedAt jika cancelledAt belum ada
+          const lastActionTime = (order.cancelledAt || order.updatedAt || order.createdAt)?.toMillis() || now;
+          if (now - lastActionTime > fifteenDaysMs) {
             deleteDoc(doc(db, 'orders', order.id));
           }
         }
@@ -106,7 +107,7 @@ export default function AdminOrdersPage() {
     if (!orders) return { total: 0, pending: 0, completed: 0 };
     return {
       total: orders.length,
-      pending: orders.filter((o: any) => !['Selesai', 'Dibatalkan', 'Dibatalkan Otomatis', 'Gagal Bayar'].includes(o.status)).length,
+      pending: orders.filter((o: any) => !['Selesai', 'Dibatalkan', 'Dibatalkan Otomatis', 'Gagal Bayar', 'Tidak Dibayar'].includes(o.status)).length,
       completed: orders.filter((o: any) => o.status === 'Selesai').length
     };
   }, [orders]);

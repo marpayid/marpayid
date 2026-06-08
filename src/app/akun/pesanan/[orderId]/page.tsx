@@ -83,6 +83,7 @@ export default function OrderDetailPage() {
   }
 
   const copyToClipboard = (text: string) => {
+    if (!text) return;
     navigator.clipboard.writeText(text);
     toast({ title: "Berhasil", description: "Nomor resi telah disalin." });
   };
