@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useParams, useRouter } from 'next/navigation';
@@ -118,6 +119,15 @@ export default function ProductDetail() {
     return Products.filter(p => 
       p.category === product.category && 
       String(p.id) !== String(product.id) && 
+      p.category !== 'Premium'
+    ).slice(0, 4);
+  }, [product]);
+
+  const youMightLikeProducts = useMemo(() => {
+    if (!product) return [];
+    // Get products from different categories for variety
+    return Products.filter(p => 
+      p.category !== product.category && 
       p.category !== 'Premium'
     ).slice(0, 4);
   }, [product]);
@@ -334,17 +344,35 @@ export default function ProductDetail() {
           <div className="h-6"></div>
         </section>
 
+        {/* Section: Produk Serupa */}
         {similarProducts.length > 0 && (
+          <section className="mt-2 bg-white p-4">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <LayoutGrid className="w-4 h-4 text-primary" />
+                <h2 className="text-sm font-bold uppercase tracking-tight">Produk Serupa</h2>
+              </div>
+              <Link href={`/kategori/${product.category.toLowerCase()}`} className="text-[10px] font-bold text-primary">Lihat Semua</Link>
+            </div>
+            <div className="grid grid-cols-2 gap-3.5">
+              {similarProducts.map((p) => (
+                <ProductCard key={p.id} product={p} />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Section: Yang Mungkin Anda Suka */}
+        {youMightLikeProducts.length > 0 && (
           <section className="mt-2 bg-white p-4">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-primary" />
                 <h2 className="text-sm font-bold uppercase tracking-tight">Yang Mungkin Anda Suka</h2>
               </div>
-              <Link href={`/kategori/${product.category.toLowerCase()}`} className="text-[10px] font-bold text-primary">Lihat Semua</Link>
             </div>
             <div className="grid grid-cols-2 gap-3.5">
-              {similarProducts.map((p) => (
+              {youMightLikeProducts.map((p) => (
                 <ProductCard key={p.id} product={p} />
               ))}
             </div>
