@@ -100,13 +100,13 @@ export default function AdminOrdersPage() {
       </header>
 
       <main className="pt-20 px-4 space-y-4">
-        {/* MARPAY CONTROL CENTER - PREMIUM DESIGN */}
-        <div className="bg-[#0B1120] rounded-[28px] p-6 border border-white/5 shadow-2xl relative overflow-hidden">
+        {/* MARPAY CONTROL CENTER - PREMIUM DESIGN (COMPACT VERSION) */}
+        <div className="bg-[#0B1120] rounded-[28px] p-5 border border-white/5 shadow-2xl relative overflow-hidden">
            {/* Glow Effects */}
            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 blur-[50px] rounded-full"></div>
            <div className="absolute bottom-0 left-0 w-24 h-24 bg-emerald-500/5 blur-[40px] rounded-full"></div>
 
-           <div className="relative z-10 space-y-5">
+           <div className="relative z-10 space-y-3.5">
               <div className="flex items-center justify-between">
                  <div className="flex items-center gap-2.5">
                     <div className="w-8 h-8 bg-blue-500/10 rounded-xl flex items-center justify-center border border-blue-500/20">
@@ -125,28 +125,23 @@ export default function AdminOrdersPage() {
                  </button>
               </div>
 
-              <div className="grid grid-cols-1 gap-3.5 pt-1">
-                 <div className="flex items-center justify-between py-1 border-b border-white/5">
+              <div className="grid grid-cols-1 gap-2.5">
+                 <div className="flex items-center justify-between py-0.5 border-b border-white/5">
                     <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Database Status</span>
                     <span className="px-2 py-0.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[8px] font-black rounded-md uppercase tracking-tighter">Connected</span>
                  </div>
-                 <div className="flex items-center justify-between py-1 border-b border-white/5">
+                 <div className="flex items-center justify-between py-0.5 border-b border-white/5">
                     <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Order Collection</span>
                     <span className="text-xs font-black text-white">{orders.length} Records</span>
                  </div>
-                 <div className="flex items-center justify-between py-1 border-b border-white/5">
+                 <div className="flex items-center justify-between py-0.5 border-b border-white/5">
                     <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Last Sync</span>
                     <span className="text-[10px] font-bold text-blue-400">Just Now</span>
                  </div>
-                 <div className="flex items-center justify-between py-1">
+                 <div className="flex items-center justify-between py-0.5">
                     <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Admin Access</span>
                     <span className="px-2 py-0.5 bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[8px] font-black rounded-md uppercase tracking-tighter">Authorized</span>
                  </div>
-              </div>
-
-              <div className="pt-1 flex items-center justify-between opacity-30">
-                 <div />
-                 <Server className="w-3 h-3 text-gray-500" />
               </div>
            </div>
         </div>
