@@ -54,21 +54,13 @@ export default function RegisterPage() {
     e.preventDefault();
     
     if (!validate()) return;
-    if (!auth || !db) {
-      toast({ 
-        variant: "destructive", 
-        title: "Pendaftaran Gagal", 
-        description: "Layanan database atau autentikasi tidak tersedia. Mohon hubungi admin untuk konfigurasi sistem." 
-      });
-      return;
-    }
 
     setLoading(true);
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
       const user = userCredential.user;
 
-      // Simpan data ke Firestore dengan field fullName secara eksplisit
+      // Simpan data ke Firestore
       await setDoc(doc(db, 'users', user.uid), {
         uid: user.uid,
         fullName: formData.name.trim(),
@@ -89,19 +81,11 @@ export default function RegisterPage() {
       
       router.push('/profile');
     } catch (error: any) {
-      console.error("Firebase Registration Error:", error.code, error.message);
-      
-      let message = error.message;
-      if (error.code === 'auth/email-already-in-use') {
-        message = "Email ini sudah terdaftar. Silakan masuk.";
-      } else if (error.code === 'auth/invalid-email') {
-        message = "Format email tidak valid.";
-      }
-      
+      console.error("Firebase Registration Error:", error);
       toast({
         variant: "destructive",
         title: "Pendaftaran Gagal",
-        description: `[${error.code}] ${message}`,
+        description: error.message,
       });
     } finally {
       setLoading(false);

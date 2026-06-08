@@ -33,15 +33,6 @@ export default function LoginPage() {
       return;
     }
 
-    if (!auth) {
-      toast({
-        variant: "destructive",
-        title: "Gagal Masuk",
-        description: "Layanan autentikasi tidak tersedia. Periksa konfigurasi API Key Firebase.",
-      });
-      return;
-    }
-
     setLoading(true);
     try {
       await signInWithEmailAndPassword(auth, formData.email, formData.password);
@@ -57,14 +48,12 @@ export default function LoginPage() {
       let message = error.message;
       if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
         message = "Akun tidak ditemukan atau password salah.";
-      } else if (error.code === 'auth/api-key-not-valid') {
-        message = "Kesalahan sistem: Konfigurasi API tidak valid.";
       }
       
       toast({
         variant: "destructive",
         title: "Gagal Masuk",
-        description: `[${error.code}] ${message}`,
+        description: message,
       });
     } finally {
       setLoading(false);

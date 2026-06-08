@@ -16,27 +16,29 @@ export const FirebaseClientProvider: React.FC<{ children: React.ReactNode }> = (
       return { app: null, db: null, auth: null };
     }
 
-    // Audit and validate configuration before initialization
-    const isApiKeyMissing = !firebaseConfig.apiKey || firebaseConfig.apiKey === 'undefined' || firebaseConfig.apiKey === '';
-    const isProjectIdMissing = !firebaseConfig.projectId || firebaseConfig.projectId === 'undefined' || firebaseConfig.projectId === '';
-
-    if (isApiKeyMissing || isProjectIdMissing) {
-      console.error("CRITICAL: Firebase Configuration is invalid or missing Environment Variables.");
-      if (isApiKeyMissing) console.error("- NEXT_PUBLIC_FIREBASE_API_KEY is missing or undefined");
-      if (isProjectIdMissing) console.error("- NEXT_PUBLIC_FIREBASE_PROJECT_ID is missing or undefined");
-      console.warn("Firebase services will be unavailable. Please set the environment variables in your hosting provider (e.g., Vercel/Firebase).");
-      return { app: null, db: null, auth: null };
-    }
-
     try {
+      // Inisialisasi App
       const existingApp = getApps().length > 0 ? getApp() : null;
       const app: FirebaseApp = existingApp || initializeApp(firebaseConfig);
-      const db: Firestore = getFirestore(app);
-      const auth: Auth = getAuth(app);
+      
+      // Inisialisasi layanan secara terpisah untuk mencegah crash jika config tidak lengkap
+      let db: Firestore | null = null;
+      try {
+        db = getFirestore(app);
+      } catch (dbErr) {
+        console.warn("Firestore failed to initialize:", dbErr);
+      }
+
+      let auth: Auth | null = null;
+      try {
+        auth = getAuth(app);
+      } catch (authErr) {
+        console.warn("Firebase Auth failed to initialize:", authErr);
+      }
       
       return { app, db, auth };
     } catch (err: any) {
-      console.error("Firebase Initialization Error:", err.message || err);
+      console.error("Firebase Initialization Error:", err);
       return { app: null, db: null, auth: null };
     }
   }, []);

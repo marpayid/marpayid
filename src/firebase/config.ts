@@ -1,8 +1,8 @@
 'use client';
 
 /**
- * Konfigurasi Produksi MarPay.
- * Membaca dari environment variables untuk keamanan dan fleksibilitas deployment.
+ * Konfigurasi Firebase MarPay.
+ * Menggunakan environment variables untuk fleksibilitas deployment.
  */
 export const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
