@@ -38,85 +38,89 @@ export function MarPayAIChat() {
     setInput('');
     setIsLoading(true);
 
-    // Simulated "AI" response logic based on expanded local FAQ keywords
+    // AI response logic based on expanded local FAQ
     setTimeout(() => {
-      let reply = "Maaf, CS AI MarPay belum memahami pertanyaan itu. Silakan tanya tentang order, pembayaran, pulsa, e-wallet, PLN, produk, stok, pengiriman, atau hubungi admin WhatsApp.";
+      let reply = "Maaf, saya tidak menemukan jawaban yang Anda cari. Silakan hubungi admin MarPay untuk bantuan lebih lanjut melalui tombol WhatsApp di bawah.";
 
-      // 1. Sapaan
-      if (["hi", "hai", "halo", "hallo", "p", "tes", "assalamualaikum", "permisi"].some(k => lowInput === k || lowInput.startsWith(k + " "))) {
-        reply = "Halo! Saya CS AI MarPay. Silakan tanya tentang cara order, pembayaran, pulsa, e-wallet, PLN, produk, pengiriman, atau bantuan lainnya.";
-      } 
-      // 2. Cara order / pesan
-      else if (["order", "pesan", "beli", "cara beli", "cara pesan", "cara order", "checkout", "co", "mau beli", "mau order"].some(k => lowInput.includes(k))) {
-        reply = "Untuk order di MarPay, pilih produk yang diinginkan, tekan beli/checkout, lalu kirim pesanan ke WhatsApp admin untuk konfirmasi.";
+      // 1. Cara Pemesanan
+      if (["order", "pesan", "beli", "cara beli", "cara pesan", "cara order", "langkah"].some(k => lowInput.includes(k))) {
+        reply = "Untuk melakukan pemesanan, pilih produk yang Anda inginkan, klik tombol 'Beli Sekarang' atau 'Tambah ke Keranjang', lalu ikuti langkah checkout hingga pesanan berhasil dibuat.";
       }
-      // 3. Cara bayar
-      else if (["bayar", "pembayaran", "metode bayar", "transfer", "qris", "qr", "dana bayar", "rekening", "bank", "e-wallet bayar"].some(k => lowInput.includes(k))) {
-        reply = "Pembayaran mengikuti arahan admin MarPay melalui WhatsApp. Admin akan memberikan metode pembayaran yang tersedia seperti transfer, e-wallet, atau QRIS jika tersedia.";
+      // 2. Metode Pembayaran
+      else if (["bayar", "pembayaran", "metode", "transfer", "bank", "qris", "rekening"].some(k => lowInput.includes(k))) {
+        reply = "Saat ini MarPay mendukung pembayaran melalui transfer bank, e-wallet (DANA/OVO/GoPay), QRIS, dan metode lain yang tersedia saat proses checkout.";
       }
-      // 4. Aman / terpercaya
-      else if (["aman", "percaya", "trusted", "penipuan", "real", "asli", "terpercaya", "scam"].some(k => lowInput.includes(k))) {
-        reply = "MarPay berusaha melayani transaksi dengan aman dan jelas. Untuk memastikan detail pesanan, silakan konfirmasi langsung ke admin WhatsApp MarPay.";
+      // 3. Batas Waktu Pembayaran
+      else if (["batas waktu", "expired", "berapa lama", "kadaluarsa", "3 jam"].some(k => lowInput.includes(k))) {
+        reply = "Pesanan harus dikonfirmasi dalam waktu 3 jam. Jika melewati batas waktu tersebut dan pembayaran belum diverifikasi, pesanan akan otomatis dibatalkan oleh sistem.";
       }
-      // 5. Jam layanan
-      else if (["jam buka", "buka jam", "online", "admin online", "respon", "fast respon", "kapan buka"].some(k => lowInput.includes(k))) {
-        reply = "Admin MarPay akan membalas secepat mungkin saat online. Silakan kirim pesan WhatsApp dan tunggu konfirmasi dari admin.";
+      // 4. Sudah Bayar Tapi Belum Update
+      else if (["sudah bayar", "belum berubah", "konfirmasi bayar", "bukti bayar"].some(k => lowInput.includes(k))) {
+        reply = "Jika Anda sudah melakukan pembayaran namun status belum berubah, mohon tunggu beberapa saat untuk proses verifikasi atau segera hubungi admin dengan menyertakan bukti pembayaran.";
       }
-      // 6. Pulsa
-      else if (["pulsa", "telkomsel", "tsel", "axis", "xl", "indosat", "im3", "tri", "3", "smartfren"].some(k => lowInput.includes(k))) {
-        reply = "MarPay menyediakan pulsa Telkomsel, Axis/XL, Indosat/IM3, Tri, dan Smartfren. Untuk harga terbaru dan order, silakan hubungi admin WhatsApp.";
+      // 5. Cek Status Pesanan
+      else if (["cek status", "lihat pesanan", "perkembangan", "tracking"].some(k => lowInput.includes(k))) {
+        reply = "Anda dapat melihat perkembangan pesanan Anda secara realtime dengan masuk ke menu Akun → Riwayat Pesanan.";
       }
-      // 7. E-wallet
-      else if (["dana", "ovo", "gopay", "go pay", "shopeepay", "shopee pay", "spay", "e-wallet", "ewallet", "top up", "topup", "isi saldo"].some(k => lowInput.includes(k))) {
-        reply = "Top up e-wallet seperti DANA, OVO, GoPay, and ShopeePay tersedia di MarPay. Silakan hubungi admin WhatsApp untuk nominal and harga terbaru.";
+      // 6. Originalitas
+      else if (["original", "asli", "ori", "kw", "kualitas"].some(k => lowInput.includes(k))) {
+        reply = "MarPay berupaya menyediakan produk berkualitas dari supplier terpercaya. Detail spesifikasi produk dapat Anda lihat pada halaman produk masing-masing.";
       }
-      // 8. PLN
-      else if (["pln", "token", "listrik", "token listrik", "pascabayar"].some(k => lowInput.includes(k))) {
-        reply = "Token PLN tersedia di MarPay. Untuk cek nominal, harga, atau bantuan pembelian, silakan hubungi admin WhatsApp.";
+      // 7. Gratis Ongkir
+      else if (["ongkir", "gratis ongkir", "free ongkir", "biaya kirim"].some(k => lowInput.includes(k))) {
+        reply = "Beberapa produk tertentu di MarPay memiliki promo gratis ongkir. Informasi ini dapat dilihat langsung pada kartu produk atau saat tahap checkout.";
       }
-      // 9. Produk fisik
-      else if (["produk fisik", "barang", "baju", "hoodie", "skincare", "akrilik", "sertifikat", "fashion", "kemeja"].some(k => lowInput.includes(k))) {
-        reply = "MarPay menyediakan produk fisik pilihan seperti fashion, skincare, and produk lainnya sesuai katalog. Silakan cek produk di website atau hubungi admin WhatsApp.";
+      // 8. Lama Pengiriman
+      else if (["lama", "berapa hari", "sampai kapan", "estimasi"].some(k => lowInput.includes(k))) {
+        reply = "Waktu pengiriman sangat tergantung pada lokasi alamat Anda dan jasa pengiriman (kurir) yang dipilih saat checkout.";
       }
-      // 10. Produk digital
-      else if (["produk digital", "digital", "otp", "voucher", "game", "topup game", "top up game", "saldo game"].some(k => lowInput.includes(k))) {
-        reply = "MarPay menyediakan layanan digital tertentu seperti PPOB, top up, and produk digital sesuai ketersediaan. Untuk detail terbaru, silakan hubungi admin WhatsApp.";
+      // 9. Pembatalan Pesanan
+      else if (["batal", "cancel", "ingin batal"].some(k => lowInput.includes(k))) {
+        reply = "Pesanan yang belum diproses oleh admin dapat diajukan pembatalan dengan cara menghubungi admin melalui chat WhatsApp.";
       }
-      // 11. Harga
-      else if (["harga", "berapa", "price", "list harga", "daftar harga", "murah", "diskon", "promo"].some(k => lowInput.includes(k))) {
-        reply = "Harga bisa berbeda tergantung produk and nominal. Silakan cek katalog MarPay atau hubungi admin WhatsApp untuk harga terbaru.";
+      // 10. Produk Tidak Sesuai
+      else if (["tidak sesuai", "salah", "rusak", "cacat", "komplain", "unboxing"].some(k => lowInput.includes(k))) {
+        reply = "Jika produk yang diterima tidak sesuai, segera hubungi admin dan pastikan menyertakan foto serta video unboxing produk untuk proses pengecekan lebih lanjut.";
       }
-      // 12. Stok
-      else if (["stok", "ready", "tersedia", "kosong", "ada barang", "masih ada"].some(k => lowInput.includes(k))) {
-        reply = "Untuk memastikan stok terbaru, silakan hubungi admin WhatsApp MarPay karena stok bisa berubah sewaktu-waktu.";
-      }
-      // 13. Pengiriman
-      else if (["ongkir", "pengiriman", "kirim", "kurir", "paket", "resi", "cek resi", "cod"].some(k => lowInput.includes(k))) {
-        reply = "Untuk produk fisik, pengiriman and ongkir akan dikonfirmasi oleh admin MarPay. Jika sudah ada resi, Anda bisa cek status pengiriman sesuai info dari admin.";
-      }
-      // 14. COD
+      // 11. COD
       else if (["cod", "bayar ditempat", "bayar di tempat"].some(k => lowInput.includes(k))) {
-        reply = "Untuk saat ini ketersediaan COD mengikuti jenis produk and arahan admin. Silakan hubungi admin WhatsApp untuk konfirmasi.";
+        reply = "Layanan COD tersedia pada produk-produk tertentu sesuai dengan kebijakan penjual dan ketersediaan layanan pengiriman di wilayah Anda.";
       }
-      // 15. Refund / batal
-      else if (["refund", "batal", "cancel", "uang kembali", "pengembalian", "komplain"].some(k => lowInput.includes(k))) {
-        reply = "Untuk pembatalan, refund, atau komplain, silakan hubungi admin WhatsApp MarPay dengan detail pesanan agar bisa dibantu.";
+      // 12. Voucher
+      else if (["voucher", "kupon", "kode promo", "diskon"].some(k => lowInput.includes(k))) {
+        reply = "Anda dapat menggunakan voucher dengan memasukkan kode voucher pada kolom yang tersedia saat checkout jika terdapat promo yang sedang berlaku.";
       }
-      // 16. Login / akun
-      else if (["login", "daftar", "akun", "profil", "password", "masuk"].some(k => lowInput.includes(k))) {
-        reply = "Fitur akun MarPay digunakan untuk kebutuhan profil and riwayat. Jika ada kendala login/akun, silakan hubungi admin WhatsApp.";
+      // 13. Keamanan Data
+      else if (["aman", "data pribadi", "privasi", "terpercaya"].some(k => lowInput.includes(k))) {
+        reply = "MarPay berkomitmen menjaga keamanan data pelanggan dengan sangat ketat dan tidak akan membagikan informasi pribadi Anda kepada pihak lain tanpa izin.";
       }
-      // 17. Keranjang
-      else if (["keranjang", "cart", "masuk keranjang", "hapus keranjang"].some(k => lowInput.includes(k))) {
-        reply = "Anda bisa menambahkan produk ke keranjang terlebih dahulu, lalu lanjut checkout and konfirmasi pesanan lewat WhatsApp admin.";
+      // 14. Hubungi Admin
+      else if (["admin", "hubungi", "wa", "whatsapp", "kontak", "cs", "customer service"].some(k => lowInput.includes(k))) {
+        reply = "Anda dapat menghubungi admin dengan klik tombol WhatsApp atau melalui menu 'Pusat Bantuan' yang tersedia di halaman akun.";
       }
-      // 18. Bantuan umum
-      else if (["bantuan", "cs", "admin", "kontak", "whatsapp", "wa", "hubungi"].some(k => lowInput.includes(k))) {
-        reply = "Untuk bantuan langsung, silakan klik tombol Hubungi Admin WhatsApp agar admin MarPay bisa membantu pesanan Anda.";
+      // 15. Luar Kota
+      else if (["luar kota", "daerah", "wilayah", "kirim ke"].some(k => lowInput.includes(k))) {
+        reply = "Ya, MarPay melayani pengiriman ke berbagai wilayah di seluruh Indonesia yang didukung oleh jaringan jasa ekspedisi mitra kami.";
       }
-      // 19. Terima kasih
-      else if (["makasih", "terima kasih", "thanks", "thank you", "oke", "ok", "sip"].some(k => lowInput.includes(k))) {
-        reply = "Sama-sama! Jika butuh bantuan lain seputar MarPay, silakan tanyakan di sini atau hubungi admin WhatsApp.";
+      // 16. Lacak Resi
+      else if (["resi", "lacak", "nomor resi"].some(k => lowInput.includes(k))) {
+        reply = "Nomor resi akan tersedia setelah pesanan dikirim oleh kurir. Anda bisa melihatnya langsung pada bagian 'Detail Pesanan' di menu riwayat transaksi.";
+      }
+      // 17. Produk Digital
+      else if (["digital", "otomatis", "proses digital"].some(k => lowInput.includes(k))) {
+        reply = "Produk digital diproses sesuai jenisnya. Beberapa layanan seperti top up seringkali dikirim lebih cepat dibandingkan produk fisik.";
+      }
+      // 18. Top Up & PPOB
+      else if (["game", "top up", "pulsa", "pln", "e-wallet", "ppob"].some(k => lowInput.includes(k))) {
+        reply = "Ya, MarPay menyediakan berbagai layanan digital lengkap seperti top up game favorit, isi pulsa, paket data, saldo e-wallet, token PLN, dan layanan tagihan lainnya.";
+      }
+      // 19. Sapaan Umum
+      else if (["hi", "hai", "halo", "hallo", "p"].some(k => lowInput === k)) {
+        reply = "Halo! Saya CS AI MarPay. Ada yang bisa saya bantu terkait cara pemesanan, pembayaran, atau bantuan lainnya?";
+      }
+      // 20. Terima Kasih
+      else if (["makasih", "terima kasih", "thanks", "oke"].some(k => lowInput.includes(k))) {
+        reply = "Sama-sama! Senang bisa membantu Anda. Jika butuh bantuan lagi, jangan ragu untuk bertanya.";
       }
 
       setMessages((prev) => [...prev, { role: 'assistant', content: reply }]);
@@ -125,7 +129,7 @@ export function MarPayAIChat() {
   };
 
   const handleWhatsApp = () => {
-    window.open(`https://wa.me/${adminWhatsApp}?text=${encodeURIComponent('Halo Admin MarPay, saya butuh bantuan order...')}`, '_blank');
+    window.open(`https://wa.me/${adminWhatsApp}?text=${encodeURIComponent('Halo Admin MarPay, saya butuh bantuan terkait pesanan saya...')}`, '_blank');
   };
 
   return (
@@ -224,7 +228,7 @@ export function MarPayAIChat() {
               <div className="flex gap-2">
                 <input
                   type="text"
-                  placeholder="Ketik pertanyaan (order, bayar, pulsa...)"
+                  placeholder="Ketik pertanyaan (cara order, bayar, dll...)"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
