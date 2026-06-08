@@ -248,7 +248,7 @@ export default function Home() {
             <TabsList className="bg-transparent border-b border-gray-100 w-full flex justify-start mb-4 gap-6 px-1 overflow-x-auto no-scrollbar">
               <TabsTrigger value="viral" className="font-bold text-base px-0 whitespace-nowrap">Produk Viral</TabsTrigger>
               <TabsTrigger value="official" className="font-bold text-base px-0 flex items-center gap-1.5 whitespace-nowrap">
-                <ShieldCheck className="w-4 h-4 text-[#00A859]" /> Official Store
+                <ShieldCheck className="w-4 h-4 text-[#00A859]" /> Official
               </TabsTrigger>
               <TabsTrigger value="semua" className="font-bold text-base px-0 whitespace-nowrap">Semua Produk</TabsTrigger>
             </TabsList>

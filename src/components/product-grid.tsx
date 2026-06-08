@@ -213,14 +213,14 @@ export function ProductCard({ product, compact = false }: { product: any, compac
         </button>
       </Link>
       <div className="p-3 flex-1 flex flex-col">
-        {/* Official Store Badge */}
-        {product.isOfficialStore && (
-          <div className="flex items-center gap-1 mb-1 text-[#00A859]">
-            <ShieldCheck className="w-2.5 h-2.5 fill-current/20" />
-            <span className="text-[9px] font-black uppercase tracking-tighter">Official Store</span>
-          </div>
-        )}
-        <Link href={`/product/${product.id}`} className="mb-1.5"><h3 className="text-[11.5px] font-bold text-gray-800 line-clamp-2 leading-tight h-[28px] overflow-hidden">{product.name}</h3></Link>
+        <Link href={`/product/${product.id}`} className="mb-1.5">
+          <h3 className="text-[11.5px] font-bold text-gray-800 line-clamp-2 leading-tight h-[28px] overflow-hidden">
+            {product.isOfficialStore && (
+              <ShieldCheck className="inline-block w-3.5 h-3.5 text-[#00A859] fill-current/10 mr-1 align-text-bottom" />
+            )}
+            {product.name}
+          </h3>
+        </Link>
         <div className="mt-auto">
           <div className="flex justify-between items-center mb-1.5">
             <p className="text-[13px] font-black text-red-600">
