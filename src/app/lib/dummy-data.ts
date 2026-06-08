@@ -49,6 +49,49 @@ export const Vouchers = [
   }
 ];
 
+// Voucher logic data for validation in checkout
+export const MasterVouchers = [
+  {
+    code: 'MARPAY10',
+    discountType: 'fixed',
+    discountValue: 10000,
+    minPurchase: 50000,
+    maxDiscount: 10000,
+    quota: 1000,
+    usedCount: 0,
+    expiredAt: '2026-12-31T23:59:59Z',
+    isActive: true,
+    applicableCategory: 'all',
+    description: 'Potongan Rp10.000 minimal belanja Rp50.000'
+  },
+  {
+    code: 'GRATISONGKIR',
+    discountType: 'fixed',
+    discountValue: 10000,
+    minPurchase: 0,
+    maxDiscount: 10000,
+    quota: 5000,
+    usedCount: 0,
+    expiredAt: '2026-12-31T23:59:59Z',
+    isActive: true,
+    applicableCategory: 'all',
+    description: 'Potongan ongkir maksimal Rp10.000'
+  },
+  {
+    code: 'PROMONYATA',
+    discountType: 'percent',
+    discountValue: 10, // 10%
+    minPurchase: 100000,
+    maxDiscount: 20000,
+    quota: 500,
+    usedCount: 0,
+    expiredAt: '2026-12-31T23:59:59Z',
+    isActive: true,
+    applicableCategory: 'Fashion',
+    description: 'Diskon 10% khusus kategori Fashion (Min. Rp100rb)'
+  }
+];
+
 export const Products = [
   {
     id: 226,

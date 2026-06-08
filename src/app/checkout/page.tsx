@@ -1,11 +1,11 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { 
   ArrowLeft, MapPin, CreditCard, Edit3, MessageCircle, AlertCircle, Wallet, QrCode, Truck, Info,
-  Smartphone, Zap, Gamepad2, Loader2
+  Smartphone, Zap, Gamepad2, Loader2, Ticket, CheckCircle2, X
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -26,6 +26,7 @@ import { cn, getProductImage } from '@/lib/utils';
 import { useUser, useFirestore } from '@/firebase';
 import { addDoc, collection, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
+import { MasterVouchers } from '@/app/lib/dummy-data';
 
 interface AddressData {
   name: string;
@@ -60,6 +61,11 @@ export default function Checkout() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isFromCart, setIsFromCart] = useState(false);
+
+  // Voucher States
+  const [voucherCode, setVoucherCode] = useState('');
+  const [appliedVoucher, setAppliedVoucher] = useState<any>(null);
+  const [voucherError, setVoucherError] = useState<string | null>(null);
 
   useEffect(() => {
     const handleFocus = () => {
@@ -110,15 +116,72 @@ export default function Checkout() {
     setIsLoaded(true);
   }, []);
 
-  const totalItemsPrice = items.reduce((acc, curr) => acc + (curr.price * curr.quantity), 0);
-  const totalShipping = items.reduce((acc, item) => {
+  const totalItemsPrice = useMemo(() => items.reduce((acc, curr) => acc + (curr.price * curr.quantity), 0), [items]);
+  const totalShipping = useMemo(() => items.reduce((acc, item) => {
     if (!item.shippingFee || item.shippingFee <= 0) return acc;
     const additionalFee = Math.max(0, item.quantity - 1) * 5000;
     return acc + (item.shippingFee + additionalFee);
-  }, 0);
+  }, 0), [items]);
 
-  const totalBill = totalItemsPrice + totalShipping;
+  const discountAmount = useMemo(() => {
+    if (!appliedVoucher) return 0;
+    
+    let discount = 0;
+    if (appliedVoucher.discountType === 'fixed') {
+      discount = appliedVoucher.discountValue;
+    } else if (appliedVoucher.discountType === 'percent') {
+      discount = (totalItemsPrice * appliedVoucher.discountValue) / 100;
+    }
+
+    return Math.min(discount, appliedVoucher.maxDiscount || discount);
+  }, [appliedVoucher, totalItemsPrice]);
+
+  const totalBill = Math.max(0, totalItemsPrice + totalShipping - discountAmount);
   const isDigital = items.length > 0 && items.every(item => item.type === 'digital');
+
+  const handleApplyVoucher = () => {
+    setVoucherError(null);
+    const code = voucherCode.trim().toUpperCase();
+    if (!code) return;
+
+    const voucher = MasterVouchers.find(v => v.code === code);
+
+    if (!voucher) {
+      setVoucherError("Kode voucher tidak ditemukan.");
+      return;
+    }
+
+    if (!voucher.isActive) {
+      setVoucherError("Voucher sudah tidak aktif.");
+      return;
+    }
+
+    if (new Date(voucher.expiredAt) < new Date()) {
+      setVoucherError("Voucher telah kadaluarsa.");
+      return;
+    }
+
+    if (totalItemsPrice < voucher.minPurchase) {
+      setVoucherError(`Minimal belanja Rp ${voucher.minPurchase.toLocaleString()} untuk kode ini.`);
+      return;
+    }
+
+    if (voucher.applicableCategory !== 'all') {
+      const hasValidCategory = items.some(item => item.category === voucher.applicableCategory);
+      if (!hasValidCategory) {
+        setVoucherError(`Voucher hanya berlaku untuk kategori ${voucher.applicableCategory}.`);
+        return;
+      }
+    }
+
+    setAppliedVoucher(voucher);
+    toast({ title: "Voucher Berhasil!", description: "Potongan harga telah diterapkan.", variant: "success" });
+  };
+
+  const removeVoucher = () => {
+    setAppliedVoucher(null);
+    setVoucherCode('');
+  };
 
   const saveAddress = () => {
     if (!tempAddress.name || !tempAddress.phone || !tempAddress.fullAddress) {
@@ -156,7 +219,6 @@ export default function Checkout() {
       return `${index + 1}. ${item.name}\n   Varian: ${item.variant || 'Default'}\n   Jumlah: ${item.quantity} pcs\n   Harga: Rp ${item.price.toLocaleString()}`;
     }).join('\n\n');
 
-    // EXPIRED LOGIC: 3 Hours from now (Marketplace Standard)
     const now = new Date();
     const expireTime = new Date(now.getTime() + 3 * 60 * 60 * 1000);
 
@@ -171,10 +233,14 @@ export default function Checkout() {
       message += `━━━━━━━━━━━━━━\n\n`;
       message += `📦 DETAIL PESANAN\n\n`;
       message += `${orderItemsList}\n\n`;
+      if (appliedVoucher) {
+        message += `🎟️ VOUCHER: ${appliedVoucher.code} (-Rp ${discountAmount.toLocaleString()})\n\n`;
+      }
       message += `━━━━━━━━━━━━━━\n\n`;
       message += `💳 RINGKASAN PEMBAYARAN\n\n`;
       message += `Subtotal : Rp ${totalItemsPrice.toLocaleString()}\n`;
       message += `Ongkir : Rp ${totalShipping.toLocaleString()}\n`;
+      if (appliedVoucher) message += `Diskon : -Rp ${discountAmount.toLocaleString()}\n`;
       message += `Total Bayar : Rp ${totalBill.toLocaleString()}\n\n`;
       message += `Metode Pembayaran :\n${paymentMethodLabel}\n\n`;
       message += `━━━━━━━━━━━━━━\n\n`;
@@ -194,7 +260,9 @@ export default function Checkout() {
         customerEmail: user?.email || '',
         items,
         totalAmount: totalBill,
-        status: 'Menunggu Konfirmasi', // Equivalent to "pending"
+        discountAmount: discountAmount,
+        voucherUsed: appliedVoucher?.code || null,
+        status: 'Menunggu Konfirmasi',
         paymentStatus: 'Menunggu Pembayaran',
         paymentMethod: paymentMethodLabel,
         shippingAddress: isDigital ? { fullAddress: 'Digital' } : address,
@@ -255,7 +323,7 @@ export default function Checkout() {
 
   return (
     <div className="min-h-screen bg-gray-50 pb-32">
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white px-4 py-3.5 border-b border-gray-100 flex items-center gap-4">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white px-4 py-3.5 border-b border-gray-100 flex items-center gap-4 shadow-sm">
         <Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => {
           localStorage.removeItem('marpay_checkout_temp');
           router.back();
@@ -368,6 +436,54 @@ export default function Checkout() {
           </div>
         </div>
 
+        {/* Voucher Section */}
+        <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm space-y-3">
+          <div className="flex items-center gap-2">
+            <Ticket className="w-4 h-4 text-primary" />
+            <h3 className="text-xs font-bold uppercase tracking-wide">Voucher MarPay</h3>
+          </div>
+          
+          {appliedVoucher ? (
+            <div className="flex items-center justify-between bg-emerald-50 border border-emerald-100 p-3 rounded-xl animate-in zoom-in-95 duration-200">
+               <div className="flex items-center gap-3">
+                 <div className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center text-white shadow-sm">
+                   <CheckCircle2 className="w-5 h-5" />
+                 </div>
+                 <div>
+                   <p className="text-[10px] font-bold text-emerald-800 uppercase leading-none">{appliedVoucher.code}</p>
+                   <p className="text-[9px] text-emerald-600 font-medium mt-1">Berhasil hemat Rp {discountAmount.toLocaleString()}</p>
+                 </div>
+               </div>
+               <button onClick={removeVoucher} className="p-1.5 text-emerald-400 hover:text-red-500">
+                 <X className="w-4 h-4" />
+               </button>
+            </div>
+          ) : (
+            <div className="space-y-2">
+               <div className="flex gap-2">
+                 <Input 
+                   placeholder="Punya kode voucher?" 
+                   value={voucherCode} 
+                   onChange={(e) => setVoucherCode(e.target.value)}
+                   className="rounded-xl border-gray-100 bg-gray-50/50 h-10 text-xs font-medium uppercase placeholder:normal-case" 
+                 />
+                 <Button 
+                   onClick={handleApplyVoucher}
+                   variant="outline" 
+                   className="rounded-xl border-primary/20 text-primary font-bold text-xs h-10 px-5 active:scale-95 transition-transform"
+                 >
+                   Pakai
+                 </Button>
+               </div>
+               {voucherError && (
+                 <p className="text-[9px] text-red-500 font-medium ml-1 flex items-center gap-1">
+                   <AlertCircle className="w-3 h-3" /> {voucherError}
+                 </p>
+               )}
+            </div>
+          )}
+        </div>
+
         <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm space-y-3.5">
           <div className="flex items-center gap-2">
             <CreditCard className="w-4 h-4 text-primary" />
@@ -408,6 +524,9 @@ export default function Checkout() {
           <div className="space-y-2.5">
             <div className="flex justify-between items-center"><span className="text-[11px] text-gray-500 font-medium">Subtotal</span><span className="text-[11px] font-bold text-gray-800">Rp {totalItemsPrice.toLocaleString()}</span></div>
             <div className="flex justify-between items-center"><span className="text-[11px] text-gray-500 font-medium">Ongkir</span><span className="text-[11px] font-bold text-primary">Rp {totalShipping.toLocaleString()}</span></div>
+            {appliedVoucher && (
+              <div className="flex justify-between items-center"><span className="text-[11px] text-emerald-600 font-medium">Diskon Voucher</span><span className="text-[11px] font-bold text-emerald-600">-Rp {discountAmount.toLocaleString()}</span></div>
+            )}
             <div className="border-t border-gray-50 pt-2.5 flex justify-between items-center"><span className="text-xs font-bold text-gray-900 uppercase">Total Tagihan</span><span className="text-base font-black text-primary">Rp {totalBill.toLocaleString()}</span></div>
           </div>
         </div>
