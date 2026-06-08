@@ -31,7 +31,11 @@ export default function OrderDetailPage() {
   const { data: order, loading: orderLoading } = useDoc<any>(orderRef);
 
   useEffect(() => {
-    if (!order?.expiredAt || order.status !== 'Menunggu Konfirmasi') return;
+    // Timer only runs if status is still 'Menunggu Konfirmasi'
+    if (!order?.expiredAt || order.status !== 'Menunggu Konfirmasi') {
+      setTimeLeft('');
+      return;
+    }
 
     const timer = setInterval(() => {
       const now = new Date().getTime();
@@ -58,12 +62,12 @@ export default function OrderDetailPage() {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [order, orderRef]);
+  }, [order?.status, order?.expiredAt, orderRef]);
 
   const isAdmin = user?.email === 'cs.marpay@gmail.com';
   const isOwner = order?.userId === user?.uid || isAdmin;
 
-  if (authLoading || orderLoading) {
+  if (authLoading || (orderLoading && !order)) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -100,17 +104,20 @@ export default function OrderDetailPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 pb-24">
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white px-4 py-4 border-b border-gray-100 flex items-center gap-4 shadow-sm">
-        <Button variant="ghost" size="icon" onClick={() => router.back()}>
-          <ArrowLeft className="w-5 h-5" />
-        </Button>
-        <h1 className="text-lg font-bold">Detail Pesanan</h1>
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white px-4 py-4 border-b border-gray-100 flex items-center justify-between shadow-sm">
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" size="icon" onClick={() => router.back()}>
+            <ArrowLeft className="w-5 h-5" />
+          </Button>
+          <h1 className="text-lg font-bold">Detail Pesanan</h1>
+        </div>
+        {orderLoading && <Loader2 className="w-4 h-4 animate-spin text-gray-300" />}
       </header>
 
       <main className="pt-20 px-4 space-y-4">
         {/* Payment Expiration Countdown */}
         {order.status === 'Menunggu Konfirmasi' && timeLeft && (
-          <div className="bg-orange-50 border border-orange-100 p-4 rounded-3xl flex items-center gap-4 shadow-sm">
+          <div className="bg-orange-50 border border-orange-100 p-4 rounded-3xl flex items-center gap-4 shadow-sm animate-in fade-in duration-300">
              <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-orange-500 shadow-sm shrink-0">
                 <Timer className="w-6 h-6 animate-pulse" />
              </div>
@@ -126,8 +133,8 @@ export default function OrderDetailPage() {
         )}
 
         {/* Failed / Cancelled Notice */}
-        {(order.status === 'Dibatalkan Otomatis' || order.status === 'Gagal Bayar') && (
-          <div className="bg-red-50 border border-red-100 p-4 rounded-3xl flex items-center gap-4 shadow-sm">
+        {(order.status === 'Dibatalkan Otomatis' || order.status === 'Gagal Bayar' || order.status === 'Dibatalkan') && (
+          <div className="bg-red-50 border border-red-100 p-4 rounded-3xl flex items-center gap-4 shadow-sm animate-in slide-in-from-top-2">
              <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-red-500 shadow-sm shrink-0">
                 <XCircle className="w-6 h-6" />
              </div>
@@ -147,7 +154,7 @@ export default function OrderDetailPage() {
               <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Nomor Pesanan</p>
               <h2 className="text-sm font-black text-primary">#{orderId.slice(-8).toUpperCase()}</h2>
             </div>
-            <span className={cn("text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-tighter border", getStatusColor(order.status))}>
+            <span className={cn("text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-tighter border transition-colors duration-300", getStatusColor(order.status))}>
               {order.status}
             </span>
           </div>
@@ -157,9 +164,9 @@ export default function OrderDetailPage() {
           </div>
         </section>
 
-        {/* Shipping Status (Premium Look - Adjusted) */}
+        {/* Shipping Status */}
         {(order.status === 'Dikirim' || (order.status === 'Selesai' && order.trackingNumber)) && (
-          <section className="bg-gradient-to-br from-[#1565FF] to-[#0057E7] text-white p-4 rounded-[28px] shadow-xl shadow-blue-100/50 space-y-3 relative overflow-hidden">
+          <section className="bg-gradient-to-br from-[#1565FF] to-[#0057E7] text-white p-4 rounded-[28px] shadow-xl shadow-blue-100/50 space-y-3 relative overflow-hidden animate-in fade-in zoom-in-95 duration-500">
             <div className="absolute right-[-10px] top-[-10px] opacity-10 pointer-events-none">
               <Truck className="w-20 h-20 rotate-12" />
             </div>
@@ -261,7 +268,7 @@ export default function OrderDetailPage() {
         {/* Action Button */}
         <div className="pt-4 flex flex-col gap-3">
           <Button 
-            className="w-full h-12 rounded-2xl bg-primary hover:bg-primary/90 text-white font-black flex items-center gap-2"
+            className="w-full h-12 rounded-2xl bg-primary hover:bg-primary/90 text-white font-black flex items-center gap-2 transition-all active:scale-95"
             onClick={() => window.open(`https://wa.me/6283851278935?text=${encodeURIComponent(`Halo Admin MarPay, saya ingin bertanya status pesanan saya dengan ID: ${orderId.slice(-8).toUpperCase()}`)}`, '_blank')}
           >
             <MessageCircle className="w-5 h-5" />

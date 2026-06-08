@@ -67,16 +67,20 @@ export default function TransactionPage() {
   const [activeTab, setActiveTab] = useState('all');
 
   const ordersRef = useMemo(() => {
-    if (!db || !user?.uid) return null;
+    if (!db) return null;
     return collection(db, 'orders');
-  }, [db, user?.uid]);
+  }, [db]);
 
-  const { data: orders, loading: ordersLoading } = useCollection(
-    ordersRef ? query(
+  // STABILIZE QUERY TO PREVENT RE-SUBSCRIPTION LOOPS
+  const ordersQuery = useMemo(() => {
+    if (!ordersRef || !user?.uid) return null;
+    return query(
       ordersRef, 
-      where('userId', '==', user?.uid)
-    ) : null
-  );
+      where('userId', '==', user.uid)
+    );
+  }, [ordersRef, user?.uid]);
+
+  const { data: orders, loading: ordersLoading } = useCollection(ordersQuery);
 
   const filteredOrders = useMemo(() => {
     if (!orders) return [];
@@ -112,7 +116,7 @@ export default function TransactionPage() {
     { label: 'Selesai', value: 'Selesai' },
   ];
 
-  if (authLoading || ordersLoading) {
+  if (authLoading || (ordersLoading && orders.length === 0)) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -137,6 +141,7 @@ export default function TransactionPage() {
           <ArrowLeft className="w-5 h-5" />
         </Button>
         <h1 className="text-lg font-bold">Riwayat Pesanan</h1>
+        {ordersLoading && <Loader2 className="w-4 h-4 animate-spin text-gray-300 ml-auto" />}
       </header>
 
       <main className="pt-20 px-4">

@@ -31,9 +31,13 @@ export default function AdminOrdersPage() {
     return collection(db, 'orders');
   }, [db]);
 
-  const { data: rawOrders, loading: ordersLoading } = useCollection(
-    ordersRef ? query(ordersRef) : null
-  );
+  // STABILIZE QUERY TO PREVENT RE-SUBSCRIPTION LOOPS
+  const ordersQuery = useMemo(() => {
+    if (!ordersRef) return null;
+    return query(ordersRef);
+  }, [ordersRef]);
+
+  const { data: rawOrders, loading: ordersLoading } = useCollection(ordersQuery);
 
   const orders = useMemo(() => {
     if (!rawOrders) return [];
@@ -111,7 +115,7 @@ export default function AdminOrdersPage() {
     };
   }, [orders]);
 
-  if (authLoading) {
+  if (authLoading || (ordersLoading && orders.length === 0)) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -128,8 +132,11 @@ export default function AdminOrdersPage() {
           </Button>
           <h1 className="text-lg font-black">Dashboard Pesanan</h1>
         </div>
-        <div className="bg-primary/10 px-3 py-1 rounded-full border border-primary/20">
-          <span className="text-[10px] font-black text-primary uppercase">ADMIN</span>
+        <div className="flex items-center gap-2">
+          {ordersLoading && <Loader2 className="w-4 h-4 animate-spin text-primary/40" />}
+          <div className="bg-primary/10 px-3 py-1 rounded-full border border-primary/20">
+            <span className="text-[10px] font-black text-primary uppercase">ADMIN</span>
+          </div>
         </div>
       </header>
 
