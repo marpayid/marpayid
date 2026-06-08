@@ -55,9 +55,22 @@ export function getProductImage(product: any): string {
     return '/premium1.png';
   }
   
+  // Deteksi Tipe Digital untuk Fallback yang lebih baik
+  const name = (product.name || '').toLowerCase();
+  const isDigital = product.type === 'digital' || ['Top Up', 'Game', 'E-Wallet'].includes(product.category);
+
   // Prioritas field: productImage (normalized) -> image (order data) -> imageUrl (external) -> image (local)
-  const imgPath = product.productImage || product.image || product.imageUrl || '';
+  let imgPath = product.productImage || product.image || product.imageUrl || '';
   
+  // Jika ini produk digital dan tidak ada path valid atau hanya berupa placeholder ikon lokal
+  if (isDigital && (!imgPath || imgPath.includes('-icon'))) {
+    if (name.includes('pulsa')) return 'https://picsum.photos/seed/pulsa/400/400';
+    if (name.includes('pln') || name.includes('listrik')) return 'https://picsum.photos/seed/electricity/400/400';
+    if (name.includes('dana') || name.includes('ovo') || name.includes('gopay') || name.includes('wallet')) return 'https://picsum.photos/seed/wallet/400/400';
+    if (name.includes('game') || name.includes('diamond') || name.includes('robux')) return 'https://picsum.photos/seed/gaming/400/400';
+    return 'https://picsum.photos/seed/digital/400/400';
+  }
+
   if (!imgPath) {
     return DEFAULT_PLACEHOLDER;
   }

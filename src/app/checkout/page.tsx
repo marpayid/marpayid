@@ -311,7 +311,7 @@ Mohon diproses.
 Terima kasih 🙏`;
 
     // CRITICAL: Ensure every item has its resolved image URL saved to the order document
-    // Using 'productImage' as the normalized field name as requested
+    // We use getProductImage(item) which now handles digital fallbacks correctly
     const processedItems = items.map(item => ({
       ...item,
       productImage: getProductImage(item),
@@ -347,6 +347,7 @@ Terima kasih 🙏`;
   };
 
   const renderItemMedia = (item: any) => {
+    // During checkout UI, we can use icons for digital products, but the saved data must have productImage
     if (item.type === 'digital') {
       const name = item.name?.toLowerCase() || '';
       let Icon = CreditCard;
