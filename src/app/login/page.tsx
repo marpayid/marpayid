@@ -33,6 +33,15 @@ export default function LoginPage() {
       return;
     }
 
+    if (!auth) {
+      toast({
+        variant: "destructive",
+        title: "Gagal Masuk",
+        description: "Layanan autentikasi tidak tersedia. Periksa konfigurasi API Key Firebase.",
+      });
+      return;
+    }
+
     setLoading(true);
     try {
       await signInWithEmailAndPassword(auth, formData.email, formData.password);

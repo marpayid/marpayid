@@ -16,20 +16,27 @@ export const FirebaseClientProvider: React.FC<{ children: React.ReactNode }> = (
       return { app: null, db: null, auth: null };
     }
 
-    // Basic validation to prevent immediate crash if env vars are missing
-    const hasConfig = !!firebaseConfig.apiKey && firebaseConfig.apiKey !== 'undefined';
+    // Audit and validate configuration before initialization
+    const isApiKeyMissing = !firebaseConfig.apiKey || firebaseConfig.apiKey === 'undefined' || firebaseConfig.apiKey === '';
+    const isProjectIdMissing = !firebaseConfig.projectId || firebaseConfig.projectId === 'undefined' || firebaseConfig.projectId === '';
+
+    if (isApiKeyMissing || isProjectIdMissing) {
+      console.error("CRITICAL: Firebase Configuration is invalid or missing Environment Variables.");
+      if (isApiKeyMissing) console.error("- NEXT_PUBLIC_FIREBASE_API_KEY is missing or undefined");
+      if (isProjectIdMissing) console.error("- NEXT_PUBLIC_FIREBASE_PROJECT_ID is missing or undefined");
+      console.warn("Firebase services will be unavailable. Please set the environment variables in your hosting provider (e.g., Vercel/Firebase).");
+      return { app: null, db: null, auth: null };
+    }
 
     try {
       const existingApp = getApps().length > 0 ? getApp() : null;
-      
-      // If no config, we still initialize to prevent Context errors, but auth/db will fail gracefully on use
       const app: FirebaseApp = existingApp || initializeApp(firebaseConfig);
       const db: Firestore = getFirestore(app);
       const auth: Auth = getAuth(app);
       
       return { app, db, auth };
-    } catch (err) {
-      console.error("Firebase Initialization Warning:", err);
+    } catch (err: any) {
+      console.error("Firebase Initialization Error:", err.message || err);
       return { app: null, db: null, auth: null };
     }
   }, []);
@@ -40,7 +47,7 @@ export const FirebaseClientProvider: React.FC<{ children: React.ReactNode }> = (
         try {
           await setPersistence(firebaseInstance.auth, browserLocalPersistence);
         } catch (err) {
-          // Ignore persistence errors in preview
+          // Ignore persistence errors
         }
       }
       setIsInitialized(true);
@@ -56,7 +63,6 @@ export const FirebaseClientProvider: React.FC<{ children: React.ReactNode }> = (
     );
   }
 
-  // Provide the instances even if null to allow app to render and use dummy data
   return (
     <FirebaseProvider 
       firebaseApp={firebaseInstance.app as any} 

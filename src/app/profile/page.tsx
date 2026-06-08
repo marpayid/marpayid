@@ -1,4 +1,3 @@
-
 'use client';
 
 import { BottomNav } from '@/components/bottom-nav';
@@ -99,7 +98,11 @@ export default function Profile() {
   };
 
   const handleUpdateProfile = async () => {
-    if (!user?.uid || !userProfileRef) return;
+    if (!user?.uid || !userProfileRef || !db) {
+      toast({ variant: "destructive", title: "Gagal", description: "Layanan database tidak tersedia saat ini." });
+      return;
+    }
+
     if (!editForm.name.trim() || !editForm.phone.trim()) {
       toast({ variant: "destructive", title: "Gagal", description: "Nama dan Nomor WhatsApp wajib diisi." });
       return;

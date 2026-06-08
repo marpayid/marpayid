@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -56,7 +55,11 @@ export default function RegisterPage() {
     
     if (!validate()) return;
     if (!auth || !db) {
-      toast({ variant: "destructive", title: "Sistem Error", description: "Layanan Firebase belum siap." });
+      toast({ 
+        variant: "destructive", 
+        title: "Pendaftaran Gagal", 
+        description: "Layanan database atau autentikasi tidak tersedia. Mohon hubungi admin untuk konfigurasi sistem." 
+      });
       return;
     }
 
