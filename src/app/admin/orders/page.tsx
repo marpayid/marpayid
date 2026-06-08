@@ -145,7 +145,7 @@ export default function AdminOrdersPage() {
               </div>
 
               <div className="pt-1 flex items-center justify-between opacity-30">
-                 <p className="text-[8px] font-black text-gray-400 uppercase tracking-[0.3em]">MarPay v2.0</p>
+                 <div />
                  <Server className="w-3 h-3 text-gray-500" />
               </div>
            </div>
