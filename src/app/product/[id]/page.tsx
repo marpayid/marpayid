@@ -145,7 +145,8 @@ export default function ProductDetail() {
       quantity: quantity, 
       type: product.type || 'physical', 
       category: product.category, 
-      shippingFee: product.shippingFee || 0 
+      shippingFee: product.shippingFee || 0,
+      isFreeShipping: product.isFreeShipping || product.shippingFee === 0
     };
 
     if (redirect) {

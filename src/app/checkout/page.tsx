@@ -117,11 +117,34 @@ export default function Checkout() {
   }, []);
 
   const totalItemsPrice = useMemo(() => items.reduce((acc, curr) => acc + (curr.price * curr.quantity), 0), [items]);
-  const totalShipping = useMemo(() => items.reduce((acc, item) => {
-    if (!item.shippingFee || item.shippingFee <= 0) return acc;
-    const additionalFee = Math.max(0, item.quantity - 1) * 5000;
-    return acc + (item.shippingFee + additionalFee);
-  }, 0), [items]);
+  
+  // Perhitungan Ongkir Baru: Mengakomodasi Gratis Ongkir Otomatis
+  const shippingDetails = useMemo(() => {
+    let raw = 0;
+    let autoDiscount = 0;
+
+    items.forEach(item => {
+      if (item.type === 'digital') return;
+      
+      // Hitung Ongkir Dasar (Gunakan 10.000 sebagai base jika produk ditandai Gratis Ongkir, agar bisa didiskon visual)
+      const baseFee = (item.shippingFee && item.shippingFee > 0) ? item.shippingFee : 10000;
+      const additional = Math.max(0, item.quantity - 1) * 5000;
+      const totalItemShipping = baseFee + additional;
+      
+      raw += totalItemShipping;
+      
+      // Jika produk memiliki label Gratis Ongkir (atau isFreeShipping dari data produk)
+      if (item.isFreeShipping === true || item.shippingFee === 0) {
+        autoDiscount += totalItemShipping;
+      }
+    });
+
+    return { 
+      raw, 
+      autoDiscount, 
+      net: Math.max(0, raw - autoDiscount) 
+    };
+  }, [items]);
 
   const discountAmount = useMemo(() => {
     if (!appliedVoucher) return 0;
@@ -136,7 +159,7 @@ export default function Checkout() {
     return Math.min(discount, appliedVoucher.maxDiscount || discount);
   }, [appliedVoucher, totalItemsPrice]);
 
-  const totalBill = Math.max(0, totalItemsPrice + totalShipping - discountAmount);
+  const totalBill = Math.max(0, totalItemsPrice + shippingDetails.net - discountAmount);
   const isDigital = items.length > 0 && items.every(item => item.type === 'digital');
 
   const handleApplyVoucher = () => {
@@ -236,11 +259,15 @@ export default function Checkout() {
       if (appliedVoucher) {
         message += `🎟️ VOUCHER: ${appliedVoucher.code} (-Rp ${discountAmount.toLocaleString()})\n\n`;
       }
+      if (shippingDetails.autoDiscount > 0) {
+        message += `🚚 GRATIS ONGKIR: Otomatis (-Rp ${shippingDetails.autoDiscount.toLocaleString()})\n\n`;
+      }
       message += `━━━━━━━━━━━━━━\n\n`;
       message += `💳 RINGKASAN PEMBAYARAN\n\n`;
       message += `Subtotal : Rp ${totalItemsPrice.toLocaleString()}\n`;
-      message += `Ongkir : Rp ${totalShipping.toLocaleString()}\n`;
+      message += `Ongkir : Rp ${shippingDetails.raw.toLocaleString()}\n`;
       if (appliedVoucher) message += `Diskon : -Rp ${discountAmount.toLocaleString()}\n`;
+      if (shippingDetails.autoDiscount > 0) message += `Potongan Ongkir : -Rp ${shippingDetails.autoDiscount.toLocaleString()}\n`;
       message += `Total Bayar : Rp ${totalBill.toLocaleString()}\n\n`;
       message += `Metode Pembayaran :\n${paymentMethodLabel}\n\n`;
       message += `━━━━━━━━━━━━━━\n\n`;
@@ -260,8 +287,9 @@ export default function Checkout() {
         customerEmail: user?.email || '',
         items,
         totalAmount: totalBill,
-        discountAmount: discountAmount,
+        discountAmount: discountAmount + shippingDetails.autoDiscount,
         voucherUsed: appliedVoucher?.code || null,
+        autoFreeShipping: shippingDetails.autoDiscount > 0,
         status: 'Menunggu Konfirmasi',
         paymentStatus: 'Menunggu Pembayaran',
         paymentMethod: paymentMethodLabel,
@@ -409,9 +437,7 @@ export default function Checkout() {
           </div>
           <div className="space-y-3.5">
             {items.map((item, idx) => {
-              const itemShipping = (item.shippingFee || 0) > 0 
-                ? item.shippingFee + (Math.max(0, item.quantity - 1) * 5000) 
-                : 0;
+              const hasFreeShipping = item.isFreeShipping === true || item.shippingFee === 0;
               return (
                 <div key={`${item.id}-${idx}`} className="flex gap-3.5">
                   <div className="relative w-14 h-14 rounded-xl overflow-hidden flex-shrink-0 border border-gray-50 bg-gray-50">
@@ -422,7 +448,14 @@ export default function Checkout() {
                     <div className="mt-1 space-y-0.5">
                       <p className="text-[10px] text-gray-400 font-medium truncate">Varian: {item.variant || 'Default'}</p>
                       {item.type !== 'digital' && (
-                        <p className="text-[10px] text-gray-400 font-medium">Ongkir: {itemShipping > 0 ? `Rp ${itemShipping.toLocaleString()}` : 'Gratis'}</p>
+                        <div className="flex items-center gap-1.5">
+                           <p className="text-[10px] text-gray-400 font-medium">Ongkir:</p>
+                           {hasFreeShipping ? (
+                             <span className="text-[10px] text-emerald-600 font-black uppercase tracking-tighter">Gratis</span>
+                           ) : (
+                             <p className="text-[10px] text-gray-400 font-medium">Rp {item.shippingFee?.toLocaleString()}</p>
+                           )}
+                        </div>
                       )}
                     </div>
                     <div className="flex items-center justify-between mt-1.5">
@@ -482,6 +515,14 @@ export default function Checkout() {
                )}
             </div>
           )}
+
+          {/* Info Promo Otomatis */}
+          {shippingDetails.autoDiscount > 0 && (
+             <div className="bg-emerald-50/50 border border-dashed border-emerald-200 p-2.5 rounded-xl flex items-center gap-2">
+                <Truck className="w-3.5 h-3.5 text-emerald-500" />
+                <p className="text-[10px] text-emerald-700 font-bold uppercase tracking-tight">🚚 Gratis Ongkir Diterapkan Otomatis</p>
+             </div>
+          )}
         </div>
 
         <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm space-y-3.5">
@@ -523,10 +564,22 @@ export default function Checkout() {
           <h3 className="text-xs font-bold uppercase tracking-wide">Ringkasan Belanja</h3>
           <div className="space-y-2.5">
             <div className="flex justify-between items-center"><span className="text-[11px] text-gray-500 font-medium">Subtotal</span><span className="text-[11px] font-bold text-gray-800">Rp {totalItemsPrice.toLocaleString()}</span></div>
-            <div className="flex justify-between items-center"><span className="text-[11px] text-gray-500 font-medium">Ongkir</span><span className="text-[11px] font-bold text-primary">Rp {totalShipping.toLocaleString()}</span></div>
-            {appliedVoucher && (
-              <div className="flex justify-between items-center"><span className="text-[11px] text-emerald-600 font-medium">Diskon Voucher</span><span className="text-[11px] font-bold text-emerald-600">-Rp {discountAmount.toLocaleString()}</span></div>
+            <div className="flex justify-between items-center"><span className="text-[11px] text-gray-500 font-medium">Ongkir</span><span className="text-[11px] font-bold text-gray-800">Rp {shippingDetails.raw.toLocaleString()}</span></div>
+            
+            {/* Tampilan Diskon Otomatis */}
+            {shippingDetails.autoDiscount > 0 && (
+              <div className="flex justify-between items-center bg-emerald-50/30 -mx-1 px-1 rounded">
+                <span className="text-[11px] text-emerald-600 font-bold uppercase tracking-tighter flex items-center gap-1">
+                  <Truck className="w-3 h-3" /> Voucher Ongkir Otomatis
+                </span>
+                <span className="text-[11px] font-bold text-emerald-600">-Rp {shippingDetails.autoDiscount.toLocaleString()}</span>
+              </div>
             )}
+
+            {appliedVoucher && (
+              <div className="flex justify-between items-center"><span className="text-[11px] text-emerald-600 font-medium">Diskon Voucher ({appliedVoucher.code})</span><span className="text-[11px] font-bold text-emerald-600">-Rp {discountAmount.toLocaleString()}</span></div>
+            )}
+            
             <div className="border-t border-gray-50 pt-2.5 flex justify-between items-center"><span className="text-xs font-bold text-gray-900 uppercase">Total Tagihan</span><span className="text-base font-black text-primary">Rp {totalBill.toLocaleString()}</span></div>
           </div>
         </div>
