@@ -213,13 +213,18 @@ export function ProductCard({ product, compact = false }: { product: any, compac
         </button>
       </Link>
       <div className="p-3 flex-1 flex flex-col">
-        <Link href={`/product/${product.id}`} className="mb-1.5">
-          <h3 className="text-[11.5px] font-bold text-gray-800 line-clamp-2 leading-tight h-[28px] overflow-hidden">
+        <Link href={`/product/${product.id}`} className="mb-1.5 block">
+          <div className="flex items-start gap-1.5 h-[28px] overflow-hidden">
             {product.isOfficialStore && (
-              <ShieldCheck className="inline-block w-3.5 h-3.5 text-[#00A859] fill-current/10 mr-1 align-text-bottom" />
+              <div className="shrink-0 mt-[1.5px] w-[14px] h-[14px] relative flex items-center justify-center rounded-[3.5px] bg-gradient-to-tr from-[#059669] via-[#10B981] to-[#4ADE80] shadow-[0_1.5px_3px_rgba(5,150,105,0.3)] border-[0.5px] border-white/20 overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-b from-white/30 to-transparent opacity-60"></div>
+                <ShieldCheck className="w-[10px] h-[10px] text-white stroke-[3.5px] relative z-10 drop-shadow-[0_0.5px_0.5px_rgba(0,0,0,0.1)]" />
+              </div>
             )}
-            {product.name}
-          </h3>
+            <h3 className="text-[11.5px] font-bold text-gray-800 line-clamp-2 leading-tight flex-1">
+              {product.name}
+            </h3>
+          </div>
         </Link>
         <div className="mt-auto">
           <div className="flex justify-between items-center mb-1.5">
