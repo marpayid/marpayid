@@ -213,10 +213,7 @@ export function ProductCard({ product, compact = false }: { product: any, compac
           {product.isOfficialStore && (
             <div className="absolute left-0 top-[1px] w-[13.5px] h-[13.5px] z-10 flex items-center justify-center">
               <div className="relative w-full h-full flex items-center justify-center">
-                {/* Shadow & Glow layer */}
                 <div className="absolute inset-0 bg-[#1565FF]/20 rounded-full blur-[2px]"></div>
-                
-                {/* Premium Shield Badge SVG */}
                 <svg viewBox="0 0 100 100" className="w-full h-full relative z-10 drop-shadow-[0_1px_1px_rgba(0,0,0,0.2)]">
                   <defs>
                     <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -224,20 +221,17 @@ export function ProductCard({ product, compact = false }: { product: any, compac
                       <stop offset="100%" stopColor="#10B981" />
                     </linearGradient>
                   </defs>
-                  {/* Hexagon Shield Body */}
                   <path 
                     d="M50 2 L88 22 L88 78 L50 98 L12 78 L12 22 Z" 
                     fill="url(#shieldGrad)" 
                     stroke="white" 
                     strokeWidth="4"
                   />
-                  {/* Glossy top highlight */}
                   <path 
                     d="M50 10 L80 28 L20 28 Z" 
                     fill="white" 
                     fillOpacity="0.3"
                   />
-                  {/* Premium White Checkmark */}
                   <path 
                     d="M32 52 L45 65 L70 38" 
                     stroke="white" 
@@ -251,7 +245,7 @@ export function ProductCard({ product, compact = false }: { product: any, compac
             </div>
           )}
           <h3 
-            className="text-[11.5px] font-bold text-gray-800 line-clamp-2 leading-tight"
+            className="text-[11.5px] font-medium text-gray-800 line-clamp-2 leading-tight"
             style={{ textIndent: product.isOfficialStore ? '17px' : '0' }}
           >
             {product.name}
@@ -273,7 +267,7 @@ export function ProductCard({ product, compact = false }: { product: any, compac
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1 overflow-hidden">
               <Star className="w-2.5 h-2.5 fill-yellow-400 text-yellow-400 flex-shrink-0" />
-              <span className="text-[10px] font-black text-gray-700">{product.rating || '0.0'}</span>
+              <span className="text-[10px] font-semibold text-gray-700">{product.rating || '0.0'}</span>
               <span className="text-[10px] text-gray-300 mx-0.5 flex-shrink-0">|</span>
               <span className="text-[10px] text-gray-400 font-medium truncate">{formatSold(product.sold || 0)}</span>
             </div>
