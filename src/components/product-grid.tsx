@@ -211,10 +211,43 @@ export function ProductCard({ product, compact = false }: { product: any, compac
       <div className="p-3 flex-1 flex flex-col">
         <Link href={`/product/${product.id}`} className="mb-1.5 block relative min-h-[28px]">
           {product.isOfficialStore && (
-            <div className="absolute left-0 top-[1px] w-[13px] h-[13px] rounded-full bg-gradient-to-br from-[#10B981] to-[#059669] flex items-center justify-center shadow-[0_1px_3px_rgba(16,185,129,0.3)] z-10 border-[0.5px] border-white/20">
-              <svg viewBox="0 0 24 24" className="w-[8px] h-[8px] text-white stroke-[5px]" fill="none" stroke="currentColor">
-                <polyline points="20 6 9 17 4 12" />
-              </svg>
+            <div className="absolute left-0 top-[1.5px] w-[13.5px] h-[13.5px] z-10 flex items-center justify-center">
+              <div className="relative w-full h-full flex items-center justify-center">
+                {/* Shadow & Glow layer */}
+                <div className="absolute inset-0 bg-[#1565FF]/20 rounded-full blur-[2px]"></div>
+                
+                {/* Premium Shield Badge SVG */}
+                <svg viewBox="0 0 100 100" className="w-full h-full relative z-10 drop-shadow-[0_1px_1px_rgba(0,0,0,0.2)]">
+                  <defs>
+                    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#1565FF" />
+                      <stop offset="100%" stopColor="#10B981" />
+                    </linearGradient>
+                  </defs>
+                  {/* Hexagon Shield Body */}
+                  <path 
+                    d="M50 2 L88 22 L88 78 L50 98 L12 78 L12 22 Z" 
+                    fill="url(#shieldGrad)" 
+                    stroke="white" 
+                    strokeWidth="4"
+                  />
+                  {/* Glossy top highlight */}
+                  <path 
+                    d="M50 10 L80 28 L20 28 Z" 
+                    fill="white" 
+                    fillOpacity="0.3"
+                  />
+                  {/* Premium White Checkmark */}
+                  <path 
+                    d="M32 52 L45 65 L70 38" 
+                    stroke="white" 
+                    strokeWidth="13" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    fill="none" 
+                  />
+                </svg>
+              </div>
             </div>
           )}
           <h3 
