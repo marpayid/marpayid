@@ -1,7 +1,7 @@
 "use client"
 
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Languages, Moon, Info, ChevronRight, ShieldCheck, FileText } from 'lucide-react';
+import { ArrowLeft, Languages, Moon, Info, ChevronRight, ShieldCheck, FileText, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import Link from 'next/link';
@@ -85,8 +85,22 @@ export default function SettingsPage() {
           </Link>
         </section>
 
+        <section className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+          <Link href="/akun/pengaturan/hapus-akun">
+            <div className="flex items-center justify-between p-5 active:bg-red-50/50 transition-colors">
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center text-red-500">
+                  <Trash2 className="w-5 h-5" />
+                </div>
+                <h4 className="text-xs font-bold text-red-600">Hapus Akun</h4>
+              </div>
+              <ChevronRight className="w-4 h-4 text-gray-300" />
+            </div>
+          </Link>
+        </section>
+
         <div className="pt-6 text-center">
-          <p className="text-[10px] text-gray-300 font-bold uppercase tracking-widest">Versi 1.0.4</p>
+          <p className="text-[10px] text-gray-300 font-bold uppercase tracking-widest">Versi 1.0.5</p>
         </div>
       </main>
     </div>
